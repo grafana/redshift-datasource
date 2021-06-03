@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"math/rand"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -97,9 +96,10 @@ func (d *RedshiftDatasource) CheckHealth(_ context.Context, req *backend.CheckHe
 	var status = backend.HealthStatusOk
 	var message = "Data source is working"
 
-	if rand.Int()%2 == 0 {
+	// temp dummy health check
+	if d.settings.Database == "" || d.settings.ClusterIdentifier == "" || 	d.settings.DBUser == "" {
 		status = backend.HealthStatusError
-		message = "randomized error"
+		message = "All fields need to be set"
 	}
 
 	return &backend.CheckHealthResult{
