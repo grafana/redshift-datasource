@@ -1,1 +1,3 @@
-# redshift-datasource
+## Redshift plugin
+
+WORK IN PROGRESS
