@@ -1,7 +1,7 @@
 {
-  "name": "simple-datasource-backend",
+  "name": "grafana-redshift-datasource",
   "version": "1.0.0",
-  "description": "Grafana Data Source Backend Plugin Template",
+  "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
     "test": "grafana-toolkit plugin:test",

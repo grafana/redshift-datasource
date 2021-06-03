@@ -1,25 +1,26 @@
 {
   "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
   "type": "datasource",
-  "name": "Grafana Data Source Backend Plugin Template",
-  "id": "myorgid-simple-backend-datasource",
+  "name": "redshift",
+  "id": "grafana-redshift-datasource",
   "metrics": true,
   "backend": true,
+  "alerting": true,
   "executable": "gpx_simple_datasource_backend",
-
   "info": {
-    "description": "Grafana Data Source Backend Plugin Template",
+    "description": "Use Amazon Redshift in Grafana",
     "author": {
-      "name": "Your Name"
+      "name": "Grafana Labs",
+      "url": "https://grafana.com"
     },
-    "keywords": ["Simple"],
+    "keywords": ["datasource", "redshift"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
     },
     "links": [
-      {"name": "Website", "url": "https://github.com/grafana/grafana-starter-datasource-backend"},
-      {"name": "License", "url": "https://github.com/grafana/grafana-starter-datasource-backend/blob/master/LICENSE"}
+      { "name": "Website", "url": "https://github.com/grafana/redshift-datasource" },
+      { "name": "License", "url": "https://github.com/redshift-datasource/blob/master/LICENSE" }
     ],
     "screenshots": [],
     "version": "%VERSION%",
