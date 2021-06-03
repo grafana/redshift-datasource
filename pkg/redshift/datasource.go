@@ -1,8 +1,9 @@
-package main
+package redshift
 
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"math/rand"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
+	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 )
 
 var (
@@ -19,12 +21,19 @@ var (
 )
 
 // NewRedshiftDatasource creates a new datasource instance.
-func NewRedshiftDatasource(_ backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
-	return &RedshiftDatasource{}, nil
+func NewRedshiftDatasource(dataSourceInstanceSettings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+	settings := &models.RedshiftDataSourceSettings{}
+	err := settings.Load(dataSourceInstanceSettings)
+	if err != nil {
+		return nil, fmt.Errorf("error reading settings: %s", err.Error())
+	}
+	return &RedshiftDatasource{settings: settings}, nil
 }
 
 // RedshiftDatasource is the redshift data source backend host
-type RedshiftDatasource struct{}
+type RedshiftDatasource struct{
+	settings *models.RedshiftDataSourceSettings
+}
 
 // Dispose cleans up datasource instance resources.
 func (d *RedshiftDatasource) Dispose() {
