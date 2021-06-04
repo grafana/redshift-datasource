@@ -1,15 +1,19 @@
-package main
+package redshift
 
 import (
 	"context"
 	"encoding/json"
-	"math/rand"
+	"fmt"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
+	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 )
 
 var (
@@ -18,13 +22,24 @@ var (
 	_ instancemgmt.InstanceDisposer = (*RedshiftDatasource)(nil)
 )
 
-// NewRedshiftDatasource creates a new datasource instance.
-func NewRedshiftDatasource(_ backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
-	return &RedshiftDatasource{}, nil
+// RedshiftDatasource is the redshift data source backend host
+type RedshiftDatasource struct{
+	settings *models.RedshiftDataSourceSettings
+	sessionCache *awsds.SessionCache
 }
 
-// RedshiftDatasource is the redshift data source backend host
-type RedshiftDatasource struct{}
+// NewRedshiftDatasource creates a new datasource instance.
+func NewRedshiftDatasource(dataSourceInstanceSettings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+	settings := &models.RedshiftDataSourceSettings{}
+	err := settings.Load(dataSourceInstanceSettings)
+	if err != nil {
+		return nil, fmt.Errorf("error reading settings: %s", err.Error())
+	}
+	return &RedshiftDatasource{
+		settings: settings,
+		sessionCache: awsds.NewSessionCache(),
+	}, nil
+}
 
 // Dispose cleans up datasource instance resources.
 func (d *RedshiftDatasource) Dispose() {
@@ -84,17 +99,53 @@ func (d *RedshiftDatasource) query(_ context.Context, pCtx backend.PluginContext
 // a datasource is working as expected.
 func (d *RedshiftDatasource) CheckHealth(_ context.Context, req *backend.CheckHealthRequest) (*backend.CheckHealthResult, error) {
 	log.DefaultLogger.Info("CheckHealth called", "request", req)
+	const testQuery = "SELECT 1"
 
-	var status = backend.HealthStatusOk
-	var message = "Data source is working"
+	session, err := d.sessionCache.GetSession(d.settings.DefaultRegion, d.settings.AWSDatasourceSettings)
+	if err != nil {
+		return &backend.CheckHealthResult{
+			Status:  backend.HealthStatusError,
+			Message: err.Error(),
+		}, nil
+	}
 
-	if rand.Int()%2 == 0 {
-		status = backend.HealthStatusError
-		message = "randomized error"
+	client := redshiftdataapiservice.New(session)
+	statementInput := &redshiftdataapiservice.ExecuteStatementInput{
+		ClusterIdentifier: aws.String(d.settings.ClusterIdentifier),
+		Database: aws.String(d.settings.Database),
+		DbUser: aws.String(d.settings.DBUser),
+		Sql	: aws.String(testQuery),
+	}
+	executeStatementResult, err := client.ExecuteStatement(statementInput)
+	if err != nil {
+		return &backend.CheckHealthResult{
+			Status:  backend.HealthStatusError,
+			Message: err.Error(),
+		}, nil
+	}
+
+	// wait for a second so that the statement gets a chance to finish before querying the statement result. 
+	// this will be replace by something non-blocking eventually
+	time.Sleep(1 * time.Second)
+
+	statementResult, err := client.GetStatementResult(&redshiftdataapiservice.GetStatementResultInput{
+		Id: executeStatementResult.Id,
+	})
+
+	log.DefaultLogger.Info("healthcheck", "statementResult", statementResult.TotalNumRows)
+
+	if err != nil {
+		describeStatementResult, _ := client.DescribeStatement(&redshiftdataapiservice.DescribeStatementInput{
+			Id: executeStatementResult.Id,
+		})
+		return &backend.CheckHealthResult{
+			Status:  backend.HealthStatusError,
+			Message: *describeStatementResult.Error,
+		}, nil
 	}
 
 	return &backend.CheckHealthResult{
-		Status:  status,
-		Message: message,
+		Status:  backend.HealthStatusOk,
+		Message: "Data source is working",
 	}, nil
 }

@@ -1,7 +1,6 @@
 import { defaults } from 'lodash';
 
 import React, { PureComponent } from 'react';
-import { LegacyForms } from '@grafana/ui';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from './datasource';
 import { defaultQuery, RedshiftDataSourceOptions, RedshiftQuery } from './types';

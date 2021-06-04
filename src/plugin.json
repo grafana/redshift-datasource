@@ -6,7 +6,7 @@
   "metrics": true,
   "backend": true,
   "alerting": true,
-  "executable": "gpx_simple_datasource_backend",
+  "executable": "gpx_redshift",
   "info": {
     "description": "Use Amazon Redshift in Grafana",
     "author": {
