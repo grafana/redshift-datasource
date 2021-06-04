@@ -24,5 +24,6 @@ func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSetti
 	
 	s.AccessKey = config.DecryptedSecureJSONData["accessKey"]
 	s.SecretKey = config.DecryptedSecureJSONData["secretKey"]
+	
 	return nil
 }
