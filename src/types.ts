@@ -1,9 +1,13 @@
 import { DataQuery } from '@grafana/data';
 import { AwsAuthDataSourceJsonData, AwsAuthDataSourceSecureJsonData } from '@grafana/aws-sdk';
 
-export interface RedshiftQuery extends DataQuery {}
+export interface RedshiftQuery extends DataQuery {
+  rawSQL: string;
+}
 
-export const defaultQuery: Partial<RedshiftQuery> = {};
+export const defaultQuery: Partial<RedshiftQuery> = {
+  rawSQL: '',
+};
 
 /**
  * These are options configured for each DataSource instance
