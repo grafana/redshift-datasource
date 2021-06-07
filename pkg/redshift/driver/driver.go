@@ -22,7 +22,7 @@ type Driver struct {
 }
 
 // Open returns a new driver.Conn using already existing settings
-func (d *Driver) Open(connStr string) (driver.Conn, error) {
+func (d *Driver) Open(_ string) (driver.Conn, error) {
 	return &conn{
 		sessionCache:  awsds.NewSessionCache(),
 		settings: d.settings,

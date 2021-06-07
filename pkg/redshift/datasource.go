@@ -41,7 +41,6 @@ func (s *RedshiftDatasource) Converters() (sc []sqlutil.Converter) {
 	return sc
 }
 
-
 func (s *RedshiftDatasource) Macros() sqlds.Macros {
 	return nil
 }

@@ -24,7 +24,6 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 
 func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
 	panic("not implemented")
-
 }
 
 func (c *conn) Ping(ctx context.Context) error {
