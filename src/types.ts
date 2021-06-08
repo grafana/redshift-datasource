@@ -1,12 +1,30 @@
-import { DataQuery } from '@grafana/data';
+import { DataQuery, SelectableValue } from '@grafana/data';
 import { AwsAuthDataSourceJsonData, AwsAuthDataSourceSecureJsonData } from '@grafana/aws-sdk';
+
+export enum FormatOptions {
+  TimeSeries,
+  Table,
+}
+
+export const SelectableFormatOptions: Array<SelectableValue<FormatOptions>> = [
+  {
+    label: 'Time Series',
+    value: FormatOptions.TimeSeries,
+  },
+  {
+    label: 'Table',
+    value: FormatOptions.Table,
+  },
+];
 
 export interface RedshiftQuery extends DataQuery {
   rawSQL: string;
+  format: FormatOptions;
 }
 
 export const defaultQuery: Partial<RedshiftQuery> = {
   rawSQL: '',
+  format: FormatOptions.TimeSeries,
 };
 
 /**
