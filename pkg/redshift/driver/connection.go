@@ -3,13 +3,12 @@ package driver
 import (
 	"context"
 	"database/sql/driver"
-	"fmt"
+	"errors"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
-	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 )
 
@@ -19,50 +18,74 @@ type conn struct {
 }
 
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
-	panic("not implemented")
-}
-
-func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
-	panic("not implemented")
-}
-
-func (c *conn) Ping(ctx context.Context) error {
-	const testQuery = "SELECT 1"
-
 	session, err := c.sessionCache.GetSession(c.settings.DefaultRegion, c.settings.AWSDatasourceSettings)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
 	client := redshiftdataapiservice.New(session)
+
 	statementInput := &redshiftdataapiservice.ExecuteStatementInput{
 		ClusterIdentifier: aws.String(c.settings.ClusterIdentifier),
 		Database: aws.String(c.settings.Database),
 		DbUser: aws.String(c.settings.DBUser),
-		Sql	: aws.String(testQuery),
+		Sql	: aws.String(query),
 	}
 	executeStatementResult, err := client.ExecuteStatement(statementInput)
 	if err != nil {
+		return nil, err
+	}
+
+	if err := c.waitOnQuery(ctx, client, *executeStatementResult.Id); err != nil {
+		return nil, err
+	}
+
+
+	return newRows(client, *executeStatementResult.Id)
+}
+
+
+// waitOnQuery blocks until a query finishes, returning an error if it failed.
+func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.RedshiftDataAPIService, queryID string) error {
+	for {
+		statusResp, err := client.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
+			Id: aws.String(queryID),
+		})
+		if err != nil {
+			return err
+		}
+
+		switch *statusResp.Status {
+		case redshiftdataapiservice.StatusStringFailed:
+		case redshiftdataapiservice.StatusStringAborted:
+			reason := *statusResp.Error
+			return errors.New(reason)
+		case redshiftdataapiservice.StatusStringFinished:
+			return nil
+		case redshiftdataapiservice.StatusStringSubmitted:
+		case redshiftdataapiservice.StatusStringPicked:
+		case redshiftdataapiservice.StatusStringStarted:
+		}
+
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(time.Second * 1):
+			continue
+		}
+	}
+}
+
+func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
+	_, err := c.QueryContext(ctx, query, args)
+	return nil, err
+}
+
+func (c *conn) Ping(ctx context.Context) error {
+	rows, err := c.QueryContext(ctx, "SELECT 1", nil)
+	if err != nil {
 		return err
 	}
-
-	// wait for a second so that the statement gets a chance to finish before querying the statement result. 
-	// this will be replace by something non-blocking eventually
-	time.Sleep(1 * time.Second)
-
-	statementResult, err := client.GetStatementResult(&redshiftdataapiservice.GetStatementResultInput{
-		Id: executeStatementResult.Id,
-	})
-
-	log.DefaultLogger.Info("healthcheck", "statementResult", statementResult.TotalNumRows)
-
-	if err != nil {
-		describeStatementResult, _ := client.DescribeStatement(&redshiftdataapiservice.DescribeStatementInput{
-			Id: executeStatementResult.Id,
-		})
-		return fmt.Errorf(*describeStatementResult.Error)
-	}
-
+	defer rows.Close()
 	return nil
 }
 
