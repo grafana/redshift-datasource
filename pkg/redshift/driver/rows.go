@@ -19,7 +19,6 @@ type Rows struct {
 
 	done      bool
 	result    *redshiftdataapiservice.GetStatementResultOutput
-	pageCount int64
 }
 
 func newRows(client *redshiftdataapiservice.RedshiftDataAPIService, queryId string) (*Rows, error) {
@@ -51,7 +50,7 @@ func (r *Rows) Next(dest []driver.Value) error {
 			return io.EOF
 		}
 
-		err := r.fetchNextPage(r.result.NextToken)
+		err := r.fetchNextPage(r.result.NextToken)fetchNextPage
 		if err != nil {
 			return err
 		}
@@ -171,9 +170,6 @@ func (r *Rows) fetchNextPage(token *string) error {
 		return err
 	}
 
-	r.pageCount++
-
-	// r.done = r.result.NextToken == nil
 	return nil
 }
 
