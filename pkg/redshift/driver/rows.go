@@ -47,6 +47,7 @@ func (r *Rows) Next(dest []driver.Value) error {
 	if len(r.result.Records) == 0 {
 		// And if nothing more to paginate...
 		if r.result.NextToken == nil || *r.result.NextToken == "" {
+			r.done = true
 			return io.EOF
 		}
 
@@ -156,6 +157,8 @@ func (r *Rows) Close() error {
 	return nil
 }
 
+
+// fetchNextPage fetches the next statement result page and adds the result to the row
 func (r *Rows) fetchNextPage(token *string) error {
 	var err error
 
