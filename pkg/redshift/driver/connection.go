@@ -42,7 +42,7 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 	return newRows(client, *executeStatementResult.Id)
 }
 
-// waitOnQuery blocks until a query finishes, returning an error if it failed.
+// waitOnQuery polls the redshift api until the query finishes, returning an error if it failed.
 func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.RedshiftDataAPIService, queryID string) error {
 	for {
 		statusResp, err := client.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
@@ -92,7 +92,7 @@ func (c *conn) Begin() (driver.Tx, error) {
 }
 
 func (c *conn) Prepare(query string) (driver.Stmt, error) {
-	panic("Athena doesn't support prepared statements")
+	panic("Redshift doesn't support prepared statements")
 }
 
 func (c *conn) Close() error {
