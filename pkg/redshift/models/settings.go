@@ -21,9 +21,9 @@ func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSetti
 			return fmt.Errorf("could not unmarshal DatasourceSettings json: %w", err)
 		}
 	}
-	
+
 	s.AccessKey = config.DecryptedSecureJSONData["accessKey"]
 	s.SecretKey = config.DecryptedSecureJSONData["secretKey"]
-	
+
 	return nil
 }

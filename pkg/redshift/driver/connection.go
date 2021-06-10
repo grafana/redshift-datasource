@@ -13,8 +13,8 @@ import (
 )
 
 type conn struct {
-	sessionCache   *awsds.SessionCache
-	settings *models.RedshiftDataSourceSettings
+	sessionCache *awsds.SessionCache
+	settings     *models.RedshiftDataSourceSettings
 }
 
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
@@ -26,9 +26,9 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 
 	statementInput := &redshiftdataapiservice.ExecuteStatementInput{
 		ClusterIdentifier: aws.String(c.settings.ClusterIdentifier),
-		Database: aws.String(c.settings.Database),
-		DbUser: aws.String(c.settings.DBUser),
-		Sql	: aws.String(query),
+		Database:          aws.String(c.settings.Database),
+		DbUser:            aws.String(c.settings.DBUser),
+		Sql:               aws.String(query),
 	}
 	executeStatementResult, err := client.ExecuteStatement(statementInput)
 	if err != nil {
@@ -39,10 +39,8 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 		return nil, err
 	}
 
-
 	return newRows(client, *executeStatementResult.Id)
 }
-
 
 // waitOnQuery blocks until a query finishes, returning an error if it failed.
 func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.RedshiftDataAPIService, queryID string) error {

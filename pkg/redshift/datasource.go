@@ -39,7 +39,7 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings) 
 }
 
 func (s *RedshiftDatasource) Converters() (sc []sqlutil.Converter) {
-	return  []sqlutil.Converter{{ // This converter can be removed as soon as it's a part of SQLUtil. See https://github.com/grafana/grafana-plugin-sdk-go/pull/369
+	return []sqlutil.Converter{{ // This converter can be removed as soon as it's a part of SQLUtil. See https://github.com/grafana/grafana-plugin-sdk-go/pull/369
 		Name:          "nullable bool converter",
 		InputScanType: reflect.TypeOf(sql.NullBool{}),
 		InputTypeName: "BOOLEAN",
