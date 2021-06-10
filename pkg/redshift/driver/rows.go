@@ -50,7 +50,7 @@ func (r *Rows) Next(dest []driver.Value) error {
 			return io.EOF
 		}
 
-		err := r.fetchNextPage(r.result.NextToken)fetchNextPage
+		err := r.fetchNextPage(r.result.NextToken)
 		if err != nil {
 			return err
 		}
