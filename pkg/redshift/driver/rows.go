@@ -11,19 +11,20 @@ import (
 	"github.com/araddon/dateparse"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
+	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
 )
 
 type Rows struct {
-	client  *redshiftdataapiservice.RedshiftDataAPIService
+	service redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
 	queryID string
 
-	done      bool
-	result    *redshiftdataapiservice.GetStatementResultOutput
+	done   bool
+	result *redshiftdataapiservice.GetStatementResultOutput
 }
 
-func newRows(client *redshiftdataapiservice.RedshiftDataAPIService, queryId string) (*Rows, error) {
+func newRows(service redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI, queryId string) (*Rows, error) {
 	r := Rows{
-		client:  client,
+		service: service,
 		queryID: queryId,
 	}
 
@@ -75,7 +76,7 @@ func (r *Rows) Columns() []string {
 	return columnNames
 }
 
-// ColumnTypeNullable returns true if it is known the column may be null, 
+// ColumnTypeNullable returns true if it is known the column may be null,
 // or false if the column is known to be not nullable. If the column nullability is unknown, ok should be false.
 func (r *Rows) ColumnTypeNullable(index int) (nullable, ok bool) {
 	col := *r.result.ColumnMetadata[index]
@@ -87,7 +88,7 @@ func (r *Rows) ColumnTypeNullable(index int) (nullable, ok bool) {
 	return false, true
 }
 
-// ColumnTypeScanType returns the value type that can be used to scan types into. 
+// ColumnTypeScanType returns the value type that can be used to scan types into.
 // For example, the database column type "bigint" this should return "reflect.TypeOf(int64(0))"
 func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 	col := *r.result.ColumnMetadata[index]
@@ -156,12 +157,11 @@ func (r *Rows) Close() error {
 	return nil
 }
 
-
 // fetchNextPage fetches the next statement result page and adds the result to the row
 func (r *Rows) fetchNextPage(token *string) error {
 	var err error
 
-	r.result, err = r.client.GetStatementResult(&redshiftdataapiservice.GetStatementResultInput{
+	r.result, err = r.service.GetStatementResult(&redshiftdataapiservice.GetStatementResultInput{
 		Id:        aws.String(r.queryID),
 		NextToken: token,
 	})
