@@ -73,11 +73,6 @@ func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.R
 	}
 }
 
-func (c *conn) ExecContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Result, error) {
-	_, err := c.QueryContext(ctx, query, args)
-	return nil, err
-}
-
 func (c *conn) Ping(ctx context.Context) error {
 	rows, err := c.QueryContext(ctx, "SELECT 1", nil)
 	if err != nil {
