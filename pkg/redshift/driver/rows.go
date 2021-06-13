@@ -94,21 +94,31 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 	col := *r.result.ColumnMetadata[index]
 
 	switch strings.ToUpper(*col.TypeName) {
-	case "INT2":
+	case REDSHIFT_INT2:
 		return reflect.TypeOf(int16(0))
-	case "INT", "INT4":
+	case REDSHIFT_INT, REDSHIFT_INT4:
 		return reflect.TypeOf(int32(0))
-	case "INT8":
+	case REDSHIFT_INT8:
 		return reflect.TypeOf(int64(0))
-	case "FLOAT4":
+	case REDSHIFT_FLOAT4:
 		return reflect.TypeOf(float32(0))
-	case "NUMERIC", "FLOAT", "FLOAT8":
+	case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT8:
 		return reflect.TypeOf(float64(0))
-	case "BOOL":
+	case REDSHIFT_BOOL:
 		return reflect.TypeOf(false)
-	case "CHARACTER", "NCHAR", "BPCHAR", "VARYING", "NVARCHAR", "TEXT":
+	case REDSHIFT_CHARACTER,
+		REDSHIFT_VARCHAR,
+		REDSHIFT_NCHAR,
+		REDSHIFT_BPCHAR,
+		REDSHIFT_CHARACTER_VARYING,
+		REDSHIFT_NVARCHAR,
+		REDSHIFT_TEXT:
 		return reflect.TypeOf("")
-	case "TIMESTAMP":
+	case REDSHIFT_TIMESTAMP,
+		REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE,
+		REDSHIFT_TIMESTAMP_WITH_TIME_ZONE,
+		REDSHIFT_TIME_WITHOUT_TIME_ZONE,
+		REDSHIFT_TIME_WITH_TIME_ZONE:
 		return reflect.TypeOf(time.Time{})
 	default:
 		return reflect.TypeOf("")
@@ -118,28 +128,28 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 // ColumnTypeDatabaseTypeName converts a redshift data type to a corresponding go sql type
 func (r *Rows) ColumnTypeDatabaseTypeName(index int) string {
 	columnTypeMapper := map[string]string{
-		"INT2":                        "SMALLINT",
-		"INT":                         "INTEGER",
-		"INT4":                        "INTEGER",
-		"INT8":                        "BIGINT",
-		"NUMERIC":                     "DECIMAL",
-		"FLOAT4":                      "REAL",
-		"FLOAT8":                      "DOUBLE",
-		"FLOAT":                       "DOUBLE",
-		"BOOL":                        "BOOLEAN",
-		"CHARACTER":                   "CHAR",
-		"NCHAR":                       "CHAR",
-		"BPCHAR":                      "CHAR",
-		"CHARACTER VARYING":           "VARCHAR",
-		"NVARCHAR":                    "VARCHAR",
-		"TEXT":                        "VARCHAR",
-		"DATE":                        "DATE",
-		"TIMESTAMP":                   "TIMESTAMP",
-		"TIMESTAMP WITHOUT TIME ZONE": "TIMESTAMP",
-		"TIMESTAMP WITH TIME ZONE":    "TIMESTAMPTZ",
-		"TIME WITHOUT TIME ZONE":      "TIME",
-		"TIME WITH TIME ZONE":         "TIMETZ",
-		"VARCHAR":                     "VARCHAR",
+		REDSHIFT_INT2:                        "SMALLINT",
+		REDSHIFT_INT:                         "INTEGER",
+		REDSHIFT_INT4:                        "INTEGER",
+		REDSHIFT_INT8:                        "BIGINT",
+		REDSHIFT_NUMERIC:                     "DECIMAL",
+		REDSHIFT_FLOAT4:                      "REAL",
+		REDSHIFT_FLOAT8:                      "DOUBLE",
+		REDSHIFT_FLOAT:                       "DOUBLE",
+		REDSHIFT_BOOL:                        "BOOLEAN",
+		REDSHIFT_CHARACTER:                   "CHAR",
+		REDSHIFT_NCHAR:                       "CHAR",
+		REDSHIFT_BPCHAR:                      "CHAR",
+		REDSHIFT_CHARACTER_VARYING:           "VARCHAR",
+		REDSHIFT_NVARCHAR:                    "VARCHAR",
+		REDSHIFT_TEXT:                        "VARCHAR",
+		REDSHIFT_VARCHAR:                     "VARCHAR",
+		REDSHIFT_DATE:                        "DATE",
+		REDSHIFT_TIMESTAMP:                   "TIMESTAMP",
+		REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE: "TIMESTAMP",
+		REDSHIFT_TIMESTAMP_WITH_TIME_ZONE:    "TIMESTAMPTZ",
+		REDSHIFT_TIME_WITHOUT_TIME_ZONE:      "TIME",
+		REDSHIFT_TIME_WITH_TIME_ZONE:         "TIMETZ",
 	}
 
 	typeName := *r.result.ColumnMetadata[index].TypeName
@@ -183,31 +193,45 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 		}
 
 		col := columns[i]
-		switch strings.ToUpper(*col.TypeName) {
-		case "INT2":
+		typeName := strings.ToUpper(*col.TypeName)
+		switch typeName {
+		case REDSHIFT_INT2:
 			ret[i] = int16(*curr.LongValue)
-		case "INT", "INT4":
+		case REDSHIFT_INT, REDSHIFT_INT4:
 			ret[i] = int32(*curr.LongValue)
-		case "INT8":
+		case REDSHIFT_INT8:
 			ret[i] = *curr.LongValue
-		case "FLOAT4":
-			ret[i] = float32(*curr.LongValue)
-		case "NUMERIC", "FLOAT", "FLOAT8":
-			v, err := strconv.ParseFloat(*curr.StringValue, 64)
+		case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT4, REDSHIFT_FLOAT8:
+			bitSize := 64
+			if typeName == REDSHIFT_FLOAT4 {
+				bitSize = 32
+			}
+			v, err := strconv.ParseFloat(*curr.StringValue, bitSize)
 			if err != nil {
 				return err
 			}
 			ret[i] = v
-		case "BOOL":
+		case REDSHIFT_BOOL:
 			// don't know why boolean values are not passed as curr.BooleanValue
 			boolValue, err := strconv.ParseBool(*curr.StringValue)
 			if err != nil {
 				return err
 			}
 			ret[i] = boolValue
-		case "VARCHAR", "CHARACTER", "NCHAR", "BPCHAR", "VARYING", "NVARCHAR", "TEXT":
+
+		case REDSHIFT_CHARACTER,
+			REDSHIFT_VARCHAR,
+			REDSHIFT_NCHAR,
+			REDSHIFT_BPCHAR,
+			REDSHIFT_CHARACTER_VARYING,
+			REDSHIFT_NVARCHAR,
+			REDSHIFT_TEXT:
 			ret[i] = *curr.StringValue
-		case "TIMESTAMP", "TIMESTAMPTZ":
+		case REDSHIFT_TIMESTAMP,
+			REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE,
+			REDSHIFT_TIMESTAMP_WITH_TIME_ZONE,
+			REDSHIFT_TIME_WITHOUT_TIME_ZONE,
+			REDSHIFT_TIME_WITH_TIME_ZONE:
 			// TODO: Replace this with something more robust
 			t, err := dateparse.ParseAny(*curr.StringValue)
 			if err != nil {
