@@ -11,6 +11,7 @@ import (
 )
 
 const DriverName string = "redshift"
+
 var (
 	openFromSessionMutex sync.Mutex
 	openFromSessionCount int
@@ -24,8 +25,8 @@ type Driver struct {
 // Open returns a new driver.Conn using already existing settings
 func (d *Driver) Open(_ string) (driver.Conn, error) {
 	return &conn{
-		sessionCache:  awsds.NewSessionCache(),
-		settings: d.settings,
+		sessionCache: awsds.NewSessionCache(),
+		settings:     d.settings,
 	}, nil
 }
 

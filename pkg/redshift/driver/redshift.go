@@ -1,0 +1,26 @@
+package driver
+
+const (
+	REDSHIFT_INT                         = "INT"
+	REDSHIFT_INT2                        = "INT2"
+	REDSHIFT_INT4                        = "INT4"
+	REDSHIFT_INT8                        = "INT8"
+	REDSHIFT_FLOAT4                      = "FLOAT4"
+	REDSHIFT_NUMERIC                     = "NUMERIC"
+	REDSHIFT_FLOAT                       = "FLOAT"
+	REDSHIFT_FLOAT8                      = "FLOAT8"
+	REDSHIFT_BOOL                        = "BOOL"
+	REDSHIFT_CHARACTER                   = "CHARACTER"
+	REDSHIFT_NCHAR                       = "NCHAR"
+	REDSHIFT_BPCHAR                      = "BPCHAR"
+	REDSHIFT_CHARACTER_VARYING           = "CHARACTER VARYING"
+	REDSHIFT_NVARCHAR                    = "NVARCHAR"
+	REDSHIFT_TEXT                        = "TEXT"
+	REDSHIFT_VARCHAR                     = "VARCHAR"
+	REDSHIFT_DATE                        = "DATE"
+	REDSHIFT_TIMESTAMP                   = "TIMESTAMP"
+	REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE = "TIMESTAMP WITHOUT TIME ZONE"
+	REDSHIFT_TIMESTAMP_WITH_TIME_ZONE    = "TIMESTAMP WITH TIME ZONE"
+	REDSHIFT_TIME_WITHOUT_TIME_ZONE      = "TIME WITHOUT TIME ZONE"
+	REDSHIFT_TIME_WITH_TIME_ZONE         = "TIME WITH TIME ZONE"
+)
