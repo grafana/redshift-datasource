@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql/driver"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -83,11 +84,11 @@ func (c *conn) Ping(ctx context.Context) error {
 }
 
 func (c *conn) Begin() (driver.Tx, error) {
-	panic("not implemented")
+	return nil, fmt.Errorf("redshift driver doesn't support begin statements")
 }
 
-func (c *conn) Prepare(query string) (driver.Stmt, error) {
-	panic("Redshift doesn't support prepared statements")
+func (c *conn) Prepare(query string) (driver.Stmt, error) {	
+	return nil, fmt.Errorf("redshift driver doesn't support prepared statements")
 }
 
 func (c *conn) Close() error {
