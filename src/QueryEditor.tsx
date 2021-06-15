@@ -29,7 +29,7 @@ export class QueryEditor extends PureComponent<Props> {
         <CodeEditor
           height={'250px'}
           language="redshift"
-          value={rawSQL || ''}
+          value={rawSQL}
           onBlur={this.onRawSqlChange}
           onSave={this.onRawSqlChange}
           showMiniMap={false}
