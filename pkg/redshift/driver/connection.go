@@ -54,15 +54,12 @@ func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.R
 		}
 
 		switch *statusResp.Status {
-		case redshiftdataapiservice.StatusStringFailed:
-		case redshiftdataapiservice.StatusStringAborted:
+		case redshiftdataapiservice.StatusStringFailed,
+		 redshiftdataapiservice.StatusStringAborted:
 			reason := *statusResp.Error
 			return errors.New(reason)
 		case redshiftdataapiservice.StatusStringFinished:
 			return nil
-		case redshiftdataapiservice.StatusStringSubmitted:
-		case redshiftdataapiservice.StatusStringPicked:
-		case redshiftdataapiservice.StatusStringStarted:
 		}
 
 		select {
