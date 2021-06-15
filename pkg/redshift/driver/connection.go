@@ -9,13 +9,23 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
+	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 )
 
 type conn struct {
-	sessionCache *awsds.SessionCache
-	settings     *models.RedshiftDataSourceSettings
+	sessionCache    *awsds.SessionCache
+	settings        *models.RedshiftDataSourceSettings
+	pollingInterval time.Duration
+}
+
+func newConnection(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) *conn {
+	return &conn{
+		sessionCache:    sessionCache,
+		settings:        settings,
+		pollingInterval: time.Second * 1, //TODO: this polling interval shoud be configurable in ds settings OR increased successively (https://github.com/grafana/redshift-datasource/issues/15)
+	}
 }
 
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
@@ -44,9 +54,9 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 }
 
 // waitOnQuery polls the redshift api until the query finishes, returning an error if it failed.
-func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.RedshiftDataAPIService, queryID string) error {
+func (c *conn) waitOnQuery(ctx context.Context, service redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI, queryID string) error {
 	for {
-		statusResp, err := client.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
+		statusResp, err := service.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
 			Id: aws.String(queryID),
 		})
 		if err != nil {
@@ -55,7 +65,7 @@ func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.R
 
 		switch *statusResp.Status {
 		case redshiftdataapiservice.StatusStringFailed,
-		 redshiftdataapiservice.StatusStringAborted:
+			redshiftdataapiservice.StatusStringAborted:
 			reason := *statusResp.Error
 			return errors.New(reason)
 		case redshiftdataapiservice.StatusStringFinished:
@@ -65,7 +75,7 @@ func (c *conn) waitOnQuery(ctx context.Context, client *redshiftdataapiservice.R
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(time.Second * 1):
+		case <-time.After(c.pollingInterval):
 			continue
 		}
 	}
@@ -84,7 +94,7 @@ func (c *conn) Begin() (driver.Tx, error) {
 	return nil, fmt.Errorf("redshift driver doesn't support begin statements")
 }
 
-func (c *conn) Prepare(query string) (driver.Stmt, error) {	
+func (c *conn) Prepare(query string) (driver.Stmt, error) {
 	return nil, fmt.Errorf("redshift driver doesn't support prepared statements")
 }
 

@@ -44,25 +44,26 @@ var twoRecords = [][]*redshiftdataapiservice.Field{
 }
 
 type mockRedshiftService struct {
-	getStatementResult *redshiftdataapiservice.GetStatementResultOutput
-	pageCounter        int
+	getStatementResult   *redshiftdataapiservice.GetStatementResultOutput
+	calledTimesCounter   int
+	calledTimesCountDown int
 }
 
 func newMockRedshiftService() *mockRedshiftService {
-	return &mockRedshiftService{pageCounter: 0}
+	return &mockRedshiftService{calledTimesCounter: 0}
 }
 
 func (s *mockRedshiftService) GetStatementResult(input *redshiftdataapiservice.GetStatementResultInput) (*redshiftdataapiservice.GetStatementResultOutput, error) {
-	s.pageCounter++
+	s.calledTimesCounter++
 
-	if *input.Id == singlePageResponseQueryId || s.pageCounter == 2 {
+	if *input.Id == singlePageResponseQueryId || s.calledTimesCounter == 2 {
 		return &redshiftdataapiservice.GetStatementResultOutput{
 			ColumnMetadata: columnMetaData,
 			Records:        twoRecords,
 		}, nil
 	}
 
-	if *input.Id == multiPageResponseQueryId && s.pageCounter == 1 {
+	if *input.Id == multiPageResponseQueryId && s.calledTimesCounter == 1 {
 		return &redshiftdataapiservice.GetStatementResultOutput{
 			ColumnMetadata: columnMetaData,
 			Records:        twoRecords,
@@ -71,6 +72,31 @@ func (s *mockRedshiftService) GetStatementResult(input *redshiftdataapiservice.G
 	}
 
 	return nil, fmt.Errorf("no test response for this query id")
+}
+
+const DESCRIBE_STATEMENT_FAILED = "DESCRIBE_STATEMENT_FAILED"
+const DESCRIBE_STATEMENT_SUCCEEDED = "DESCRIBE_STATEMENT_FINISHED"
+
+func (s *mockRedshiftService) DescribeStatementWithContext(_ aws.Context, input *redshiftdataapiservice.DescribeStatementInput, _ ...request.Option) (*redshiftdataapiservice.DescribeStatementOutput, error) {
+	s.calledTimesCountDown--
+	s.calledTimesCounter++
+
+	if *input.Id == DESCRIBE_STATEMENT_FAILED {
+		return &redshiftdataapiservice.DescribeStatementOutput{
+			Status: aws.String(redshiftdataapiservice.StatusStringFailed),
+			Error:  aws.String(DESCRIBE_STATEMENT_FAILED),
+		}, nil
+	}
+
+	if s.calledTimesCountDown == 0 {
+		return &redshiftdataapiservice.DescribeStatementOutput{
+			Status: aws.String(redshiftdataapiservice.StatusStringFinished),
+		}, nil
+	} else {
+		return &redshiftdataapiservice.DescribeStatementOutput{
+			Status: aws.String(redshiftdataapiservice.StatusStringStarted),
+		}, nil
+	}
 }
 
 func (s *mockRedshiftService) CancelStatement(*redshiftdataapiservice.CancelStatementInput) (*redshiftdataapiservice.CancelStatementOutput, error) {
@@ -86,10 +112,6 @@ func (s *mockRedshiftService) CancelStatementRequest(*redshiftdataapiservice.Can
 }
 
 func (s *mockRedshiftService) DescribeStatement(*redshiftdataapiservice.DescribeStatementInput) (*redshiftdataapiservice.DescribeStatementOutput, error) {
-	panic("not implemented")
-}
-
-func (s *mockRedshiftService) DescribeStatementWithContext(aws.Context, *redshiftdataapiservice.DescribeStatementInput, ...request.Option) (*redshiftdataapiservice.DescribeStatementOutput, error) {
 	panic("not implemented")
 }
 
