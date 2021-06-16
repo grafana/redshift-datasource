@@ -32,13 +32,3 @@ func TestConnection_waitOnQuery(t *testing.T) {
 		assert.Equal(t, tc.calledTimesCountDown, redshiftServiceMock.CalledTimesCounter)
 	}
 }
-
-func TestConnection_waitOnQuery_success2(t *testing.T) {
-	t.Parallel()
-	c := &conn{pollingInterval: time.Millisecond}
-	redshiftServiceMock := redshiftservicemock.NewMockRedshiftService()
-	redshiftServiceMock.CalledTimesCountDown = 10
-	err := c.waitOnQuery(context.Background(), redshiftServiceMock, redshiftservicemock.DESCRIBE_STATEMENT_SUCCEEDED)
-	assert.Nil(t, err)
-	assert.Equal(t, 10, redshiftServiceMock.CalledTimesCounter)
-}
