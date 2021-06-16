@@ -13,10 +13,9 @@ func TestOnePageSuccess(t *testing.T) {
 	rows, rowErr := newRows(redshiftServiceMock, singlePageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
-	var err error = nil
 	for {
 		var col1, col2 string
-		err = rows.Next([]driver.Value{
+		err := rows.Next([]driver.Value{
 			&col1,
 			&col2,
 		})
@@ -35,10 +34,9 @@ func TestMultiPageSuccess(t *testing.T) {
 	rows, rowErr := newRows(redshiftServiceMock, multiPageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
-	var err error = nil
 	for {
 		var col1, col2 string
-		err = rows.Next([]driver.Value{
+		err := rows.Next([]driver.Value{
 			&col1,
 			&col2,
 		})
