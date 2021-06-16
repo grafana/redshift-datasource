@@ -10,6 +10,7 @@ import (
 
 func TestOnePageSuccess(t *testing.T) {
 	redshiftServiceMock := &mockRedshiftService{}
+	redshiftServiceMock.calledTimesCountDown = 1
 	rows, rowErr := newRows(redshiftServiceMock, singlePageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
@@ -31,6 +32,7 @@ func TestOnePageSuccess(t *testing.T) {
 
 func TestMultiPageSuccess(t *testing.T) {
 	redshiftServiceMock := &mockRedshiftService{}
+	redshiftServiceMock.calledTimesCountDown = 5
 	rows, rowErr := newRows(redshiftServiceMock, multiPageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
@@ -47,5 +49,6 @@ func TestMultiPageSuccess(t *testing.T) {
 		require.NoError(t, err)
 		cnt++
 	}
-	require.Equal(t, 4, cnt)
+	require.Equal(t, 10, cnt)
+	require.Equal(t, 5, redshiftServiceMock.calledTimesCounter)
 }

@@ -1,8 +1,6 @@
 package driver
 
 import (
-	"fmt"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
@@ -53,50 +51,48 @@ func newMockRedshiftService() *mockRedshiftService {
 	return &mockRedshiftService{calledTimesCounter: 0}
 }
 
+// GetStatementResult returns a GetStatementResultOutput
+// When mockRedshiftService.calledTimesCountDown is more than 0, the GetStatementResultOutput will have a next token
 func (s *mockRedshiftService) GetStatementResult(input *redshiftdataapiservice.GetStatementResultInput) (*redshiftdataapiservice.GetStatementResultOutput, error) {
+	s.calledTimesCountDown--
 	s.calledTimesCounter++
 
-	if *input.Id == singlePageResponseQueryId || s.calledTimesCounter == 2 {
+	if s.calledTimesCountDown == 0 {
 		return &redshiftdataapiservice.GetStatementResultOutput{
 			ColumnMetadata: columnMetaData,
 			Records:        twoRecords,
 		}, nil
 	}
 
-	if *input.Id == multiPageResponseQueryId && s.calledTimesCounter == 1 {
-		return &redshiftdataapiservice.GetStatementResultOutput{
-			ColumnMetadata: columnMetaData,
-			Records:        twoRecords,
-			NextToken:      aws.String("nexttoken"),
-		}, nil
-	}
-
-	return nil, fmt.Errorf("no test response for this query id")
+	return &redshiftdataapiservice.GetStatementResultOutput{
+		ColumnMetadata: columnMetaData,
+		Records:        twoRecords,
+		NextToken:      aws.String("nexttoken"),
+	}, nil
 }
 
 const DESCRIBE_STATEMENT_FAILED = "DESCRIBE_STATEMENT_FAILED"
 const DESCRIBE_STATEMENT_SUCCEEDED = "DESCRIBE_STATEMENT_FINISHED"
 
+// DescribeStatementWithContext returns a DescribeStatementOutput
+// When DescribeStatementInput.Id == DESCRIBE_STATEMENT_FAILED, an the output will include an error message that is equal to the input id
+// When DescribeStatementInput.Id == DESCRIBE_STATEMENT_FINISHED, the output will have a status redshiftdataapiservice.StatusStringFinished once mockRedshiftService.calledTimesCountDown == 0
 func (s *mockRedshiftService) DescribeStatementWithContext(_ aws.Context, input *redshiftdataapiservice.DescribeStatementInput, _ ...request.Option) (*redshiftdataapiservice.DescribeStatementOutput, error) {
 	s.calledTimesCountDown--
 	s.calledTimesCounter++
 
-	if *input.Id == DESCRIBE_STATEMENT_FAILED {
-		return &redshiftdataapiservice.DescribeStatementOutput{
-			Status: aws.String(redshiftdataapiservice.StatusStringFailed),
-			Error:  aws.String(DESCRIBE_STATEMENT_FAILED),
-		}, nil
-	}
-
+	output := &redshiftdataapiservice.DescribeStatementOutput{}
 	if s.calledTimesCountDown == 0 {
-		return &redshiftdataapiservice.DescribeStatementOutput{
-			Status: aws.String(redshiftdataapiservice.StatusStringFinished),
-		}, nil
+		if *input.Id == DESCRIBE_STATEMENT_FAILED {
+			output.Status = aws.String(redshiftdataapiservice.StatusStringFailed)
+			output.Error = aws.String(DESCRIBE_STATEMENT_FAILED)
+		} else {
+			output.Status = aws.String(redshiftdataapiservice.StatusStringFinished)
+		}
 	} else {
-		return &redshiftdataapiservice.DescribeStatementOutput{
-			Status: aws.String(redshiftdataapiservice.StatusStringStarted),
-		}, nil
+		output.Status = aws.String(redshiftdataapiservice.StatusStringStarted)
 	}
+	return output, nil
 }
 
 func (s *mockRedshiftService) CancelStatement(*redshiftdataapiservice.CancelStatementInput) (*redshiftdataapiservice.CancelStatementOutput, error) {
