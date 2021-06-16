@@ -24,10 +24,7 @@ type Driver struct {
 
 // Open returns a new driver.Conn using already existing settings
 func (d *Driver) Open(_ string) (driver.Conn, error) {
-	return &conn{
-		sessionCache: awsds.NewSessionCache(),
-		settings:     d.settings,
-	}, nil
+	return newConnection(awsds.NewSessionCache(), d.settings), nil
 }
 
 // Open registers a new driver with a unique name
