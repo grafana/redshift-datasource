@@ -44,12 +44,7 @@ var twoRecords = [][]*redshiftdataapiservice.Field{
 }
 
 type mockRedshiftService struct {
-	getStatementResult *redshiftdataapiservice.GetStatementResultOutput
 	pageCounter        int
-}
-
-func newMockRedshiftService() *mockRedshiftService {
-	return &mockRedshiftService{pageCounter: 0}
 }
 
 func (s *mockRedshiftService) GetStatementResult(input *redshiftdataapiservice.GetStatementResultInput) (*redshiftdataapiservice.GetStatementResultOutput, error) {
