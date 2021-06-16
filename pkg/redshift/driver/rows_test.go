@@ -5,13 +5,14 @@ import (
 	"io"
 	"testing"
 
+	redshiftservicemock "github.com/grafana/redshift-datasource/pkg/redshift/driver/mock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestOnePageSuccess(t *testing.T) {
-	redshiftServiceMock := &mockRedshiftService{}
-	redshiftServiceMock.calledTimesCountDown = 1
-	rows, rowErr := newRows(redshiftServiceMock, singlePageResponseQueryId)
+	redshiftServiceMock := &redshiftservicemock.RedshiftService{}
+	redshiftServiceMock.CalledTimesCountDown = 1
+	rows, rowErr := newRows(redshiftServiceMock, redshiftservicemock.SinglePageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
 	for {
@@ -31,9 +32,9 @@ func TestOnePageSuccess(t *testing.T) {
 }
 
 func TestMultiPageSuccess(t *testing.T) {
-	redshiftServiceMock := &mockRedshiftService{}
-	redshiftServiceMock.calledTimesCountDown = 5
-	rows, rowErr := newRows(redshiftServiceMock, multiPageResponseQueryId)
+	redshiftServiceMock := &redshiftservicemock.RedshiftService{}
+	redshiftServiceMock.CalledTimesCountDown = 5
+	rows, rowErr := newRows(redshiftServiceMock, redshiftservicemock.MultiPageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
 	for {
@@ -50,5 +51,5 @@ func TestMultiPageSuccess(t *testing.T) {
 		cnt++
 	}
 	require.Equal(t, 10, cnt)
-	require.Equal(t, 5, redshiftServiceMock.calledTimesCounter)
+	require.Equal(t, 5, redshiftServiceMock.CalledTimesCounter)
 }
