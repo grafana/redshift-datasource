@@ -6,6 +6,7 @@ import (
 	"io"
 	"testing"
 
+	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	redshiftservicemock "github.com/grafana/redshift-datasource/pkg/redshift/driver/mock"
 	"github.com/stretchr/testify/assert"
@@ -57,16 +58,6 @@ func TestMultiPageSuccess(t *testing.T) {
 	require.Equal(t, 5, redshiftServiceMock.CalledTimesCounter)
 }
 
-func strToPtr(i string) *string {
-	r := i
-	return &r
-}
-
-func int64ToPtr(i int64) *int64 {
-	r := i
-	return &r
-}
-
 func Test_convertRow(t *testing.T) {
 
 	tests := []struct {
@@ -79,8 +70,8 @@ func Test_convertRow(t *testing.T) {
 	}{
 		{
 			name:          "numeric type int",
-			metadata:      &redshiftdataapiservice.ColumnMetadata{TypeName: strToPtr(REDSHIFT_INT)},
-			data:          &redshiftdataapiservice.Field{LongValue: int64ToPtr(1)},
+			metadata:      &redshiftdataapiservice.ColumnMetadata{TypeName: aws.String(REDSHIFT_INT)},
+			data:          &redshiftdataapiservice.Field{LongValue: aws.Int64(1)},
 			expectedType:  "int32",
 			expectedValue: "1",
 			Err:           require.NoError,
@@ -88,10 +79,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type int2",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_INT2),
+				TypeName: aws.String(REDSHIFT_INT2),
 			},
 			data: &redshiftdataapiservice.Field{
-				LongValue: int64ToPtr(2),
+				LongValue: aws.Int64(2),
 			},
 			expectedType:  "int16",
 			expectedValue: "2",
@@ -100,10 +91,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type int4",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_INT4),
+				TypeName: aws.String(REDSHIFT_INT4),
 			},
 			data: &redshiftdataapiservice.Field{
-				LongValue: int64ToPtr(3),
+				LongValue: aws.Int64(3),
 			},
 			expectedType:  "int32",
 			expectedValue: "3",
@@ -112,10 +103,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type int8",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_INT8),
+				TypeName: aws.String(REDSHIFT_INT8),
 			},
 			data: &redshiftdataapiservice.Field{
-				LongValue: int64ToPtr(4),
+				LongValue: aws.Int64(4),
 			},
 			expectedType:  "int64",
 			expectedValue: "4",
@@ -124,10 +115,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type float4",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_FLOAT4),
+				TypeName: aws.String(REDSHIFT_FLOAT4),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("1.1"),
+				StringValue: aws.String("1.1"),
 			},
 			expectedType:  "float64",
 			expectedValue: "1.100000023841858",
@@ -136,10 +127,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type numeric",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_NUMERIC),
+				TypeName: aws.String(REDSHIFT_NUMERIC),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("1.2"),
+				StringValue: aws.String("1.2"),
 			},
 			expectedType:  "float64",
 			expectedValue: "1.2",
@@ -148,10 +139,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type float",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_FLOAT),
+				TypeName: aws.String(REDSHIFT_FLOAT),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("1.3"),
+				StringValue: aws.String("1.3"),
 			},
 			expectedType:  "float64",
 			expectedValue: "1.3",
@@ -160,10 +151,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric float8",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_FLOAT8),
+				TypeName: aws.String(REDSHIFT_FLOAT8),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("1.4"),
+				StringValue: aws.String("1.4"),
 			},
 			expectedType:  "float64",
 			expectedValue: "1.4",
@@ -172,10 +163,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "bool type",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_BOOL),
+				TypeName: aws.String(REDSHIFT_BOOL),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("false"),
+				StringValue: aws.String("false"),
 			},
 			expectedType:  "bool",
 			expectedValue: "false",
@@ -184,10 +175,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "character",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_CHARACTER),
+				TypeName: aws.String(REDSHIFT_CHARACTER),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("f"),
+				StringValue: aws.String("f"),
 			},
 			expectedType:  "string",
 			expectedValue: "f",
@@ -196,10 +187,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "nchar",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_NCHAR),
+				TypeName: aws.String(REDSHIFT_NCHAR),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("f"),
+				StringValue: aws.String("f"),
 			},
 			expectedType:  "string",
 			expectedValue: "f",
@@ -208,10 +199,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "bpchar",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_BPCHAR),
+				TypeName: aws.String(REDSHIFT_BPCHAR),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("f"),
+				StringValue: aws.String("f"),
 			},
 			expectedType:  "string",
 			expectedValue: "f",
@@ -220,10 +211,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "character varying",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_CHARACTER_VARYING),
+				TypeName: aws.String(REDSHIFT_CHARACTER_VARYING),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("f"),
+				StringValue: aws.String("f"),
 			},
 			expectedType:  "string",
 			expectedValue: "f",
@@ -232,10 +223,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "text",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_TEXT),
+				TypeName: aws.String(REDSHIFT_TEXT),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("foo"),
+				StringValue: aws.String("foo"),
 			},
 			expectedType:  "string",
 			expectedValue: "foo",
@@ -244,10 +235,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "varchar",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_VARCHAR),
+				TypeName: aws.String(REDSHIFT_VARCHAR),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("foo"),
+				StringValue: aws.String("foo"),
 			},
 			expectedType:  "string",
 			expectedValue: "foo",
@@ -256,10 +247,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "date",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_DATE),
+				TypeName: aws.String(REDSHIFT_DATE),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("2008-01-01"),
+				StringValue: aws.String("2008-01-01"),
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 00:00:00 +0000 UTC",
@@ -268,10 +259,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "timestamp",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_TIMESTAMP),
+				TypeName: aws.String(REDSHIFT_TIMESTAMP),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("2008-01-01 20:00:00.00"),
+				StringValue: aws.String("2008-01-01 20:00:00.00"),
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 20:00:00 +0000 UTC",
@@ -280,10 +271,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "timestamp without tz",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE),
+				TypeName: aws.String(REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("2008-01-01 20:00:00.00"),
+				StringValue: aws.String("2008-01-01 20:00:00.00"),
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 20:00:00 +0000 UTC",
@@ -292,10 +283,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "timestamp with tz",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_TIMESTAMP_WITH_TIME_ZONE),
+				TypeName: aws.String(REDSHIFT_TIMESTAMP_WITH_TIME_ZONE),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("2008-01-01 20:00:00"),
+				StringValue: aws.String("2008-01-01 20:00:00"),
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 20:00:00 +0000 UTC",
@@ -304,10 +295,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "time without tz",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_TIME_WITHOUT_TIME_ZONE),
+				TypeName: aws.String(REDSHIFT_TIME_WITHOUT_TIME_ZONE),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("20:00:00.00"),
+				StringValue: aws.String("20:00:00.00"),
 			},
 			expectedType:  "time.Time",
 			expectedValue: "0000-01-01 20:00:00 +0000 UTC",
@@ -316,10 +307,10 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "time with tz",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: strToPtr(REDSHIFT_TIME_WITH_TIME_ZONE),
+				TypeName: aws.String(REDSHIFT_TIME_WITH_TIME_ZONE),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: strToPtr("20:00:00.00"),
+				StringValue: aws.String("20:00:00.00"),
 			},
 			expectedType:  "time.Time",
 			expectedValue: "0000-01-01 20:00:00 +0000 UTC",
