@@ -14,10 +14,10 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@grafana/aws-sdk": "^0.0.31",
-    "@grafana/data": "latest",
-    "@grafana/runtime": "latest",
-    "@grafana/toolkit": "latest",
-    "@grafana/ui": "latest",
+    "@grafana/data": "8.0.1",
+    "@grafana/runtime": "8.0.1",
+    "@grafana/toolkit": "8.0.1",
+    "@grafana/ui": "8.0.1",
     "@types/lodash": "latest"
   },
   "resolutions": {
