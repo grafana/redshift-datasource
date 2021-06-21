@@ -8,7 +8,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/araddon/dateparse"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
@@ -227,13 +226,25 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			REDSHIFT_NVARCHAR,
 			REDSHIFT_TEXT:
 			ret[i] = *curr.StringValue
+		// Time formats from
+		// https://docs.aws.amazon.com/redshift/latest/dg/r_Datetime_types.html
+		case REDSHIFT_DATE:
+			t, err := time.Parse("2006-01-02", *curr.StringValue)
+			if err != nil {
+				return err
+			}
+			ret[i] = t
 		case REDSHIFT_TIMESTAMP,
 			REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE,
-			REDSHIFT_TIMESTAMP_WITH_TIME_ZONE,
-			REDSHIFT_TIME_WITHOUT_TIME_ZONE,
+			REDSHIFT_TIMESTAMP_WITH_TIME_ZONE:
+			t, err := time.Parse("2006-01-02 15:04:05", *curr.StringValue)
+			if err != nil {
+				return err
+			}
+			ret[i] = t
+		case REDSHIFT_TIME_WITHOUT_TIME_ZONE,
 			REDSHIFT_TIME_WITH_TIME_ZONE:
-			// TODO: Replace this with something more robust
-			t, err := dateparse.ParseAny(*curr.StringValue)
+			t, err := time.Parse("15:04:05", *curr.StringValue)
 			if err != nil {
 				return err
 			}
