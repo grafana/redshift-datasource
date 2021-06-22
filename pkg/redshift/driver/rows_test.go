@@ -154,7 +154,7 @@ func Test_convertRow(t *testing.T) {
 				TypeName: aws.String(REDSHIFT_FLOAT8),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: aws.String("1.4"),
+				DoubleValue: aws.Float64(1.4),
 			},
 			expectedType:  "float64",
 			expectedValue: "1.4",
@@ -269,24 +269,12 @@ func Test_convertRow(t *testing.T) {
 			Err:           require.NoError,
 		},
 		{
-			name: "timestamp without tz",
-			metadata: &redshiftdataapiservice.ColumnMetadata{
-				TypeName: aws.String(REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE),
-			},
-			data: &redshiftdataapiservice.Field{
-				StringValue: aws.String("2008-01-01 20:00:00.00"),
-			},
-			expectedType:  "time.Time",
-			expectedValue: "2008-01-01 20:00:00 +0000 UTC",
-			Err:           require.NoError,
-		},
-		{
 			name: "timestamp with tz",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
 				TypeName: aws.String(REDSHIFT_TIMESTAMP_WITH_TIME_ZONE),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: aws.String("2008-01-01 20:00:00"),
+				StringValue: aws.String("2008-01-01 20:00:00+00"),
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 20:00:00 +0000 UTC",
@@ -314,6 +302,42 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: "0000-01-01 20:00:00 +0000 UTC",
+			Err:           require.NoError,
+		},
+		{
+			name: "geometry",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				TypeName: aws.String(REDSHIFT_GEOMETRY),
+			},
+			data: &redshiftdataapiservice.Field{
+				StringValue: aws.String("[B@f69ae81"),
+			},
+			expectedType:  "string",
+			expectedValue: "[B@f69ae81",
+			Err:           require.NoError,
+		},
+		{
+			name: "hllsketch",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				TypeName: aws.String(REDSHIFT_HLLSKETCH),
+			},
+			data: &redshiftdataapiservice.Field{
+				StringValue: aws.String(`{"version":1,"logm":15,"sparse":{"indices":[40242751],"values":[2]}}`),
+			},
+			expectedType:  "string",
+			expectedValue: `{"version":1,"logm":15,"sparse":{"indices":[40242751],"values":[2]}}`,
+			Err:           require.NoError,
+		},
+		{
+			name: "super",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				TypeName: aws.String(REDSHIFT_SUPER),
+			},
+			data: &redshiftdataapiservice.Field{
+				StringValue: aws.String(`{"foo":"bar"}`),
+			},
+			expectedType:  "string",
+			expectedValue: `{"foo":"bar"}`,
 			Err:           require.NoError,
 		},
 	}
