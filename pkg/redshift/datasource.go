@@ -10,7 +10,6 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
 	"github.com/grafana/redshift-datasource/pkg/redshift/driver"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds"
 	"github.com/pkg/errors"
 )
 
@@ -56,8 +55,4 @@ func (s *RedshiftDatasource) Converters() (sc []sqlutil.Converter) {
 			},
 		},
 	}}
-}
-
-func (s *RedshiftDatasource) Macros() sqlds.Macros {
-	return nil
 }
