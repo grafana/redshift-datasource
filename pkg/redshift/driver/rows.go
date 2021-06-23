@@ -2,6 +2,7 @@ package driver
 
 import (
 	"database/sql/driver"
+	"fmt"
 	"io"
 	"reflect"
 	"strconv"
@@ -11,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
+	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
 type Rows struct {
@@ -114,7 +116,6 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 		REDSHIFT_TEXT:
 		return reflect.TypeOf("")
 	case REDSHIFT_TIMESTAMP,
-		REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE,
 		REDSHIFT_TIMESTAMP_WITH_TIME_ZONE,
 		REDSHIFT_TIME_WITHOUT_TIME_ZONE,
 		REDSHIFT_TIME_WITH_TIME_ZONE:
@@ -127,37 +128,40 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 // ColumnTypeDatabaseTypeName converts a redshift data type to a corresponding go sql type
 func (r *Rows) ColumnTypeDatabaseTypeName(index int) string {
 	columnTypeMapper := map[string]string{
-		REDSHIFT_INT2:                        "SMALLINT",
-		REDSHIFT_INT:                         "INTEGER",
-		REDSHIFT_INT4:                        "INTEGER",
-		REDSHIFT_INT8:                        "BIGINT",
-		REDSHIFT_NUMERIC:                     "DECIMAL",
-		REDSHIFT_FLOAT4:                      "REAL",
-		REDSHIFT_FLOAT8:                      "DOUBLE",
-		REDSHIFT_FLOAT:                       "DOUBLE",
-		REDSHIFT_BOOL:                        "BOOLEAN",
-		REDSHIFT_CHARACTER:                   "CHAR",
-		REDSHIFT_NCHAR:                       "CHAR",
-		REDSHIFT_BPCHAR:                      "CHAR",
-		REDSHIFT_CHARACTER_VARYING:           "VARCHAR",
-		REDSHIFT_NVARCHAR:                    "VARCHAR",
-		REDSHIFT_TEXT:                        "VARCHAR",
-		REDSHIFT_VARCHAR:                     "VARCHAR",
-		REDSHIFT_DATE:                        "DATE",
-		REDSHIFT_TIMESTAMP:                   "TIMESTAMP",
-		REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE: "TIMESTAMP",
-		REDSHIFT_TIMESTAMP_WITH_TIME_ZONE:    "TIMESTAMPTZ",
-		REDSHIFT_TIME_WITHOUT_TIME_ZONE:      "TIME",
-		REDSHIFT_TIME_WITH_TIME_ZONE:         "TIMETZ",
+		REDSHIFT_INT2:                     "SMALLINT",
+		REDSHIFT_INT:                      "INTEGER",
+		REDSHIFT_INT4:                     "INTEGER",
+		REDSHIFT_INT8:                     "BIGINT",
+		REDSHIFT_NUMERIC:                  "DECIMAL",
+		REDSHIFT_FLOAT4:                   "REAL",
+		REDSHIFT_FLOAT8:                   "DOUBLE",
+		REDSHIFT_FLOAT:                    "DOUBLE",
+		REDSHIFT_BOOL:                     "BOOLEAN",
+		REDSHIFT_CHARACTER:                "CHAR",
+		REDSHIFT_NCHAR:                    "CHAR",
+		REDSHIFT_BPCHAR:                   "CHAR",
+		REDSHIFT_CHARACTER_VARYING:        "VARCHAR",
+		REDSHIFT_NVARCHAR:                 "VARCHAR",
+		REDSHIFT_TEXT:                     "VARCHAR",
+		REDSHIFT_VARCHAR:                  "VARCHAR",
+		REDSHIFT_DATE:                     "DATE",
+		REDSHIFT_TIMESTAMP:                "TIMESTAMP",
+		REDSHIFT_TIMESTAMP_WITH_TIME_ZONE: "TIMESTAMPTZ",
+		REDSHIFT_TIME_WITHOUT_TIME_ZONE:   "TIME",
+		REDSHIFT_TIME_WITH_TIME_ZONE:      "TIMETZ",
+		REDSHIFT_GEOMETRY:                 "GEOMETRY",
+		// HLLSKETCH and SUPER are redshift specific types
+		REDSHIFT_HLLSKETCH: "VARCHAR",
+		REDSHIFT_SUPER:     "VARCHAR",
 	}
 
-	typeName := *r.result.ColumnMetadata[index].TypeName
-	if val, ok := columnTypeMapper[strings.ToUpper(typeName)]; ok {
+	typeName := strings.ToUpper(*r.result.ColumnMetadata[index].TypeName)
+	if val, ok := columnTypeMapper[typeName]; ok {
 		return val
 	}
 
-	// TODO: Replace this with return "VARCHAR" once this ds is no longer in development
-	panic("could not map redshift type to go sql type")
+	backend.Logger.Warn("unexpected type, using VARCHAR instead", "type name", typeName)
+	return "VARCHAR"
 }
 
 // Close closes the rows iterator.
@@ -200,7 +204,7 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			ret[i] = int32(*curr.LongValue)
 		case REDSHIFT_INT8:
 			ret[i] = *curr.LongValue
-		case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT4, REDSHIFT_FLOAT8:
+		case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT4:
 			bitSize := 64
 			if typeName == REDSHIFT_FLOAT4 {
 				bitSize = 32
@@ -210,6 +214,8 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 				return err
 			}
 			ret[i] = v
+		case REDSHIFT_FLOAT8:
+			ret[i] = *curr.DoubleValue
 		case REDSHIFT_BOOL:
 			// don't know why boolean values are not passed as curr.BooleanValue
 			boolValue, err := strconv.ParseBool(*curr.StringValue)
@@ -224,7 +230,11 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			REDSHIFT_BPCHAR,
 			REDSHIFT_CHARACTER_VARYING,
 			REDSHIFT_NVARCHAR,
-			REDSHIFT_TEXT:
+			REDSHIFT_TEXT,
+			// Complex types are returned as a string
+			REDSHIFT_GEOMETRY,
+			REDSHIFT_HLLSKETCH,
+			REDSHIFT_SUPER:
 			ret[i] = *curr.StringValue
 		// Time formats from
 		// https://docs.aws.amazon.com/redshift/latest/dg/r_Datetime_types.html
@@ -234,10 +244,14 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 				return err
 			}
 			ret[i] = t
-		case REDSHIFT_TIMESTAMP,
-			REDSHIFT_TIMESTAMP_WITHOUT_TIME_ZONE,
-			REDSHIFT_TIMESTAMP_WITH_TIME_ZONE:
+		case REDSHIFT_TIMESTAMP:
 			t, err := time.Parse("2006-01-02 15:04:05", *curr.StringValue)
+			if err != nil {
+				return err
+			}
+			ret[i] = t
+		case REDSHIFT_TIMESTAMP_WITH_TIME_ZONE:
+			t, err := time.Parse("2006-01-02 15:04:05+00", *curr.StringValue)
 			if err != nil {
 				return err
 			}
@@ -250,11 +264,8 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			}
 			ret[i] = t
 		default:
-			// Unhandled type should probably be handled like this: ret[i] = *curr.StringValue
-			// But while this driver is still in development, let's panic so we get a chance to add them.
-			panic("unhandled type name")
+			return fmt.Errorf("unsupported type %s", typeName)
 		}
 	}
-
 	return nil
 }
