@@ -25,7 +25,9 @@ export class QueryEditor extends PureComponent<Props> {
 
     return (
       <>
-        <Alert title="" severity="info">To save and re-run the query, press ctrl/cmd+S.</InfoBox>
+        <Alert title="" severity="info">
+          To save and re-run the query, press ctrl/cmd+S.
+        </Alert>
         <CodeEditor
           height={'250px'}
           language="redshift"
