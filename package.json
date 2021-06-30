@@ -4,8 +4,7 @@
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
-    "test": "grafana-toolkit plugin:test",
-    "test-dev": "jest --notify --watch",
+    "test": "jest --notify --watch",
     "dev": "grafana-toolkit plugin:dev",
     "watch": "grafana-toolkit plugin:dev --watch",
     "sign": "grafana-toolkit plugin:sign",
