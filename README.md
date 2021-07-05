@@ -4,27 +4,25 @@ The Redshift data source plugin allows you to query and visualize Redshift data 
 
 This topic explains options, variables, querying, and other options specific to this data source. Refer to [Add a data source]({{< relref "add-a-data-source.md" >}}) for instructions on how to add a data source to Grafana.
 
-> **Note:** Only users with the Organization Admin role can add data sources.
-
-## Redshift settings
+## Configure the data source in Grafana
 
 To access data source settings, hover your mouse over the **Configuration** (gear) icon, then click **Data Sources**, and then click the AWS Redshift data source.
 
-| Name                       | Description                                                                                                             |
-| -------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `Name`                     | The data source name. This is how you refer to the data source in panels and queries.                                   |
-| `Default`                  | Default data source means that it will be pre-selected for new panels.                                                  |
-| `Auth Provider`            | Specify the provider to get credentials.                                                                                |
-| `Access Key ID`            | If `Access & secret key` is selected, specify the Access Key of the security credentials to use                         |
-| `Secret Access Key`        | If `Access & secret key` is selected, specify the Secret Key of the security credentials to use                         |
-| `Credentials Profile Name` | Specify the name of the profile to use (if you use `~/.aws/credentials` file), leave blank for default.                 |
-| `Assume Role Arn`          | Specify the ARN of the role to assume                                                                                   |
-| `External ID`              | If you are assuming a role in another account, that has been created with an external ID, specify the external ID here. |
-| `Endpoint`                 | Optionally, specify a custom endpoint for the service                                                                   |
-| `Default Region`           | Used in query editor to set region (can be changed on per query basis)                                                  |
-| `Cluster Identifier`       | Redshift Cluster to use                                                                                                 |
-| `Database`                 | Name of the database within the cluster                                                                                 |
-| `DB User`                  | User of the database                                                                                                    |
+| Name                         | Description                                                                                                             |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `Name`                       | The data source name. This is how you refer to the data source in panels and queries.                                   |
+| `Default`                    | Default data source means that it will be pre-selected for new panels.                                                  |
+| `Auth Provider`              | Specify the provider to get credentials.                                                                                |
+| `Access Key ID`              | If `Access & secret key` is selected, specify the Access Key of the security credentials to use.                        |
+| `Secret Access Key`          | If `Access & secret key` is selected, specify the Secret Key of the security credentials to use.                        |
+| `Credentials Profile Name`   | Specify the name of the profile to use (if you use `~/.aws/credentials` file), leave blank for default.                 |
+| `Assume Role Arn` (optional) | Specify the ARN of the role to assume.                                                                                  |
+| `External ID` (optional)     | If you are assuming a role in another account, that has been created with an external ID, specify the external ID here. |
+| `Endpoint` (optional)        | Optionally, specify a custom endpoint for the service.                                                                  |
+| `Default Region`             | Region in which the cluster is deployed.                                                                                |
+| `Cluster Identifier`         | Redshift Cluster to use.                                                                                                |
+| `Database`                   | Name of the database within the cluster.                                                                                |
+| `DB User`                    | User of the database.                                                                                                   |
 
 ## Authentication
 
@@ -44,7 +42,7 @@ See the AWS documentation on [IAM Roles](http://docs.aws.amazon.com/AWSEC2/lates
 
 ### IAM policies
 
-Grafana needs permissions granted via IAM to be able to read Redshift metrics. You can attach these permissions to IAM roles and utilize Grafana's built-in support for assuming roles.
+Grafana needs permissions granted via IAM to be able to read Redshift metrics. You can attach these permissions to IAM roles and utilize Grafana's built-in support for assuming roles. Note that you will need to [configure the required policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) before adding the datasource to Grafana.
 
 Here is a minimal policy example:
 
@@ -85,7 +83,7 @@ The `Assume Role ARN` field allows you to specify which IAM role to assume, if a
 
 The `Endpoint` field allows you to specify a custom endpoint URL that overrides the default generated endpoint for the Redshift API. Leave this field blank if you want to use the default generated endpoint. For more information on why and how to use Service endpoints, refer to the [AWS service endpoints documentation](https://docs.aws.amazon.com/general/latest/gr/rande.html).
 
-### EKS IAM roles for service accounts
+### EKS securityContext configuration
 
 The Grafana process in the container runs as user 472 (called "grafana"). When Kubernetes mounts your projected credentials, they will by default only be available to the root user. In order to allow user 472 to access the credentials (and avoid it falling back to the IAM role attached to the EC2 instance), you will need to provide a [security context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/) for your pod.
 
@@ -140,7 +138,7 @@ For timeseries / graph visualizations, there are a few requirements:
 
 - A column with a `date` or `datetime` type must be selected
 - The `date` column must be in ascending order (using `ORDER BY column ASC`)
-- A numberic column must also be selected
+- A numeric column must also be selected
 
 To make a more reasonable graph, be sure to use the `$__timeFilter` and `$__timeGroup` macros.
 
@@ -173,18 +171,11 @@ Any value queried from a Redshift table can be used as a variable. Be sure to av
 
 After creating a variable, you can use it in your Redshift queries by using [Variable syntax](https://grafana.com/docs/grafana/latest/variables/syntax/). For more information about variables, refer to [Templates and variables](https://grafana.com/docs/grafana/latest/variables/).
 
-## Get the most out of the plugin
+## Provision Redshift data source
 
-- Add [Annotations](https://grafana.com/docs/grafana/latest/dashboards/annotations/).
-- Configure and use [Templates and variables](https://grafana.com/docs/grafana/latest/variables/).
-- Add [Transformations](https://grafana.com/docs/grafana/latest/panels/transformations/).
-- Set up alerting; refer to [Alerts overview](https://grafana.com/docs/grafana/latest/alerting/).
+You can configure the Redshift data source using configuration files with Grafana's provisioning system. For more information, refer to the [provisioning docs page]({{< relref "../administration/provisioning/#datasources" >}}).
 
-## Provision Redshift
-
-It's now possible to configure data sources using config files with Grafana's provisioning system. You can read more about how it works and all the settings you can set for data sources on the [provisioning docs page]({{< relref "../administration/provisioning/#datasources" >}})
-
-Here are some provisioning examples for this data source.
+Here are some provisioning examples.
 
 ### Using AWS SDK (default)
 
@@ -240,3 +231,10 @@ datasources:
       assumeRoleArn: arn:aws:iam::123456789012:root
       defaultRegion: eu-west-2
 ```
+
+## Get the most out of the plugin
+
+- Add [Annotations](https://grafana.com/docs/grafana/latest/dashboards/annotations/).
+- Configure and use [Templates and variables](https://grafana.com/docs/grafana/latest/variables/).
+- Add [Transformations](https://grafana.com/docs/grafana/latest/panels/transformations/).
+- Set up alerting; refer to [Alerts overview](https://grafana.com/docs/grafana/latest/alerting/).
