@@ -25,4 +25,5 @@ const (
 	REDSHIFT_GEOMETRY                 = "GEOMETRY"
 	REDSHIFT_HLLSKETCH                = "HLLSKETCH"
 	REDSHIFT_SUPER                    = "SUPER"
+	REDSHIFT_NAME                     = "NAME"
 )

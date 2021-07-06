@@ -234,7 +234,8 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			// Complex types are returned as a string
 			REDSHIFT_GEOMETRY,
 			REDSHIFT_HLLSKETCH,
-			REDSHIFT_SUPER:
+			REDSHIFT_SUPER,
+			REDSHIFT_NAME:
 			ret[i] = *curr.StringValue
 		// Time formats from
 		// https://docs.aws.amazon.com/redshift/latest/dg/r_Datetime_types.html
