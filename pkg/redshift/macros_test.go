@@ -81,6 +81,30 @@ func Test_macros(t *testing.T) {
 			"",
 			sqlds.ErrorBadArgumentCount,
 		},
+		{
+			"adds a schema",
+			"schema",
+			&sqlds.Query{Schema: "foo"},
+			[]string{},
+			`foo`,
+			nil,
+		},
+		{
+			"adds a table",
+			"table",
+			&sqlds.Query{Table: "foo"},
+			[]string{},
+			`foo`,
+			nil,
+		},
+		{
+			"adds a column",
+			"column",
+			&sqlds.Query{Column: "foo"},
+			[]string{},
+			`foo`,
+			nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
