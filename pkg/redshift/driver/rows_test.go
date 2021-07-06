@@ -340,6 +340,18 @@ func Test_convertRow(t *testing.T) {
 			expectedValue: `{"foo":"bar"}`,
 			Err:           require.NoError,
 		},
+		{
+			name: "name",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				TypeName: aws.String(REDSHIFT_NAME),
+			},
+			data: &redshiftdataapiservice.Field{
+				StringValue: aws.String(`table`),
+			},
+			expectedType:  "string",
+			expectedValue: `table`,
+			Err:           require.NoError,
+		},
 	}
 
 	for _, tt := range tests {
