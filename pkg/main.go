@@ -11,8 +11,15 @@ import (
 
 func main() {
 	// Start listening to requests sent from Grafana.
-	ds := sqlds.NewDatasource(&redshift.RedshiftDatasource{})
-	if err := datasource.Manage("grafana-redshift-datasource", ds.NewDatasource, datasource.ManageOpts{}); err != nil {
+	s := &redshift.RedshiftDatasource{}
+	ds := sqlds.NewDatasource(s)
+	ds.Completable = s
+
+	if err := datasource.Manage(
+		"grafana-redshift-datasource",
+		ds.NewDatasource,
+		datasource.ManageOpts{},
+	); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)
 	}

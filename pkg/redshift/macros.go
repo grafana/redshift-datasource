@@ -39,11 +39,26 @@ func macroTimeGroup(query *sqlds.Query, args []string) (string, error) {
 	return fmt.Sprintf("date_trunc(%s, %s)", args[1], args[0]), nil
 }
 
+func macroSchema(query *sqlds.Query, args []string) (string, error) {
+	return query.Schema, nil
+}
+
+func macroTable(query *sqlds.Query, args []string) (string, error) {
+	return query.Table, nil
+}
+
+func macroColumn(query *sqlds.Query, args []string) (string, error) {
+	return query.Column, nil
+}
+
 var macros = map[string]sqlds.MacroFunc{
 	"timeFilter": macroTimeFilter,
 	"timeFrom":   macroTimeFrom,
 	"timeTo":     macroTimeTo,
 	"timeGroup":  macroTimeGroup,
+	"schema":     macroSchema,
+	"table":      macroTable,
+	"column":     macroColumn,
 }
 
 func (s *RedshiftDatasource) Macros() sqlds.Macros {
