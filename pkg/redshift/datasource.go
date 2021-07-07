@@ -90,8 +90,17 @@ func (s *RedshiftDatasource) Schemas(ctx context.Context) ([]string, error) {
 	return getStringArr(rows)
 }
 
-func (s *RedshiftDatasource) Tables(ctx context.Context) ([]string, error) {
-	rows, err := s.db.QueryContext(ctx, "SELECT table_name FROM information_schema.tables WHERE table_schema='public'")
+func (s *RedshiftDatasource) Tables(ctx context.Context, schema string) ([]string, error) {
+	// We use the "public" schema by default if not specified
+	if schema == "" {
+		schema = "public"
+	}
+	if !tableNameRegex.Match([]byte(schema)) {
+		return nil, fmt.Errorf("unsupported schema name %s", schema)
+	}
+	// Rather than injecting the table_schema, we should use arguments but the Redshift API only allow
+	// arguments for prepared statements (which has no support in the golang sdk)
+	rows, err := s.db.QueryContext(ctx, fmt.Sprintf("SELECT table_name FROM information_schema.tables WHERE table_schema='%s'", schema))
 	if err != nil {
 		return nil, err
 	}
@@ -106,7 +115,7 @@ func (s *RedshiftDatasource) Columns(ctx context.Context, table string) ([]strin
 	}
 	// Rather than injecting the table_name, we should use arguments but the Redshift API only allow
 	// arguments for prepared statements (which has no support in the golang sdk)
-	rows, err := s.db.Query(fmt.Sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '%s'", table))
+	rows, err := s.db.QueryContext(ctx, fmt.Sprintf("SELECT column_name FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = '%s'", table))
 	if err != nil {
 		return nil, err
 	}

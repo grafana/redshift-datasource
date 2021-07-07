@@ -36,28 +36,66 @@ func TestSchemas(t *testing.T) {
 }
 
 func TestTables(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	tests := []struct {
+		description    string
+		schemaName     string
+		expectedTables []string
+		expectedErr    error
+	}{
+		{
+			description:    "should return tables",
+			schemaName:     "foobar",
+			expectedTables: []string{"foo", "bar"},
+			expectedErr:    nil,
+		},
+		{
+			description:    "should use public schema by default",
+			schemaName:     "",
+			expectedTables: []string{"foo", "bar"},
+			expectedErr:    nil,
+		},
+		{
+			description:    "should fail if the schema name is not supported",
+			schemaName:     "'*'",
+			expectedTables: []string{},
+			expectedErr:    fmt.Errorf("unsupported schema name '*'"),
+		},
 	}
-	defer db.Close()
+	for _, test := range tests {
+		t.Run(test.description, func(t *testing.T) {
+			db, mock, err := sqlmock.New()
+			if err != nil {
+				t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+			}
+			defer db.Close()
 
-	ds := RedshiftDatasource{db: db}
-	tableName := "foo"
-	mock.ExpectQuery("SELECT table_name FROM information_schema.tables WHERE table_schema='public'").
-		WillReturnRows(sqlmock.NewRows([]string{"table"}).AddRow(tableName))
+			ds := RedshiftDatasource{db: db}
+			schema := test.schemaName
+			if schema == "" {
+				schema = "public"
+			}
+			rows := sqlmock.NewRows([]string{"tables"})
+			for _, table := range test.expectedTables {
+				rows.AddRow(table)
+			}
+			mock.ExpectQuery(fmt.Sprintf("SELECT table_name FROM information_schema.tables WHERE table_schema='%s'", schema)).
+				WillReturnRows(rows)
 
-	tables, err := ds.Tables(context.TODO())
-	if err != nil {
-		t.Errorf("unexpected error %v", err)
-	}
-	expectedTables := []string{tableName}
-	if !cmp.Equal(tables, expectedTables) {
-		t.Errorf("unexpected result: %v", cmp.Diff(tables, expectedTables))
-	}
+			tables, err := ds.Tables(context.TODO(), test.schemaName)
+			if err != nil {
+				if test.expectedErr == nil || (err.Error() != test.expectedErr.Error()) {
+					t.Errorf("unexpected error %v", cmp.Diff(err.Error(), test.expectedErr.Error()))
+				}
+			} else {
+				if !cmp.Equal(tables, test.expectedTables) {
+					t.Errorf("unexpected result: %v", cmp.Diff(tables, test.expectedTables))
+				}
 
-	if err := mock.ExpectationsWereMet(); err != nil {
-		t.Errorf("there were unfulfilled expectations: %s", err)
+				if err := mock.ExpectationsWereMet(); err != nil {
+					t.Errorf("there were unfulfilled expectations: %s", err)
+				}
+			}
+		})
 	}
 }
 
