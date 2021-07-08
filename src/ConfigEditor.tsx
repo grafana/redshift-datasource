@@ -14,6 +14,7 @@ export class ConfigEditor extends PureComponent<Props> {
         <ConnectionConfig {...this.props} />
         <InlineField label="Cluster Identifier" labelWidth={28}>
           <Input
+            data-test-id="cluster-id"
             css
             className="width-30"
             value={clusterIdentifier ?? ''}
@@ -22,6 +23,7 @@ export class ConfigEditor extends PureComponent<Props> {
         </InlineField>
         <InlineField label="Database" labelWidth={28}>
           <Input
+            data-test-id="database"
             css
             className="width-30"
             value={database ?? ''}
@@ -30,6 +32,7 @@ export class ConfigEditor extends PureComponent<Props> {
         </InlineField>
         <InlineField label="DB User" labelWidth={28}>
           <Input
+            data-test-id="dbuser"
             css
             className="width-30"
             value={dbUser ?? ''}
