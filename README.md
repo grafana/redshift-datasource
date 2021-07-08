@@ -2,7 +2,7 @@
 
 The Redshift data source plugin allows you to query and visualize Redshift data metrics from within Grafana.
 
-This topic explains options, variables, querying, and other options specific to this data source. Refer to [Add a data source]({{< relref "add-a-data-source.md" >}}) for instructions on how to add a data source to Grafana.
+This topic explains options, variables, querying, and other options specific to this data source. Refer to [Add a data source](https://grafana.com/docs/grafana/latest/datasources/add-a-data-source/) for instructions on how to add a data source to Grafana.
 
 ## Configure the data source in Grafana
 
@@ -121,6 +121,9 @@ The provided query editor is a standard SQL query editor. Grafana includes some 
 | `$__timeFrom()`                     | `$__timeFrom` outputs the current starting time of the range of the panel with quotes                             | `'2017-07-18T11:15:52Z'`                                         |
 | `$__timeTo()`                       | `$__timeTo` outputs the current ending time of the range of the panel with quotes                                 | `'2017-07-18T11:15:52Z'`                                         |
 | `$__timeGroup(column, 'time_unit')` | `$__timeGroup` groups timestamps so that there is only 1 point for every time unit on the graph                   | `date_trunc(created_ts, hour)`                                   |
+| `$__schema`                         | `$__schema` uses the selected schema                                                                              | `public`                                                         |
+| `$__table`                          | `$__table` outputs a table from the given `$__schema` (it uses the `public` schema by default)                    | `sales`                                                          |
+| `$__column`                         | `$__column` outputs a column from the current `$__table`                                                          | `date`                                                           |
 
 #### Table Visualization
 
@@ -173,7 +176,7 @@ After creating a variable, you can use it in your Redshift queries by using [Var
 
 ## Provision Redshift data source
 
-You can configure the Redshift data source using configuration files with Grafana's provisioning system. For more information, refer to the [provisioning docs page]({{< relref "../administration/provisioning/#datasources" >}}).
+You can configure the Redshift data source using configuration files with Grafana's provisioning system. For more information, refer to the [provisioning docs page](https://grafana.com/docs/grafana/latest/administration/provisioning/).
 
 Here are some provisioning examples.
 
