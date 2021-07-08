@@ -130,7 +130,6 @@ export class QueryEditor extends PureComponent<Props, State> {
     const { rawSQL, format } = defaults(this.props.query, defaultQuery);
 
     const { schema, schemaState } = this.state;
-    console.log('foo');
     return (
       <>
         <Alert title="" severity="info">
