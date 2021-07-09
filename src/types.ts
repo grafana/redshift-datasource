@@ -21,7 +21,6 @@ export interface RedshiftQuery extends DataQuery {
   rawSQL: string;
   format: FormatOptions;
 
-  // When specified, use these for macros
   schema?: string;
   table?: string;
   column?: string;

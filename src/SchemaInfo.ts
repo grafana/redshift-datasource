@@ -13,6 +13,10 @@ export class SchemaInfo {
 
   constructor(private ds: DataSource, q: Partial<RedshiftQuery>, private templateSrv?: TemplateSrv) {
     this.state = { ...q };
+    if (!q.schema) {
+      // The default schema is "public"
+      this.state.schema = 'public';
+    }
   }
 
   updateState(state: Partial<RedshiftQuery>): Partial<RedshiftQuery> {

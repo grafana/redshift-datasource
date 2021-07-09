@@ -13,6 +13,13 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
   // This will support annotation queries for 7.2+
   annotations = {};
 
+  /**
+   * Do not execute queries that do not exist yet
+   */
+  filterQuery(query: RedshiftQuery): boolean {
+    return !!query.rawSQL;
+  }
+
   query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
     // What is this about? Due to a bug in the templating query system, data source variables doesn't get assigned ref id.
     // This leads to bad things to therefore we need to assign a dummy value in case it's undefined.

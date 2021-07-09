@@ -1,12 +1,13 @@
 import { defaults } from 'lodash';
 
 import React, { PureComponent } from 'react';
-import { QueryEditorProps, SelectableValue } from '@grafana/data';
+import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from './datasource';
 import { defaultQuery, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
-import { CodeEditor, Alert, InlineField, Select, InlineFormLabel, SegmentAsync } from '@grafana/ui';
+import { CodeEditor, Alert, InlineField, Select, InlineFormLabel } from '@grafana/ui';
 import { SchemaInfo } from 'SchemaInfo';
 import { getTemplateSrv } from '@grafana/runtime';
+import ResourceMacro from 'ResourceMacro';
 
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
@@ -48,84 +49,6 @@ export class QueryEditor extends PureComponent<Props, State> {
     this.props.onRunQuery();
   };
 
-  onSchemaChanged = (value: SelectableValue<string>) => {
-    const query = {
-      ...this.props.query,
-      schema: value.value,
-      table: undefined,
-      column: undefined,
-    };
-    if (!query.schema) {
-      delete query.schema;
-    }
-    this.updateSchemaState(query);
-  };
-
-  onTableChanged = (value: SelectableValue<string>) => {
-    const query = {
-      ...this.props.query,
-      table: value.value,
-      column: undefined,
-    };
-    if (!query.table) {
-      delete query.table;
-    }
-    this.updateSchemaState(query);
-  };
-
-  onColumnChanged = (value: SelectableValue<string>) => {
-    const query = {
-      ...this.props.query,
-      column: value.value,
-    };
-    if (!query.column) {
-      delete query.column;
-    }
-    this.updateSchemaState(query);
-  };
-
-  renderResourceMacro = (
-    resource: 'schema' | 'table' | 'column',
-    schema: SchemaInfo,
-    query?: string,
-    value?: string
-  ) => {
-    let placehoder = '';
-    let current = '$__' + resource + ' = ';
-    if (query) {
-      current += query;
-    } else {
-      placehoder = current + (value ?? '?');
-      current = '';
-    }
-
-    let loadOptions;
-    let onChange;
-    switch (resource) {
-      case 'schema':
-        loadOptions = schema.getSchemas;
-        onChange = this.onSchemaChanged;
-        break;
-      case 'table':
-        loadOptions = schema.getTables;
-        onChange = this.onTableChanged;
-        break;
-      case 'column':
-        loadOptions = schema.getColumns;
-        onChange = this.onColumnChanged;
-        break;
-    }
-    return (
-      <SegmentAsync
-        value={current}
-        loadOptions={loadOptions}
-        placeholder={placehoder}
-        onChange={onChange}
-        allowCustomValue
-      />
-    );
-  };
-
   render() {
     const { rawSQL, format } = defaults(this.props.query, defaultQuery);
 
@@ -141,9 +64,27 @@ export class QueryEditor extends PureComponent<Props, State> {
           </InlineFormLabel>
           {schema && schemaState && (
             <>
-              {this.renderResourceMacro('schema', schema, this.props.query.schema, schemaState.schema)}
-              {this.renderResourceMacro('table', schema, this.props.query.table, schemaState.table)}
-              {this.renderResourceMacro('column', schema, this.props.query.column, schemaState.column)}
+              {ResourceMacro({
+                resource: 'schema',
+                schema,
+                query: this.props.query,
+                value: schemaState.schema,
+                updateSchemaState: this.updateSchemaState,
+              })}
+              {ResourceMacro({
+                resource: 'table',
+                schema,
+                query: this.props.query,
+                value: schemaState.table,
+                updateSchemaState: this.updateSchemaState,
+              })}
+              {ResourceMacro({
+                resource: 'column',
+                schema,
+                query: this.props.query,
+                value: schemaState.column,
+                updateSchemaState: this.updateSchemaState,
+              })}
             </>
           )}
           <div className="gf-form gf-form--grow">

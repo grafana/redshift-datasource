@@ -1,11 +1,17 @@
-import { DataSource } from 'datasource';
 import { SchemaInfo } from 'SchemaInfo';
-import { RedshiftQuery } from 'types';
+import { mockDatasource, mockQuery } from '__mocks__/datasource';
 
-const ds = {} as DataSource;
-const q = {} as Partial<RedshiftQuery>;
+const ds = mockDatasource;
+const q = mockQuery;
 
 describe('SchemaInfo', () => {
+  describe('constructor', () => {
+    it("should select the 'public' schema by default", () => {
+      const schema = new SchemaInfo(ds, q);
+      expect(schema.state.schema).toEqual('public');
+    });
+  });
+
   describe('getSuggestions', () => {
     const macros = ['$__timeFilter', '$__timeFrom', '$__timeTo', '$__timeGroup', '$__schema', '$__table', '$__column'];
     it('should return the list of macros', () => {
@@ -29,7 +35,7 @@ describe('SchemaInfo', () => {
     it('updates the schema in the state', () => {
       const schema = new SchemaInfo(ds, q);
       schema.updateState({ schema: 'foo' });
-      expect(schema.state).toEqual({ schema: 'foo' });
+      expect(schema.state).toEqual({ ...q, schema: 'foo' });
     });
 
     it('cleans up tables and columns if the schema changes', () => {
@@ -44,7 +50,7 @@ describe('SchemaInfo', () => {
     it('sets a table in the state', () => {
       const schema = new SchemaInfo(ds, q);
       schema.updateState({ table: 'foo' });
-      expect(schema.state).toEqual({ table: 'foo' });
+      expect(schema.state.table).toEqual('foo');
     });
 
     it('cleans up columns if the table changes', () => {
@@ -57,7 +63,7 @@ describe('SchemaInfo', () => {
     it('sets a column in the state', () => {
       const schema = new SchemaInfo(ds, q);
       schema.updateState({ column: 'foo' });
-      expect(schema.state).toEqual({ column: 'foo' });
+      expect(schema.state.column).toEqual('foo');
     });
 
     it('uses the templateSrv to replace values', () => {
@@ -67,7 +73,7 @@ describe('SchemaInfo', () => {
       };
       const schema = new SchemaInfo(ds, q, templateSrv);
       schema.updateState({ schema: '$foobar', table: '$foo', column: '$bar' });
-      expect(schema.state).toEqual({ schema: 'foobar', table: 'foo', column: 'bar' });
+      expect(schema.state).toEqual({ ...q, schema: 'foobar', table: 'foo', column: 'bar' });
     });
   });
 
@@ -81,9 +87,7 @@ describe('SchemaInfo', () => {
     });
 
     it('should get schemas as a resource', async () => {
-      const ds = {
-        getResource: jest.fn().mockResolvedValue(['foo', 'bar']),
-      } as any;
+      ds.getResource = jest.fn().mockResolvedValue(['foo', 'bar']);
       const schema = new SchemaInfo(ds, q);
       const res = await schema.getSchemas();
       expect(res).toEqual([
@@ -104,9 +108,7 @@ describe('SchemaInfo', () => {
     });
 
     it('should get tables as a resource', async () => {
-      const ds = {
-        postResource: jest.fn().mockResolvedValue(['foo', 'bar']),
-      } as any;
+      ds.postResource = jest.fn().mockResolvedValue(['foo', 'bar']);
       const schema = new SchemaInfo(ds, q);
       const res = await schema.getTables();
       expect(res).toEqual([
@@ -114,8 +116,13 @@ describe('SchemaInfo', () => {
         { label: 'bar', value: 'bar' },
         { label: '-- remove --', value: '' },
       ]);
-      // it should set an empty schema if not set
-      expect(ds.postResource).toHaveBeenCalledWith('tables', { schema: '' });
+    });
+
+    it('should get tables as a resource', async () => {
+      ds.postResource = jest.fn().mockResolvedValue(['foo', 'bar']);
+      const schema = new SchemaInfo(ds, q);
+      await schema.getTables();
+      expect(ds.postResource).toHaveBeenCalledWith('tables', { schema: 'public' });
     });
   });
 
@@ -129,9 +136,7 @@ describe('SchemaInfo', () => {
     });
 
     it('should get columns as a resource', async () => {
-      const ds = {
-        postResource: jest.fn().mockResolvedValue(['foo', 'bar']),
-      } as any;
+      ds.postResource = jest.fn().mockResolvedValue(['foo', 'bar']);
       const schema = new SchemaInfo(ds, q);
       schema.state.table = 'foobar';
       const res = await schema.getColumns();
