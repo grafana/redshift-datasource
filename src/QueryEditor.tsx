@@ -32,7 +32,8 @@ export function QueryEditor(props: Props) {
       </Alert>
       <CodeEditor
         height={'250px'}
-        language="redshift"
+        // TODO: Use language="redshift" once Grafana v7.x is deprecated.
+        language="sql"
         value={rawSQL}
         onBlur={onRawSqlChange}
         onSave={onRawSqlChange}
