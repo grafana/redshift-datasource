@@ -1,3 +1,4 @@
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import ResourceMacro, { Resource } from 'ResourceMacro';
@@ -13,17 +14,17 @@ const defaultProps = {
 };
 
 describe('ResourceMacro', () => {
-  it('should render a question mark if the value is not set', async () => {
+  it('should render a question mark if the value is not set', () => {
     render(<ResourceMacro {...defaultProps} />);
-    await screen.findByText('$__table = ?');
+    expect(screen.getByText('$__table = ?')).toBeInTheDocument();
   });
 
-  it('should render the resource value if set', async () => {
+  it('should render the resource value if set', () => {
     render(<ResourceMacro {...defaultProps} query={{ ...defaultProps.query, table: 'foo' }} />);
-    await screen.findByText('$__table = foo');
+    expect(screen.getByText('$__table = foo')).toBeInTheDocument();
   });
 
-  it('should load the resource options', async () => {
+  it('should load the resource options', () => {
     const schema = new SchemaInfo(mockDatasource, mockQuery);
     schema.getTables = jest.fn().mockReturnValue({ then: jest.fn() });
     render(<ResourceMacro {...defaultProps} schema={schema} />);

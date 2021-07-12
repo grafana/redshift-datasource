@@ -18,9 +18,11 @@
     "@grafana/runtime": "7.5.9",
     "@grafana/toolkit": "8.0.4",
     "@grafana/ui": "7.5.9",
+    "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.1.9",
-    "@types/lodash": "latest"
+    "@types/lodash": "latest",
+    "semver": "^7.1.3"
   },
   "resolutions": {
     "rxjs": "6.6.3"

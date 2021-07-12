@@ -43,8 +43,8 @@ describe('SchemaInfo', () => {
       schema.tables = [{ label: 'foo', value: 'foo' }];
       schema.columns = [{ label: 'bar', value: 'bar' }];
       schema.updateState({ schema: 'foobar' });
-      expect(schema.tables).toEqual(undefined);
-      expect(schema.columns).toEqual(undefined);
+      expect(schema.tables).toBeUndefined();
+      expect(schema.columns).toBeUndefined();
     });
 
     it('sets a table in the state', () => {
@@ -57,7 +57,7 @@ describe('SchemaInfo', () => {
       const schema = new SchemaInfo(ds, q);
       schema.columns = [{ label: 'bar', value: 'bar' }];
       schema.updateState({ table: 'foobar' });
-      expect(schema.columns).toEqual(undefined);
+      expect(schema.columns).toBeUndefined();
     });
 
     it('sets a column in the state', () => {

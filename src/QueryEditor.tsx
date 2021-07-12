@@ -3,28 +3,34 @@ import { defaults } from 'lodash';
 import React, { PureComponent } from 'react';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from './datasource';
-import { defaultQuery, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
+import {
+  defaultQuery,
+  FormatOptions,
+  RedshiftDataSourceOptions,
+  RedshiftQuery,
+  SelectableFormatOptions,
+} from './types';
 import { CodeEditor, Alert, InlineField, Select, InlineFormLabel } from '@grafana/ui';
 import { SchemaInfo } from 'SchemaInfo';
 import { getTemplateSrv, config } from '@grafana/runtime';
 import ResourceMacro from 'ResourceMacro';
+import { gt, valid } from 'semver';
 
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
 interface State {
-  schema?: SchemaInfo;
+  schema: SchemaInfo;
   schemaState?: Partial<RedshiftQuery>;
 }
 
 export class QueryEditor extends PureComponent<Props, State> {
-  state: State = {};
+  state: State = {
+    schema: new SchemaInfo(this.props.datasource, this.props.query, getTemplateSrv()),
+  };
 
   componentDidMount = () => {
-    const { datasource, query } = this.props;
-
-    const schema = new SchemaInfo(datasource, query, getTemplateSrv());
-    this.setState({ schema: schema, schemaState: schema.state });
-
+    const { schema } = this.state;
+    this.setState({ schemaState: schema.state });
     schema.preload();
   };
 
@@ -42,7 +48,7 @@ export class QueryEditor extends PureComponent<Props, State> {
   };
 
   updateSchemaState = (query: RedshiftQuery) => {
-    const schemaState = this.state.schema!.updateState(query);
+    const schemaState = this.state.schema.updateState(query);
     this.setState({ schemaState });
 
     this.props.onChange(query);
@@ -95,7 +101,7 @@ export class QueryEditor extends PureComponent<Props, State> {
           <CodeEditor
             height={'250px'}
             // TODO: Use language="redshift" once Grafana v7.x is deprecated.
-            language={config.buildInfo.version.startsWith('7.5') ? 'sql' : 'redshift'}
+            language={valid(config.buildInfo.version) && gt(config.buildInfo.version, '8.0.0') ? 'redshift' : 'sql'}
             value={rawSQL}
             onBlur={this.onRawSqlChange}
             onSave={this.onRawSqlChange}
@@ -108,7 +114,7 @@ export class QueryEditor extends PureComponent<Props, State> {
           <Select
             options={SelectableFormatOptions}
             value={format}
-            onChange={({ value }) => this.onChange({ ...this.props.query, format: value! })}
+            onChange={({ value }) => this.onChange({ ...this.props.query, format: value || FormatOptions.TimeSeries })}
           />
         </InlineField>
       </>
