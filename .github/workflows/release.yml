@@ -75,11 +75,10 @@ jobs:
           version: latest
           args: buildAll
 
-      # TODO: Re-enable for v1.0
-      # - name: Sign plugin
-      #   run: yarn sign
-      #   env:
-      #     GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }} # Requires a Grafana API key from Grafana.com.
+      - name: Sign plugin
+        run: yarn sign
+        env:
+          GRAFANA_API_KEY: ${{ secrets.GRAFANA_API_KEY }} # Requires a Grafana API key from Grafana.com.
 
       - name: Get plugin metadata
         id: metadata
