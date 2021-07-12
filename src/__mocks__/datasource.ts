@@ -1,6 +1,7 @@
 import { PluginType } from '@grafana/data';
 import { RedshiftQuery } from '../types';
 import { DataSource } from '../datasource';
+import { SchemaInfo } from 'SchemaInfo';
 
 export const mockDatasource = new DataSource({
   id: 1,
@@ -32,3 +33,5 @@ export const mockDatasource = new DataSource({
 });
 
 export const mockQuery: RedshiftQuery = { rawSQL: 'select * from foo', refId: '', format: 0 };
+
+export const mockSchemaInfo: SchemaInfo = new SchemaInfo(mockDatasource, mockQuery);

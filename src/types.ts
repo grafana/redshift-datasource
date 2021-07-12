@@ -20,6 +20,10 @@ export const SelectableFormatOptions: Array<SelectableValue<FormatOptions>> = [
 export interface RedshiftQuery extends DataQuery {
   rawSQL: string;
   format: FormatOptions;
+
+  schema?: string;
+  table?: string;
+  column?: string;
 }
 
 export const defaultQuery: Partial<RedshiftQuery> = {
