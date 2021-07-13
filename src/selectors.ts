@@ -16,7 +16,7 @@ export const Components = {
   },
   RefreshPicker: {
     runButton: 'RefreshPicker run button',
-  }
+  },
 };
 
 export const selectors: { components: E2ESelectors<typeof Components> } = {
