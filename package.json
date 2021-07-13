@@ -10,7 +10,8 @@
     "sign": "grafana-toolkit plugin:sign",
     "start": "yarn watch",
     "e2e": "grafana-e2e run",
-    "e2e:open": "grafana-e2e open"
+    "e2e:open": "grafana-e2e open",
+    "e2e:update": "grafana-e2e run --update-screenshots"
   },
   "author": "Grafana Labs",
   "license": "Apache-2.0",
