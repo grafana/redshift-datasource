@@ -79,8 +79,9 @@ e2e.scenario({
               .click({ force: true })
               .type(
                 `{selectall} select saletime as time, commission as commission from sales where $__timeFilter(time)`
-              )
-              .type('{cmd+s}');
+              );
+
+            e2eSelectors.RefreshPicker.runButton().first().click({ force: true })
           },
         });
       });
