@@ -102,8 +102,11 @@ The idiomatic way to use a SQL, or SQL-like, database in Go is through the [data
 ### grafana/sqlds and sqlutil
 
 From the [sqlds](https://github.com/grafana/sqlds) readme:
+
 _sqlds stands for SQL Datasource._
+
 _Most SQL-driven datasources, like Postgres, MySQL, and MSSQL share extremely similar codebases._
+
 _The sqlds package is intended to remove the repetition of these datasources and centralize the datasource logic. The only thing that the datasources themselves should have to define is connecting to the database, and what driver to use, and the plugin frontend._
 
 Furthermore, sqlds allows each datasource to implement its own fillmode, macros and string converters.
