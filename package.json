@@ -26,7 +26,7 @@
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.1.9",
     "@types/lodash": "latest",
-    "cypress": "6.4.0",
+    "cypress": "7.7.0",
     "tslib": "^2.3.0",
     "semver": "^7.1.3"
   },
