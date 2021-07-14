@@ -55,6 +55,11 @@ export class QueryEditor extends PureComponent<Props, State> {
     this.props.onRunQuery();
   };
 
+  isPanelEditor = () => {
+    // If there can be more than one query, it's a panel editor
+    return !!this.props.queries;
+  };
+
   render() {
     const { rawSQL, format } = defaults(this.props.query, defaultQuery);
 
@@ -110,13 +115,17 @@ export class QueryEditor extends PureComponent<Props, State> {
             getSuggestions={schema.getSuggestions}
           />
         )}
-        <InlineField label="Format as">
-          <Select
-            options={SelectableFormatOptions}
-            value={format}
-            onChange={({ value }) => this.onChange({ ...this.props.query, format: value || FormatOptions.TimeSeries })}
-          />
-        </InlineField>
+        {this.isPanelEditor() && (
+          <InlineField label="Format as">
+            <Select
+              options={SelectableFormatOptions}
+              value={format}
+              onChange={({ value }) =>
+                this.onChange({ ...this.props.query, format: value || FormatOptions.TimeSeries })
+              }
+            />
+          </InlineField>
+        )}
       </>
     );
   }
