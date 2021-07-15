@@ -176,7 +176,7 @@ After creating a variable, you can use it in your Redshift queries by using [Var
 
 ### Annotations
 
-[Annotations](https://grafana.com/docs/grafana/latest/dashboards/annotations/) allow you to overlay rich event information on top of graphs. You add annotation queries via the Dashboard menu / Annotations view.
+[Annotations](https://grafana.com/docs/grafana/latest/dashboards/annotations/) allow you to overlay rich event information on top of graphs. You can add annotations clicking on panels or adding annotation queries via the Dashboard menu / Annotations view.
 
 **Example query:**
 
