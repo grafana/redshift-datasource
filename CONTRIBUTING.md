@@ -46,17 +46,17 @@ Make sure you have the following dependencies installed first:
    mage -v
    ```
 
-## Build a release for the Azure Data Explorer data source plugin
+## Build a release for the Redshift data source plugin
 
 You need to have commit rights to the GitHub repository to publish a release.
 
 1. Update the version number in the `package.json` file.
-2. Update the `CHANGELOG.md` with the changes containted in the release.
+2. Update the `CHANGELOG.md` with the changes contained in the release.
 3. Commit the changes to master and push to GitHub.
 4. Create a tag locally that follows the convention v(major).(minor).x, leaving the patch as `x`. For example:
 
    ```bash
-   git tag -b v3.3.0
+   git tag v3.3.0
    ```
 
 5. Push the new tag to GitHub
@@ -76,11 +76,13 @@ You need to have commit rights to the GitHub repository to publish a release.
 
 Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the cloud. You can start with just a few hundred gigabytes of data and scale to a petabyte or more. This enables you to use your data to acquire new insights for your business and customers.
 
-Redshift is based on an older version of PostgreSQL (fork of 8.0.2). It still have a lot in common and it is possible to use the Postgres data source in core Grafana to query Redshift. However, in the last couple of years it has started to diverge more and more. It’s not so much about the SQL language, even though it has started to diverge too (read more about that [here](https://docs.aws.amazon.com/redshift/latest/dg/c_redshift-and-postgres-sql.html)), but more about their underlying fundamentals - PostgreSQL is a row-store database while RedShift is column-stored database.
+Redshift is based on an older version of PostgreSQL (fork of 8.0.2). It still has a lot in common and it is possible to use the Postgres data source in core Grafana to query Redshift. However, in the last couple of years it has started to diverge more and more. [While the SQL language in Redshift has started to diverge from Postgres](https://docs.aws.amazon.com/redshift/latest/dg/c_redshift-and-postgres-sql.html), the biggest differences have been in the underlying fundamentals of how the data is stored - PostgreSQL is a row-store database while RedShift is column-stored database.
+
+While it's possible to use the PostgreSQL datasource to query Redshift, this plugins provides better integration with AWS authentication and provides Redshift exclusive features like its query editor, which uses Redshift built-in functions and specific syntax hightlight.
 
 ## Authentication
 
-The [awsds](https://github.com/grafana/grafana-aws-sdk/tree/main/pkg/awsds) package is currently used by all the Grafana AWS data sources. It contains logic for creating, caching and providing aws-sdk-go sessions based upon the selected type of authentication and its parameters. At the moment, four different types of authentication are supported - Workspace IAM role (currently only enabled in Amazon Managed Grafana), AWS SDK Default, Credential file auth and Keys & secrets.
+The [awsds](https://github.com/grafana/grafana-aws-sdk/tree/main/pkg/awsds) package is currently used by all the Grafana AWS data sources. It contains logic for creating, caching and providing aws-sdk-go sessions based upon the selected type of authentication and its parameters. At the moment, four different types of authentication are supported - Workspace IAM role (currently only enabled in Amazon Managed Grafana), AWS SDK Default, Credential file auth, and Keys & secrets.
 
 The Redshift configuration page renders the @grafana/aws-sdk ConnectionConfig, which shows all the common fields such as type of authentication, assume role details etc. However, in order to test the connection to AWS using temporary credentials, we need three additional fields - cluster identifier, database and db user. These fields are not needed when creating the aws-sdk-go session, but are params to each new SQL query. Consequently, we could add these fields in the query editor so that [they could be changed for each query](https://github.com/grafana/redshift-datasource/issues/42) (similar to how the region can be changed for each query in the CloudWatch data source).
 
@@ -93,7 +95,7 @@ There are four predefined (AWS managed) policies for Amazon Redshift.
 - AmazonRedshiftQueryEditor – Grants full access to the Query Editor on the Amazon Redshift console.
 - AmazonRedshiftDataFullAccess – Grants full access to the Amazon Redshift Data API operations and resources for the AWS account.
 
-The intent of the Redshift query editor in Grafana is **not** to be used as a management tool, so in the [documentation](./README.md#iam-policies) we make it clear that the role that is running the data source in Grafana should only have the AmazonRedshiftReadOnlyAccess policy attached to it.
+The intent of the Redshift query editor in Grafana is **not** to be used to modify values in the data source, so in the [documentation](./README.md#iam-policies) we make it clear that the role that is running the data source in Grafana should only have the AmazonRedshiftReadOnlyAccess policy attached to it.
 
 ## Architecture
 
@@ -115,9 +117,9 @@ Internally, sqlds is using [sqlutil](https://github.com/grafana/grafana-plugin-s
 
 ### Redshift driver
 
-The database/sql package can only be used in conjunction with a database driver. The AWS Redshift team offers support for two drivers - JDBC and ODBC. JDBC, which is the recommended driver, doesn’t have a golang version and it has a dependency to a Java runtime. There are golang drivers available for ODBC, but they still require an ODBC manager to be installed on the machine that is running grafana. Also we’d have to fork the golang driver in order to integrate it with our AWS sdk for handling authentication. For these reasons, we decided to use the [Amazon Redshift Data API](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api.html) instead.
+The database/sql package can only be used in conjunction with a database driver. The AWS Redshift team offers support for two drivers - [JDBC](https://docs.aws.amazon.com/redshift/latest/mgmt/configure-jdbc-connection.html) and [ODBC](https://docs.aws.amazon.com/redshift/latest/mgmt/configure-odbc-connection.html). JDBC, which is the recommended driver, doesn’t have a golang version and it has a dependency to a Java runtime. There are golang drivers available for ODBC, but they still require an ODBC manager to be installed on the machine that is running grafana. Also we’d have to fork the golang driver in order to integrate it with our AWS sdk for handling authentication. For these reasons, we decided to use the [Amazon Redshift Data API](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api.html) instead.
 
-This plugin implements our own sql driver on top of the Amazon Redshift data api. To meet the criterias of a sql driver, a few interfaces have been implemented. The database/sql api is big, but we haven't added support for everything - only the parts that we need.
+This plugin implements our own sql driver on top of the Amazon Redshift data api. To meet the criteria of a sql driver, a few interfaces have been implemented. The database/sql api is big, but we haven't added support for everything - only the parts that we need.
 
 #### Amazon Redshift Data API
 
@@ -146,7 +148,7 @@ Response example:
   "CreatedAt": 1598306924.632,
   "Database": "dev",
   "DbUser": "myuser",
-  "Id": "d9b6c0c9-0747-4bf4-b142-e8883122f766"
+  "Id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeee"
 }
 ```
 
@@ -156,7 +158,7 @@ Request example:
 
 ```console
 aws redshift-data describe-statement
-    --id d9b6c0c9-0747-4bf4-b142-e8883122f766
+    --id aaaaaaaa-bbbb-cccc-dddd-eeeeeeeee
     --region us-west-2
 ```
 
@@ -167,7 +169,7 @@ Response example;
   "ClusterIdentifier": "mycluster-test",
   "CreatedAt": 1598306924.632,
   "Duration": 1095981511,
-  "Id": "d9b6c0c9-0747-4bf4-b142-e8883122f766",
+  "Id": "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeee",
   "QueryString": "select * from stl_query limit 1",
   "RedshiftPid": 20859,
   "RedshiftQueryId": 48879,
@@ -184,7 +186,7 @@ Request example:
 
 ```console
 aws redshift-data get-statement-result
-    --id d9b6c0c9-0747-4bf4-b142-e8883122f766
+    --id aaaaaaaa-bbbb-cccc-dddd-eeeeeeeee
     --region us-west-2
 ```
 
@@ -219,4 +221,4 @@ Response example:
 
 For step 2, initially it keeps on calling `DescribeStatement` until the status is finished or errored. In the longer term, this procedure should be non-blocking by using polling or something like that.
 
-The redshift data api also has commands for list-databases, list-schemas, list-tables and describe-tables. But due to simplicity we are using SQL queries to retrieve this metadata for the data source UI.
+The redshift data api also has commands for list-databases, list-schemas, list-tables and describe-tables. But for the sake of simplicity simplicity we are using SQL queries to retrieve this metadata for the data source UI.
