@@ -17,14 +17,36 @@ import (
 type conn struct {
 	sessionCache    *awsds.SessionCache
 	settings        *models.RedshiftDataSourceSettings
-	pollingInterval time.Duration
+	pollingInterval func() time.Duration
+}
+
+func fibonacciPollingInterval() func() time.Duration {
+	fibNum := 0
+	lastFibNum := 0
+	timesCalled := 0
+	return func() time.Duration {
+		switch {
+		case timesCalled == 0:
+			fibNum = 0
+		case timesCalled == 1:
+			fibNum = 1
+		default:
+			oldFibNum := fibNum
+			fibNum = lastFibNum + fibNum
+			lastFibNum = oldFibNum
+		}
+
+		timesCalled++
+
+		return time.Second * time.Duration(fibNum)
+	}
 }
 
 func newConnection(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) *conn {
 	return &conn{
 		sessionCache:    sessionCache,
 		settings:        settings,
-		pollingInterval: time.Second * 1, //TODO: this polling interval shoud be configurable in ds settings OR increased successively (https://github.com/grafana/redshift-datasource/issues/15)
+		pollingInterval: fibonacciPollingInterval(),
 	}
 }
 
@@ -75,7 +97,7 @@ func (c *conn) waitOnQuery(ctx context.Context, service redshiftdataapiserviceif
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(c.pollingInterval):
+		case <-time.After(c.pollingInterval()):
 			continue
 		}
 	}
