@@ -14,3 +14,17 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
+
+const consoleError = console.error;
+global.console = {
+  ...global.console,
+  error: (e: Error) => {
+    // The package react-inlinesvg is failing to load Grafana icons but the error
+    // is harmless. Issue at: https://github.com/grafana/grafana/issues/37052
+    if (e.stack?.includes('InlineSVG.getNode')) {
+      // ignore
+    } else {
+      consoleError(e);
+    }
+  },
+};
