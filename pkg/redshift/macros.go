@@ -2,8 +2,10 @@ package redshift
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
+	"github.com/grafana/redshift-datasource/pkg/redshift/gtime"
 	"github.com/grafana/sqlds"
 	"github.com/pkg/errors"
 )
@@ -33,10 +35,19 @@ func macroTimeTo(query *sqlds.Query, args []string) (string, error) {
 
 func macroTimeGroup(query *sqlds.Query, args []string) (string, error) {
 	if len(args) < 2 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro timeGroup expects 2 arguments, received %d", len(args))
+		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro $__timeGroup needs time column and interval and optional fill value")
 	}
 
-	return fmt.Sprintf("date_trunc(%s, %s)", args[1], args[0]), nil
+	interval, err := gtime.ParseInterval(strings.Trim(args[1], `'`))
+	if err != nil {
+		return "", fmt.Errorf("error parsing interval %v", args[1])
+	}
+
+	if len(args) == 3 {
+		return "", fmt.Errorf("fill mode is not yet implemented")
+	}
+
+	return fmt.Sprintf("floor(extract(epoch from %s)/%v)*%v AS \"time\"", args[0], interval.Seconds(), interval.Seconds()), nil
 }
 
 func macroSchema(query *sqlds.Query, args []string) (string, error) {
