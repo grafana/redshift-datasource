@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import ResourceMacro, { Resource } from 'ResourceMacro';
@@ -48,6 +47,7 @@ describe('ResourceMacro', () => {
         updateSchemaState={updateSchemaState}
       />
     );
+    // TODO: investigate why this throws a console.log error in our test suite
     userEvent.click(screen.getByText('$__table = foo'));
     expect(schema.getTables).toHaveBeenCalled();
     await screen.findByText('bar');
