@@ -25,9 +25,9 @@ func fibonacciPollingInterval() func() time.Duration {
 	lastFibNum := 0
 	timesCalled := 0
 	return func() time.Duration {
+		timesCalled++
+
 		switch {
-		case timesCalled == 0:
-			fibNum = 0
 		case timesCalled == 1:
 			fibNum = 1
 		default:
@@ -35,9 +35,7 @@ func fibonacciPollingInterval() func() time.Duration {
 			fibNum = lastFibNum + fibNum
 			lastFibNum = oldFibNum
 		}
-
-		timesCalled++
-
+		
 		return time.Second * time.Duration(fibNum)
 	}
 }
