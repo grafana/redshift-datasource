@@ -363,7 +363,7 @@ func Test_convertRow(t *testing.T) {
 				DoubleValue: aws.Float64(1626357600),
 			},
 			expectedType:  "time.Time",
-			expectedValue: `2021-07-15 16:00:00 +0200 CEST`,
+			expectedValue: `2021-07-15 14:00:00 +0000 UTC`,
 			Err:           require.NoError,
 		},
 	}

@@ -219,7 +219,7 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			ret[i] = v
 		case REDSHIFT_FLOAT8:
 			if *col.Name == "time" {
-				ret[i] = time.Unix(int64(*curr.DoubleValue), 0)
+				ret[i] = time.Unix(int64(*curr.DoubleValue), 0).UTC()
 			} else {
 				ret[i] = *curr.DoubleValue
 			}
