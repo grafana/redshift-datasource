@@ -151,6 +151,7 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric float8",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
+				Name:     aws.String("other"),
 				TypeName: aws.String(REDSHIFT_FLOAT8),
 			},
 			data: &redshiftdataapiservice.Field{
@@ -350,6 +351,19 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: `table`,
+			Err:           require.NoError,
+		},
+		{
+			name: "unix time",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				Name:     aws.String("time"),
+				TypeName: aws.String(REDSHIFT_FLOAT8),
+			},
+			data: &redshiftdataapiservice.Field{
+				DoubleValue: aws.Float64(1626357600),
+			},
+			expectedType:  "time.Time",
+			expectedValue: `2021-07-15 16:00:00 +0200 CEST`,
 			Err:           require.NoError,
 		},
 	}
