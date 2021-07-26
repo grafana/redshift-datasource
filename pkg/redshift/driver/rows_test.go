@@ -69,8 +69,11 @@ func Test_convertRow(t *testing.T) {
 		Err           require.ErrorAssertionFunc
 	}{
 		{
-			name:          "numeric type int",
-			metadata:      &redshiftdataapiservice.ColumnMetadata{TypeName: aws.String(REDSHIFT_INT)},
+			name: "numeric type int",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				Name:     aws.String("num"),
+				TypeName: aws.String(REDSHIFT_INT),
+			},
 			data:          &redshiftdataapiservice.Field{LongValue: aws.Int64(1)},
 			expectedType:  "int32",
 			expectedValue: "1",
@@ -91,6 +94,7 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type int4",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
+				Name:     aws.String("num"),
 				TypeName: aws.String(REDSHIFT_INT4),
 			},
 			data: &redshiftdataapiservice.Field{
@@ -98,6 +102,19 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "int32",
 			expectedValue: "3",
+			Err:           require.NoError,
+		},
+		{
+			name: "time as int4",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				Name:     aws.String("time"),
+				TypeName: aws.String(REDSHIFT_INT4),
+			},
+			data: &redshiftdataapiservice.Field{
+				LongValue: aws.Int64(1624741200),
+			},
+			expectedType:  "time.Time",
+			expectedValue: "2021-06-26 21:00:00 +0000 UTC",
 			Err:           require.NoError,
 		},
 		{

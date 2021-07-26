@@ -115,15 +115,18 @@ The provided query editor is a standard SQL query editor. Grafana includes some 
 
 #### Macros
 
-| Macro                        | Description                                                                                                       | Output example                                                   |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `$__timeFilter(column)`      | `$__timeFilter` creates a conditional that filters the data (using `column`) based on the time range of the panel | `time BETWEEN '2017-07-18T11:15:52Z' AND '2017-07-18T11:15:52Z'` |
-| `$__timeFrom()`              | `$__timeFrom` outputs the current starting time of the range of the panel with quotes                             | `'2017-07-18T11:15:52Z'`                                         |
-| `$__timeTo()`                | `$__timeTo` outputs the current ending time of the range of the panel with quotes                                 | `'2017-07-18T11:15:52Z'`                                         |
-| `$__timeGroup(column, '1m')` | `$__timeGroup` groups timestamps so that there is only 1 point for every period on the graph                      | `floor(extract(epoch from time)/60)*60 AS "time"`                |
-| `$__schema`                  | `$__schema` uses the selected schema                                                                              | `public`                                                         |
-| `$__table`                   | `$__table` outputs a table from the given `$__schema` (it uses the `public` schema by default)                    | `sales`                                                          |
-| `$__column`                  | `$__column` outputs a column from the current `$__table`                                                          | `date`                                                           |
+| Macro                        | Description                                                                                                                      | Output example                                                   |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `$__timeEpoch(column)`       | `$__timeEpoch` will be replaced by an expression to convert to a UNIX timestamp and rename the column to time                    | `UNIX_TIMESTAMP(dateColumn) as "time"`                           |
+| `$__timeFilter(column)`      | `$__timeFilter` creates a conditional that filters the data (using `column`) based on the time range of the panel                | `time BETWEEN '2017-07-18T11:15:52Z' AND '2017-07-18T11:15:52Z'` |
+| `$__timeFrom()`              | `$__timeFrom` outputs the current starting time of the range of the panel with quotes                                            | `'2017-07-18T11:15:52Z'`                                         |
+| `$__timeTo()`                | `$__timeTo` outputs the current ending time of the range of the panel with quotes                                                | `'2017-07-18T11:15:52Z'`                                         |
+| `$__timeGroup(column, '1m')` | `$__timeGroup` groups timestamps so that there is only 1 point for every period on the graph                                     | `floor(extract(epoch from time)/60)*60 AS "time"`                |
+| `$__schema`                  | `$__schema` uses the selected schema                                                                                             | `public`                                                         |
+| `$__table`                   | `$__table` outputs a table from the given `$__schema` (it uses the `public` schema by default)                                   | `sales`                                                          |
+| `$__column`                  | `$__column` outputs a column from the current `$__table`                                                                         | `date`                                                           |
+| `$__unixEpochFilter(column)` | `$__unixEpochFilter` be replaced by a time range filter using the specified column name with times represented as Unix timestamp | `column >= 1624406400 AND column <= 1624410000`                  |
+| `$__unixEpochGroup(column)`  | `$__unixEpochGroup` is the same as $\_\_timeGroup but for times stored as Unix timestamp                                         | `floor(time/60)*60 AS "time"`                                    |
 
 #### Table Visualization
 
