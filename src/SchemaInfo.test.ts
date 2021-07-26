@@ -13,7 +13,18 @@ describe('SchemaInfo', () => {
   });
 
   describe('getSuggestions', () => {
-    const macros = ['$__timeFilter', '$__timeFrom', '$__timeTo', '$__timeGroup', '$__schema', '$__table', '$__column'];
+    const macros = [
+      '$__timeEpoch',
+      '$__timeFilter',
+      '$__timeFrom',
+      '$__timeTo',
+      '$__timeGroup',
+      '$__unixEpochFilter',
+      '$__unixEpochGroup',
+      '$__schema',
+      '$__table',
+      '$__column',
+    ];
     it('should return the list of macros', () => {
       const schema = new SchemaInfo(ds, q);
       const sugs = schema.getSuggestions();
