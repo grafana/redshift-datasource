@@ -104,6 +104,9 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 	case REDSHIFT_FLOAT4:
 		return reflect.TypeOf(float32(0))
 	case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT8:
+		if *col.Name == "time" {
+			return reflect.TypeOf(time.Time{})
+		}
 		return reflect.TypeOf(float64(0))
 	case REDSHIFT_BOOL:
 		return reflect.TypeOf(false)
@@ -215,7 +218,11 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			}
 			ret[i] = v
 		case REDSHIFT_FLOAT8:
-			ret[i] = *curr.DoubleValue
+			if *col.Name == "time" {
+				ret[i] = time.Unix(int64(*curr.DoubleValue), 0).UTC()
+			} else {
+				ret[i] = *curr.DoubleValue
+			}
 		case REDSHIFT_BOOL:
 			// don't know why boolean values are not passed as curr.BooleanValue
 			boolValue, err := strconv.ParseBool(*curr.StringValue)
