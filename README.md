@@ -115,15 +115,15 @@ The provided query editor is a standard SQL query editor. Grafana includes some 
 
 #### Macros
 
-| Macro                               | Description                                                                                                       | Output example                                                   |
-| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `$__timeFilter(column)`             | `$__timeFilter` creates a conditional that filters the data (using `column`) based on the time range of the panel | `time BETWEEN '2017-07-18T11:15:52Z' AND '2017-07-18T11:15:52Z'` |
-| `$__timeFrom()`                     | `$__timeFrom` outputs the current starting time of the range of the panel with quotes                             | `'2017-07-18T11:15:52Z'`                                         |
-| `$__timeTo()`                       | `$__timeTo` outputs the current ending time of the range of the panel with quotes                                 | `'2017-07-18T11:15:52Z'`                                         |
-| `$__timeGroup(column, 'time_unit')` | `$__timeGroup` groups timestamps so that there is only 1 point for every time unit on the graph                   | `date_trunc(created_ts, hour)`                                   |
-| `$__schema`                         | `$__schema` uses the selected schema                                                                              | `public`                                                         |
-| `$__table`                          | `$__table` outputs a table from the given `$__schema` (it uses the `public` schema by default)                    | `sales`                                                          |
-| `$__column`                         | `$__column` outputs a column from the current `$__table`                                                          | `date`                                                           |
+| Macro                        | Description                                                                                                       | Output example                                                   |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `$__timeFilter(column)`      | `$__timeFilter` creates a conditional that filters the data (using `column`) based on the time range of the panel | `time BETWEEN '2017-07-18T11:15:52Z' AND '2017-07-18T11:15:52Z'` |
+| `$__timeFrom()`              | `$__timeFrom` outputs the current starting time of the range of the panel with quotes                             | `'2017-07-18T11:15:52Z'`                                         |
+| `$__timeTo()`                | `$__timeTo` outputs the current ending time of the range of the panel with quotes                                 | `'2017-07-18T11:15:52Z'`                                         |
+| `$__timeGroup(column, '1m')` | `$__timeGroup` groups timestamps so that there is only 1 point for every period on the graph                      | `floor(extract(epoch from time)/60)*60 AS "time"`                |
+| `$__schema`                  | `$__schema` uses the selected schema                                                                              | `public`                                                         |
+| `$__table`                   | `$__table` outputs a table from the given `$__schema` (it uses the `public` schema by default)                    | `sales`                                                          |
+| `$__column`                  | `$__column` outputs a column from the current `$__table`                                                          | `date`                                                           |
 
 #### Table Visualization
 

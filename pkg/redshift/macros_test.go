@@ -69,8 +69,8 @@ func Test_macros(t *testing.T) {
 			"creates time group",
 			"timeGroup",
 			&sqlds.Query{},
-			[]string{"starttime", "'day'"},
-			`date_trunc('day', starttime)`,
+			[]string{"starttime", "'1m'"},
+			`floor(extract(epoch from starttime)/60)*60 AS "time"`,
 			nil,
 		},
 		{
