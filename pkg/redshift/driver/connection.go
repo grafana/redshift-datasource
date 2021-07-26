@@ -12,39 +12,24 @@ import (
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
+	"github.com/jpillora/backoff"
 )
 
 type conn struct {
 	sessionCache    *awsds.SessionCache
 	settings        *models.RedshiftDataSourceSettings
-	pollingInterval func() time.Duration
-}
-
-func fibonacciPollingInterval() func() time.Duration {
-	fibNum := 0
-	lastFibNum := 0
-	timesCalled := 0
-	return func() time.Duration {
-		timesCalled++
-
-		switch {
-		case timesCalled == 1:
-			fibNum = 1
-		default:
-			oldFibNum := fibNum
-			fibNum = lastFibNum + fibNum
-			lastFibNum = oldFibNum
-		}
-		
-		return time.Second * time.Duration(fibNum)
-	}
+	backoffInstance backoff.Backoff
 }
 
 func newConnection(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) *conn {
 	return &conn{
 		sessionCache:    sessionCache,
 		settings:        settings,
-		pollingInterval: fibonacciPollingInterval(),
+		backoffInstance: backoff.Backoff{
+			Min:    500 * time.Millisecond,
+			Max:   10 * time.Minute,
+			Factor: 2,
+		},
 	}
 }
 
@@ -95,7 +80,7 @@ func (c *conn) waitOnQuery(ctx context.Context, service redshiftdataapiserviceif
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(c.pollingInterval()):
+		case <-time.After(c.backoffInstance.Duration()):
 			continue
 		}
 	}
