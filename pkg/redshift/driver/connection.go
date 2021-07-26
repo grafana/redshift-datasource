@@ -12,19 +12,24 @@ import (
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
+	"github.com/jpillora/backoff"
 )
 
 type conn struct {
 	sessionCache    *awsds.SessionCache
 	settings        *models.RedshiftDataSourceSettings
-	pollingInterval time.Duration
+	backoffInstance backoff.Backoff
 }
 
 func newConnection(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) *conn {
 	return &conn{
 		sessionCache:    sessionCache,
 		settings:        settings,
-		pollingInterval: time.Second * 1, //TODO: this polling interval shoud be configurable in ds settings OR increased successively (https://github.com/grafana/redshift-datasource/issues/15)
+		backoffInstance: backoff.Backoff{
+			Min:    500 * time.Millisecond,
+			Max:   10 * time.Minute,
+			Factor: 2,
+		},
 	}
 }
 
@@ -75,7 +80,7 @@ func (c *conn) waitOnQuery(ctx context.Context, service redshiftdataapiserviceif
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(c.pollingInterval):
+		case <-time.After(c.backoffInstance.Duration()):
 			continue
 		}
 	}
