@@ -95,6 +95,15 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 	col := *r.result.ColumnMetadata[index]
 
 	switch strings.ToUpper(*col.TypeName) {
+	case REDSHIFT_INT, REDSHIFT_INT4,
+		REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT8:
+		// If the value is numeric and the name is "time", assume a Unix timestamp
+		if *col.Name == "time" {
+			return reflect.TypeOf(time.Time{})
+		}
+	}
+
+	switch strings.ToUpper(*col.TypeName) {
 	case REDSHIFT_INT2:
 		return reflect.TypeOf(int16(0))
 	case REDSHIFT_INT, REDSHIFT_INT4:
@@ -104,9 +113,6 @@ func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
 	case REDSHIFT_FLOAT4:
 		return reflect.TypeOf(float32(0))
 	case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT8:
-		if *col.Name == "time" {
-			return reflect.TypeOf(time.Time{})
-		}
 		return reflect.TypeOf(float64(0))
 	case REDSHIFT_BOOL:
 		return reflect.TypeOf(false)
@@ -204,7 +210,11 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 		case REDSHIFT_INT2:
 			ret[i] = int16(*curr.LongValue)
 		case REDSHIFT_INT, REDSHIFT_INT4:
-			ret[i] = int32(*curr.LongValue)
+			if *col.Name == "time" {
+				ret[i] = time.Unix(*curr.LongValue, 0).UTC()
+			} else {
+				ret[i] = int32(*curr.LongValue)
+			}
 		case REDSHIFT_INT8:
 			ret[i] = *curr.LongValue
 		case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT4:

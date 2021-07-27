@@ -19,6 +19,14 @@ func Test_macros(t *testing.T) {
 		expectedErr error
 	}{
 		{
+			"adds time as Unix",
+			"timeEpoch",
+			&sqlds.Query{},
+			[]string{"starttime"},
+			`extract(epoch from starttime) as "time"`,
+			nil,
+		},
+		{
 			"creates time filter",
 			"timeFilter",
 			&sqlds.Query{
@@ -103,6 +111,27 @@ func Test_macros(t *testing.T) {
 			&sqlds.Query{Column: "foo"},
 			[]string{},
 			`foo`,
+			nil,
+		},
+		{
+			"unix epoch filter",
+			"unixEpochFilter",
+			&sqlds.Query{
+				TimeRange: backend.TimeRange{
+					From: time.Date(2021, 6, 23, 0, 0, 0, 0, &time.Location{}),
+					To:   time.Date(2021, 6, 23, 1, 0, 0, 0, &time.Location{}),
+				},
+			},
+			[]string{"starttime"},
+			`starttime >= 1624406400 AND starttime <= 1624410000`,
+			nil,
+		},
+		{
+			"unix epoch time group",
+			"unixEpochGroup",
+			&sqlds.Query{},
+			[]string{"starttime", "1h"},
+			`floor(starttime/3600)*3600 AS "time"`,
 			nil,
 		},
 	}

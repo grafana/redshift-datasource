@@ -106,6 +106,11 @@ export class SchemaInfo {
   getSuggestions = (): CodeEditorSuggestionItem[] => {
     const sugs: CodeEditorSuggestionItem[] = [
       {
+        label: '$__timeEpoch',
+        kind: CodeEditorSuggestionItemKind.Method,
+        detail: '(Macro)',
+      },
+      {
         label: '$__timeFilter',
         kind: CodeEditorSuggestionItemKind.Method,
         detail: '(Macro)',
@@ -122,6 +127,16 @@ export class SchemaInfo {
       },
       {
         label: '$__timeGroup',
+        kind: CodeEditorSuggestionItemKind.Method,
+        detail: '(Macro)',
+      },
+      {
+        label: '$__unixEpochFilter',
+        kind: CodeEditorSuggestionItemKind.Method,
+        detail: '(Macro)',
+      },
+      {
+        label: '$__unixEpochGroup',
         kind: CodeEditorSuggestionItemKind.Method,
         detail: '(Macro)',
       },
