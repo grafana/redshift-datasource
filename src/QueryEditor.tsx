@@ -9,8 +9,10 @@ import {
   RedshiftDataSourceOptions,
   RedshiftQuery,
   SelectableFormatOptions,
+  SelectableFillValueOptions,
+  FillValueOptions,
 } from './types';
-import { CodeEditor, Alert, InlineField, Select, InlineFormLabel } from '@grafana/ui';
+import { CodeEditor, Alert, InlineField, Select, InlineFormLabel, Input, InlineFieldRow } from '@grafana/ui';
 import { SchemaInfo } from 'SchemaInfo';
 import { getTemplateSrv, config } from '@grafana/runtime';
 import ResourceMacro from 'ResourceMacro';
@@ -21,11 +23,13 @@ type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptio
 interface State {
   schema: SchemaInfo;
   schemaState?: Partial<RedshiftQuery>;
+  fillValue: number;
 }
 
 export class QueryEditor extends PureComponent<Props, State> {
   state: State = {
     schema: new SchemaInfo(this.props.datasource, this.props.query, getTemplateSrv()),
+    fillValue: 0,
   };
 
   componentDidMount = () => {
@@ -60,8 +64,12 @@ export class QueryEditor extends PureComponent<Props, State> {
     return !!this.props.queries;
   };
 
+  onFillValueChange = ({ currentTarget }: React.FormEvent<HTMLInputElement>) => {
+    this.setState({ fillValue: currentTarget.valueAsNumber });
+  };
+
   render() {
-    const { rawSQL, format } = defaults(this.props.query, defaultQuery);
+    const { rawSQL, format, fillMode } = defaults(this.props.query, defaultQuery);
 
     const { schema, schemaState } = this.state;
     return (
@@ -116,15 +124,48 @@ export class QueryEditor extends PureComponent<Props, State> {
           />
         )}
         {this.isPanelEditor() && (
-          <InlineField label="Format as">
-            <Select
-              options={SelectableFormatOptions}
-              value={format}
-              onChange={({ value }) =>
-                this.onChange({ ...this.props.query, format: value || FormatOptions.TimeSeries })
-              }
-            />
-          </InlineField>
+          <>
+            <InlineField label="Format as">
+              <Select
+                options={SelectableFormatOptions}
+                value={format}
+                onChange={({ value }) =>
+                  this.onChange({ ...this.props.query, format: value || FormatOptions.TimeSeries })
+                }
+              />
+            </InlineField>
+            <InlineFieldRow>
+              <InlineField label="Fill value" tooltip="value to fill missing points">
+                <Select
+                  aria-label="Fill value"
+                  options={SelectableFillValueOptions}
+                  value={fillMode.mode}
+                  onChange={({ value }) =>
+                    this.onChange({
+                      ...this.props.query,
+                      fillMode: { mode: value || FillValueOptions.Previous, value: this.state.fillValue },
+                    })
+                  }
+                />
+              </InlineField>
+              {fillMode.mode === FillValueOptions.Value && (
+                <InlineField label="Value">
+                  <Input
+                    type="number"
+                    css=""
+                    value={this.state.fillValue}
+                    onChange={this.onFillValueChange}
+                    onBlur={() =>
+                      this.onChange({
+                        ...this.props.query,
+                        fillMode: { mode: FillValueOptions.Value, value: this.state.fillValue },
+                      })
+                    }
+                  />
+                </InlineField>
+              )}
+            </InlineFieldRow>
+          </>
         )}
       </>
     );

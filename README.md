@@ -165,6 +165,10 @@ order by
   start_time,query_type ASC;
 ```
 
+##### Fill mode
+
+Grafana also supports to autocomplete frames without a value with some default. To configure this value, change the "Fill Value" in the query editor.
+
 #### Inspecting the query
 
 Because Grafana supports macros that Redshift does not, the fully rendered query, which can be copy/pasted directly into Redshift, is visible in the Query Inspector. To view the full interpolated query, click the Query Inspector button, and the full query will be visible under the "Query" tab.
