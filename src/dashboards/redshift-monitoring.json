@@ -34,7 +34,7 @@
       },
       "id": 40,
       "options": {
-        "content": "# Redshift Advance Monitoring\n\nAmazon Redshift is a fast, fully managed, petabyte-scale data warehouse solution that uses columnar storage to minimise IO, provides high data compression rates, and offers fast performance.\n\nThis dashboard contains several charts and statistics to monitor different aspects of Redshift. For more information about these metrics, visit the [AWS Labs repository for Amazon Redshift Monitoring](https://github.com/awslabs/amazon-redshift-monitoring).\n",
+        "content": "# Redshift Advanced Monitoring\n\nAmazon Redshift is a fast, fully managed, petabyte-scale data warehouse solution that uses columnar storage to minimise IO, provides high data compression rates, and offers fast performance.\n\nThis dashboard contains several charts and statistics to monitor different aspects of Redshift. For more information about these metrics, visit the [AWS Labs repository for Amazon Redshift Monitoring](https://github.com/awslabs/amazon-redshift-monitoring).\n",
         "mode": "markdown"
       },
       "pluginVersion": "8.1.0-pre",
