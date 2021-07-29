@@ -42,17 +42,13 @@ func macroTimeTo(query *sqlds.Query, args []string) (string, error) {
 }
 
 func macroTimeGroup(query *sqlds.Query, args []string) (string, error) {
-	if len(args) < 2 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro $__timeGroup needs time column and interval and optional fill value")
+	if len(args) != 2 {
+		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro $__timeGroup needs time column and interval")
 	}
 
 	interval, err := gtime.ParseInterval(strings.Trim(args[1], `'`))
 	if err != nil {
 		return "", fmt.Errorf("error parsing interval %v", args[1])
-	}
-
-	if len(args) == 3 {
-		return "", fmt.Errorf("fill mode is not yet implemented")
 	}
 
 	return fmt.Sprintf("floor(extract(epoch from %s)/%v)*%v AS \"time\"", args[0], interval.Seconds(), interval.Seconds()), nil
@@ -85,17 +81,13 @@ func macroUnixEpochFilter(query *sqlds.Query, args []string) (string, error) {
 }
 
 func macroUnixEpochGroup(query *sqlds.Query, args []string) (string, error) {
-	if len(args) < 2 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro $__unixEpochGroup needs time column and interval and optional fill value")
+	if len(args) != 2 {
+		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro $__unixEpochGroup needs time column and interval")
 	}
 
 	interval, err := gtime.ParseInterval(strings.Trim(args[1], `'`))
 	if err != nil {
 		return "", fmt.Errorf("error parsing interval %v", args[1])
-	}
-
-	if len(args) == 3 {
-		return "", fmt.Errorf("fill mode is not yet implemented")
 	}
 
 	return fmt.Sprintf(`floor(%s/%v)*%v AS "time"`, args[0], interval.Seconds(), interval.Seconds()), nil

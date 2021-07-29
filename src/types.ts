@@ -6,6 +6,12 @@ export enum FormatOptions {
   Table,
 }
 
+export enum FillValueOptions {
+  Previous,
+  Null,
+  Value,
+}
+
 export const SelectableFormatOptions: Array<SelectableValue<FormatOptions>> = [
   {
     label: 'Time Series',
@@ -17,9 +23,25 @@ export const SelectableFormatOptions: Array<SelectableValue<FormatOptions>> = [
   },
 ];
 
+export const SelectableFillValueOptions: Array<SelectableValue<FillValueOptions>> = [
+  {
+    label: 'Previous Value',
+    value: FillValueOptions.Previous,
+  },
+  {
+    label: 'NULL',
+    value: FillValueOptions.Null,
+  },
+  {
+    label: 'Value',
+    value: FillValueOptions.Value,
+  },
+];
+
 export interface RedshiftQuery extends DataQuery {
   rawSQL: string;
   format: FormatOptions;
+  fillMode: { mode: FillValueOptions; value?: number };
 
   schema?: string;
   table?: string;
@@ -29,6 +51,7 @@ export interface RedshiftQuery extends DataQuery {
 export const defaultQuery: Partial<RedshiftQuery> = {
   rawSQL: '',
   format: FormatOptions.TimeSeries,
+  fillMode: { mode: FillValueOptions.Previous },
 };
 
 /**

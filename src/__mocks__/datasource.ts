@@ -32,6 +32,6 @@ export const mockDatasource = new DataSource({
   },
 });
 
-export const mockQuery: RedshiftQuery = { rawSQL: 'select * from foo', refId: '', format: 0 };
+export const mockQuery: RedshiftQuery = { rawSQL: 'select * from foo', refId: '', format: 0, fillMode: { mode: 0 } };
 
 export const mockSchemaInfo: SchemaInfo = new SchemaInfo(mockDatasource, mockQuery);
