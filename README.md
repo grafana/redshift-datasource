@@ -42,7 +42,7 @@ See the AWS documentation on [IAM Roles](http://docs.aws.amazon.com/AWSEC2/lates
 
 ### IAM policies
 
-Grafana needs permissions granted via IAM to be able to read Redshift metrics. You can attach these permissions to IAM roles and utilize Grafana's built-in support for assuming roles. Note that you will need to [configure the required policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) before adding the data source to Grafana.
+Grafana needs permissions granted via IAM to be able to read Redshift metrics. You can attach these permissions to IAM roles and utilize Grafana's built-in support for assuming roles. Note that you will need to [configure the required policy](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_create.html) before adding the data source to Grafana. [You can check some predefined policies by AWS here](https://docs.aws.amazon.com/redshift/latest/mgmt/redshift-iam-access-control-identity-based.html#redshift-policy-resources.managed-policies).
 
 Here is a minimal policy example:
 
@@ -54,20 +54,10 @@ Here is a minimal policy example:
       "Sid": "AllowReadingMetricsFromRedshift",
       "Effect": "Allow",
       "Action": [
-        "redshift:Describe*",
-        "redshift:ViewQueriesInConsole",
-        "ec2:DescribeAccountAttributes",
-        "ec2:DescribeAddresses",
-        "ec2:DescribeAvailabilityZones",
-        "ec2:DescribeSecurityGroups",
-        "ec2:DescribeSubnets",
-        "ec2:DescribeVpcs",
-        "ec2:DescribeInternetGateways",
-        "sns:Get*",
-        "sns:List*",
-        "cloudwatch:Describe*",
-        "cloudwatch:List*",
-        "cloudwatch:Get*"
+        "redshift-data:DescribeStatement",
+        "redshift-data:ExecuteStatement",
+        "redshift-data:GetStatementResult",
+        "redshift:GetClusterCredentials"
       ],
       "Resource": "*"
     }
