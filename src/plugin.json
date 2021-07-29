@@ -8,6 +8,13 @@
   "alerting": true,
   "annotations": true,
   "executable": "gpx_redshift",
+  "includes": [
+    {
+      "type": "dashboard",
+      "name": "Redshift Monitoring",
+      "path": "dashboards/redshift-monitoring.json"
+    }
+  ],
   "info": {
     "description": "Use Amazon Redshift in Grafana",
     "author": {
