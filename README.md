@@ -258,6 +258,14 @@ datasources:
       defaultRegion: eu-west-2
 ```
 
+## Preconfigured Redshift dashboards
+
+Redshift data source ships with a pre-configured dashboard for some advanced monitoring parameters. This curated dashboard is based on similar dashboards in the [AWS Labs repository for Redshift](https://github.com/awslabs/amazon-redshift-monitoring). Check it out for more details.
+
+Follow these [instructions](https://grafana.com/docs/grafana/latest/dashboards/export-import/#importing-a-dashboard) for importing a dashboard in Grafana.
+
+Imported dashboards can be found in Configuration > Data Sources > select your Redshift data source > select the Dashboards tab to see available pre-made dashboards.
+
 ## Get the most out of the plugin
 
 - Add [Annotations](https://grafana.com/docs/grafana/latest/dashboards/annotations/).
