@@ -1,5 +1,1 @@
 blank_issues_enabled: false
-contact_links:
-  - name: Feature Request
-    url: https://github.com/grafana/redshift-datasource/discussions/new
-    about: Discuss ideas for new features
