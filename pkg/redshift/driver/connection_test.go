@@ -7,7 +7,6 @@ import (
 	"time"
 
 	redshiftservicemock "github.com/grafana/redshift-datasource/pkg/redshift/driver/mock"
-	"github.com/jpillora/backoff"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,13 +23,12 @@ var waitOnQueryTestCases = []struct {
 
 func TestConnection_waitOnQuery(t *testing.T) {
 	t.Parallel()
+	backoffMin = 1 * time.Millisecond
+	backoffMax = 1 * time.Millisecond
 
 	for _, tc := range waitOnQueryTestCases {
 		// for tests we override backoff instance to always take 1 millisecond so the tests run quickly
-		c := &conn{backoffInstance: backoff.Backoff{
-			Min:    1 * time.Millisecond,
-			Max:   1 * time.Millisecond,
-		},}
+		c := &conn{}
 		redshiftServiceMock := redshiftservicemock.NewMockRedshiftService()
 		redshiftServiceMock.CalledTimesCountDown = tc.calledTimesCountDown
 		err := c.waitOnQuery(context.Background(), redshiftServiceMock, tc.statementStatus)
