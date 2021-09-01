@@ -15,21 +15,20 @@ import (
 	"github.com/jpillora/backoff"
 )
 
+var (
+	backoffMin = 200 * time.Millisecond
+	backoffMax = 10 * time.Minute
+)
+
 type conn struct {
-	sessionCache    *awsds.SessionCache
-	settings        *models.RedshiftDataSourceSettings
-	backoffInstance backoff.Backoff
+	sessionCache *awsds.SessionCache
+	settings     *models.RedshiftDataSourceSettings
 }
 
 func newConnection(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) *conn {
 	return &conn{
-		sessionCache:    sessionCache,
-		settings:        settings,
-		backoffInstance: backoff.Backoff{
-			Min:    500 * time.Millisecond,
-			Max:   10 * time.Minute,
-			Factor: 2,
-		},
+		sessionCache: sessionCache,
+		settings:     settings,
 	}
 }
 
@@ -60,6 +59,11 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 
 // waitOnQuery polls the redshift api until the query finishes, returning an error if it failed.
 func (c *conn) waitOnQuery(ctx context.Context, service redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI, queryID string) error {
+	backoffInstance := backoff.Backoff{
+		Min:    backoffMin,
+		Max:    backoffMax,
+		Factor: 2,
+	}
 	for {
 		statusResp, err := service.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
 			Id: aws.String(queryID),
@@ -80,7 +84,7 @@ func (c *conn) waitOnQuery(ctx context.Context, service redshiftdataapiserviceif
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(c.backoffInstance.Duration()):
+		case <-time.After(backoffInstance.Duration()):
 			continue
 		}
 	}
