@@ -11,7 +11,6 @@ export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions
 export function ConfigEditor(props: Props) {
   const [useTempCreds, setUseTempCreds] = useState(!props.options.jsonData.managedSecret);
   const onChangeAuthType = (newUseTempCreds: boolean) => {
-    props.options;
     setUseTempCreds(newUseTempCreds);
     // Clean up state for the non-used type
     if (newUseTempCreds) {
