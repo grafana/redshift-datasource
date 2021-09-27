@@ -61,6 +61,7 @@ export interface RedshiftDataSourceOptions extends AwsAuthDataSourceJsonData {
   clusterIdentifier?: string;
   database?: string;
   dbUser?: string;
+  managedSecret?: string;
 }
 
 /**
