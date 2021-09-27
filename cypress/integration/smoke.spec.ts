@@ -57,9 +57,9 @@ e2e.scenario({
               .click({ force: true })
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
-            e2e().get('[data-test-id="cluster-id"]').click({ force: true }).type(datasource.jsonData.clusterId);
-            e2e().get('[data-test-id="database"]').click({ force: true }).type(datasource.jsonData.database);
-            e2e().get('[data-test-id="dbuser"]').click({ force: true }).type(datasource.jsonData.dbUser);
+            e2eSelectors.ConfigEditor.ClusterID.testID().click({ force: true }).type(datasource.jsonData.clusterId);
+            e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
+            e2eSelectors.ConfigEditor.DatabaseUser.testID().click({ force: true }).type(datasource.jsonData.dbUser);
           },
           type: 'Amazon Redshift',
         });
@@ -81,7 +81,7 @@ e2e.scenario({
                 `{selectall} select saletime as time, commission as commission from sales where $__timeFilter(time)`
               );
 
-            e2eSelectors.RefreshPicker.runButton().first().click({ force: true })
+            e2eSelectors.RefreshPicker.runButton().first().click({ force: true });
           },
         });
       });

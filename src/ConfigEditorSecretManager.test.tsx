@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ConfigEditorSecretManager } from './ConfigEditorSecretManager';
+import { selectors } from 'selectors';
 
 const props = {
   onChangeCluster: jest.fn(),
@@ -11,8 +12,8 @@ const props = {
 describe('ConfigEditorSecretManager', () => {
   it('should display temporary credentials by default', () => {
     render(<ConfigEditorSecretManager {...props} />);
-    expect(screen.getByText('Managed Secret ARN')).toBeInTheDocument();
-    expect(screen.getByText('Cluster Identifier')).toBeInTheDocument();
-    expect(screen.getByText('Database')).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ClusterID.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).toBeInTheDocument();
   });
 });

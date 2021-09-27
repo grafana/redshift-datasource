@@ -1,5 +1,6 @@
 import React from 'react';
 import { InlineField, Input } from '@grafana/ui';
+import { selectors } from 'selectors';
 
 export type Props = {
   clusterIdentifier?: string;
@@ -14,20 +15,32 @@ export function ConfigEditorTempCreds(props: Props) {
   const { onChangeCluster, onChangeDB, onChangeDBUser, clusterIdentifier, database, dbUser } = props;
   return (
     <>
-      <InlineField label="Cluster Identifier" labelWidth={28}>
+      <InlineField label={selectors.components.ConfigEditor.ClusterID.input} labelWidth={28}>
         <Input
-          data-test-id="cluster-id"
+          data-testid={selectors.components.ConfigEditor.ClusterID.testID}
           css
           className="width-30"
           value={clusterIdentifier ?? ''}
           onChange={onChangeCluster}
         />
       </InlineField>
-      <InlineField label="Database" labelWidth={28}>
-        <Input data-test-id="database" css className="width-30" value={database ?? ''} onChange={onChangeDB} />
+      <InlineField label={selectors.components.ConfigEditor.Database.input} labelWidth={28}>
+        <Input
+          data-testid={selectors.components.ConfigEditor.Database.testID}
+          css
+          className="width-30"
+          value={database ?? ''}
+          onChange={onChangeDB}
+        />
       </InlineField>
-      <InlineField label="DB User" labelWidth={28}>
-        <Input aria-label="DB User" css className="width-30" value={dbUser ?? ''} onChange={onChangeDBUser} />
+      <InlineField label={selectors.components.ConfigEditor.DatabaseUser.input} labelWidth={28}>
+        <Input
+          data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
+          css
+          className="width-30"
+          value={dbUser ?? ''}
+          onChange={onChangeDBUser}
+        />
       </InlineField>
     </>
   );

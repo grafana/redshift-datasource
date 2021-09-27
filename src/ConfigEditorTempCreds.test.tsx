@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ConfigEditorTempCreds } from './ConfigEditorTempCreds';
+import { selectors } from 'selectors';
 
 const props = {
   onChangeCluster: jest.fn(),
@@ -11,8 +12,8 @@ const props = {
 describe('ConfigEditorTempCreds', () => {
   it('should display temporary credentials by default', () => {
     render(<ConfigEditorTempCreds {...props} />);
-    expect(screen.getByText('Cluster Identifier')).toBeInTheDocument();
-    expect(screen.getByText('Database')).toBeInTheDocument();
-    expect(screen.getByText('DB User')).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ClusterID.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ClusterID.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).toBeInTheDocument();
   });
 });

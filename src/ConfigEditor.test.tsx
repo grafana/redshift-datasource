@@ -4,6 +4,7 @@ import { ConfigEditor } from './ConfigEditor';
 import { DataSourceSettings } from '@grafana/data';
 import { RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData } from './types';
 import userEvent from '@testing-library/user-event';
+import { selectors } from './selectors';
 
 jest.mock('@grafana/aws-sdk', () => {
   return {
@@ -24,28 +25,28 @@ const props = {
 describe('ConfigEditor', () => {
   it('should display temporary credentials by default', () => {
     render(<ConfigEditor {...props} />);
-    expect(screen.getByText('Cluster Identifier')).toBeInTheDocument();
-    expect(screen.getByText('Database')).toBeInTheDocument();
-    expect(screen.getByText('DB User')).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ClusterID.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeInTheDocument();
   });
 
   it('should switch to use the Secret Manager', () => {
     render(<ConfigEditor {...props} />);
     screen.getByText('AWS Secrets Manager').click();
-    expect(screen.getByText('Managed Secret ARN')).toBeInTheDocument();
-    expect(screen.getByText('Cluster Identifier')).toBeInTheDocument();
-    expect(screen.getByText('Database')).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ClusterID.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).toBeInTheDocument();
   });
 
   it('should clean up related state', () => {
     render(<ConfigEditor {...props} />);
     // type a user. Using a single letter since the change method is mocked so the value is not updated
-    userEvent.type(screen.getByLabelText('DB User'), 'f');
+    userEvent.type(screen.getByTestId(selectors.components.ConfigEditor.DatabaseUser.testID), 'f');
     expect(props.onOptionsChange).toHaveBeenLastCalledWith({ jsonData: { dbUser: 'f' } });
 
     // change auth type and clean state
     screen.getByText('AWS Secrets Manager').click();
-    expect(screen.getByText('Managed Secret ARN')).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeInTheDocument();
     expect(props.onOptionsChange).toHaveBeenLastCalledWith({ jsonData: { dbUser: '' } });
   });
 });
