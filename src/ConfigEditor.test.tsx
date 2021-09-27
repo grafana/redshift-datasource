@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { ConfigEditor } from './ConfigEditor';
 import { DataSourceSettings } from '@grafana/data';
 import { RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData } from './types';
