@@ -14,9 +14,8 @@ import {
 } from './types';
 import { CodeEditor, Alert, InlineField, Select, InlineFormLabel, Input, InlineFieldRow } from '@grafana/ui';
 import { SchemaInfo } from 'SchemaInfo';
-import { getTemplateSrv, config } from '@grafana/runtime';
+import { getTemplateSrv } from '@grafana/runtime';
 import ResourceMacro from 'ResourceMacro';
-import { gt, valid } from 'semver';
 
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
@@ -113,8 +112,7 @@ export class QueryEditor extends PureComponent<Props, State> {
         {schema && (
           <CodeEditor
             height={'250px'}
-            // TODO: Use language="redshift" once Grafana v7.x is deprecated.
-            language={valid(config.buildInfo.version) && gt(config.buildInfo.version, '8.0.0') ? 'redshift' : 'sql'}
+            language={'redshift'}
             value={rawSQL}
             onBlur={this.onRawSqlChange}
             onSave={this.onRawSqlChange}
