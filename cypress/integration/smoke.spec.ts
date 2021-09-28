@@ -96,7 +96,7 @@ e2e.scenario({
     e2e()
       .readProvisions(['datasources/redshift.yaml'])
       .then((RedshiftProvisions: RedshiftProvision[]) => {
-        const datasource = RedshiftProvisions[0].datasources[0];
+        const datasource = RedshiftProvisions[0].datasources[1];
 
         e2e.flows.addDataSource({
           checkHealth: false,
