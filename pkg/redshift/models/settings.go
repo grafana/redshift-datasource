@@ -13,6 +13,7 @@ type RedshiftDataSourceSettings struct {
 	ClusterIdentifier string `json:"clusterIdentifier"`
 	Database          string `json:"Database"`
 	DBUser            string `json:"dbUser"`
+	ManagedSecret     string `json:"managedSecret"`
 }
 
 func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSettings) error {

@@ -24,6 +24,7 @@ type RedshiftDatasourceConfig = {
     database: string;
     dbUser: string;
     defaultRegion: string;
+    managedSecret: string;
   };
 };
 type RedshiftProvision = {
@@ -57,9 +58,9 @@ e2e.scenario({
               .click({ force: true })
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
-            e2e().get('[data-test-id="cluster-id"]').click({ force: true }).type(datasource.jsonData.clusterId);
-            e2e().get('[data-test-id="database"]').click({ force: true }).type(datasource.jsonData.database);
-            e2e().get('[data-test-id="dbuser"]').click({ force: true }).type(datasource.jsonData.dbUser);
+            e2eSelectors.ConfigEditor.ClusterID.testID().click({ force: true }).type(datasource.jsonData.clusterId);
+            e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
+            e2eSelectors.ConfigEditor.DatabaseUser.testID().click({ force: true }).type(datasource.jsonData.dbUser);
           },
           type: 'Amazon Redshift',
         });
@@ -81,8 +82,48 @@ e2e.scenario({
                 `{selectall} select saletime as time, commission as commission from sales where $__timeFilter(time)`
               );
 
-            e2eSelectors.RefreshPicker.runButton().first().click({ force: true })
+            e2eSelectors.RefreshPicker.runButton().first().click({ force: true });
           },
+        });
+      });
+  },
+});
+
+e2e.scenario({
+  describeName: 'Smoke test - managed secret',
+  itName: 'Login, create data source with a managed secret',
+  scenario: () => {
+    e2e()
+      .readProvisions(['datasources/redshift.yaml'])
+      .then((RedshiftProvisions: RedshiftProvision[]) => {
+        const datasource = RedshiftProvisions[0].datasources[1];
+
+        e2e.flows.addDataSource({
+          checkHealth: false,
+          expectedAlertMessage: 'Data source is working',
+          form: () => {
+            e2e()
+              .get('.aws-config-authType')
+              .find(`input`)
+              .click({ force: true })
+              .type('Access & secret key')
+              .type('{enter}');
+            e2eSelectors.ConfigEditor.AccessKey.input().type(datasource.secureJsonData.accessKey);
+            e2eSelectors.ConfigEditor.SecretKey.input().type(datasource.secureJsonData.secretKey);
+            e2e()
+              .get('.aws-config-defaultRegion')
+              .find(`input`)
+              .click({ force: true })
+              .type(datasource.jsonData.defaultRegion)
+              .type('{enter}');
+            e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
+            e2eSelectors.ConfigEditor.ManagedSecret.testID()
+              .click({ force: true })
+              .type(datasource.jsonData.managedSecret);
+            e2eSelectors.ConfigEditor.ClusterID.testID().click({ force: true }).type(datasource.jsonData.clusterId);
+            e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
+          },
+          type: 'Amazon Redshift',
         });
       });
   },

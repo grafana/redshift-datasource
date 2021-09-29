@@ -32,6 +32,20 @@ func newConnection(sessionCache *awsds.SessionCache, settings *models.RedshiftDa
 	}
 }
 
+func parseStatementInput(query string, settings *models.RedshiftDataSourceSettings) *redshiftdataapiservice.ExecuteStatementInput {
+	statementInput := &redshiftdataapiservice.ExecuteStatementInput{
+		ClusterIdentifier: aws.String(settings.ClusterIdentifier),
+		Database:          aws.String(settings.Database),
+		Sql:               aws.String(query),
+	}
+	if settings.ManagedSecret != "" {
+		statementInput.SecretArn = aws.String(settings.ManagedSecret)
+	} else {
+		statementInput.DbUser = aws.String(settings.DBUser)
+	}
+	return statementInput
+}
+
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
 	session, err := c.sessionCache.GetSession(c.settings.DefaultRegion, c.settings.AWSDatasourceSettings)
 	if err != nil {
@@ -39,12 +53,7 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 	}
 	client := redshiftdataapiservice.New(session)
 
-	statementInput := &redshiftdataapiservice.ExecuteStatementInput{
-		ClusterIdentifier: aws.String(c.settings.ClusterIdentifier),
-		Database:          aws.String(c.settings.Database),
-		DbUser:            aws.String(c.settings.DBUser),
-		Sql:               aws.String(query),
-	}
+	statementInput := parseStatementInput(query, c.settings)
 	executeStatementResult, err := client.ExecuteStatement(statementInput)
 	if err != nil {
 		return nil, err
