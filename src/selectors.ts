@@ -9,7 +9,7 @@ export const Components = {
       input: 'Config editor access key input',
     },
     ManagedSecret: {
-      input: 'Managed Secret ARN',
+      input: 'Managed Secret',
       testID: 'data-testid managedSecret',
     },
     ClusterID: {

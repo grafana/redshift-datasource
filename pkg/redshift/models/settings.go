@@ -8,12 +8,22 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
+type ManagedSecret struct {
+	Name string `json:"name"`
+	ARN  string `json:"arn"`
+}
+
+type RedshiftSecret struct {
+	ClusterIdentifier string `json:"dbClusterIdentifier"`
+	DBUser            string `json:"username"`
+}
+
 type RedshiftDataSourceSettings struct {
 	awsds.AWSDatasourceSettings
 	ClusterIdentifier string `json:"clusterIdentifier"`
 	Database          string `json:"Database"`
 	DBUser            string `json:"dbUser"`
-	ManagedSecret     string `json:"managedSecret"`
+	ManagedSecret     ManagedSecret
 }
 
 func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSettings) error {

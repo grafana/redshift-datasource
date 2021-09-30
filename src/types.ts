@@ -1,4 +1,4 @@
-import { DataQuery, SelectableValue } from '@grafana/data';
+import { DataQuery, DataSourceSettings, SelectableValue } from '@grafana/data';
 import { AwsAuthDataSourceJsonData, AwsAuthDataSourceSecureJsonData } from '@grafana/aws-sdk';
 
 export enum FormatOptions {
@@ -48,6 +48,8 @@ export interface RedshiftQuery extends DataQuery {
   column?: string;
 }
 
+export const defaultKey = '__default';
+
 export const defaultQuery: Partial<RedshiftQuery> = {
   rawSQL: '',
   format: FormatOptions.TimeSeries,
@@ -61,10 +63,18 @@ export interface RedshiftDataSourceOptions extends AwsAuthDataSourceJsonData {
   clusterIdentifier?: string;
   database?: string;
   dbUser?: string;
-  managedSecret?: string;
+  managedSecret?: {
+    name: string;
+    arn: string;
+  };
 }
 
 /**
  * Value that is used in the backend, but never sent over HTTP to the frontend
  */
 export interface RedshiftDataSourceSecureJsonData extends AwsAuthDataSourceSecureJsonData {}
+
+export type RedshiftDataSourceSettings = DataSourceSettings<
+  RedshiftDataSourceOptions,
+  RedshiftDataSourceSecureJsonData
+>;

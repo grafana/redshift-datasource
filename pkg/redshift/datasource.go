@@ -3,15 +3,21 @@ package redshift
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"regexp"
+	"time"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/resource/httpadapter"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
+	"github.com/grafana/redshift-datasource/pkg/redshift/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/driver"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
+	"github.com/grafana/sqlds/v2"
 	"github.com/pkg/errors"
 )
 
@@ -20,25 +26,44 @@ var (
 	tableNameRegex = regexp.MustCompile("^[0-9A-Za-z_]+$")
 )
 
-type RedshiftDatasource struct {
-	db *sql.DB
+type RedshiftDatasourceIface interface {
+	sqlds.Driver
+	Schemas(ctx context.Context) ([]string, error)
+	Tables(ctx context.Context, schema string) ([]string, error)
+	Columns(ctx context.Context, table string) ([]string, error)
+	Secrets(ctx context.Context) ([]models.ManagedSecret, error)
+	Secret(ctx context.Context, arn string) (*models.RedshiftSecret, error)
 }
 
-func (s *RedshiftDatasource) FillMode() *data.FillMissing {
-	return &data.FillMissing{
-		Mode: data.FillModeNull,
+type RedshiftDatasource struct {
+	sessionCache *awsds.SessionCache
+	db           *sql.DB
+}
+
+func New() *RedshiftDatasource {
+	return &RedshiftDatasource{
+		sessionCache: awsds.NewSessionCache(),
+	}
+}
+
+func (s *RedshiftDatasource) Settings(_ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
+	return sqlds.DriverSettings{
+		FillMode: &data.FillMissing{
+			Mode: data.FillModeNull,
+		},
+		Timeout: 5 * time.Minute,
 	}
 }
 
 // Connect opens a sql.DB connection using datasource settings
-func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings) (*sql.DB, error) {
+func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, _ json.RawMessage) (*sql.DB, error) {
 	settings := models.RedshiftDataSourceSettings{}
 	err := settings.Load(config)
 	if err != nil {
 		return nil, fmt.Errorf("error reading settings: %s", err.Error())
 	}
 
-	db, err := driver.Open(settings)
+	db, err := driver.Open(settings, s.sessionCache)
 	if err != nil {
 		return nil, errors.WithMessage(err, "Failed to connect to database. Is the hostname and port correct?")
 	}
@@ -122,4 +147,35 @@ func (s *RedshiftDatasource) Columns(ctx context.Context, table string) ([]strin
 	defer rows.Close()
 
 	return getStringArr(rows)
+}
+
+func (s *RedshiftDatasource) getApi(ctx context.Context) (*api.API, error) {
+	plugin := httpadapter.PluginConfigFromContext(ctx)
+	if plugin.DataSourceInstanceSettings == nil {
+		return nil, fmt.Errorf("unable to get settings from request")
+	}
+
+	settings := models.RedshiftDataSourceSettings{}
+	err := settings.Load(*plugin.DataSourceInstanceSettings)
+	if err != nil {
+		return nil, fmt.Errorf("error reading settings: %s", err.Error())
+	}
+
+	return api.New(s.sessionCache, &settings)
+}
+
+func (s *RedshiftDatasource) Secrets(ctx context.Context) ([]models.ManagedSecret, error) {
+	api, err := s.getApi(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return api.ListSecrets(ctx)
+}
+
+func (s *RedshiftDatasource) Secret(ctx context.Context, arn string) (*models.RedshiftSecret, error) {
+	api, err := s.getApi(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return api.GetSecret(ctx, arn)
 }

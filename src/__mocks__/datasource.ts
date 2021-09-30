@@ -1,5 +1,5 @@
-import { PluginType } from '@grafana/data';
-import { RedshiftQuery } from '../types';
+import { DataSourcePluginOptionsEditorProps, PluginType } from '@grafana/data';
+import { RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData, RedshiftQuery } from '../types';
 import { DataSource } from '../datasource';
 import { SchemaInfo } from 'SchemaInfo';
 
@@ -31,6 +31,37 @@ export const mockDatasource = new DataSource({
     },
   },
 });
+
+export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
+  RedshiftDataSourceOptions,
+  RedshiftDataSourceSecureJsonData
+> = {
+  options: {
+    id: 1,
+    uid: 'redshift-id',
+    orgId: 1,
+    name: 'Redshift',
+    typeLogoUrl: '',
+    type: '',
+    typeName: '',
+    access: '',
+    url: '',
+    password: '',
+    user: '',
+    basicAuth: false,
+    basicAuthPassword: '',
+    basicAuthUser: '',
+    database: '',
+    isDefault: false,
+    jsonData: {
+      defaultRegion: 'us-east-2',
+    },
+    secureJsonFields: {},
+    readOnly: false,
+    withCredentials: false,
+  },
+  onOptionsChange: jest.fn(),
+};
 
 export const mockQuery: RedshiftQuery = { rawSQL: 'select * from foo', refId: '', format: 0, fillMode: { mode: 0 } };
 

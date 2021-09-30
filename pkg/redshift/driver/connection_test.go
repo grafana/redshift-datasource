@@ -69,7 +69,7 @@ func Test_parseStatementInput(t *testing.T) {
 			&models.RedshiftDataSourceSettings{
 				ClusterIdentifier: "cluster",
 				Database:          "db",
-				ManagedSecret:     "arn:...",
+				ManagedSecret:     models.ManagedSecret{ARN: "arn:..."},
 				// ignored
 				DBUser: "user",
 			},
