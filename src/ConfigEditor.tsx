@@ -31,7 +31,7 @@ export function ConfigEditor(props: Props) {
   };
   // Secrets
   const fetchSecrets = async () => {
-    const res: { name: string; arn: string }[] = await getBackendSrv().get(resourcesURL + '/secrets');
+    const res: Array<{ name: string; arn: string }> = await getBackendSrv().get(resourcesURL + '/secrets');
     return res.map((r) => ({ label: r.name, value: r.arn, description: r.arn }));
   };
   const fetchSecret = async (arn: string) => {

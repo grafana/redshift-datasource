@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"bytes"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -15,6 +16,7 @@ var ds = &fake.RedshiftFakeDatasource{
 	SecretList: []models.ManagedSecret{
 		{Name: "secret1", ARN: "arn:secret1"},
 	},
+	RSecret: models.RedshiftSecret{ClusterIdentifier: "clu", DBUser: "user"},
 }
 
 func TestRoutes(t *testing.T) {
@@ -28,17 +30,25 @@ func TestRoutes(t *testing.T) {
 			description:    "return secrets",
 			route:          "secrets",
 			expectedCode:   http.StatusOK,
-			expectedResult: `[{"arn":"arn:secret1","name":"secret1"}]`,
+			expectedResult: `[{"name":"secret1","arn":"arn:secret1"}]`,
+		},
+		{
+			description:    "return secret",
+			route:          "secret",
+			expectedCode:   http.StatusOK,
+			expectedResult: `{"dbClusterIdentifier":"clu","username":"user"}`,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
-			req := httptest.NewRequest("GET", "http://example.com/foo", nil)
+			req := httptest.NewRequest("GET", "http://example.com/foo", bytes.NewReader([]byte("{}")))
 			rw := httptest.NewRecorder()
 			rh := ResourceHandler{ds: ds}
 			switch tt.route {
-			case "secretsmanager":
+			case "secrets":
 				rh.secrets(rw, req)
+			case "secret":
+				rh.secret(rw, req)
 			default:
 				t.Fatalf("unexpected route %s", tt.route)
 			}
@@ -50,7 +60,7 @@ func TestRoutes(t *testing.T) {
 			}
 
 			if resp.StatusCode != tt.expectedCode {
-				t.Errorf("expecting code %v got %v", tt.expectedCode, resp.StatusCode)
+				t.Errorf("expecting code %v got %v. Body: %v", tt.expectedCode, resp.StatusCode, string(body))
 			}
 			if resp.StatusCode == http.StatusOK && !cmp.Equal(string(body), tt.expectedResult) {
 				t.Errorf("unexpected response: %v", cmp.Diff(string(body), tt.expectedResult))

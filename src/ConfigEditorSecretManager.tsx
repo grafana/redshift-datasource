@@ -40,7 +40,7 @@ export function ConfigEditorSecretManager(props: Props) {
         setDBUser(s.username);
       });
     }
-  }, [managedSecret]);
+  }, [managedSecret, setClusterID, fetchSecret]);
   return (
     <>
       <ResourceSelector
