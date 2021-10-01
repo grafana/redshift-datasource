@@ -36,15 +36,15 @@ export function SecretManager(props: Props) {
   useEffect(() => {
     if (managedSecret) {
       fetchSecret(managedSecret.arn).then((s) => {
-        if (s.dbClusterIdentifier != clusterIdentifier) {
+        if (s.dbClusterIdentifier !== clusterIdentifier) {
           onChangeClusterID(s.dbClusterIdentifier);
         }
-        if (s.username != dbUser) {
+        if (s.username !== dbUser) {
           setDBUser(s.username);
         }
       });
     }
-  }, [managedSecret, onChangeClusterID, fetchSecret]);
+  }, [managedSecret, onChangeClusterID, fetchSecret, clusterIdentifier, dbUser]);
   return (
     <>
       <ResourceSelector
