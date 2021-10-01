@@ -1,9 +1,8 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { ConfigEditor } from './ConfigEditor';
-import userEvent from '@testing-library/user-event';
-import { selectors } from './selectors';
-import { mockDatasourceOptions } from '__mocks__/datasource';
+import { selectors } from '../selectors';
+import { mockDatasourceOptions } from '../__mocks__/datasource';
 import { select } from 'react-select-event';
 
 const secret = { name: 'foo', arn: 'arn:foo' };
@@ -48,21 +47,6 @@ describe('ConfigEditor', () => {
     expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).toBeInTheDocument();
   });
 
-  it('should clean up related state', () => {
-    render(<ConfigEditor {...props} />);
-    // type a user. Using a single letter since the change method is mocked so the value is not updated
-    userEvent.type(screen.getByTestId(selectors.components.ConfigEditor.DatabaseUser.testID), 'f');
-    expect(props.onOptionsChange).toHaveBeenLastCalledWith({
-      ...mockDatasourceOptions.options,
-      jsonData: { ...mockDatasourceOptions.options.jsonData, dbUser: 'f' },
-    });
-
-    // change auth type and clean state
-    screen.getByText('AWS Secrets Manager').click();
-    expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeInTheDocument();
-    expect(props.onOptionsChange).toHaveBeenLastCalledWith(mockDatasourceOptions.options);
-  });
-
   it('should select a secret', async () => {
     const onChange = jest.fn();
     render(<ConfigEditor {...props} onOptionsChange={onChange} />);
@@ -86,14 +70,17 @@ describe('ConfigEditor', () => {
         {...props}
         onOptionsChange={onChange}
         // setting the managedSecret will trigger the secret retrieval
-        options={{ ...props.options, jsonData: { ...props.options.jsonData, managedSecret: secret } }}
+        options={{
+          ...props.options,
+          jsonData: { ...props.options.jsonData, useTemporaryCredentials: false, managedSecret: secret },
+        }}
       />
     );
     await waitFor(() => screen.getByDisplayValue(dbUser));
     // the clusterIdentifier update is delegated to the onChange function
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
-      jsonData: { ...props.options.jsonData, managedSecret: secret, clusterIdentifier },
+      jsonData: { ...props.options.jsonData, useTemporaryCredentials: false, managedSecret: secret, clusterIdentifier },
     });
   });
 });

@@ -52,9 +52,10 @@ func Test_parseStatementInput(t *testing.T) {
 			"using temporary creds",
 			"select * from table",
 			&models.RedshiftDataSourceSettings{
-				ClusterIdentifier: "cluster",
-				Database:          "db",
-				DBUser:            "user",
+				UseTemporaryCredentials: true,
+				ClusterIdentifier:       "cluster",
+				Database:                "db",
+				DBUser:                  "user",
 			},
 			&redshiftdataapiservice.ExecuteStatementInput{
 				ClusterIdentifier: aws.String("cluster"),
@@ -67,9 +68,10 @@ func Test_parseStatementInput(t *testing.T) {
 			"using managed secret",
 			"select * from table",
 			&models.RedshiftDataSourceSettings{
-				ClusterIdentifier: "cluster",
-				Database:          "db",
-				ManagedSecret:     models.ManagedSecret{ARN: "arn:..."},
+				UseTemporaryCredentials: false,
+				ClusterIdentifier:       "cluster",
+				Database:                "db",
+				ManagedSecret:           models.ManagedSecret{ARN: "arn:..."},
 				// ignored
 				DBUser: "user",
 			},

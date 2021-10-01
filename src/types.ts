@@ -48,6 +48,11 @@ export interface RedshiftQuery extends DataQuery {
   column?: string;
 }
 
+export interface RedshiftManagedSecret {
+  name: string;
+  arn: string;
+}
+
 export const defaultKey = '__default';
 
 export const defaultQuery: Partial<RedshiftQuery> = {
@@ -60,6 +65,7 @@ export const defaultQuery: Partial<RedshiftQuery> = {
  * These are options configured for each DataSource instance
  */
 export interface RedshiftDataSourceOptions extends AwsAuthDataSourceJsonData {
+  useTemporaryCredentials?: boolean;
   clusterIdentifier?: string;
   database?: string;
   dbUser?: string;

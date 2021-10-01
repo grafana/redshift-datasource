@@ -2,8 +2,8 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { ResourceSelector, QueryResourceType } from './ResourceSelector';
 import { select } from 'react-select-event';
-import { defaultKey } from 'types';
-import { selectors } from 'selectors';
+import { defaultKey } from '../types';
+import { selectors } from '../selectors';
 
 const props = {
   resource: 'ManagedSecret' as QueryResourceType,

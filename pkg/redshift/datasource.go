@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
-	"time"
 
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -51,7 +50,6 @@ func (s *RedshiftDatasource) Settings(_ backend.DataSourceInstanceSettings) sqld
 		FillMode: &data.FillMissing{
 			Mode: data.FillModeNull,
 		},
-		Timeout: 5 * time.Minute,
 	}
 }
 

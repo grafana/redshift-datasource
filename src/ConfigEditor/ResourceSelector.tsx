@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { SelectableValue } from '@grafana/data';
 import { InlineField, Select } from '@grafana/ui';
-import { selectors } from './selectors';
+import { selectors } from '../selectors';
 import { isEqual } from 'lodash';
 import { defaultKey } from 'types';
 

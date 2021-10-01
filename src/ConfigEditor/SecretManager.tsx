@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { InlineField, Input } from '@grafana/ui';
-import { selectors } from 'selectors';
-import { ResourceSelector } from 'ResourceSelector';
+import { selectors } from '../selectors';
+import { ResourceSelector } from './ResourceSelector';
 import { SelectableValue } from '@grafana/data';
-import { RedshiftDataSourceOptions } from 'types';
+import { RedshiftDataSourceOptions, RedshiftManagedSecret } from '../types';
 
 export type Props = {
   clusterIdentifier?: string;
@@ -12,15 +12,15 @@ export type Props = {
   secretsDisabled?: boolean;
   fetchSecrets: () => Promise<Array<string | SelectableValue<string>>>;
   fetchSecret: (arn: string) => Promise<{ dbClusterIdentifier: string; username: string }>;
-  setClusterID: (id: string) => void;
-  onChangeDB: React.FormEventHandler<HTMLInputElement>;
-  onChangeSecret: (e: SelectableValue<string> | null) => void;
   saveOptions: () => Promise<void>;
+  onChangeClusterID: (r?: string) => void;
+  onChangeDB: (r?: string) => void;
+  onChangeSecret: (r?: RedshiftManagedSecret) => void;
 };
 
-export function ConfigEditorSecretManager(props: Props) {
+export function SecretManager(props: Props) {
   const {
-    setClusterID,
+    onChangeClusterID,
     onChangeDB,
     onChangeSecret,
     clusterIdentifier,
@@ -36,16 +36,16 @@ export function ConfigEditorSecretManager(props: Props) {
   useEffect(() => {
     if (managedSecret) {
       fetchSecret(managedSecret.arn).then((s) => {
-        setClusterID(s.dbClusterIdentifier);
+        onChangeClusterID(s.dbClusterIdentifier);
         setDBUser(s.username);
       });
     }
-  }, [managedSecret, setClusterID, fetchSecret]);
+  }, [managedSecret, onChangeClusterID, fetchSecret]);
   return (
     <>
       <ResourceSelector
         resource="ManagedSecret"
-        onChange={onChangeSecret}
+        onChange={(e) => onChangeSecret({ name: e?.label || '', arn: e?.value || '' })}
         fetch={fetchSecrets}
         value={managedSecret?.name || null}
         saveOptions={saveOptions}
@@ -75,7 +75,7 @@ export function ConfigEditorSecretManager(props: Props) {
           css
           className="width-30"
           value={database ?? ''}
-          onChange={onChangeDB}
+          onChange={(e) => onChangeDB(e.currentTarget.value)}
         />
       </InlineField>
     </>

@@ -1,17 +1,17 @@
 import React from 'react';
 import { InlineField, Input } from '@grafana/ui';
-import { selectors } from 'selectors';
+import { selectors } from '../selectors';
 
 export type Props = {
   clusterIdentifier?: string;
   database?: string;
   dbUser?: string;
-  onChangeCluster: React.FormEventHandler<HTMLInputElement>;
-  onChangeDB: React.FormEventHandler<HTMLInputElement>;
-  onChangeDBUser: React.FormEventHandler<HTMLInputElement>;
+  onChangeCluster: (r?: string) => void;
+  onChangeDB: (r?: string) => void;
+  onChangeDBUser: (r?: string) => void;
 };
 
-export function ConfigEditorTempCreds(props: Props) {
+export function TempCreds(props: Props) {
   const { onChangeCluster, onChangeDB, onChangeDBUser, clusterIdentifier, database, dbUser } = props;
   return (
     <>
@@ -21,7 +21,7 @@ export function ConfigEditorTempCreds(props: Props) {
           css
           className="width-30"
           value={clusterIdentifier ?? ''}
-          onChange={onChangeCluster}
+          onChange={(e) => onChangeCluster(e.currentTarget.value)}
         />
       </InlineField>
       <InlineField label={selectors.components.ConfigEditor.Database.input} labelWidth={28}>
@@ -30,7 +30,7 @@ export function ConfigEditorTempCreds(props: Props) {
           css
           className="width-30"
           value={database ?? ''}
-          onChange={onChangeDB}
+          onChange={(e) => onChangeDB(e.currentTarget.value)}
         />
       </InlineField>
       <InlineField label={selectors.components.ConfigEditor.DatabaseUser.input} labelWidth={28}>
@@ -39,7 +39,7 @@ export function ConfigEditorTempCreds(props: Props) {
           css
           className="width-30"
           value={dbUser ?? ''}
-          onChange={onChangeDBUser}
+          onChange={(e) => onChangeDBUser(e.currentTarget.value)}
         />
       </InlineField>
     </>
