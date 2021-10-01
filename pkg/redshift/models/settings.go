@@ -20,11 +20,11 @@ type RedshiftSecret struct {
 
 type RedshiftDataSourceSettings struct {
 	awsds.AWSDatasourceSettings
-	ClusterIdentifier       string `json:"clusterIdentifier"`
-	Database                string `json:"database"`
-	UseTemporaryCredentials bool   `json:"useTemporaryCredentials"`
-	DBUser                  string `json:"dbUser"`
-	ManagedSecret           ManagedSecret
+	ClusterIdentifier string `json:"clusterIdentifier"`
+	Database          string `json:"database"`
+	UseManagedSecret  bool   `json:"useManagedSecret"`
+	DBUser            string `json:"dbUser"`
+	ManagedSecret     ManagedSecret
 }
 
 func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSettings) error {

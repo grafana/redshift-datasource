@@ -35,14 +35,14 @@ export function ConfigEditor(props: Props) {
   };
 
   // Auth type
-  const [useTempCreds, setUseTempCreds] = useState(props.options.jsonData.useTemporaryCredentials ?? true);
-  const onChangeAuthType = (newUseTempCreds: boolean) => {
-    setUseTempCreds(newUseTempCreds);
+  const [useManagedSecret, setUseManagedSecret] = useState(!!props.options.jsonData.useManagedSecret);
+  const onChangeAuthType = (newAuthType: boolean) => {
+    setUseManagedSecret(newAuthType);
     props.onOptionsChange({
       ...props.options,
       jsonData: {
         ...props.options.jsonData,
-        useTemporaryCredentials: newUseTempCreds,
+        useManagedSecret: newAuthType,
       },
     });
   };
@@ -121,7 +121,18 @@ export function ConfigEditor(props: Props) {
       <h6>Authentication</h6>
       <Label
         description={
-          useTempCreds ? (
+          useManagedSecret ? (
+            <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+              Use a stored secret to authenticate access.{' '}
+              <a
+                href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Learn more
+              </a>
+            </div>
+          ) : (
             <div style={{ marginTop: '10px', marginBottom: '10px', minWidth: '670px' }}>
               Use the <code>GetClusterCredentials</code> IAM permission and your database user to generate temporary
               access credentials.{' '}
@@ -133,39 +144,19 @@ export function ConfigEditor(props: Props) {
                 Learn more
               </a>
             </div>
-          ) : (
-            <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-              Use a stored secret to authenticate access.{' '}
-              <a
-                href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Learn more
-              </a>
-            </div>
           )
         }
       >
         <RadioButtonGroup
           options={[
-            { label: 'Temporary credentials', value: true },
-            { label: 'AWS Secrets Manager', value: false },
+            { label: 'Temporary credentials', value: false },
+            { label: 'AWS Secrets Manager', value: true },
           ]}
-          value={useTempCreds}
+          value={useManagedSecret}
           onChange={onChangeAuthType}
         />
       </Label>
-      {useTempCreds ? (
-        <TempCreds
-          clusterIdentifier={clusterIdentifier}
-          database={database}
-          dbUser={dbUser}
-          onChangeDB={onDatabaseChange}
-          onChangeDBUser={onDBUserChange}
-          onChangeCluster={onClusterIdentifierChange}
-        />
-      ) : (
+      {useManagedSecret ? (
         <SecretManager
           clusterIdentifier={clusterIdentifier}
           database={database}
@@ -177,6 +168,15 @@ export function ConfigEditor(props: Props) {
           onChangeSecret={onSecretChange}
           onChangeClusterID={onClusterIdentifierChange}
           saveOptions={saveOptions}
+        />
+      ) : (
+        <TempCreds
+          clusterIdentifier={clusterIdentifier}
+          database={database}
+          dbUser={dbUser}
+          onChangeDB={onDatabaseChange}
+          onChangeDBUser={onDBUserChange}
+          onChangeCluster={onClusterIdentifierChange}
         />
       )}
     </>

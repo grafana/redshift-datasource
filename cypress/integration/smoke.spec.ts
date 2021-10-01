@@ -126,7 +126,9 @@ e2e.scenario({
             e2eSelectors.ConfigEditor.ManagedSecret.input()
               .type(datasource.jsonData.managedSecret.name)
               .type('{enter}');
-            e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
+            e2eSelectors.ConfigEditor.Database.testID()
+              .click({ force: true })
+              .type(datasource.jsonData.database, { delay: 20 });
           },
           type: 'Amazon Redshift',
         });

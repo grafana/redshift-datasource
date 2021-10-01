@@ -72,7 +72,7 @@ describe('ConfigEditor', () => {
         // setting the managedSecret will trigger the secret retrieval
         options={{
           ...props.options,
-          jsonData: { ...props.options.jsonData, useTemporaryCredentials: false, managedSecret: secret },
+          jsonData: { ...props.options.jsonData, useManagedSecret: true, managedSecret: secret },
         }}
       />
     );
@@ -80,7 +80,7 @@ describe('ConfigEditor', () => {
     // the clusterIdentifier update is delegated to the onChange function
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
-      jsonData: { ...props.options.jsonData, useTemporaryCredentials: false, managedSecret: secret, clusterIdentifier },
+      jsonData: { ...props.options.jsonData, useManagedSecret: true, managedSecret: secret, clusterIdentifier },
     });
   });
 });

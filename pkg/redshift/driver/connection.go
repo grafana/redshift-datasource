@@ -38,10 +38,10 @@ func parseStatementInput(query string, settings *models.RedshiftDataSourceSettin
 		Database:          aws.String(settings.Database),
 		Sql:               aws.String(query),
 	}
-	if settings.UseTemporaryCredentials {
-		statementInput.DbUser = aws.String(settings.DBUser)
-	} else {
+	if settings.UseManagedSecret {
 		statementInput.SecretArn = aws.String(settings.ManagedSecret.ARN)
+	} else {
+		statementInput.DbUser = aws.String(settings.DBUser)
 	}
 	return statementInput
 }
