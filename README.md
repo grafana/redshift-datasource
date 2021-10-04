@@ -20,9 +20,11 @@ To access data source settings, hover your mouse over the **Configuration** (gea
 | `External ID` (optional)     | If you are assuming a role in another account, that has been created with an external ID, specify the external ID here. |
 | `Endpoint` (optional)        | Optionally, specify a custom endpoint for the service.                                                                  |
 | `Default Region`             | Region in which the cluster is deployed.                                                                                |
-| `Cluster Identifier`         | Redshift Cluster to use.                                                                                                |
+| `Authentication`             | To authenticate with AWS Redshift you can use AWS temporary credentials or AWS Secrets Manager.     |
+| `Managed Secret`             | When using AWS Secrets Manager, select the secret containing the credentials to access the database.                   |
+| `Cluster Identifier`         | Redshift Cluster to use (automatically set if using AWS Secrets Manager).                                               |
+| `DB User`                    | User of the database (automatically set if using AWS Secrets Manager).                                                  |
 | `Database`                   | Name of the database within the cluster.                                                                                |
-| `DB User`                    | User of the database.                                                                                                   |
 
 ## Authentication
 
