@@ -13,7 +13,7 @@ const props = {
   onChange: jest.fn(),
 };
 
-describe('AthenaResourceSelector', () => {
+describe('ResourceSelector', () => {
   it('should include a default option', () => {
     render(<ResourceSelector {...props} default="foo" value={defaultKey} />);
     expect(screen.queryByText('default (foo)')).toBeInTheDocument();

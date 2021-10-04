@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Label, RadioButtonGroup } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import {
   RedshiftDataSourceOptions,
@@ -11,6 +10,7 @@ import { ConnectionConfig } from '@grafana/aws-sdk';
 import { TempCreds } from './TempCreds';
 import { SecretManager } from './SecretManager';
 import { getBackendSrv } from '@grafana/runtime';
+import { AuthTypeSwitch } from './AuthTypeSwitch';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 
@@ -23,14 +23,11 @@ export function ConfigEditor(props: Props) {
     if (saved) {
       return;
     }
-    await getBackendSrv()
-      .put(baseURL, props.options)
-      .then((result: { datasource: RedshiftDataSourceSettings }) => {
-        props.onOptionsChange({
-          ...props.options,
-          version: result.datasource.version,
-        });
-      });
+    const result: { datasource: RedshiftDataSourceSettings } = await getBackendSrv().put(baseURL, props.options);
+    props.onOptionsChange({
+      ...props.options,
+      version: result.datasource.version,
+    });
     setSaved(true);
   };
 
@@ -72,9 +69,9 @@ export function ConfigEditor(props: Props) {
   };
 
   // ClusterID
-  const [clusterIdentifier, setClusterclusterIdentifier] = useState(jsonData.clusterIdentifier);
+  const [clusterIdentifier, setClusterIdentifier] = useState(jsonData.clusterIdentifier);
   const onClusterIdentifierChange = (id?: string) => {
-    setClusterclusterIdentifier(id);
+    setClusterIdentifier(id);
     props.onOptionsChange({
       ...props.options,
       jsonData: {
@@ -119,43 +116,7 @@ export function ConfigEditor(props: Props) {
     <>
       <ConnectionConfig {...props} onOptionsChange={onOptionsChange} />
       <h6>Authentication</h6>
-      <Label
-        description={
-          useManagedSecret ? (
-            <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-              Use a stored secret to authenticate access.{' '}
-              <a
-                href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Learn more
-              </a>
-            </div>
-          ) : (
-            <div style={{ marginTop: '10px', marginBottom: '10px', minWidth: '670px' }}>
-              Use the <code>GetClusterCredentials</code> IAM permission and your database user to generate temporary
-              access credentials.{' '}
-              <a
-                href="https://docs.aws.amazon.com/redshift/latest/mgmt/generating-user-credentials.html"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Learn more
-              </a>
-            </div>
-          )
-        }
-      >
-        <RadioButtonGroup
-          options={[
-            { label: 'Temporary credentials', value: false },
-            { label: 'AWS Secrets Manager', value: true },
-          ]}
-          value={useManagedSecret}
-          onChange={onChangeAuthType}
-        />
-      </Label>
+      <AuthTypeSwitch useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
       {useManagedSecret ? (
         <SecretManager
           clusterIdentifier={clusterIdentifier}
