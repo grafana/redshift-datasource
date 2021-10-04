@@ -10,7 +10,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
-	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
+	"github.com/grafana/redshift-datasource/pkg/redshift/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/jpillora/backoff"
 )
@@ -21,14 +21,12 @@ var (
 )
 
 type conn struct {
-	sessionCache *awsds.SessionCache
-	settings     *models.RedshiftDataSourceSettings
+	api *api.API
 }
 
-func newConnection(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) *conn {
+func newConnection(api *api.API) *conn {
 	return &conn{
-		sessionCache: sessionCache,
-		settings:     settings,
+		api: api,
 	}
 }
 
@@ -47,23 +45,16 @@ func parseStatementInput(query string, settings *models.RedshiftDataSourceSettin
 }
 
 func (c *conn) QueryContext(ctx context.Context, query string, args []driver.NamedValue) (driver.Rows, error) {
-	session, err := c.sessionCache.GetSession(c.settings.DefaultRegion, c.settings.AWSDatasourceSettings)
-	if err != nil {
-		return nil, err
-	}
-	client := redshiftdataapiservice.New(session)
-
-	statementInput := parseStatementInput(query, c.settings)
-	executeStatementResult, err := client.ExecuteStatement(statementInput)
+	executeStatementResult, err := c.api.Execute(ctx, query)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := c.waitOnQuery(ctx, client, *executeStatementResult.Id); err != nil {
+	if err := c.waitOnQuery(ctx, c.api.Client, *executeStatementResult.Id); err != nil {
 		return nil, err
 	}
 
-	return newRows(client, *executeStatementResult.Id)
+	return newRows(c.api.Client, *executeStatementResult.Id)
 }
 
 // waitOnQuery polls the redshift api until the query finishes, returning an error if it failed.

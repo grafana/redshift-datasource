@@ -5,7 +5,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/grafana/redshift-datasource/pkg/redshift/gtime"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/gtime"
 	"github.com/grafana/sqlds/v2"
 	"github.com/pkg/errors"
 )
