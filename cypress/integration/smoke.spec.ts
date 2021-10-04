@@ -24,7 +24,10 @@ type RedshiftDatasourceConfig = {
     database: string;
     dbUser: string;
     defaultRegion: string;
-    managedSecret: string;
+    managedSecret: {
+      arn: string;
+      name: string;
+    };
   };
 };
 type RedshiftProvision = {
@@ -117,11 +120,15 @@ e2e.scenario({
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
             e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
-            e2eSelectors.ConfigEditor.ManagedSecret.testID()
+            e2eSelectors.ConfigEditor.ManagedSecret.input().click({ force: true });
+            // wait for it to load
+            e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name);
+            e2eSelectors.ConfigEditor.ManagedSecret.input()
+              .type(datasource.jsonData.managedSecret.name)
+              .type('{enter}');
+            e2eSelectors.ConfigEditor.Database.testID()
               .click({ force: true })
-              .type(datasource.jsonData.managedSecret);
-            e2eSelectors.ConfigEditor.ClusterID.testID().click({ force: true }).type(datasource.jsonData.clusterId);
-            e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
+              .type(datasource.jsonData.database, { delay: 20 });
           },
           type: 'Amazon Redshift',
         });

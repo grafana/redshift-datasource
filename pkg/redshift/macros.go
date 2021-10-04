@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/grafana/redshift-datasource/pkg/redshift/gtime"
-	"github.com/grafana/sqlds"
+	"github.com/grafana/sqlds/v2"
 	"github.com/pkg/errors"
 )
 
