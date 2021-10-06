@@ -56,10 +56,15 @@ Here is a minimal policy example:
       "Sid": "AllowReadingMetricsFromRedshift",
       "Effect": "Allow",
       "Action": [
-        "redshift-data:DescribeStatement",
-        "redshift-data:ExecuteStatement",
+        "redshift-data:ListTables",
+        "secretsmanager:GetSecretValue",
+        "redshift-data:DescribeTable",
         "redshift-data:GetStatementResult",
-        "redshift:GetClusterCredentials"
+        "redshift:GetClusterCredentials",
+        "redshift-data:DescribeStatement",
+        "redshift-data:ListSchemas",
+        "redshift-data:ExecuteStatement",
+        "secretsmanager:ListSecrets"
       ],
       "Resource": "*"
     }
