@@ -1,15 +1,14 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import ResourceMacro, { Resource } from 'ResourceMacro';
-import { SchemaInfo } from 'SchemaInfo';
-import { mockDatasource, mockQuery, mockSchemaInfo } from '__mocks__/datasource';
-import userEvent from '@testing-library/user-event';
+import { mockQuery } from '__mocks__/datasource';
+import { select } from 'react-select-event';
 
 const defaultProps = {
   resource: 'table' as Resource,
   query: mockQuery,
-  schema: mockSchemaInfo,
-  updateSchemaState: jest.fn(),
+  updateQuery: jest.fn(),
+  loadOptions: jest.fn(),
 };
 
 describe('ResourceMacro', () => {
@@ -23,35 +22,34 @@ describe('ResourceMacro', () => {
     expect(screen.getByText('$__table = foo')).toBeInTheDocument();
   });
 
-  it('should load the resource options', () => {
-    const schema = new SchemaInfo(mockDatasource, mockQuery);
-    schema.getTables = jest.fn().mockReturnValue({ then: jest.fn() });
-    render(<ResourceMacro {...defaultProps} schema={schema} />);
+  it('should load the resource options', async () => {
+    const loadOptions = jest.fn().mockResolvedValue([]);
+    render(<ResourceMacro {...defaultProps} loadOptions={loadOptions} />);
     const node = screen.getByText('$__table = ?');
-    userEvent.click(node);
-    expect(schema.getTables).toHaveBeenCalled();
+    node.click();
+    expect(loadOptions).toHaveBeenCalled();
+    await waitFor(() => screen.getByText('No options found'));
   });
 
   it('should change the selected option', async () => {
-    const updateSchemaState = jest.fn();
-    const schema = new SchemaInfo(mockDatasource, mockQuery);
-    schema.getTables = jest.fn().mockResolvedValue([
+    const loadOptions = jest.fn().mockResolvedValue([
       { label: 'foo', value: 'foo' },
       { label: 'bar', value: 'bar' },
     ]);
+    const updateQuery = jest.fn();
     render(
       <ResourceMacro
         {...defaultProps}
         query={{ ...defaultProps.query, table: 'foo' }}
-        schema={schema}
-        updateSchemaState={updateSchemaState}
+        loadOptions={loadOptions}
+        updateQuery={updateQuery}
       />
     );
-    // TODO: investigate why this throws a console.log error in our test suite
-    userEvent.click(screen.getByText('$__table = foo'));
-    expect(schema.getTables).toHaveBeenCalled();
-    await screen.findByText('bar');
-    userEvent.click(screen.getByText('bar'));
-    expect(updateSchemaState).toHaveBeenCalledWith({ ...mockQuery, table: 'bar' });
+    const selectEl = screen.getByText('$__table = foo');
+    expect(selectEl).toBeInTheDocument();
+    selectEl.click();
+    await select(selectEl, 'bar', { container: document.body });
+
+    expect(updateQuery).toHaveBeenCalledWith({ ...mockQuery, table: 'bar' });
   });
 });

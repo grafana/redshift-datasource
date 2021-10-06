@@ -1,14 +1,22 @@
-import { DataSourceVariableSupport, VariableSupportType } from '@grafana/data';
-
+import { DataQueryRequest, DataQueryResponse, CustomVariableSupport } from '@grafana/data';
+import { assign } from 'lodash';
+import { QueryCodeEditor } from 'QueryCodeEditor';
+import { Observable } from 'rxjs';
 import { DataSource } from './datasource';
-import { RedshiftQuery } from './types';
+import { RedshiftQuery, defaultQuery } from './types';
 
-export class RedshiftVariableSupport extends DataSourceVariableSupport<DataSource, RedshiftQuery> {
-  constructor() {
+export class RedshiftVariableSupport extends CustomVariableSupport<DataSource, RedshiftQuery> {
+  constructor(private readonly datasource: DataSource) {
     super();
+    this.datasource = datasource;
+    this.query = this.query.bind(this);
   }
 
-  getType() {
-    return VariableSupportType.Datasource;
+  editor = QueryCodeEditor;
+
+  query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
+    // fill query params with default data
+    assign(request.targets, [{ ...defaultQuery, ...request.targets[0], refId: 'A' }]);
+    return this.datasource.query(request);
   }
 }

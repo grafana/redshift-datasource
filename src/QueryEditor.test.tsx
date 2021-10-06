@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { QueryEditor } from './QueryEditor';
 import { mockDatasource, mockQuery } from './__mocks__/datasource';
 import '@testing-library/jest-dom';
@@ -21,19 +21,14 @@ const props = {
 describe('QueryEditor', () => {
   it('should render Macros input', async () => {
     render(<QueryEditor {...props} />);
-    expect(screen.getByText('$__schema = public')).toBeInTheDocument();
+    await waitFor(() => screen.getByText('$__schema = public'));
     expect(screen.getByText('$__table = ?')).toBeInTheDocument();
     expect(screen.getByText('$__column = ?')).toBeInTheDocument();
   });
 
-  it('should not include the Format As input if the query editor does not support multiple queries', async () => {
-    render(<QueryEditor {...props} queries={undefined} />);
-    expect(screen.queryByText('Format as')).not.toBeInTheDocument();
-  });
-
   it('should include the Format As input', async () => {
-    render(<QueryEditor {...props} queries={[]} />);
-    expect(screen.queryByText('Format as')).toBeInTheDocument();
+    render(<QueryEditor {...props} />);
+    await waitFor(() => screen.getByText('Format as'));
   });
 
   it('should allow to change the fill mode', async () => {
