@@ -1,19 +1,15 @@
 import { defaults } from 'lodash';
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from './datasource';
 import { defaultQuery, RedshiftDataSourceOptions, RedshiftQuery } from './types';
-import { CodeEditor, CodeEditorSuggestionItem, InlineFormLabel } from '@grafana/ui';
+import { CodeEditor, InlineFormLabel } from '@grafana/ui';
 import { getTemplateSrv } from '@grafana/runtime';
 import ResourceMacro from 'ResourceMacro';
 import { getSuggestions } from 'Suggestions';
 
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
-
-// getSuggestions result gets cached so we need to reference a var outside the component
-// related issue: https://github.com/grafana/grafana/issues/39264
-let suggestions: CodeEditorSuggestionItem[] = [];
 
 export function QueryCodeEditor(props: Props) {
   const onChange = (value: RedshiftQuery) => {
@@ -50,11 +46,6 @@ export function QueryCodeEditor(props: Props) {
     return columns.map((column) => ({ label: column, value: column })).concat({ label: '-- remove --', value: '' });
   };
 
-  const { table, column } = props.query;
-  useEffect(() => {
-    suggestions = getSuggestions({ table, column, templateSrv: getTemplateSrv() });
-  }, [table, column]);
-
   return (
     <>
       <div className={'gf-form-inline'}>
@@ -88,9 +79,10 @@ export function QueryCodeEditor(props: Props) {
         language={'redshift'}
         value={rawSQL}
         onBlur={onRawSqlChange}
+        // removed onSave due to bug: https://github.com/grafana/grafana/issues/39264
         showMiniMap={false}
         showLineNumbers={true}
-        getSuggestions={() => suggestions}
+        getSuggestions={() => getSuggestions({ query: props.query, templateSrv: getTemplateSrv() })}
       />
     </>
   );
