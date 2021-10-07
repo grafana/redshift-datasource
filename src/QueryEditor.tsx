@@ -1,5 +1,3 @@
-import { defaults } from 'lodash';
-
 import React, { useState } from 'react';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from './datasource';
@@ -29,7 +27,7 @@ export function QueryEditor(props: Props) {
     setFillValue(currentTarget.valueAsNumber);
   };
 
-  const { format, fillMode } = defaults(props.query, defaultQuery);
+  const { format, fillMode } = { ...props.query, ...defaultQuery };
 
   return (
     <>
