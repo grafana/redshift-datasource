@@ -5,14 +5,14 @@ import { selectors } from '../selectors';
 import { isEqual } from 'lodash';
 import { defaultKey } from 'types';
 
-export type QueryResourceType = 'ManagedSecret';
+export type QueryResourceType = 'ManagedSecret' | 'schema' | 'table' | 'column';
 
 type Props = {
   resource: QueryResourceType;
   value: string | null;
   fetch: () => Promise<Array<string | SelectableValue<string>>>;
   onChange: (e: SelectableValue<string> | null) => void;
-  dependencies?: Array<string | null>;
+  dependencies?: Array<string | null | undefined>;
   tooltip?: string;
   // Options only needed for QueryEditor
   default?: string;

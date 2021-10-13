@@ -8,8 +8,11 @@ import { FillValueOptions } from 'types';
 
 const ds = mockDatasource;
 const q = mockQuery;
-ds.getResource = jest.fn().mockResolvedValue([]);
-ds.postResource = jest.fn().mockResolvedValue([]);
+
+beforeEach(() => {
+  ds.getResource = jest.fn().mockResolvedValue([]);
+  ds.postResource = jest.fn().mockResolvedValue([]);
+});
 
 const props = {
   datasource: ds,
@@ -19,11 +22,69 @@ const props = {
 };
 
 describe('QueryEditor', () => {
-  it('should render Macros input', async () => {
-    render(<QueryEditor {...props} />);
-    await waitFor(() => screen.getByText('$__schema = public'));
-    expect(screen.getByText('$__table = ?')).toBeInTheDocument();
-    expect(screen.getByText('$__column = ?')).toBeInTheDocument();
+  it('should request select schemas and execute the query', async () => {
+    const onChange = jest.fn();
+    const onRunQuery = jest.fn();
+    ds.getResource = jest.fn().mockResolvedValue(['foo']);
+    render(
+      <QueryEditor {...props} onChange={onChange} onRunQuery={onRunQuery} query={{ ...props.query, schema: 'bar' }} />
+    );
+
+    const selectEl = screen.getByLabelText('Schema');
+    expect(selectEl).toBeInTheDocument();
+
+    await select(selectEl, 'foo', { container: document.body });
+
+    expect(ds.getResource).toHaveBeenCalledWith('schemas');
+    expect(onChange).toHaveBeenCalledWith({
+      ...q,
+      schema: 'foo',
+    });
+    expect(onRunQuery).toHaveBeenCalled();
+  });
+
+  it('should request select tables and execute the query', async () => {
+    const onChange = jest.fn();
+    const onRunQuery = jest.fn();
+    ds.postResource = jest.fn().mockResolvedValue(['foo']);
+    render(
+      <QueryEditor {...props} onChange={onChange} onRunQuery={onRunQuery} query={{ ...props.query, schema: 'bar' }} />
+    );
+
+    const selectEl = screen.getByLabelText('Table');
+    expect(selectEl).toBeInTheDocument();
+
+    await select(selectEl, 'foo', { container: document.body });
+
+    expect(ds.postResource).toHaveBeenCalledWith('tables', { schema: 'bar' });
+    expect(onChange).toHaveBeenCalledWith({
+      ...q,
+      schema: 'bar',
+      table: 'foo',
+    });
+    expect(onRunQuery).toHaveBeenCalled();
+  });
+
+  it('should request select column and execute the query', async () => {
+    const onChange = jest.fn();
+    const onRunQuery = jest.fn();
+    ds.postResource = jest.fn().mockResolvedValue(['foo']);
+    render(
+      <QueryEditor {...props} onChange={onChange} onRunQuery={onRunQuery} query={{ ...props.query, table: 'bar' }} />
+    );
+
+    const selectEl = screen.getByLabelText('Column');
+    expect(selectEl).toBeInTheDocument();
+
+    await select(selectEl, 'foo', { container: document.body });
+
+    expect(ds.postResource).toHaveBeenCalledWith('columns', { table: 'bar' });
+    expect(onChange).toHaveBeenCalledWith({
+      ...q,
+      table: 'bar',
+      column: 'foo',
+    });
+    expect(onRunQuery).toHaveBeenCalled();
   });
 
   it('should include the Format As input', async () => {
