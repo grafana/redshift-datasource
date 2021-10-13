@@ -24,7 +24,6 @@ export const Components = {
       input: 'Database User',
       testID: 'data-testid dbuser',
     },
-    // TODO: not in configEditor
     schema: {
       input: 'Schema',
       testID: 'data-testid schema',
