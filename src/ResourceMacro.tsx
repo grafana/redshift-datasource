@@ -1,7 +1,6 @@
 import { SelectableValue } from '@grafana/data';
 import { SegmentAsync } from '@grafana/ui';
 import React from 'react';
-import { SchemaInfo } from 'SchemaInfo';
 import { RedshiftQuery } from 'types';
 
 export type Resource = 'schema' | 'table' | 'column';
@@ -9,17 +8,21 @@ export type Resource = 'schema' | 'table' | 'column';
 interface Props {
   resource: Resource;
   query: RedshiftQuery;
-  schema: SchemaInfo;
-  updateSchemaState: (query: RedshiftQuery) => void;
-  value?: string;
+  updateQuery: (q: RedshiftQuery) => void;
+  loadOptions: (query?: string) => Promise<Array<SelectableValue<string>>>;
 }
 
-function ResourceMacro({ resource, schema, updateSchemaState, query, value }: Props) {
+function ResourceMacro({ resource, query, updateQuery, loadOptions }: Props) {
   let placeholder = '';
   let current = '$__' + resource + ' = ';
   if (query[resource]) {
     current += query[resource];
   } else {
+    let value = query[resource];
+    if (!value && resource === 'schema') {
+      // Use the public schema by default
+      value = 'public';
+    }
     placeholder = current + (value ?? '?');
     current = '';
   }
@@ -42,20 +45,14 @@ function ResourceMacro({ resource, schema, updateSchemaState, query, value }: Pr
         // Clean up column since a new table is set
         newQuery.column = undefined;
       }
-      updateSchemaState(newQuery);
+      updateQuery(newQuery);
     };
-  };
-
-  const loadOptions = {
-    schema: schema.getSchemas,
-    table: schema.getTables,
-    column: schema.getColumns,
   };
 
   return (
     <SegmentAsync
       value={current}
-      loadOptions={loadOptions[resource]}
+      loadOptions={loadOptions}
       placeholder={placeholder}
       onChange={onChanged(resource)}
       allowCustomValue
