@@ -24,6 +24,18 @@ export const Components = {
       input: 'Database User',
       testID: 'data-testid dbuser',
     },
+    schema: {
+      input: 'Schema',
+      testID: 'data-testid schema',
+    },
+    table: {
+      input: 'Table',
+      testID: 'data-testid table',
+    },
+    column: {
+      input: 'Column',
+      testID: 'data-testid column',
+    },
   },
   QueryEditor: {
     CodeEditor: {
