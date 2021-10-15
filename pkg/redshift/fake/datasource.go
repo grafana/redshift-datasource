@@ -32,15 +32,15 @@ func (s *RedshiftFakeDatasource) Macros() sqlds.Macros {
 	return sqlds.Macros{}
 }
 
-func (s *RedshiftFakeDatasource) Schemas(ctx context.Context) ([]string, error) {
+func (s *RedshiftFakeDatasource) Schemas(ctx context.Context, options sqlds.Options) ([]string, error) {
 	return []string{}, nil
 }
 
-func (s *RedshiftFakeDatasource) Tables(ctx context.Context, schema string) ([]string, error) {
+func (s *RedshiftFakeDatasource) Tables(ctx context.Context, options sqlds.Options) ([]string, error) {
 	return []string{}, nil
 }
 
-func (s *RedshiftFakeDatasource) Columns(ctx context.Context, table string) ([]string, error) {
+func (s *RedshiftFakeDatasource) Columns(ctx context.Context, options sqlds.Options) ([]string, error) {
 	return []string{}, nil
 }
 
