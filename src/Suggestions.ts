@@ -1,8 +1,7 @@
 import { CodeEditorSuggestionItem, CodeEditorSuggestionItemKind } from '@grafana/ui';
 import { TemplateSrv } from '@grafana/runtime';
-import { RedshiftQuery } from './types';
 
-export const getSuggestions = ({ templateSrv, query }: { templateSrv: TemplateSrv; query: RedshiftQuery }) => {
+export const getSuggestions = (templateSrv: TemplateSrv, schema?: string, table?: string, column?: string) => {
   const sugs: CodeEditorSuggestionItem[] = [
     {
       label: '$__timeEpoch',
@@ -42,17 +41,17 @@ export const getSuggestions = ({ templateSrv, query }: { templateSrv: TemplateSr
     {
       label: '$__schema',
       kind: CodeEditorSuggestionItemKind.Text,
-      detail: `(Macro) ${query.schema || 'public'}`,
+      detail: `(Macro) ${schema || 'public'}`,
     },
     {
       label: '$__table',
       kind: CodeEditorSuggestionItemKind.Text,
-      detail: `(Macro) ${query.table}`,
+      detail: `(Macro) ${table}`,
     },
     {
       label: '$__column',
       kind: CodeEditorSuggestionItemKind.Text,
-      detail: `(Macro) ${query.column}`,
+      detail: `(Macro) ${column}`,
     },
   ];
 
