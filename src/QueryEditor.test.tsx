@@ -5,6 +5,11 @@ import { mockDatasource, mockQuery } from './__mocks__/datasource';
 import '@testing-library/jest-dom';
 import { select } from 'react-select-event';
 import { FillValueOptions } from 'types';
+import * as runtime from '@grafana/runtime';
+
+jest
+  .spyOn(runtime, 'getTemplateSrv')
+  .mockImplementation(() => ({ getVariables: jest.fn().mockReturnValue([]), replace: jest.fn() }));
 
 const ds = mockDatasource;
 const q = mockQuery;
