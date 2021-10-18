@@ -20,6 +20,8 @@ export function QueryCodeEditor(props: Props) {
   };
 
   const { rawSQL } = defaults(props.query, defaultQuery);
+  // Use a reference for suggestions because a bug in CodeEditor getSuggestions
+  // https://github.com/grafana/grafana/issues/40121
   const suggestionsRef = useRef<CodeEditorSuggestionItem[]>([]);
   useEffect(() => {
     suggestionsRef.current = getSuggestions(
@@ -28,7 +30,7 @@ export function QueryCodeEditor(props: Props) {
       props.query.table,
       props.query.column
     );
-  }, [props.query.table, props.query.column]);
+  }, [props.query.schema, props.query.table, props.query.column]);
 
   return (
     <CodeEditor
