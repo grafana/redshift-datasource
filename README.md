@@ -20,8 +20,8 @@ To access data source settings, hover your mouse over the **Configuration** (gea
 | `External ID` (optional)     | If you are assuming a role in another account, that has been created with an external ID, specify the external ID here. |
 | `Endpoint` (optional)        | Optionally, specify a custom endpoint for the service.                                                                  |
 | `Default Region`             | Region in which the cluster is deployed.                                                                                |
-| `Authentication`             | To authenticate with AWS Redshift you can use AWS temporary credentials or AWS Secrets Manager.     |
-| `Managed Secret`             | When using AWS Secrets Manager, select the secret containing the credentials to access the database.                   |
+| `Authentication`             | To authenticate with AWS Redshift you can use AWS temporary credentials or AWS Secrets Manager.                         |
+| `Managed Secret`             | When using AWS Secrets Manager, select the secret containing the credentials to access the database.                    |
 | `Cluster Identifier`         | Redshift Cluster to use (automatically set if using AWS Secrets Manager).                                               |
 | `DB User`                    | User of the database (automatically set if using AWS Secrets Manager).                                                  |
 | `Database`                   | Name of the database within the cluster.                                                                                |
@@ -57,7 +57,6 @@ Here is a minimal policy example:
       "Effect": "Allow",
       "Action": [
         "redshift-data:ListTables",
-        "secretsmanager:GetSecretValue",
         "redshift-data:DescribeTable",
         "redshift-data:GetStatementResult",
         "redshift:GetClusterCredentials",
@@ -67,6 +66,17 @@ Here is a minimal policy example:
         "secretsmanager:ListSecrets"
       ],
       "Resource": "*"
+    },
+    {
+      "Sid": "AllowReadingRedshiftQuerySecrets",
+      "Effect": "Allow",
+      "Action": ["secretsmanager:GetSecretValue"],
+      "Resource": "*",
+      "Condition": {
+        "Null": {
+          "secretsmanager:ResourceTag/RedshiftQueryOwner": "false"
+        }
+      }
     }
   ]
 }
