@@ -1,10 +1,10 @@
 import { defaults } from 'lodash';
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { QueryEditorProps } from '@grafana/data';
 import { DataSource } from './datasource';
 import { defaultQuery, RedshiftDataSourceOptions, RedshiftQuery } from './types';
-import { CodeEditor } from '@grafana/ui';
+import { CodeEditor, CodeEditorSuggestionItem } from '@grafana/ui';
 import { getTemplateSrv } from '@grafana/runtime';
 import { getSuggestions } from 'Suggestions';
 
@@ -20,6 +20,17 @@ export function QueryCodeEditor(props: Props) {
   };
 
   const { rawSQL } = defaults(props.query, defaultQuery);
+  // Use a reference for suggestions because a bug in CodeEditor getSuggestions
+  // https://github.com/grafana/grafana/issues/40121
+  const suggestionsRef = useRef<CodeEditorSuggestionItem[]>([]);
+  useEffect(() => {
+    suggestionsRef.current = getSuggestions(
+      getTemplateSrv(),
+      props.query.schema,
+      props.query.table,
+      props.query.column
+    );
+  }, [props.query.schema, props.query.table, props.query.column]);
 
   return (
     <CodeEditor
@@ -29,7 +40,7 @@ export function QueryCodeEditor(props: Props) {
       onBlur={onRawSqlChange}
       showMiniMap={false}
       showLineNumbers={true}
-      getSuggestions={() => getSuggestions({ query: props.query, templateSrv: getTemplateSrv() })}
+      getSuggestions={() => suggestionsRef.current}
     />
   );
 }
