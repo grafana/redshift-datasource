@@ -2,6 +2,7 @@ package api
 
 import (
 	"context"
+	"sort"
 	"testing"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -31,7 +32,7 @@ func Test_ListSchemas(t *testing.T) {
 		"foo": {},
 		"bar": {},
 	}
-	expectedResult := []string{"foo", "bar"}
+	expectedResult := []string{"bar", "foo"}
 	c := &API{
 		settings: &models.RedshiftDataSourceSettings{},
 		Client:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
@@ -40,6 +41,7 @@ func Test_ListSchemas(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
+	sort.Strings(res)
 	if !cmp.Equal(expectedResult, res) {
 		t.Errorf("unexpected result: %v", cmp.Diff(expectedResult, res))
 	}

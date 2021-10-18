@@ -20,9 +20,9 @@ import (
 
 type RedshiftDatasourceIface interface {
 	sqlds.Driver
-	Schemas(ctx context.Context) ([]string, error)
-	Tables(ctx context.Context, schema string) ([]string, error)
-	Columns(ctx context.Context, table string) ([]string, error)
+	Schemas(ctx context.Context, options sqlds.Options) ([]string, error)
+	Tables(ctx context.Context, options sqlds.Options) ([]string, error)
+	Columns(ctx context.Context, options sqlds.Options) ([]string, error)
 	Secrets(ctx context.Context) ([]models.ManagedSecret, error)
 	Secret(ctx context.Context, arn string) (*models.RedshiftSecret, error)
 }
@@ -87,7 +87,7 @@ func (s *RedshiftDatasource) getApi(ctx context.Context) (*api.API, error) {
 	return api.New(s.sessionCache, &settings)
 }
 
-func (s *RedshiftDatasource) Schemas(ctx context.Context) ([]string, error) {
+func (s *RedshiftDatasource) Schemas(ctx context.Context, options sqlds.Options) ([]string, error) {
 	api, err := s.getApi(ctx)
 	if err != nil {
 		return nil, err
@@ -99,25 +99,24 @@ func (s *RedshiftDatasource) Schemas(ctx context.Context) ([]string, error) {
 	return schemas, nil
 }
 
-func (s *RedshiftDatasource) Tables(ctx context.Context, schema string) ([]string, error) {
+func (s *RedshiftDatasource) Tables(ctx context.Context, options sqlds.Options) ([]string, error) {
 	api, err := s.getApi(ctx)
 	if err != nil {
 		return nil, err
 	}
-	tables, err := api.ListTables(ctx, schema)
+	tables, err := api.ListTables(ctx, options["schema"])
 	if err != nil {
 		return nil, err
 	}
 	return tables, nil
 }
 
-func (s *RedshiftDatasource) Columns(ctx context.Context, table string) ([]string, error) {
+func (s *RedshiftDatasource) Columns(ctx context.Context, options sqlds.Options) ([]string, error) {
 	api, err := s.getApi(ctx)
 	if err != nil {
 		return nil, err
 	}
-	// TODO: Add support for other schemas
-	cols, err := api.ListColumns(ctx, "public", table)
+	cols, err := api.ListColumns(ctx, options["schema"], options["table"])
 	if err != nil {
 		return nil, err
 	}

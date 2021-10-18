@@ -72,6 +72,7 @@ export function QueryEditor(props: Props) {
   const [column, setColumn] = useState<string | undefined>(queryWithDefaults.column);
   const fetchColumns = async () => {
     const columns: string[] = await props.datasource.postResource('columns', {
+      schema: props.query.schema,
       table: props.query.table,
     });
     return columns.map((column) => ({ label: column, value: column })).concat({ label: '-- remove --', value: '' });

@@ -126,6 +126,8 @@ e2e.scenario({
             e2eSelectors.ConfigEditor.ManagedSecret.input()
               .type(datasource.jsonData.managedSecret.name)
               .type('{enter}');
+            // wait for the secret to be retrieved
+            e2eSelectors.ConfigEditor.ClusterID.testID().should('have.value', datasource.jsonData.clusterId);
             e2eSelectors.ConfigEditor.Database.testID()
               .click({ force: true })
               .type(datasource.jsonData.database, { delay: 20 });
