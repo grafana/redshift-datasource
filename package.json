@@ -1,6 +1,6 @@
 {
   "name": "grafana-redshift-datasource",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
