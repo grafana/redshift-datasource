@@ -29,7 +29,6 @@ type RedshiftDatasourceIface interface {
 
 type RedshiftDatasource struct {
 	sessionCache *awsds.SessionCache
-	db           *sql.DB
 }
 
 func New() *RedshiftDatasource {
@@ -63,7 +62,6 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 	if err != nil {
 		return nil, errors.WithMessage(err, "Failed to connect to database. Is the hostname and port correct?")
 	}
-	s.db = db
 
 	return db, nil
 }
