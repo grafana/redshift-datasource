@@ -4,8 +4,11 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"reflect"
 	"sync"
 
+	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
+	sqlDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
 )
 
@@ -18,20 +21,36 @@ var (
 
 // Driver is a sql.Driver
 type Driver struct {
-	api *api.API
+	name       string
+	api        *api.API
+	connection *conn
 }
 
 // Open returns a new driver.Conn using already existing settings
 func (d *Driver) Open(_ string) (driver.Conn, error) {
-	return newConnection(d.api), nil
+	d.connection = newConnection(d.api)
+	return d.connection, nil
 }
 
-// Open registers a new driver with a unique name
-func Open(api *api.API) (*sql.DB, error) {
+func (d *Driver) Closed() bool {
+	return d.connection == nil || d.connection.closed
+}
+
+func (d *Driver) OpenDB() (*sql.DB, error) {
+	return sql.Open(d.name, "")
+}
+
+// New registers a new driver with a unique name
+func New(dsAPI sqlAPI.AWSAPI) (sqlDriver.Driver, error) {
+	// The API is stored as a generic object but we need to parse it as a Athena API
+	if reflect.TypeOf(dsAPI) != reflect.TypeOf(&api.API{}) {
+		return nil, fmt.Errorf("wrong API type")
+	}
 	openFromSessionMutex.Lock()
 	openFromSessionCount++
 	name := fmt.Sprintf("%s-%d", DriverName, openFromSessionCount)
 	openFromSessionMutex.Unlock()
-	sql.Register(name, &Driver{api})
-	return sql.Open(name, "")
+	d := &Driver{api: dsAPI.(*api.API), name: name}
+	sql.Register(name, d)
+	return d, nil
 }

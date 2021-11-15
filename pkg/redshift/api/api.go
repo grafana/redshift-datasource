@@ -1,16 +1,22 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
+	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
+	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
+	"github.com/grafana/sqlds/v2"
 )
 
 type API struct {
@@ -19,16 +25,26 @@ type API struct {
 	settings      *models.RedshiftDataSourceSettings
 }
 
-func New(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) (*API, error) {
-	region := settings.DefaultRegion
-	if settings.Region != "" {
-		region = settings.Region
-	}
-	session, err := sessionCache.GetSession(region, settings.AWSDatasourceSettings)
+func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
+	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
+	sess, err := awsds.GetSessionWithDefaultRegion(sessionCache, redshiftSettings.AWSDatasourceSettings)
 	if err != nil {
 		return nil, err
 	}
-	return &API{redshiftdataapiservice.New(session), secretsmanager.New(session), settings}, nil
+
+	svc := redshiftdataapiservice.New(sess)
+	svc.Handlers.Send.PushFront(func(r *request.Request) {
+		r.HTTPRequest.Header.Set("User-Agent", awsds.GetUserAgentString("Redshift"))
+	})
+	secretsSVC := secretsmanager.New(sess)
+	secretsSVC.Handlers.Send.PushFront(func(r *request.Request) {
+		r.HTTPRequest.Header.Set("User-Agent", awsds.GetUserAgentString("Redshift"))
+	})
+	return &API{
+		Client:        svc,
+		SecretsClient: secretsSVC,
+		settings:      redshiftSettings,
+	}, nil
 }
 
 type apiInput struct {
@@ -51,20 +67,73 @@ func (c *API) apiInput() apiInput {
 	return res
 }
 
-func (c *API) Execute(ctx aws.Context, query string) (*redshiftdataapiservice.ExecuteStatementOutput, error) {
+func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.ExecuteQueryOutput, error) {
 	commonInput := c.apiInput()
-	input := &redshiftdataapiservice.ExecuteStatementInput{
+	redshiftInput := &redshiftdataapiservice.ExecuteStatementInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
 		SecretArn:         commonInput.SecretARN,
-		Sql:               aws.String(query),
+		Sql:               aws.String(input.Query),
 	}
 
-	return c.Client.ExecuteStatementWithContext(ctx, input)
+	output, err := c.Client.ExecuteStatementWithContext(ctx, redshiftInput)
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", api.ExecuteError, err)
+	}
+
+	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
 }
 
-func (c *API) ListSchemas(ctx aws.Context) ([]string, error) {
+func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.ExecuteQueryStatus, error) {
+	statusResp, err := c.Client.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
+		Id: aws.String(output.ID),
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%w: %v", api.StatusError, err)
+	}
+
+	var finished bool
+	state := *statusResp.Status
+	switch state {
+	case redshiftdataapiservice.StatusStringFailed,
+		redshiftdataapiservice.StatusStringAborted:
+		finished = true
+		err = errors.New(*statusResp.Error)
+	case redshiftdataapiservice.StatusStringFinished:
+		finished = true
+	default:
+		finished = false
+	}
+
+	return &api.ExecuteQueryStatus{
+		ID:       output.ID,
+		State:    state,
+		Finished: finished,
+	}, err
+}
+
+func (c *API) Stop(output *api.ExecuteQueryOutput) error {
+	_, err := c.Client.CancelStatement(&redshiftdataapiservice.CancelStatementInput{
+		Id: &output.ID,
+	})
+	if err != nil {
+		return fmt.Errorf("%w: %v", err, api.StopError)
+	}
+	return nil
+}
+
+func (c *API) Regions(aws.Context) ([]string, error) {
+	// TBD
+	return []string{}, nil
+}
+
+func (c *API) Databases(ctx aws.Context, options sqlds.Options) ([]string, error) {
+	// TBD
+	return []string{}, nil
+}
+
+func (c *API) Schemas(ctx aws.Context, options sqlds.Options) ([]string, error) {
 	commonInput := c.apiInput()
 	input := &redshiftdataapiservice.ListSchemasInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
@@ -92,7 +161,8 @@ func (c *API) ListSchemas(ctx aws.Context) ([]string, error) {
 	return res, nil
 }
 
-func (c *API) ListTables(ctx aws.Context, schema string) ([]string, error) {
+func (c *API) Tables(ctx aws.Context, options sqlds.Options) ([]string, error) {
+	schema := options["schema"]
 	// We use the "public" schema by default if not specified
 	if schema == "" {
 		schema = "public"
@@ -125,7 +195,8 @@ func (c *API) ListTables(ctx aws.Context, schema string) ([]string, error) {
 	return res, nil
 }
 
-func (c *API) ListColumns(ctx aws.Context, schema, table string) ([]string, error) {
+func (c *API) Columns(ctx aws.Context, options sqlds.Options) ([]string, error) {
+	schema, table := options["schema"], options["table"]
 	commonInput := c.apiInput()
 	input := &redshiftdataapiservice.DescribeTableInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
@@ -155,7 +226,7 @@ func (c *API) ListColumns(ctx aws.Context, schema, table string) ([]string, erro
 	return res, nil
 }
 
-func (c *API) ListSecrets(ctx aws.Context) ([]models.ManagedSecret, error) {
+func (c *API) Secrets(ctx aws.Context) ([]models.ManagedSecret, error) {
 	input := &secretsmanager.ListSecretsInput{
 		Filters: []*secretsmanager.Filter{
 			{
@@ -190,7 +261,8 @@ func (c *API) ListSecrets(ctx aws.Context) ([]models.ManagedSecret, error) {
 	return redshiftSecrets, nil
 }
 
-func (c *API) GetSecret(ctx aws.Context, arn string) (*models.RedshiftSecret, error) {
+func (c *API) Secret(ctx aws.Context, options sqlds.Options) (*models.RedshiftSecret, error) {
+	arn := options["secretARN"]
 	input := &secretsmanager.GetSecretValueInput{
 		SecretId: aws.String(arn),
 	}

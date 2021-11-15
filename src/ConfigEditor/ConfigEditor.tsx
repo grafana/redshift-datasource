@@ -1,33 +1,36 @@
-import React, { useState } from 'react';
-import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
+import React, { useState, useEffect } from 'react';
+import { DataSourcePluginOptionsEditorProps, DataSourceSettings } from '@grafana/data';
 import {
   RedshiftDataSourceOptions,
   RedshiftDataSourceSecureJsonData,
   RedshiftDataSourceSettings,
   RedshiftManagedSecret,
 } from '../types';
-import { ConnectionConfig } from '@grafana/aws-sdk';
-import { TempCreds } from './TempCreds';
-import { SecretManager } from './SecretManager';
+import { InlineInput, ConfigSelect, ConnectionConfig } from '@grafana/aws-sdk';
 import { getBackendSrv } from '@grafana/runtime';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
+import { selectors } from 'selectors';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
+
+type Secret = { dbClusterIdentifier: string; username: string };
 
 export function ConfigEditor(props: Props) {
   const baseURL = `/api/datasources/${props.options.id}`;
   const resourcesURL = `${baseURL}/resources`;
-  const { jsonData } = props.options;
-  const [saved, setSaved] = useState(!!jsonData.defaultRegion);
+  const [saved, setSaved] = useState(!!props.options.jsonData.defaultRegion);
   const saveOptions = async () => {
     if (saved) {
       return;
     }
-    const result: { datasource: RedshiftDataSourceSettings } = await getBackendSrv().put(baseURL, props.options);
-    props.onOptionsChange({
-      ...props.options,
-      version: result.datasource.version,
-    });
+    await getBackendSrv()
+      .put(baseURL, props.options)
+      .then((result: { datasource: RedshiftDataSourceSettings }) => {
+        props.onOptionsChange({
+          ...props.options,
+          version: result.datasource.version,
+        });
+      });
     setSaved(true);
   };
 
@@ -45,101 +48,72 @@ export function ConfigEditor(props: Props) {
   };
 
   // Secrets
-  const [managedSecret, setManagedSecret] = useState(jsonData.managedSecret);
   const fetchSecrets = async () => {
     const res: RedshiftManagedSecret[] = await getBackendSrv().get(resourcesURL + '/secrets');
     return res.map((r) => ({ label: r.name, value: r.arn, description: r.arn }));
   };
+  const { arn } = props.options.jsonData.managedSecret || {};
   const fetchSecret = async (arn: string) => {
-    const res: { dbClusterIdentifier: string; username: string } = await getBackendSrv().post(
-      resourcesURL + '/secret',
-      { secretARN: arn }
-    );
+    const res: Secret = await getBackendSrv().post(resourcesURL + '/secret', { secretARN: arn });
     return res;
   };
-  const onSecretChange = (managedSecret?: RedshiftManagedSecret) => {
-    setManagedSecret(managedSecret);
-    props.onOptionsChange({
-      ...props.options,
-      jsonData: {
-        ...props.options.jsonData,
-        managedSecret,
-      },
-    });
-  };
+  useEffect(() => {
+    if (arn) {
+      fetchSecret(arn).then((s) => {
+        props.onOptionsChange({
+          ...props.options,
+          jsonData: {
+            ...props.options.jsonData,
+            clusterIdentifier: s.dbClusterIdentifier,
+            dbUser: s.username,
+          },
+        });
+      });
+    }
+  }, [arn]);
 
-  // ClusterID
-  const [clusterIdentifier, setClusterIdentifier] = useState(jsonData.clusterIdentifier);
-  const onClusterIdentifierChange = (id?: string) => {
-    setClusterIdentifier(id);
-    props.onOptionsChange({
-      ...props.options,
-      jsonData: {
-        ...props.options.jsonData,
-        clusterIdentifier: id,
-      },
-    });
-  };
-
-  // Database
-  const [database, setDatabase] = useState(jsonData.database);
-  const onDatabaseChange = (db?: string) => {
-    setDatabase(db);
-    props.onOptionsChange({
-      ...props.options,
-      jsonData: {
-        ...props.options.jsonData,
-        database: db,
-      },
-    });
-  };
-
-  // DB user
-  const [dbUser, setDBUser] = useState(jsonData.dbUser);
-  const onDBUserChange = (user?: string) => {
-    setDBUser(user);
-    props.onOptionsChange({
-      ...props.options,
-      jsonData: {
-        ...props.options.jsonData,
-        dbUser: user,
-      },
-    });
-  };
-
-  const onOptionsChange = (options: RedshiftDataSourceSettings) => {
+  const onOptionsChange = (
+    options: DataSourceSettings<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>
+  ) => {
     setSaved(false);
     props.onOptionsChange(options);
   };
 
   return (
-    <>
+    <div className="gf-form-group">
       <ConnectionConfig {...props} onOptionsChange={onOptionsChange} />
-      <h6>Authentication</h6>
-      <AuthTypeSwitch useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
-      {useManagedSecret ? (
-        <SecretManager
-          clusterIdentifier={clusterIdentifier}
-          database={database}
-          managedSecret={managedSecret}
-          secretsDisabled={!jsonData.defaultRegion}
-          fetchSecrets={fetchSecrets}
-          fetchSecret={fetchSecret}
-          onChangeDB={onDatabaseChange}
-          onChangeSecret={onSecretChange}
-          onChangeClusterID={onClusterIdentifierChange}
-          saveOptions={saveOptions}
-        />
-      ) : (
-        <TempCreds
-          clusterIdentifier={clusterIdentifier}
-          database={database}
-          dbUser={dbUser}
-          onChangeDB={onDatabaseChange}
-          onChangeDBUser={onDBUserChange}
-          onChangeCluster={onClusterIdentifierChange}
-        />
-      )}
-    </>
+      <h3>Redshift Details</h3>
+      <AuthTypeSwitch key="managedSecret" useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
+      <ConfigSelect
+        {...props}
+        jsonDataPath="managedSecret.arn"
+        jsonDataPathLabel="managedSecret.name"
+        fetch={fetchSecrets}
+        label={selectors.components.ConfigEditor.ManagedSecret.input}
+        data-testid={selectors.components.ConfigEditor.ManagedSecret.testID}
+        saveOptions={saveOptions}
+        hidden={!useManagedSecret}
+      />
+      <InlineInput
+        {...props}
+        jsonDataPath="clusterIdentifier"
+        label={selectors.components.ConfigEditor.ClusterID.input}
+        data-testid={selectors.components.ConfigEditor.ClusterID.testID}
+        disabled={useManagedSecret}
+      />
+      <InlineInput
+        {...props}
+        jsonDataPath="dbUser"
+        label={selectors.components.ConfigEditor.DatabaseUser.input}
+        data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
+        disabled={useManagedSecret}
+      />
+      <InlineInput
+        {...props}
+        jsonDataPath="database"
+        label={selectors.components.ConfigEditor.ClusterID.input}
+        data-testid={selectors.components.ConfigEditor.ClusterID.testID}
+      />
+    </div>
   );
 }

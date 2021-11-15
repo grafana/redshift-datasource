@@ -5,7 +5,9 @@ import (
 	"fmt"
 
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
+	"github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/sqlds/v2"
 )
 
 type ManagedSecret struct {
@@ -27,6 +29,10 @@ type RedshiftDataSourceSettings struct {
 	ManagedSecret     ManagedSecret
 }
 
+func New() models.Settings {
+	return &RedshiftDataSourceSettings{}
+}
+
 func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSettings) error {
 	if config.JSONData != nil && len(config.JSONData) > 1 {
 		if err := json.Unmarshal(config.JSONData, s); err != nil {
@@ -38,4 +44,19 @@ func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSetti
 	s.SecretKey = config.DecryptedSecureJSONData["secretKey"]
 
 	return nil
+}
+
+func (s *RedshiftDataSourceSettings) Apply(args sqlds.Options) {
+	region, database := args["region"], args["database"]
+	if region != "" {
+		if region == models.DefaultKey {
+			s.Region = s.DefaultRegion
+		} else {
+			s.Region = region
+		}
+	}
+
+	if database != "" && database != models.DefaultKey {
+		s.Database = database
+	}
 }
