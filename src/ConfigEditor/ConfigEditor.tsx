@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { DataSourcePluginOptionsEditorProps, DataSourceSettings } from '@grafana/data';
+import React, { useState, useEffect, FormEvent } from 'react';
+import { DataSourcePluginOptionsEditorProps, DataSourceSettings, SelectableValue } from '@grafana/data';
 import {
   RedshiftDataSourceOptions,
   RedshiftDataSourceSecureJsonData,
@@ -14,6 +14,8 @@ import { selectors } from 'selectors';
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 
 type Secret = { dbClusterIdentifier: string; username: string };
+
+type InputResourceType = 'clusterIdentifier' | 'dbUser' | 'database';
 
 export function ConfigEditor(props: Props) {
   const baseURL = `/api/datasources/${props.options.id}`;
@@ -79,15 +81,37 @@ export function ConfigEditor(props: Props) {
     props.onOptionsChange(options);
   };
 
+  const onChangeManagedSecret = (e: SelectableValue<string> | null) => {
+    const value = e?.value ?? '';
+    const label = e?.label ?? '';
+    props.onOptionsChange({
+      ...props.options,
+      jsonData: {
+        ...props.options.jsonData,
+        managedSecret: { arn: value, name: label },
+      },
+    });
+  };
+  const onChange = (resource: InputResourceType) => (e: FormEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value;
+    props.onOptionsChange({
+      ...props.options,
+      jsonData: {
+        ...props.options.jsonData,
+        [resource]: value,
+      },
+    });
+  };
+
   return (
     <div className="gf-form-group">
       <ConnectionConfig {...props} onOptionsChange={onOptionsChange} />
-      <h3>Redshift Details</h3>
+      <h3>Redshift Details foo</h3>
       <AuthTypeSwitch key="managedSecret" useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
       <ConfigSelect
         {...props}
-        jsonDataPath="managedSecret.arn"
-        jsonDataPathLabel="managedSecret.name"
+        value={props.options.jsonData.managedSecret?.arn ?? ''}
+        onChange={onChangeManagedSecret}
         fetch={fetchSecrets}
         label={selectors.components.ConfigEditor.ManagedSecret.input}
         data-testid={selectors.components.ConfigEditor.ManagedSecret.testID}
@@ -96,21 +120,24 @@ export function ConfigEditor(props: Props) {
       />
       <InlineInput
         {...props}
-        jsonDataPath="clusterIdentifier"
+        value={props.options.jsonData.clusterIdentifier ?? ''}
+        onChange={onChange('clusterIdentifier')}
         label={selectors.components.ConfigEditor.ClusterID.input}
         data-testid={selectors.components.ConfigEditor.ClusterID.testID}
         disabled={useManagedSecret}
       />
       <InlineInput
         {...props}
-        jsonDataPath="dbUser"
+        value={props.options.jsonData.dbUser ?? ''}
+        onChange={onChange('dbUser')}
         label={selectors.components.ConfigEditor.DatabaseUser.input}
         data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
         disabled={useManagedSecret}
       />
       <InlineInput
         {...props}
-        jsonDataPath="database"
+        value={props.options.jsonData.database ?? ''}
+        onChange={onChange('database')}
         label={selectors.components.ConfigEditor.ClusterID.input}
         data-testid={selectors.components.ConfigEditor.ClusterID.testID}
       />

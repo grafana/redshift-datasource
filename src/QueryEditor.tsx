@@ -11,10 +11,6 @@ import { getSuggestions } from 'Suggestions';
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
 export function QueryEditor(props: Props) {
-  // const queryWithDefaults = {
-  //   ...defaultQuery,
-  //   ...props.query,
-  // };
   const fetchSchemas = async () => {
     const schemas: string[] = await props.datasource.getResource('schemas');
     return schemas.map((schema) => ({ label: schema, value: schema })).concat({ label: '-- remove --', value: '' });

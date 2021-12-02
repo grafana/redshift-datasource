@@ -1,5 +1,5 @@
-import { DataQuery, DataSourceSettings, SelectableValue } from '@grafana/data';
-import { AwsAuthDataSourceJsonData, AwsAuthDataSourceSecureJsonData } from '@grafana/aws-sdk';
+import { DataSourceSettings, SelectableValue } from '@grafana/data';
+import { AwsAuthDataSourceJsonData, AwsAuthDataSourceSecureJsonData, SQLQuery } from '@grafana/aws-sdk';
 
 export enum FormatOptions {
   TimeSeries,
@@ -38,10 +38,8 @@ export const SelectableFillValueOptions: Array<SelectableValue<FillValueOptions>
   },
 ];
 
-export interface RedshiftQuery extends DataQuery {
-  rawSQL: string;
+export interface RedshiftQuery extends SQLQuery {
   format: FormatOptions;
-  fillMode: { mode: FillValueOptions; value?: number };
 
   schema?: string;
   table?: string;
