@@ -2,6 +2,7 @@ import { DataSourceInstanceSettings, ScopedVars } from '@grafana/data';
 import { DataSourceWithBackend, getTemplateSrv } from '@grafana/runtime';
 import { RedshiftVariableSupport } from 'variables';
 import { RedshiftDataSourceOptions, RedshiftQuery } from './types';
+import { filterQuery, applyTemplateVariables } from '@grafana/aws-sdk';
 
 export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDataSourceOptions> {
   constructor(instanceSettings: DataSourceInstanceSettings<RedshiftDataSourceOptions>) {
@@ -12,18 +13,8 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
   // This will support annotation queries for 7.2+
   annotations = {};
 
-  /**
-   * Do not execute queries that do not exist yet
-   */
-  filterQuery(query: RedshiftQuery): boolean {
-    return !!query.rawSQL;
-  }
+  filterQuery = filterQuery;
 
-  applyTemplateVariables(query: RedshiftQuery, scopedVars: ScopedVars): RedshiftQuery {
-    const templateSrv = getTemplateSrv();
-    return {
-      ...query,
-      rawSQL: templateSrv.replace(query.rawSQL, scopedVars, 'singlequote'),
-    };
-  }
+  applyTemplateVariables = (query: RedshiftQuery, scopedVars: ScopedVars) =>
+    applyTemplateVariables(query, scopedVars, getTemplateSrv);
 }
