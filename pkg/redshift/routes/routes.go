@@ -57,13 +57,7 @@ func sendResponse(res interface{}, err error, rw http.ResponseWriter) {
 }
 
 func (r *ResourceHandler) secrets(rw http.ResponseWriter, req *http.Request) {
-	reqBody, err := parseBody(req.Body)
-	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		write(rw, []byte(err.Error()))
-		return
-	}
-	secrets, err := r.ds.Secrets(req.Context(), reqBody)
+	secrets, err := r.ds.Secrets(req.Context(), sqlds.Options{})
 	sendResponse(secrets, err, rw)
 }
 
