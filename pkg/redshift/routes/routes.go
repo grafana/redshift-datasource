@@ -19,10 +19,6 @@ func New(ds *redshift.RedshiftDatasource) *ResourceHandler {
 	return &ResourceHandler{ds: ds}
 }
 
-type reqBody struct {
-	SecretARN string `json:"secretARN,omitempty"`
-}
-
 func write(rw http.ResponseWriter, b []byte) {
 	_, err := rw.Write(b)
 	if err != nil {
