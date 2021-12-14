@@ -8,6 +8,7 @@ import (
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/redshift-datasource/pkg/redshift"
+	"github.com/grafana/sqlds/v2"
 )
 
 type ResourceHandler struct {
@@ -29,13 +30,13 @@ func write(rw http.ResponseWriter, b []byte) {
 	}
 }
 
-func parseBody(body io.ReadCloser) (*reqBody, error) {
-	reqBody := &reqBody{}
+func parseBody(body io.ReadCloser) (sqlds.Options, error) {
+	reqBody := sqlds.Options{}
 	b, err := ioutil.ReadAll(body)
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(b, reqBody)
+	err = json.Unmarshal(b, &reqBody)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,13 @@ func sendResponse(res interface{}, err error, rw http.ResponseWriter) {
 }
 
 func (r *ResourceHandler) secrets(rw http.ResponseWriter, req *http.Request) {
-	secrets, err := r.ds.Secrets(req.Context())
+	reqBody, err := parseBody(req.Body)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		write(rw, []byte(err.Error()))
+		return
+	}
+	secrets, err := r.ds.Secrets(req.Context(), reqBody)
 	sendResponse(secrets, err, rw)
 }
 
@@ -71,7 +78,7 @@ func (r *ResourceHandler) secret(rw http.ResponseWriter, req *http.Request) {
 		write(rw, []byte(err.Error()))
 		return
 	}
-	secrets, err := r.ds.Secret(req.Context(), reqBody.SecretARN)
+	secrets, err := r.ds.Secret(req.Context(), reqBody)
 	sendResponse(secrets, err, rw)
 }
 
