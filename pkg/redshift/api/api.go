@@ -14,6 +14,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
+	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v2"
 )
@@ -24,8 +25,9 @@ type API struct {
 	settings      *models.RedshiftDataSourceSettings
 }
 
-func New(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSettings) (api.AWSAPI, error) {
-	sess, err := awsds.GetSessionWithDefaultRegion(sessionCache, settings.AWSDatasourceSettings)
+func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
+	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
+	sess, err := awsds.GetSessionWithDefaultRegion(sessionCache, redshiftSettings.AWSDatasourceSettings)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +43,7 @@ func New(sessionCache *awsds.SessionCache, settings *models.RedshiftDataSourceSe
 	return &API{
 		Client:        svc,
 		SecretsClient: secretsSVC,
-		settings:      settings,
+		settings:      redshiftSettings,
 	}, nil
 }
 
