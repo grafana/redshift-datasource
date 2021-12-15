@@ -43,7 +43,7 @@ func TestRoutes(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			req := httptest.NewRequest("GET", "http://example.com/foo", bytes.NewReader([]byte("{}")))
 			rw := httptest.NewRecorder()
-			rh := ResourceHandler{ds: ds}
+			rh := RedshiftResourceHandler{redshift: ds}
 			switch tt.route {
 			case "secrets":
 				rh.secrets(rw, req)
