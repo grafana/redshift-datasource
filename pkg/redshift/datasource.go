@@ -7,6 +7,7 @@ import (
 	"fmt"
 
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
+	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/resource/httpadapter"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
@@ -20,11 +21,13 @@ import (
 
 type RedshiftDatasourceIface interface {
 	sqlds.Driver
+	sqlds.Completable
+	sqlAPI.Resources
 	Schemas(ctx context.Context, options sqlds.Options) ([]string, error)
 	Tables(ctx context.Context, options sqlds.Options) ([]string, error)
 	Columns(ctx context.Context, options sqlds.Options) ([]string, error)
-	Secrets(ctx context.Context) ([]models.ManagedSecret, error)
-	Secret(ctx context.Context, arn string) (*models.RedshiftSecret, error)
+	Secrets(ctx context.Context, options sqlds.Options) ([]models.ManagedSecret, error)
+	Secret(ctx context.Context, options sqlds.Options) (*models.RedshiftSecret, error)
 }
 
 type RedshiftDatasource struct {
@@ -43,6 +46,10 @@ func (s *RedshiftDatasource) Settings(_ backend.DataSourceInstanceSettings) sqld
 			Mode: data.FillModeNull,
 		},
 	}
+}
+
+func (s *RedshiftDatasource) Converters() (sc []sqlutil.Converter) {
+	return sc
 }
 
 // Connect opens a sql.DB connection using datasource settings
@@ -66,10 +73,6 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 	return db, nil
 }
 
-func (s *RedshiftDatasource) Converters() (sc []sqlutil.Converter) {
-	return sc
-}
-
 func (s *RedshiftDatasource) getApi(ctx context.Context) (*api.API, error) {
 	plugin := httpadapter.PluginConfigFromContext(ctx)
 	if plugin.DataSourceInstanceSettings == nil {
@@ -82,7 +85,35 @@ func (s *RedshiftDatasource) getApi(ctx context.Context) (*api.API, error) {
 		return nil, fmt.Errorf("error reading settings: %s", err.Error())
 	}
 
-	return api.New(s.sessionCache, &settings)
+	res, err := api.New(s.sessionCache, &settings)
+	if err != nil {
+		return nil, err
+	}
+	return res.(*api.API), nil
+}
+
+func (s *RedshiftDatasource) Regions(ctx context.Context) ([]string, error) {
+	api, err := s.getApi(ctx)
+	if err != nil {
+		return nil, err
+	}
+	regions, err := api.Regions(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return regions, nil
+}
+
+func (s *RedshiftDatasource) Databases(ctx context.Context, options sqlds.Options) ([]string, error) {
+	api, err := s.getApi(ctx)
+	if err != nil {
+		return nil, err
+	}
+	dbs, err := api.Databases(ctx, options)
+	if err != nil {
+		return nil, err
+	}
+	return dbs, nil
 }
 
 func (s *RedshiftDatasource) Schemas(ctx context.Context, options sqlds.Options) ([]string, error) {
@@ -90,7 +121,7 @@ func (s *RedshiftDatasource) Schemas(ctx context.Context, options sqlds.Options)
 	if err != nil {
 		return nil, err
 	}
-	schemas, err := api.ListSchemas(ctx)
+	schemas, err := api.Schemas(ctx, options)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +133,7 @@ func (s *RedshiftDatasource) Tables(ctx context.Context, options sqlds.Options) 
 	if err != nil {
 		return nil, err
 	}
-	tables, err := api.ListTables(ctx, options["schema"])
+	tables, err := api.Tables(ctx, options)
 	if err != nil {
 		return nil, err
 	}
@@ -114,25 +145,25 @@ func (s *RedshiftDatasource) Columns(ctx context.Context, options sqlds.Options)
 	if err != nil {
 		return nil, err
 	}
-	cols, err := api.ListColumns(ctx, options["schema"], options["table"])
+	cols, err := api.Columns(ctx, options)
 	if err != nil {
 		return nil, err
 	}
 	return cols, nil
 }
 
-func (s *RedshiftDatasource) Secrets(ctx context.Context) ([]models.ManagedSecret, error) {
+func (s *RedshiftDatasource) Secrets(ctx context.Context, options sqlds.Options) ([]models.ManagedSecret, error) {
 	api, err := s.getApi(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return api.ListSecrets(ctx)
+	return api.Secrets(ctx)
 }
 
-func (s *RedshiftDatasource) Secret(ctx context.Context, arn string) (*models.RedshiftSecret, error) {
+func (s *RedshiftDatasource) Secret(ctx context.Context, options sqlds.Options) (*models.RedshiftSecret, error) {
 	api, err := s.getApi(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return api.GetSecret(ctx, arn)
+	return api.Secret(ctx, options)
 }

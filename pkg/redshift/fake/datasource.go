@@ -32,6 +32,14 @@ func (s *RedshiftFakeDatasource) Macros() sqlds.Macros {
 	return sqlds.Macros{}
 }
 
+func (s *RedshiftFakeDatasource) Regions(ctx context.Context) ([]string, error) {
+	return []string{}, nil
+}
+
+func (s *RedshiftFakeDatasource) Databases(ctx context.Context, options sqlds.Options) ([]string, error) {
+	return []string{}, nil
+}
+
 func (s *RedshiftFakeDatasource) Schemas(ctx context.Context, options sqlds.Options) ([]string, error) {
 	return []string{}, nil
 }
@@ -44,10 +52,10 @@ func (s *RedshiftFakeDatasource) Columns(ctx context.Context, options sqlds.Opti
 	return []string{}, nil
 }
 
-func (s *RedshiftFakeDatasource) Secrets(ctx context.Context) ([]models.ManagedSecret, error) {
+func (s *RedshiftFakeDatasource) Secrets(ctx context.Context, options sqlds.Options) ([]models.ManagedSecret, error) {
 	return s.SecretList, nil
 }
 
-func (s *RedshiftFakeDatasource) Secret(ctx context.Context, arn string) (*models.RedshiftSecret, error) {
+func (s *RedshiftFakeDatasource) Secret(ctx context.Context, options sqlds.Options) (*models.RedshiftSecret, error) {
 	return &s.RSecret, nil
 }
