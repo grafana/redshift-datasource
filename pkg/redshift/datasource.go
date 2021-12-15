@@ -65,7 +65,11 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 		return nil, err
 	}
 
-	db, err := driver.Open(api)
+	dr, err := driver.New(api)
+	if err != nil {
+		return nil, err
+	}
+	db, err := dr.OpenDB()
 	if err != nil {
 		return nil, errors.WithMessage(err, "Failed to connect to database. Is the hostname and port correct?")
 	}
