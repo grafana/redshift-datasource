@@ -107,7 +107,7 @@ describe('QueryEditor', () => {
 
     expect(onChange).toHaveBeenCalledWith({
       ...q,
-      fillMode: { mode: FillValueOptions.Null, value: 0 },
+      fillMode: { mode: FillValueOptions.Null },
     });
   });
 });
