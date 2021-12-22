@@ -1,7 +1,7 @@
 import { DataQueryRequest, DataQueryResponse, CustomVariableSupport } from '@grafana/data';
 import { assign } from 'lodash';
-import { QueryCodeEditor } from 'QueryCodeEditor';
 import { Observable } from 'rxjs';
+import { VariableQueryCodeEditor } from 'VariableQueryEditor';
 import { DataSource } from './datasource';
 import { RedshiftQuery, defaultQuery } from './types';
 
@@ -12,7 +12,7 @@ export class RedshiftVariableSupport extends CustomVariableSupport<DataSource, R
     this.query = this.query.bind(this);
   }
 
-  editor = QueryCodeEditor;
+  editor = VariableQueryCodeEditor;
 
   query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
     // fill query params with default data

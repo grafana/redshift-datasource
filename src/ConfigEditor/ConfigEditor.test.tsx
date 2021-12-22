@@ -76,11 +76,18 @@ describe('ConfigEditor', () => {
         }}
       />
     );
-    await waitFor(() => screen.getByDisplayValue(dbUser));
-    // the clusterIdentifier update is delegated to the onChange function
-    expect(onChange).toHaveBeenCalledWith({
-      ...props.options,
-      jsonData: { ...props.options.jsonData, useManagedSecret: true, managedSecret: secret, clusterIdentifier },
-    });
+    // the dbUser and clusterIdentifier update is delegated to the onChange function
+    await waitFor(() =>
+      expect(onChange).toHaveBeenCalledWith({
+        ...props.options,
+        jsonData: {
+          ...props.options.jsonData,
+          dbUser,
+          useManagedSecret: true,
+          managedSecret: secret,
+          clusterIdentifier,
+        },
+      })
+    );
   });
 });
