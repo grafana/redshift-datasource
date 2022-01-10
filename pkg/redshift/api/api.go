@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/request"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
@@ -31,18 +30,11 @@ func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWS
 	if err != nil {
 		return nil, err
 	}
+	awsds.WithUserAgent(sess, "Redshift")
 
-	svc := redshiftdataapiservice.New(sess)
-	svc.Handlers.Send.PushFront(func(r *request.Request) {
-		r.HTTPRequest.Header.Set("User-Agent", awsds.GetUserAgentString("Redshift"))
-	})
-	secretsSVC := secretsmanager.New(sess)
-	secretsSVC.Handlers.Send.PushFront(func(r *request.Request) {
-		r.HTTPRequest.Header.Set("User-Agent", awsds.GetUserAgentString("Redshift"))
-	})
 	return &API{
-		Client:        svc,
-		SecretsClient: secretsSVC,
+		Client:        redshiftdataapiservice.New(sess),
+		SecretsClient: secretsmanager.New(sess),
 		settings:      redshiftSettings,
 	}, nil
 }
