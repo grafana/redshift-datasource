@@ -11,7 +11,8 @@ import (
 )
 
 type MockRedshiftClient struct {
-	ExecutionResult *redshiftdataapiservice.ExecuteStatementOutput
+	ExecutionResult         *redshiftdataapiservice.ExecuteStatementOutput
+	DescribeStatementOutput *redshiftdataapiservice.DescribeStatementOutput
 	// Schemas > Tables > Columns
 	Resources map[string]map[string][]string
 	Secrets   []string
@@ -23,6 +24,10 @@ type MockRedshiftClient struct {
 
 func (m *MockRedshiftClient) ExecuteStatementWithContext(ctx aws.Context, input *redshiftdataapiservice.ExecuteStatementInput, opts ...request.Option) (*redshiftdataapiservice.ExecuteStatementOutput, error) {
 	return m.ExecutionResult, nil
+}
+
+func (m *MockRedshiftClient) DescribeStatementWithContext(_ aws.Context, input *redshiftdataapiservice.DescribeStatementInput, _ ...request.Option) (*redshiftdataapiservice.DescribeStatementOutput, error) {
+	return m.DescribeStatementOutput, nil
 }
 
 func (m *MockRedshiftClient) ListSchemasWithContext(ctx aws.Context, input *redshiftdataapiservice.ListSchemasInput, opts ...request.Option) (*redshiftdataapiservice.ListSchemasOutput, error) {

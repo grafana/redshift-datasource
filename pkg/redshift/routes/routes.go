@@ -1,83 +1,41 @@
 package routes
 
 import (
-	"encoding/json"
-	"io"
-	"io/ioutil"
 	"net/http"
 
-	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+	"github.com/grafana/grafana-aws-sdk/pkg/sql/routes"
 	"github.com/grafana/redshift-datasource/pkg/redshift"
+	"github.com/grafana/sqlds/v2"
 )
 
-type ResourceHandler struct {
-	ds redshift.RedshiftDatasourceIface
+type RedshiftResourceHandler struct {
+	routes.ResourceHandler
+	redshift redshift.RedshiftDatasourceIface
 }
 
-func New(ds *redshift.RedshiftDatasource) *ResourceHandler {
-	return &ResourceHandler{ds: ds}
+func New(api redshift.RedshiftDatasourceIface) *RedshiftResourceHandler {
+	return &RedshiftResourceHandler{routes.ResourceHandler{API: api}, api}
 }
 
-type reqBody struct {
-	SecretARN string `json:"secretARN,omitempty"`
+func (r *RedshiftResourceHandler) secrets(rw http.ResponseWriter, req *http.Request) {
+	secrets, err := r.redshift.Secrets(req.Context(), sqlds.Options{})
+	routes.SendResources(rw, secrets, err)
 }
 
-func write(rw http.ResponseWriter, b []byte) {
-	_, err := rw.Write(b)
-	if err != nil {
-		log.DefaultLogger.Error(err.Error())
-	}
-}
-
-func parseBody(body io.ReadCloser) (*reqBody, error) {
-	reqBody := &reqBody{}
-	b, err := ioutil.ReadAll(body)
-	if err != nil {
-		return nil, err
-	}
-	err = json.Unmarshal(b, reqBody)
-	if err != nil {
-		return nil, err
-	}
-	return reqBody, nil
-}
-
-func sendResponse(res interface{}, err error, rw http.ResponseWriter) {
+func (r *RedshiftResourceHandler) secret(rw http.ResponseWriter, req *http.Request) {
+	reqBody, err := routes.ParseBody(req.Body)
 	if err != nil {
 		rw.WriteHeader(http.StatusBadRequest)
-		write(rw, []byte(err.Error()))
+		routes.Write(rw, []byte(err.Error()))
 		return
 	}
-	bytes, err := json.Marshal(res)
-	if err != nil {
-		log.DefaultLogger.Error(err.Error())
-		rw.WriteHeader(http.StatusInternalServerError)
-		write(rw, []byte(err.Error()))
-		return
-	}
-	rw.Header().Add("Content-Type", "application/json")
-	write(rw, bytes)
+	secret, err := r.redshift.Secret(req.Context(), reqBody)
+	routes.SendResources(rw, secret, err)
 }
 
-func (r *ResourceHandler) secrets(rw http.ResponseWriter, req *http.Request) {
-	secrets, err := r.ds.Secrets(req.Context())
-	sendResponse(secrets, err, rw)
-}
-
-func (r *ResourceHandler) secret(rw http.ResponseWriter, req *http.Request) {
-	reqBody, err := parseBody(req.Body)
-	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		write(rw, []byte(err.Error()))
-		return
-	}
-	secrets, err := r.ds.Secret(req.Context(), reqBody.SecretARN)
-	sendResponse(secrets, err, rw)
-}
-
-func (r *ResourceHandler) Routes() map[string]func(http.ResponseWriter, *http.Request) {
-	return map[string]func(http.ResponseWriter, *http.Request){
-		"/secrets": r.secrets,
-		"/secret":  r.secret,
-	}
+func (r *RedshiftResourceHandler) Routes() map[string]func(http.ResponseWriter, *http.Request) {
+	routes := r.DefaultRoutes()
+	routes["/secrets"] = r.secrets
+	routes["/secret"] = r.secret
+	return routes
 }
