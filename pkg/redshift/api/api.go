@@ -26,11 +26,14 @@ type API struct {
 
 func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
-	sess, err := awsds.GetSessionWithDefaultRegion(sessionCache, redshiftSettings.AWSDatasourceSettings)
+	sess, err := sessionCache.GetSession(awsds.SessionConfig{
+		Settings:      redshiftSettings.AWSDatasourceSettings,
+		Config:        redshiftSettings.Config,
+		UserAgentName: aws.String("Redshift"),
+	})
 	if err != nil {
 		return nil, err
 	}
-	awsds.WithUserAgent(sess, "Redshift")
 
 	return &API{
 		Client:        redshiftdataapiservice.New(sess),
