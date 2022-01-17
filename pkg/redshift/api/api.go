@@ -14,6 +14,8 @@ import (
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
+	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v2"
 )
@@ -26,9 +28,22 @@ type API struct {
 
 func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
+
+	httpClientProvider := sdkhttpclient.NewProvider()
+	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions()
+	if err != nil {
+		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
+		return nil, err
+	}
+	httpClient, err := httpClientProvider.New(httpClientOptions)
+	if err != nil {
+		backend.Logger.Error("failed to create HTTP client", "error", err.Error())
+		return nil, err
+	}
+
 	sess, err := sessionCache.GetSession(awsds.SessionConfig{
 		Settings:      redshiftSettings.AWSDatasourceSettings,
-		Config:        redshiftSettings.Config,
+		HTTPClient:    httpClient,
 		UserAgentName: aws.String("Redshift"),
 	})
 	if err != nil {
