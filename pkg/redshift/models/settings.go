@@ -22,6 +22,7 @@ type RedshiftSecret struct {
 
 type RedshiftDataSourceSettings struct {
 	awsds.AWSDatasourceSettings
+	Config            backend.DataSourceInstanceSettings
 	ClusterIdentifier string `json:"clusterIdentifier"`
 	Database          string `json:"database"`
 	UseManagedSecret  bool   `json:"useManagedSecret"`
@@ -42,6 +43,8 @@ func (s *RedshiftDataSourceSettings) Load(config backend.DataSourceInstanceSetti
 
 	s.AccessKey = config.DecryptedSecureJSONData["accessKey"]
 	s.SecretKey = config.DecryptedSecureJSONData["secretKey"]
+
+	s.Config = config
 
 	return nil
 }
