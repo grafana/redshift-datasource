@@ -201,6 +201,7 @@ func (r *Rows) fetchNextPage(token *string) error {
 func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshiftdataapiservice.Field, ret []driver.Value) error {
 	for i, curr := range data {
 		if curr.IsNull != nil && *curr.IsNull {
+			ret[i] = nil
 			continue
 		}
 

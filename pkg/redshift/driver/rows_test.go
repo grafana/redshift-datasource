@@ -383,6 +383,19 @@ func Test_convertRow(t *testing.T) {
 			expectedValue: `2021-07-15 14:00:00 +0000 UTC`,
 			Err:           require.NoError,
 		},
+		{
+			name: "null",
+			metadata: &redshiftdataapiservice.ColumnMetadata{
+				Name:     aws.String("id"),
+				TypeName: aws.String(REDSHIFT_INT8),
+			},
+			data: &redshiftdataapiservice.Field{
+				IsNull: aws.Bool(true),
+			},
+			expectedType:  "<nil>",
+			expectedValue: "<nil>",
+			Err:           require.NoError,
+		},
 	}
 
 	for _, tt := range tests {
