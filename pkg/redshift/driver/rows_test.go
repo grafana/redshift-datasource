@@ -398,12 +398,12 @@ func Test_convertRow(t *testing.T) {
 			assert.Equal(t, tt.expectedValue, fmt.Sprintf("%v", res[0]))
 		})
 	}
-}
 
-func Test_convertRow_returns_error_for_missing_column_type(t *testing.T) {
-	assert.EqualError(t, convertRow(
-		[]*redshiftdataapiservice.ColumnMetadata{{}},
-		[]*redshiftdataapiservice.Field{{}},
-		[]driver.Value{},
-	), "error in convertRow: col.TypeName is nil")
+	t.Run("error returned for missing column type", func(t *testing.T) {
+		assert.EqualError(t, convertRow(
+			[]*redshiftdataapiservice.ColumnMetadata{{}},
+			[]*redshiftdataapiservice.Field{{}},
+			[]driver.Value{},
+		), "error in convertRow: col.TypeName is nil")
+	})
 }
