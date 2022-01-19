@@ -66,7 +66,6 @@ func Test_convertRow(t *testing.T) {
 		data          *redshiftdataapiservice.Field
 		expectedType  string
 		expectedValue string
-		Err           require.ErrorAssertionFunc
 	}{
 		{
 			name: "numeric type int",
@@ -77,7 +76,6 @@ func Test_convertRow(t *testing.T) {
 			data:          &redshiftdataapiservice.Field{LongValue: aws.Int64(1)},
 			expectedType:  "int32",
 			expectedValue: "1",
-			Err:           require.NoError,
 		},
 		{
 			name: "numeric type int2",
@@ -89,7 +87,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "int16",
 			expectedValue: "2",
-			Err:           require.NoError,
 		},
 		{
 			name: "numeric type int4",
@@ -102,7 +99,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "int32",
 			expectedValue: "3",
-			Err:           require.NoError,
 		},
 		{
 			name: "time as int4",
@@ -115,7 +111,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2021-06-26 21:00:00 +0000 UTC",
-			Err:           require.NoError,
 		},
 		{
 			name: "numeric type int8",
@@ -127,7 +122,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "int64",
 			expectedValue: "4",
-			Err:           require.NoError,
 		},
 		{
 			name: "numeric type float4",
@@ -139,7 +133,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "float64",
 			expectedValue: "1.100000023841858",
-			Err:           require.NoError,
 		},
 		{
 			name: "numeric type numeric",
@@ -151,7 +144,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "float64",
 			expectedValue: "1.2",
-			Err:           require.NoError,
 		},
 		{
 			name: "numeric type float",
@@ -163,7 +155,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "float64",
 			expectedValue: "1.3",
-			Err:           require.NoError,
 		},
 		{
 			name: "numeric float8",
@@ -176,7 +167,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "float64",
 			expectedValue: "1.4",
-			Err:           require.NoError,
 		},
 		{
 			name: "bool type",
@@ -188,7 +178,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "bool",
 			expectedValue: "false",
-			Err:           require.NoError,
 		},
 		{
 			name: "character",
@@ -200,7 +189,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: "f",
-			Err:           require.NoError,
 		},
 		{
 			name: "nchar",
@@ -212,7 +200,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: "f",
-			Err:           require.NoError,
 		},
 		{
 			name: "bpchar",
@@ -224,7 +211,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: "f",
-			Err:           require.NoError,
 		},
 		{
 			name: "character varying",
@@ -236,7 +222,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: "f",
-			Err:           require.NoError,
 		},
 		{
 			name: "text",
@@ -248,7 +233,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: "foo",
-			Err:           require.NoError,
 		},
 		{
 			name: "varchar",
@@ -260,7 +244,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: "foo",
-			Err:           require.NoError,
 		},
 		{
 			name: "date",
@@ -272,7 +255,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 00:00:00 +0000 UTC",
-			Err:           require.NoError,
 		},
 		{
 			name: "timestamp",
@@ -284,7 +266,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 20:00:00 +0000 UTC",
-			Err:           require.NoError,
 		},
 		{
 			name: "timestamp with tz",
@@ -296,7 +277,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: "2008-01-01 20:00:00 +0000 UTC",
-			Err:           require.NoError,
 		},
 		{
 			name: "time without tz",
@@ -308,7 +288,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: "0000-01-01 20:00:00 +0000 UTC",
-			Err:           require.NoError,
 		},
 		{
 			name: "time with tz",
@@ -320,7 +299,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: "0000-01-01 20:00:00 +0000 UTC",
-			Err:           require.NoError,
 		},
 		{
 			name: "geometry",
@@ -332,7 +310,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: "[B@f69ae81",
-			Err:           require.NoError,
 		},
 		{
 			name: "hllsketch",
@@ -344,7 +321,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: `{"version":1,"logm":15,"sparse":{"indices":[40242751],"values":[2]}}`,
-			Err:           require.NoError,
 		},
 		{
 			name: "super",
@@ -356,7 +332,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: `{"foo":"bar"}`,
-			Err:           require.NoError,
 		},
 		{
 			name: "name",
@@ -368,7 +343,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "string",
 			expectedValue: `table`,
-			Err:           require.NoError,
 		},
 		{
 			name: "unix time",
@@ -381,7 +355,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "time.Time",
 			expectedValue: `2021-07-15 14:00:00 +0000 UTC`,
-			Err:           require.NoError,
 		},
 	}
 
