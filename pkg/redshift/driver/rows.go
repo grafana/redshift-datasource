@@ -205,6 +205,9 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 		}
 
 		col := columns[i]
+		if col.TypeName == nil {
+			return fmt.Errorf("error in convertRow: col.TypeName is nil")
+		}
 		typeName := strings.ToUpper(*col.TypeName)
 		switch typeName {
 		case REDSHIFT_INT2:
