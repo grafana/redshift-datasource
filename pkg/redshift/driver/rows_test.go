@@ -383,6 +383,16 @@ func Test_convertRow(t *testing.T) {
 			expectedValue: `2021-07-15 14:00:00 +0000 UTC`,
 			Err:           require.NoError,
 		},
+		{
+			name:     "null",
+			metadata: &redshiftdataapiservice.ColumnMetadata{},
+			data: &redshiftdataapiservice.Field{
+				IsNull: aws.Bool(true),
+			},
+			expectedType:  "<nil>",
+			expectedValue: "<nil>",
+			Err:           require.NoError,
+		},
 	}
 
 	for _, tt := range tests {
@@ -398,4 +408,24 @@ func Test_convertRow(t *testing.T) {
 			assert.Equal(t, tt.expectedValue, fmt.Sprintf("%v", res[0]))
 		})
 	}
+
+	t.Run("a value followed by a null value", func(t *testing.T) {
+		// simulate previous value
+		res := []driver.Value{int32(1), int32(2)}
+
+		metadata := []*redshiftdataapiservice.ColumnMetadata{
+			{Name: aws.String("num"), TypeName: aws.String(REDSHIFT_INT)},
+			{},
+		}
+		data := []*redshiftdataapiservice.Field{
+			{LongValue: aws.Int64(3)},
+			{IsNull: aws.Bool(true)},
+		}
+
+		err := convertRow(metadata, data, res)
+		require.NoError(t, err)
+
+		expectedValue := []driver.Value{int32(3), nil}
+		assert.Equal(t, expectedValue, res)
+	})
 }
