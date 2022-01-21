@@ -400,4 +400,12 @@ func Test_convertRow(t *testing.T) {
 		expectedValue := []driver.Value{int32(3), nil}
 		assert.Equal(t, expectedValue, res)
 	})
+
+	t.Run("error returned for missing column type", func(t *testing.T) {
+		assert.EqualError(t, convertRow(
+			[]*redshiftdataapiservice.ColumnMetadata{{}},
+			[]*redshiftdataapiservice.Field{{}},
+			[]driver.Value{},
+		), "error in convertRow: col.TypeName is nil")
+	})
 }
