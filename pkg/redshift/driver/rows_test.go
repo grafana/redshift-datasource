@@ -364,7 +364,6 @@ func Test_convertRow(t *testing.T) {
 			},
 			expectedType:  "<nil>",
 			expectedValue: "<nil>",
-			Err:           require.NoError,
 		},
 	}
 
