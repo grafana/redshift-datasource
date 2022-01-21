@@ -1,11 +1,12 @@
-import React from 'react';
+import { FillValueSelect, FormatSelect, QueryCodeEditor, ResourceSelector } from '@grafana/aws-sdk';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
-import { DataSource } from './datasource';
-import { RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
 import { InlineSegmentGroup } from '@grafana/ui';
-import { QueryCodeEditor, FormatSelect, ResourceSelector, FillValueSelect } from '@grafana/aws-sdk';
+import React from 'react';
 import { selectors } from 'selectors';
 import { getSuggestions } from 'Suggestions';
+
+import { DataSource } from './datasource';
+import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
 
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
@@ -86,7 +87,9 @@ export function QueryEditor(props: Props) {
             onChange={props.onChange}
             onRunQuery={props.onRunQuery}
           />
-          <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />{' '}
+          {props.query.format === FormatOptions.TimeSeries && (
+            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />
+          )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
           <QueryCodeEditor

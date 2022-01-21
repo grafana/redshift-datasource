@@ -1,11 +1,13 @@
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { QueryEditor } from './QueryEditor';
-import { mockDatasource, mockQuery } from './__mocks__/datasource';
 import '@testing-library/jest-dom';
-import { select } from 'react-select-event';
-import { FillValueOptions } from 'types';
+
 import * as runtime from '@grafana/runtime';
+import { render, screen, waitFor } from '@testing-library/react';
+import React from 'react';
+import { select } from 'react-select-event';
+import { FillValueOptions, FormatOptions } from 'types';
+
+import { mockDatasource, mockQuery } from './__mocks__/datasource';
+import { QueryEditor } from './QueryEditor';
 
 jest
   .spyOn(runtime, 'getTemplateSrv')
@@ -95,6 +97,21 @@ describe('QueryEditor', () => {
   it('should include the Format As input', async () => {
     render(<QueryEditor {...props} />);
     await waitFor(() => screen.getByText('Format as'));
+  });
+
+  it('should skip the fill mode input if the format is not TimeSeries', async () => {
+    const onChange = jest.fn();
+    render(
+      <QueryEditor
+        {...props}
+        query={{ ...props.query, format: FormatOptions.Table }}
+        queries={[]}
+        onChange={onChange}
+      />
+    );
+    await waitFor(() => screen.getByText('Format as'));
+    const selectEl = screen.queryByLabelText('Fill value');
+    expect(selectEl).not.toBeInTheDocument();
   });
 
   it('should allow to change the fill mode', async () => {
