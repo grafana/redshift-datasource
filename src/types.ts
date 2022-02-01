@@ -1,14 +1,10 @@
 import { DataSourceSettings, SelectableValue } from '@grafana/data';
 import { AwsAuthDataSourceJsonData, AwsAuthDataSourceSecureJsonData, SQLQuery } from '@grafana/aws-sdk';
+import { FillValueOptions } from '@grafana/aws-sdk/dist/sql/QueryEditor/FillValueSelect';
 
 export enum FormatOptions {
   TimeSeries,
   Table,
-}
-
-export enum FillValueOptions {
-  Previous,
-  Null,
 }
 
 export const SelectableFormatOptions: Array<SelectableValue<FormatOptions>> = [
