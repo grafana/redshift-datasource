@@ -1,15 +1,14 @@
 import { DataSourceSettings, SelectableValue } from '@grafana/data';
-import { AwsAuthDataSourceJsonData, AwsAuthDataSourceSecureJsonData, SQLQuery } from '@grafana/aws-sdk';
+import {
+  AwsAuthDataSourceJsonData,
+  AwsAuthDataSourceSecureJsonData,
+  SQLQuery,
+  FillValueOptions,
+} from '@grafana/aws-sdk';
 
 export enum FormatOptions {
   TimeSeries,
   Table,
-}
-
-export enum FillValueOptions {
-  Previous,
-  Null,
-  Value,
 }
 
 export const SelectableFormatOptions: Array<SelectableValue<FormatOptions>> = [
@@ -20,21 +19,6 @@ export const SelectableFormatOptions: Array<SelectableValue<FormatOptions>> = [
   {
     label: 'Table',
     value: FormatOptions.Table,
-  },
-];
-
-export const SelectableFillValueOptions: Array<SelectableValue<FillValueOptions>> = [
-  {
-    label: 'Previous Value',
-    value: FillValueOptions.Previous,
-  },
-  {
-    label: 'NULL',
-    value: FillValueOptions.Null,
-  },
-  {
-    label: 'Value',
-    value: FillValueOptions.Value,
   },
 ];
 

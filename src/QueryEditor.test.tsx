@@ -4,7 +4,8 @@ import * as runtime from '@grafana/runtime';
 import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { select } from 'react-select-event';
-import { FillValueOptions, FormatOptions } from 'types';
+import { FillValueOptions } from '@grafana/aws-sdk';
+import { FormatOptions } from 'types';
 
 import { mockDatasource, mockQuery } from './__mocks__/datasource';
 import { QueryEditor } from './QueryEditor';
