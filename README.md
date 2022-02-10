@@ -126,9 +126,9 @@ order by
   start_time,query_type ASC;
 ```
 
-##### Fill mode
+##### Fill value
 
-Grafana also supports to autocomplete frames without a value with some default. To configure this value, change the "Fill Value" in the query editor.
+When data frames are formatted as time series, you can choose how missing values should be filled. This in turn affects how they are rendered: with connected or disconnected values. To configure this value, change the "Fill Value" in the query editor.
 
 #### Inspecting the query
 
