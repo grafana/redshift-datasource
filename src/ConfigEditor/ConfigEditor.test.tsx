@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ConfigEditor } from './ConfigEditor';
 import { selectors } from '../selectors';
 import { mockDatasourceOptions } from '../__mocks__/datasource';
@@ -60,6 +60,20 @@ describe('ConfigEditor', () => {
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
       jsonData: { ...props.options.jsonData, managedSecret: secret },
+    });
+  });
+
+  it('should select a database', async () => {
+    const onChange = jest.fn();
+    render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+
+    const dbField = screen.getByTestId('data-testid database');
+    expect(dbField).toBeInTheDocument();
+    fireEvent.change(dbField, {target: {value: 'abcd'}})
+
+    expect(onChange).toHaveBeenCalledWith({
+      ...props.options,
+      jsonData: { ...props.options.jsonData, database: 'abcd' },
     });
   });
 
