@@ -70,7 +70,7 @@ describe('ConfigEditor', () => {
 
     const dbField = screen.getByTestId('data-testid database');
     expect(dbField).toBeInTheDocument();
-    fireEvent.change(dbField, {target: {value: 'abcd'}});
+    fireEvent.change(dbField, { target: { value: 'abcd' } });
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith({
