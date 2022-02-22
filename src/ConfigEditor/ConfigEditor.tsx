@@ -74,10 +74,10 @@ export function ConfigEditor(props: Props) {
 
   // Description to show in datasource card in list
   const { dbUser, clusterIdentifier, database } = props.options.jsonData || {};
+  const { onOptionsChange: propsOnOptionsChange } = props;
   useEffect(() => {
-    console.log(`${dbUser}@${clusterIdentifier}/${database}`);
     if (dbUser || clusterIdentifier || database) {
-      props.onOptionsChange({
+      propsOnOptionsChange({
         ...props.options,
         url: `${dbUser}@${clusterIdentifier}/${database}`,
       });

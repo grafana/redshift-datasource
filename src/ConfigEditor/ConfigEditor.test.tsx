@@ -87,11 +87,11 @@ describe('ConfigEditor', () => {
         jsonData: {
           dbUser: 'testUser',
           database: 'testDB',
-          clusterIdentifier: 'testCluster'
-        }
+          clusterIdentifier: 'testCluster',
+        },
       },
       onOptionsChange: onChange,
-    }
+    };
     render(<ConfigEditor {...propsWithJson} />);
 
     expect(onChange).toHaveBeenCalledTimes(1);
