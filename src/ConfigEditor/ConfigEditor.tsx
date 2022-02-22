@@ -76,10 +76,12 @@ export function ConfigEditor(props: Props) {
   const { dbUser, clusterIdentifier, database } = props.options.jsonData || {};
   useEffect(() => {
     console.log(`${dbUser}@${clusterIdentifier}/${database}`);
-    props.onOptionsChange({
-      ...props.options,
-      url: `${dbUser}@${clusterIdentifier}/${database}`,
-    });
+    if(dbUser || clusterIdentifier || database) {
+      props.onOptionsChange({
+        ...props.options,
+        url: `${dbUser}@${clusterIdentifier}/${database}`,
+      });
+    }
   }, [dbUser, clusterIdentifier, database]);
 
   const onOptionsChange = (options: RedshiftDataSourceSettings) => {
