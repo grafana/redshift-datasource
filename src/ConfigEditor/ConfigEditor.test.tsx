@@ -64,7 +64,7 @@ describe('ConfigEditor', () => {
     });
   });
 
-  it('should select a database', async () => {
+  it('should allow user to enter a database', async () => {
     const onChange = jest.fn();
     render(<ConfigEditor {...props} onOptionsChange={onChange} />);
 
