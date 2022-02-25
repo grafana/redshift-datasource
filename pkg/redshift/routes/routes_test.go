@@ -17,6 +17,13 @@ var ds = &fake.RedshiftFakeDatasource{
 		{Name: "secret1", ARN: "arn:secret1"},
 	},
 	RSecret: models.RedshiftSecret{ClusterIdentifier: "clu", DBUser: "user"},
+	RCluster: models.RedshiftCluster{
+		Endpoint: models.RedshiftEndpoint{
+			Address: "foo.a.b.c",
+			Port: 123,
+		},
+		Database: "db-foo",
+	},
 }
 
 func TestRoutes(t *testing.T) {
@@ -38,6 +45,12 @@ func TestRoutes(t *testing.T) {
 			expectedCode:   http.StatusOK,
 			expectedResult: `{"dbClusterIdentifier":"clu","username":"user"}`,
 		},
+		{
+			description:    "return cluster",
+			route:          "cluster",
+			expectedCode:   http.StatusOK,
+			expectedResult: `{"endpoint":{"address":"foo.a.b.c","port":123},"database":"db-foo"}`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
@@ -49,6 +62,8 @@ func TestRoutes(t *testing.T) {
 				rh.secrets(rw, req)
 			case "secret":
 				rh.secret(rw, req)
+			case "cluster":
+				rh.cluster(rw, req)
 			default:
 				t.Fatalf("unexpected route %s", tt.route)
 			}

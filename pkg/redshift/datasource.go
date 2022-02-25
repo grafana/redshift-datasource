@@ -146,5 +146,5 @@ func (s *RedshiftDatasource) Cluster(ctx context.Context, options sqlds.Options)
 	if err != nil {
 		return nil, err
 	}
-	return api.Cluster(ctx, options)
+	return api.Cluster(options)
 }
