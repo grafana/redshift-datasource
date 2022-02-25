@@ -356,7 +356,7 @@ func (c *API) Cluster(options sqlds.Options) (*models.RedshiftCluster, error) {
 	}
 	res := &models.RedshiftCluster{}
 	for _,r := range out.Clusters {
-		if (r != nil && r.ClusterIdentifier != nil && *r.ClusterIdentifier == clusterId) {
+		if (r != nil && r.ClusterIdentifier != nil && *r.ClusterIdentifier == clusterId && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil) {
 			res.Endpoint = models.RedshiftEndpoint{
 				Address: *r.Endpoint.Address,
 				Port: *r.Endpoint.Port,

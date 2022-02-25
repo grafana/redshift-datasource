@@ -12,6 +12,7 @@ import (
 	redshiftclientmock "github.com/grafana/redshift-datasource/pkg/redshift/api/mock"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v2"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_apiInput(t *testing.T) {
@@ -218,11 +219,8 @@ func Test_GetSecret(t *testing.T) {
 }
 
 func Test_GetCluster(t *testing.T) {
+	fooC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
 	c := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
-	cluster, err := c.Cluster(sqlds.Options{"clusterIdentifier": "foo"})
-	if err != nil {
-		t.Fatalf("unexpected error %v", err)
-	}
 	expectedCluster := &models.RedshiftCluster{
 		Endpoint: models.RedshiftEndpoint{ 
 			Address: "foo", 
@@ -230,20 +228,19 @@ func Test_GetCluster(t *testing.T) {
 		}, 
 		Database: "foo",
 	}
-	if !cmp.Equal(expectedCluster, cluster) {
-		t.Errorf("unexpected result: %v", cmp.Diff(expectedCluster, cluster))
-	}
-}
-
-func Test_GetCluster_Errors(t *testing.T) {
-	fooC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
-
 	tests := []struct {
 		c		  *API
 		desc	  string
 		clusterId string
 		errMsg    string
+		expectedCluster *models.RedshiftCluster
 	}{
+		{
+			c: c,
+			desc: "Happy Path",
+			clusterId: "foo",
+			expectedCluster: expectedCluster,
+		},
 		{
 			c: fooC,
 			desc: "Error cluster ID not found",
@@ -253,13 +250,13 @@ func Test_GetCluster_Errors(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
-			c := tt.c
-			cluster, err := c.Cluster(sqlds.Options{"clusterIdentifier": tt.clusterId})
-			if (err.Error() != tt.errMsg) {
-				t.Errorf("unexpected error message: %v", cmp.Diff(tt.errMsg, err.Error()))
-			}
-			if (cluster != nil || err == nil) {
-				t.Errorf("error: expected cluster to be nil and error triggered")
+			cluster, err := tt.c.Cluster(sqlds.Options{"clusterIdentifier": tt.clusterId})
+			if (tt.errMsg == "") {
+				assert.NoError(t, err)
+				assert.Equal(t, expectedCluster, cluster)
+			} else {
+				assert.Nil(t, cluster)
+				assert.EqualError(t, err, tt.errMsg)
 			}
 		})
 	}
