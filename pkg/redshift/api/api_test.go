@@ -65,7 +65,7 @@ func Test_apiInput(t *testing.T) {
 func Test_Execute(t *testing.T) {
 	c := &API{
 		settings: &models.RedshiftDataSourceSettings{},
-		Client:   &redshiftclientmock.MockRedshiftClient{ExecutionResult: &redshiftdataapiservice.ExecuteStatementOutput{Id: aws.String("foo")}},
+		DataClient:   &redshiftclientmock.MockRedshiftClient{ExecutionResult: &redshiftdataapiservice.ExecuteStatementOutput{Id: aws.String("foo")}},
 	}
 	res, err := c.Execute(context.TODO(), &api.ExecuteQueryInput{Query: "select * from foo"})
 	if err != nil {
@@ -105,7 +105,7 @@ func Test_Status(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			c := &API{
 				settings: &models.RedshiftDataSourceSettings{},
-				Client: &redshiftclientmock.MockRedshiftClient{
+				DataClient: &redshiftclientmock.MockRedshiftClient{
 					DescribeStatementOutput: &redshiftdataapiservice.DescribeStatementOutput{
 						Id:     aws.String("foo"),
 						Status: aws.String(tt.status),
@@ -132,7 +132,7 @@ func Test_ListSchemas(t *testing.T) {
 	expectedResult := []string{"bar", "foo"}
 	c := &API{
 		settings: &models.RedshiftDataSourceSettings{},
-		Client:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		DataClient:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Schemas(context.TODO(), sqlds.Options{})
 	if err != nil {
@@ -156,7 +156,7 @@ func Test_ListTables(t *testing.T) {
 	expectedResult := []string{"foofoo"}
 	c := &API{
 		settings: &models.RedshiftDataSourceSettings{},
-		Client:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		DataClient:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Tables(context.TODO(), sqlds.Options{"schema": "foo"})
 	if err != nil {
@@ -182,7 +182,7 @@ func Test_ListColumns(t *testing.T) {
 	expectedResult := []string{"col1", "col2"}
 	c := &API{
 		settings: &models.RedshiftDataSourceSettings{},
-		Client:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		DataClient:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Columns(context.TODO(), sqlds.Options{"schema": "public", "table": "foo"})
 	if err != nil {
@@ -214,5 +214,23 @@ func Test_GetSecret(t *testing.T) {
 	expectedSecret := &models.RedshiftSecret{ClusterIdentifier: "foo", DBUser: "bar"}
 	if !cmp.Equal(expectedSecret, secret) {
 		t.Errorf("unexpected result: %v", cmp.Diff(expectedSecret, secret))
+	}
+}
+
+func Test_GetCluster(t *testing.T) {
+	c := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
+	cluster, err := c.Cluster(sqlds.Options{"clusterIdentifier": "foo"})
+	if err != nil {
+		t.Fatalf("unexpected error %v", err)
+	}
+	expectedCluster := &models.RedshiftCluster{
+		Endpoint: models.RedshiftEndpoint{ 
+			Address: "foo", 
+			Port: 123,
+		}, 
+		Database: "foo",
+	}
+	if !cmp.Equal(expectedCluster, cluster) {
+		t.Errorf("unexpected result: %v", cmp.Diff(expectedCluster, cluster))
 	}
 }

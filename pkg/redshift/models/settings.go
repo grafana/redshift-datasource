@@ -20,6 +20,16 @@ type RedshiftSecret struct {
 	DBUser            string `json:"username"`
 }
 
+type RedshiftEndpoint struct {
+	Address string `json:"address"`
+	Port int64 `json:"port"`
+}
+
+type RedshiftCluster struct {
+	Endpoint RedshiftEndpoint `json:"endpoint"`
+	Database string `json:"database"`
+}
+
 type RedshiftDataSourceSettings struct {
 	awsds.AWSDatasourceSettings
 	Config            backend.DataSourceInstanceSettings

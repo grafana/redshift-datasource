@@ -5,6 +5,8 @@ import (
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
+	"github.com/aws/aws-sdk-go/service/redshift"
+	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
@@ -17,9 +19,11 @@ type MockRedshiftClient struct {
 	Resources map[string]map[string][]string
 	Secrets   []string
 	Secret    string
+	Clusters  []string
 
 	secretsmanageriface.SecretsManagerAPI
 	redshiftdataapiservice.RedshiftDataAPIService
+	redshiftiface.RedshiftAPI
 }
 
 func (m *MockRedshiftClient) ExecuteStatementWithContext(ctx aws.Context, input *redshiftdataapiservice.ExecuteStatementInput, opts ...request.Option) (*redshiftdataapiservice.ExecuteStatementOutput, error) {
@@ -67,4 +71,22 @@ func (m *MockRedshiftClient) GetSecretValueWithContext(ctx aws.Context, input *s
 	return &secretsmanager.GetSecretValueOutput{
 		SecretString: aws.String(m.Secret),
 	}, nil
+}
+
+func (m *MockRedshiftClient) DescribeClusters(input *redshift.DescribeClustersInput) (*redshift.DescribeClustersOutput, error) {
+	r := []*redshift.Cluster{}
+	for _, c := range m.Clusters {
+		r = append(r, &redshift.Cluster{
+			ClusterIdentifier: aws.String(c),
+			Endpoint: &redshift.Endpoint {
+				Address: aws.String(c),
+				Port: aws.Int64(123),
+			},
+			DBName: aws.String(c),
+		})
+	}
+	res := redshift.DescribeClustersOutput{
+		Clusters: r,
+	}
+	return &res, nil
 }

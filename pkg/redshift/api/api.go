@@ -7,6 +7,8 @@ import (
 	"fmt"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/redshift"
+	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
@@ -21,8 +23,9 @@ import (
 )
 
 type API struct {
-	Client        redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
-	SecretsClient secretsmanageriface.SecretsManagerAPI
+	DataClient        redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
+	SecretsClient 	  secretsmanageriface.SecretsManagerAPI
+	ManagementClient  redshiftiface.RedshiftAPI
 	settings      *models.RedshiftDataSourceSettings
 }
 
@@ -51,8 +54,9 @@ func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWS
 	}
 
 	return &API{
-		Client:        redshiftdataapiservice.New(sess),
+		DataClient:        redshiftdataapiservice.New(sess),
 		SecretsClient: secretsmanager.New(sess),
+		ManagementClient: redshift.New(sess),
 		settings:      redshiftSettings,
 	}, nil
 }
@@ -87,7 +91,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		Sql:               aws.String(input.Query),
 	}
 
-	output, err := c.Client.ExecuteStatementWithContext(ctx, redshiftInput)
+	output, err := c.DataClient.ExecuteStatementWithContext(ctx, redshiftInput)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", api.ExecuteError, err)
 	}
@@ -96,7 +100,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 }
 
 func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.ExecuteQueryStatus, error) {
-	statusResp, err := c.Client.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
+	statusResp, err := c.DataClient.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
 		Id: aws.String(output.ID),
 	})
 	if err != nil {
@@ -124,7 +128,7 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 }
 
 func (c *API) Stop(output *api.ExecuteQueryOutput) error {
-	_, err := c.Client.CancelStatement(&redshiftdataapiservice.CancelStatementInput{
+	_, err := c.DataClient.CancelStatement(&redshiftdataapiservice.CancelStatementInput{
 		Id: &output.ID,
 	})
 	if err != nil {
@@ -173,7 +177,7 @@ func (c *API) Databases(ctx aws.Context, options sqlds.Options) ([]string, error
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.Client.ListDatabasesWithContext(ctx, input)
+		out, err := c.DataClient.ListDatabasesWithContext(ctx, input)
 		if err != nil {
 			return nil, err
 		}
@@ -201,7 +205,7 @@ func (c *API) Schemas(ctx aws.Context, options sqlds.Options) ([]string, error) 
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.Client.ListSchemasWithContext(ctx, input)
+		out, err := c.DataClient.ListSchemasWithContext(ctx, input)
 		if err != nil {
 			return nil, err
 		}
@@ -235,7 +239,7 @@ func (c *API) Tables(ctx aws.Context, options sqlds.Options) ([]string, error) {
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.Client.ListTablesWithContext(ctx, input)
+		out, err := c.DataClient.ListTablesWithContext(ctx, input)
 		if err != nil {
 			return nil, err
 		}
@@ -266,7 +270,7 @@ func (c *API) Columns(ctx aws.Context, options sqlds.Options) ([]string, error) 
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.Client.DescribeTableWithContext(ctx, input)
+		out, err := c.DataClient.DescribeTableWithContext(ctx, input)
 		if err != nil {
 			return nil, err
 		}
@@ -336,4 +340,32 @@ func (c *API) Secret(ctx aws.Context, options sqlds.Options) (*models.RedshiftSe
 		return nil, err
 	}
 	return res, nil
+}
+
+func (c *API) Cluster(options sqlds.Options) (*models.RedshiftCluster, error) {
+	clusterId := options["clusterIdentifier"]
+	input := &redshift.DescribeClustersInput{
+		ClusterIdentifier: aws.String(clusterId),
+	}
+	out, err := c.ManagementClient.DescribeClusters(input)
+	if err != nil {
+		return nil, err
+	}
+	if out == nil {
+		return nil, fmt.Errorf("missing cluster content")
+	}
+	res := &models.RedshiftCluster{}
+	for _,r := range out.Clusters {
+		if (r != nil && r.ClusterIdentifier != nil && *r.ClusterIdentifier == clusterId) {
+			res.Endpoint = models.RedshiftEndpoint{
+				Address: *r.Endpoint.Address,
+				Port: *r.Endpoint.Port,
+			}
+			if (r.DBName != nil) {
+				res.Database = *r.DBName
+			}
+			return res, nil
+		}
+	}
+	return nil, fmt.Errorf("ClusterId %s not found", clusterId)
 }
