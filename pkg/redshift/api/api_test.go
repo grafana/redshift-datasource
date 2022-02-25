@@ -221,6 +221,8 @@ func Test_GetSecret(t *testing.T) {
 func Test_GetCluster(t *testing.T) {
 	fooC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
 	c := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
+	errC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientError{}}
+	nilC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientNil{}}
 	expectedCluster := &models.RedshiftCluster{
 		Endpoint: models.RedshiftEndpoint{ 
 			Address: "foo", 
@@ -246,6 +248,18 @@ func Test_GetCluster(t *testing.T) {
 			desc: "Error cluster ID not found",
 			clusterId: "xyz",
 			errMsg: "ClusterId xyz not found",
+		},
+		{
+			c: errC,
+			desc: "Error with DescribeCluster",
+			clusterId: "foo",
+			errMsg: "Boom!",
+		},
+		{
+			c: nilC,
+			desc: "DescribeCluster returned nil",
+			clusterId: "foo",
+			errMsg: "missing cluster content",
 		},
 	}
 	for _, tt := range tests {
