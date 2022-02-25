@@ -234,3 +234,33 @@ func Test_GetCluster(t *testing.T) {
 		t.Errorf("unexpected result: %v", cmp.Diff(expectedCluster, cluster))
 	}
 }
+
+func Test_GetCluster_Errors(t *testing.T) {
+	fooC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
+
+	tests := []struct {
+		c		  *API
+		desc	  string
+		clusterId string
+		errMsg    string
+	}{
+		{
+			c: fooC,
+			desc: "Error cluster ID not found",
+			clusterId: "xyz",
+			errMsg: "ClusterId xyz not found",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			c := tt.c
+			cluster, err := c.Cluster(sqlds.Options{"clusterIdentifier": tt.clusterId})
+			if (err.Error() != tt.errMsg) {
+				t.Errorf("unexpected error message: %v", cmp.Diff(tt.errMsg, err.Error()))
+			}
+			if (cluster != nil || err == nil) {
+				t.Errorf("error: expected cluster to be nil and error triggered")
+			}
+		})
+	}
+}
