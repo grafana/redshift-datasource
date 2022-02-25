@@ -72,18 +72,6 @@ export function ConfigEditor(props: Props) {
     }
   }, [arn]);
 
-  // Description to show in datasource card in list
-  const { dbUser, clusterIdentifier, database } = props.options.jsonData || {};
-  const { onOptionsChange: propsOnOptionsChange } = props;
-  useEffect(() => {
-    if (dbUser || clusterIdentifier || database) {
-      propsOnOptionsChange({
-        ...props.options,
-        url: `${dbUser}@${clusterIdentifier}/${database}`,
-      });
-    }
-  }, [dbUser, clusterIdentifier, database]);
-
   const onOptionsChange = (options: RedshiftDataSourceSettings) => {
     setSaved(false);
     props.onOptionsChange(options);
