@@ -47,10 +47,11 @@ Here is a minimal policy example:
         "redshift-data:ListTables",
         "redshift-data:DescribeTable",
         "redshift-data:GetStatementResult",
-        "redshift:GetClusterCredentials",
         "redshift-data:DescribeStatement",
         "redshift-data:ListSchemas",
         "redshift-data:ExecuteStatement",
+        "redshift:GetClusterCredentials",
+        "redshift:DescribeClusters",
         "secretsmanager:ListSecrets"
       ],
       "Resource": "*"
