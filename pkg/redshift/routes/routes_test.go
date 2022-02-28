@@ -10,6 +10,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	"github.com/grafana/redshift-datasource/pkg/redshift/fake"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
+	"github.com/stretchr/testify/assert"
 )
 
 var ds = &fake.RedshiftFakeDatasource{
@@ -82,4 +83,12 @@ func TestRoutes(t *testing.T) {
 			}
 		})
 	}
+}
+
+func Test_Routes(t *testing.T) {
+	rh := RedshiftResourceHandler{redshift: ds}
+	r := rh.Routes()
+	assert.Contains(t, r, "/secrets")
+	assert.Contains(t, r, "/secret")
+	assert.Contains(t, r, "/cluster")
 }
