@@ -28,7 +28,7 @@ func (c *conn) QueryContext(ctx context.Context, query string, args []driver.Nam
 		return nil, err
 	}
 
-	return newRows(c.api.Client, output.ID)
+	return newRows(c.api.DataClient, output.ID)
 }
 
 func (c *conn) Ping(ctx context.Context) error {
