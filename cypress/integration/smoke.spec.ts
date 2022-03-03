@@ -1,4 +1,5 @@
 import { e2e } from '@grafana/e2e';
+
 import { selectors } from '../../src/selectors';
 
 const e2eSelectors = e2e.getSelectors(selectors.components);
@@ -6,7 +7,7 @@ const e2eSelectors = e2e.getSelectors(selectors.components);
 /**
 To run these e2e tests:
 - first make sure you have access to the internal grafana redshift cluster
-- set up a copy of your credentials in a provisioning/datasource/redshift.yaml file
+- set up a copy of your credentials in a provisioning/datasource/aws-redshift.yaml file
 - (TODO: add test credentials to provisioning repo for symlinking)
 
 OR if you are an external grafana contributor you can create your own cluster and use the sample data provided in the 
@@ -39,7 +40,7 @@ e2e.scenario({
   itName: 'Login, create data source, dashboard with panel',
   scenario: () => {
     e2e()
-      .readProvisions(['datasources/redshift.yaml'])
+      .readProvisions(['datasources/aws-redshift.yaml'])
       .then((RedshiftProvisions: RedshiftProvision[]) => {
         const datasource = RedshiftProvisions[0].datasources[0];
 
@@ -90,7 +91,7 @@ e2e.scenario({
   itName: 'Login, create data source with a managed secret',
   scenario: () => {
     e2e()
-      .readProvisions(['datasources/redshift.yaml'])
+      .readProvisions(['datasources/aws-redshift.yaml'])
       .then((RedshiftProvisions: RedshiftProvision[]) => {
         const datasource = RedshiftProvisions[0].datasources[1];
 
