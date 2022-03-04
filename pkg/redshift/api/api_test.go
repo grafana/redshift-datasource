@@ -241,26 +241,22 @@ func Test_GetClusters(t *testing.T) {
 	tests := []struct {
 		c                *API
 		desc             string
-		clusterId        string
 		errMsg           string
 		expectedClusters []models.RedshiftCluster
 	}{
 		{
 			c:                c,
 			desc:             "Happy Path",
-			clusterId:        "foo",
 			expectedClusters: []models.RedshiftCluster{*expectedCluster1, *expectedCluster2},
 		},
 		{
 			c:         errC,
 			desc:      "Error with DescribeCluster",
-			clusterId: "foo",
 			errMsg:    "Boom!",
 		},
 		{
 			c:         nilC,
 			desc:      "DescribeCluster returned nil",
-			clusterId: "foo",
 			errMsg:    "missing clusters content",
 		},
 	}
