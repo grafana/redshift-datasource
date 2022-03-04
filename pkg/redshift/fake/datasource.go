@@ -14,7 +14,7 @@ import (
 type RedshiftFakeDatasource struct {
 	SecretList []models.ManagedSecret
 	RSecret    models.RedshiftSecret
-	RCluster    models.RedshiftCluster
+	RClusters  []models.RedshiftCluster
 }
 
 func (s *RedshiftFakeDatasource) Settings(_ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
@@ -60,6 +60,6 @@ func (s *RedshiftFakeDatasource) Secrets(ctx context.Context, options sqlds.Opti
 func (s *RedshiftFakeDatasource) Secret(ctx context.Context, options sqlds.Options) (*models.RedshiftSecret, error) {
 	return &s.RSecret, nil
 }
-func (s *RedshiftFakeDatasource) Cluster(ctx context.Context, options sqlds.Options) (*models.RedshiftCluster, error) {
-	return &s.RCluster, nil
+func (s *RedshiftFakeDatasource) Clusters(ctx context.Context, options sqlds.Options) ([]models.RedshiftCluster, error) {
+	return s.RClusters, nil
 }
