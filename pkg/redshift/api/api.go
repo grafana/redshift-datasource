@@ -352,14 +352,16 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 	}
 	res := []models.RedshiftCluster{}
 	for _, r := range out.Clusters {
-		res = append(res, models.RedshiftCluster{
-			ClusterIdentifier: *r.ClusterIdentifier,
-			Endpoint: models.RedshiftEndpoint{
-				Address: *r.Endpoint.Address,
-				Port:    *r.Endpoint.Port,
-			},
-			Database: *r.DBName,
-		})
+		if (r != nil && r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil) {
+			res = append(res, models.RedshiftCluster{
+				ClusterIdentifier: *r.ClusterIdentifier,
+				Endpoint: models.RedshiftEndpoint{
+					Address: *r.Endpoint.Address,
+					Port:    *r.Endpoint.Port,
+				},
+				Database: *r.DBName,
+			})
+		}
 	}
 	return res, nil
 }
