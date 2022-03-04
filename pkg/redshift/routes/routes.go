@@ -34,13 +34,7 @@ func (r *RedshiftResourceHandler) secret(rw http.ResponseWriter, req *http.Reque
 }
 
 func (r *RedshiftResourceHandler) clusters(rw http.ResponseWriter, req *http.Request) {
-	reqBody, err := routes.ParseBody(req.Body)
-	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		routes.Write(rw, []byte(err.Error()))
-		return
-	}
-	clusters, err := r.redshift.Clusters(req.Context(), reqBody)
+	clusters, err := r.redshift.Clusters(req.Context(), sqlds.Options{})
 	routes.SendResources(rw, clusters, err)
 }
 
