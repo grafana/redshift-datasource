@@ -65,8 +65,8 @@ func Test_apiInput(t *testing.T) {
 
 func Test_Execute(t *testing.T) {
 	c := &API{
-		settings: &models.RedshiftDataSourceSettings{},
-		DataClient:   &redshiftclientmock.MockRedshiftClient{ExecutionResult: &redshiftdataapiservice.ExecuteStatementOutput{Id: aws.String("foo")}},
+		settings:   &models.RedshiftDataSourceSettings{},
+		DataClient: &redshiftclientmock.MockRedshiftClient{ExecutionResult: &redshiftdataapiservice.ExecuteStatementOutput{Id: aws.String("foo")}},
 	}
 	res, err := c.Execute(context.TODO(), &api.ExecuteQueryInput{Query: "select * from foo"})
 	if err != nil {
@@ -132,8 +132,8 @@ func Test_ListSchemas(t *testing.T) {
 	}
 	expectedResult := []string{"bar", "foo"}
 	c := &API{
-		settings: &models.RedshiftDataSourceSettings{},
-		DataClient:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		settings:   &models.RedshiftDataSourceSettings{},
+		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Schemas(context.TODO(), sqlds.Options{})
 	if err != nil {
@@ -156,8 +156,8 @@ func Test_ListTables(t *testing.T) {
 	}
 	expectedResult := []string{"foofoo"}
 	c := &API{
-		settings: &models.RedshiftDataSourceSettings{},
-		DataClient:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		settings:   &models.RedshiftDataSourceSettings{},
+		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Tables(context.TODO(), sqlds.Options{"schema": "foo"})
 	if err != nil {
@@ -182,8 +182,8 @@ func Test_ListColumns(t *testing.T) {
 	}
 	expectedResult := []string{"col1", "col2"}
 	c := &API{
-		settings: &models.RedshiftDataSourceSettings{},
-		DataClient:   &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		settings:   &models.RedshiftDataSourceSettings{},
+		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Columns(context.TODO(), sqlds.Options{"schema": "public", "table": "foo"})
 	if err != nil {
@@ -218,58 +218,56 @@ func Test_GetSecret(t *testing.T) {
 	}
 }
 
-func Test_GetCluster(t *testing.T) {
-	fooC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
-	c := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo"}}}
+func Test_GetClusters(t *testing.T) {
+	c := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo", "bar"}}}
 	errC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientError{}}
 	nilC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientNil{}}
-	expectedCluster := &models.RedshiftCluster{
-		Endpoint: models.RedshiftEndpoint{ 
-			Address: "foo", 
-			Port: 123,
-		}, 
+	expectedCluster1 := &models.RedshiftCluster{
+		ClusterIdentifier: "foo",
+		Endpoint: models.RedshiftEndpoint{
+			Address: "foo",
+			Port:    123,
+		},
 		Database: "foo",
 	}
+	expectedCluster2 := &models.RedshiftCluster{
+		ClusterIdentifier: "bar",
+		Endpoint: models.RedshiftEndpoint{
+			Address: "bar",
+			Port:    123,
+		},
+		Database: "bar",
+	}
 	tests := []struct {
-		c		  *API
-		desc	  string
-		clusterId string
-		errMsg    string
-		expectedCluster *models.RedshiftCluster
+		c                *API
+		desc             string
+		errMsg           string
+		expectedClusters []models.RedshiftCluster
 	}{
 		{
-			c: c,
-			desc: "Happy Path",
-			clusterId: "foo",
-			expectedCluster: expectedCluster,
+			c:                c,
+			desc:             "Happy Path",
+			expectedClusters: []models.RedshiftCluster{*expectedCluster1, *expectedCluster2},
 		},
 		{
-			c: fooC,
-			desc: "Error cluster ID not found",
-			clusterId: "xyz",
-			errMsg: "ClusterId xyz not found",
+			c:         errC,
+			desc:      "Error with DescribeCluster",
+			errMsg:    "Boom!",
 		},
 		{
-			c: errC,
-			desc: "Error with DescribeCluster",
-			clusterId: "foo",
-			errMsg: "Boom!",
-		},
-		{
-			c: nilC,
-			desc: "DescribeCluster returned nil",
-			clusterId: "foo",
-			errMsg: "missing cluster content",
+			c:         nilC,
+			desc:      "DescribeCluster returned nil",
+			errMsg:    "missing clusters content",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
-			cluster, err := tt.c.Cluster(sqlds.Options{"clusterIdentifier": tt.clusterId})
-			if (tt.errMsg == "") {
+			clusters, err := tt.c.Clusters()
+			if tt.errMsg == "" {
 				assert.NoError(t, err)
-				assert.Equal(t, expectedCluster, cluster)
+				assert.Equal(t, tt.expectedClusters, clusters)
 			} else {
-				assert.Nil(t, cluster)
+				assert.Nil(t, clusters)
 				assert.EqualError(t, err, tt.errMsg)
 			}
 		})

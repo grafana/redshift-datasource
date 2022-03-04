@@ -33,21 +33,15 @@ func (r *RedshiftResourceHandler) secret(rw http.ResponseWriter, req *http.Reque
 	routes.SendResources(rw, secret, err)
 }
 
-func (r *RedshiftResourceHandler) cluster(rw http.ResponseWriter, req *http.Request) {
-	reqBody, err := routes.ParseBody(req.Body)
-	if err != nil {
-		rw.WriteHeader(http.StatusBadRequest)
-		routes.Write(rw, []byte(err.Error()))
-		return
-	}
-	cluster, err := r.redshift.Cluster(req.Context(), reqBody)
-	routes.SendResources(rw, cluster, err)
+func (r *RedshiftResourceHandler) clusters(rw http.ResponseWriter, req *http.Request) {
+	clusters, err := r.redshift.Clusters(req.Context(), sqlds.Options{})
+	routes.SendResources(rw, clusters, err)
 }
 
 func (r *RedshiftResourceHandler) Routes() map[string]func(http.ResponseWriter, *http.Request) {
 	routes := r.DefaultRoutes()
 	routes["/secrets"] = r.secrets
 	routes["/secret"] = r.secret
-	routes["/cluster"] = r.cluster
+	routes["/clusters"] = r.clusters
 	return routes
 }

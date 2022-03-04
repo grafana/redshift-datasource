@@ -25,7 +25,7 @@ type RedshiftDatasourceIface interface {
 	Columns(ctx context.Context, options sqlds.Options) ([]string, error)
 	Secrets(ctx context.Context, options sqlds.Options) ([]models.ManagedSecret, error)
 	Secret(ctx context.Context, options sqlds.Options) (*models.RedshiftSecret, error)
-	Cluster(ctx context.Context, options sqlds.Options) (*models.RedshiftCluster, error)
+	Clusters(ctx context.Context, options sqlds.Options) ([]models.RedshiftCluster, error)
 }
 
 type RedshiftDatasource struct {
@@ -141,10 +141,10 @@ func (s *RedshiftDatasource) Secret(ctx context.Context, options sqlds.Options) 
 	return api.Secret(ctx, options)
 }
 
-func (s *RedshiftDatasource) Cluster(ctx context.Context, options sqlds.Options) (*models.RedshiftCluster, error) {
+func (s *RedshiftDatasource) Clusters(ctx context.Context, options sqlds.Options) ([]models.RedshiftCluster, error) {
 	api, err := s.getApi(ctx, options)
 	if err != nil {
 		return nil, err
 	}
-	return api.Cluster(options)
+	return api.Clusters()
 }
