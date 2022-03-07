@@ -1,13 +1,16 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
-import { ConfigEditor } from './ConfigEditor';
-import { selectors } from '../selectors';
-import { mockDatasourceOptions } from '../__mocks__/datasource';
 import { select } from 'react-select-event';
+
+import { mockDatasourceOptions } from '../__mocks__/datasource';
+import { selectors } from '../selectors';
+import { ConfigEditor } from './ConfigEditor';
 
 const secret = { name: 'foo', arn: 'arn:foo' };
 const clusterIdentifier = 'cluster';
 const dbUser = 'username';
+const secretFetched = { dbClusterIdentifier: clusterIdentifier, username: dbUser };
+const cluster = { endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db' };
 
 jest.mock('@grafana/aws-sdk', () => {
   return {
@@ -23,7 +26,7 @@ jest.mock('@grafana/runtime', () => {
     ...(jest.requireActual('@grafana/runtime') as any),
     getBackendSrv: () => ({
       put: jest.fn().mockResolvedValue({ datasource: {} }),
-      post: jest.fn().mockResolvedValue({ dbClusterIdentifier: clusterIdentifier, username: dbUser }),
+      post: jest.fn().mockImplementation((url, args) => (url.includes('secret') ? secretFetched : cluster)),
       get: jest.fn().mockResolvedValue([secret]),
     }),
   };
@@ -60,6 +63,41 @@ describe('ConfigEditor', () => {
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
       jsonData: { ...props.options.jsonData, managedSecret: secret },
+    });
+  });
+
+  it('should allow user to enter a database', async () => {
+    const onChange = jest.fn();
+    render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+
+    const dbField = screen.getByTestId('data-testid database');
+    expect(dbField).toBeInTheDocument();
+    fireEvent.change(dbField, { target: { value: 'abcd' } });
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith({
+      ...props.options,
+      jsonData: { ...props.options.jsonData, database: 'abcd' },
+    });
+  });
+
+  it('should populate the `url` prop when clusterIdentifier is set', async () => {
+    const onChange = jest.fn();
+    const propsWithJson = {
+      options: {
+        ...props.options,
+        jsonData: {
+          clusterIdentifier: 'testCluster',
+        },
+      },
+      onOptionsChange: onChange,
+    };
+    render(<ConfigEditor {...propsWithJson} />);
+
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+    expect(onChange).toHaveBeenCalledWith({
+      ...propsWithJson.options,
+      url: 'foo.a.b.c:123/db',
     });
   });
 

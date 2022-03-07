@@ -1,19 +1,29 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import { ConfigSelect, ConnectionConfig, InlineInput } from '@grafana/aws-sdk';
 import { DataSourcePluginOptionsEditorProps, SelectableValue } from '@grafana/data';
+import { getBackendSrv } from '@grafana/runtime';
+import React, { FormEvent, useEffect, useState } from 'react';
+import { selectors } from 'selectors';
+
 import {
   RedshiftDataSourceOptions,
   RedshiftDataSourceSecureJsonData,
   RedshiftDataSourceSettings,
   RedshiftManagedSecret,
 } from '../types';
-import { InlineInput, ConfigSelect, ConnectionConfig } from '@grafana/aws-sdk';
-import { getBackendSrv } from '@grafana/runtime';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
-import { selectors } from 'selectors';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 
 type Secret = { dbClusterIdentifier: string; username: string };
+
+type Cluster = {
+  clusterIdentifier: string;
+  endpoint: {
+    address: string;
+    port: number;
+  };
+  database: string;
+};
 
 type InputResourceType = 'clusterIdentifier' | 'dbUser' | 'database';
 
@@ -57,10 +67,19 @@ export function ConfigEditor(props: Props) {
     const res: Secret = await getBackendSrv().post(resourcesURL + '/secret', { secretARN: arn });
     return res;
   };
+  const fetchClusters = async () => {
+    const res: Cluster[] = await getBackendSrv().get(resourcesURL + '/clusters');
+    return res.map((c) => ({
+      label: c.clusterIdentifier,
+      value: c.clusterIdentifier,
+      description: `${c.endpoint.address}:${c.endpoint.port}/${c.database}`,
+    }));
+  };
+  const { onOptionsChange: propsOnOptionsChange } = props;
   useEffect(() => {
     if (arn) {
       fetchSecret(arn).then((s) => {
-        props.onOptionsChange({
+        propsOnOptionsChange({
           ...props.options,
           jsonData: {
             ...props.options.jsonData,
@@ -85,6 +104,18 @@ export function ConfigEditor(props: Props) {
       jsonData: {
         ...props.options.jsonData,
         managedSecret: { arn: value, name: label },
+      },
+    });
+  };
+  const onChangeClusterID = (e: SelectableValue<string> | null) => {
+    const value = e?.value ?? '';
+    const url = e?.description ?? '';
+    props.onOptionsChange({
+      ...props.options,
+      url,
+      jsonData: {
+        ...props.options.jsonData,
+        clusterIdentifier: value,
       },
     });
   };
@@ -114,13 +145,15 @@ export function ConfigEditor(props: Props) {
         saveOptions={saveOptions}
         hidden={!useManagedSecret}
       />
-      <InlineInput
+      <ConfigSelect
         {...props}
         value={props.options.jsonData.clusterIdentifier ?? ''}
-        onChange={onChange('clusterIdentifier')}
+        onChange={onChangeClusterID}
+        fetch={fetchClusters}
         label={selectors.components.ConfigEditor.ClusterID.input}
         data-testid={selectors.components.ConfigEditor.ClusterID.testID}
-        disabled={useManagedSecret}
+        saveOptions={saveOptions}
+        hidden={useManagedSecret}
       />
       <InlineInput
         {...props}
