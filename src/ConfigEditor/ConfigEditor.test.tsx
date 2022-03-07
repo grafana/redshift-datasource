@@ -10,7 +10,7 @@ const secret = { name: 'foo', arn: 'arn:foo' };
 const clusterIdentifier = 'cluster';
 const dbUser = 'username';
 const secretFetched = { dbClusterIdentifier: clusterIdentifier, username: dbUser };
-const cluster = { endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db' };
+const cluster = { clusterIdentifier: 'foo', endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db' };
 
 jest.mock('@grafana/aws-sdk', () => {
   return {
@@ -26,8 +26,8 @@ jest.mock('@grafana/runtime', () => {
     ...(jest.requireActual('@grafana/runtime') as any),
     getBackendSrv: () => ({
       put: jest.fn().mockResolvedValue({ datasource: {} }),
-      post: jest.fn().mockImplementation((url, args) => (url.includes('secret') ? secretFetched : cluster)),
-      get: jest.fn().mockResolvedValue([secret]),
+      get: jest.fn().mockImplementation((url, args) => (url.includes('secrets') ? [secret] : [cluster])),
+      post: jest.fn().mockResolvedValue(secretFetched),
     }),
   };
 });
@@ -83,21 +83,17 @@ describe('ConfigEditor', () => {
 
   it('should populate the `url` prop when clusterIdentifier is set', async () => {
     const onChange = jest.fn();
-    const propsWithJson = {
-      options: {
-        ...props.options,
-        jsonData: {
-          clusterIdentifier: 'testCluster',
-        },
-      },
-      onOptionsChange: onChange,
-    };
-    render(<ConfigEditor {...propsWithJson} />);
+    render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+
+    const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.ClusterID.input);
+    expect(selectEl).toBeInTheDocument();
+    await select(selectEl, cluster.clusterIdentifier, { container: document.body });
 
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
     expect(onChange).toHaveBeenCalledWith({
-      ...propsWithJson.options,
+      ...props.options,
       url: 'foo.a.b.c:123/db',
+      jsonData: { ...props.options.jsonData, clusterIdentifier: 'foo' },
     });
   });
 
