@@ -21,7 +21,7 @@ type RedshiftDatasourceConfig = {
     secretKey: string;
   };
   jsonData: {
-    clusterId: string;
+    clusterIdentifier: string;
     database: string;
     dbUser: string;
     defaultRegion: string;
@@ -55,7 +55,9 @@ e2e.scenario({
               .click({ force: true })
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
-            e2eSelectors.ConfigEditor.ClusterID.testID().click({ force: true }).type(datasource.jsonData.clusterId);
+            e2eSelectors.ConfigEditor.ClusterID.testID()
+              .click({ force: true })
+              .type(datasource.jsonData.clusterIdentifier);
             e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
             e2eSelectors.ConfigEditor.DatabaseUser.testID().click({ force: true }).type(datasource.jsonData.dbUser);
           },
@@ -114,7 +116,7 @@ e2e.scenario({
               .type(datasource.jsonData.managedSecret.name)
               .type('{enter}');
             // wait for the secret to be retrieved
-            e2eSelectors.ConfigEditor.ClusterID.testID().should('have.value', datasource.jsonData.clusterId);
+            e2eSelectors.ConfigEditor.ClusterID.testID().should('have.value', datasource.jsonData.clusterIdentifier);
             e2eSelectors.ConfigEditor.Database.testID()
               .click({ force: true })
               .type(datasource.jsonData.database, { delay: 20 });
