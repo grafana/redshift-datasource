@@ -1,4 +1,5 @@
 import { e2e } from '@grafana/e2e';
+
 import { selectors } from '../../src/selectors';
 
 const e2eSelectors = e2e.getSelectors(selectors.components);
@@ -6,7 +7,7 @@ const e2eSelectors = e2e.getSelectors(selectors.components);
 /**
 To run these e2e tests:
 - first make sure you have access to the internal grafana redshift cluster
-- set up a copy of your credentials in a provisioning/datasource/redshift.yaml file
+- set up a copy of your credentials in a provisioning/datasource/aws-redshift.yaml file
 - (TODO: add test credentials to provisioning repo for symlinking)
 
 OR if you are an external grafana contributor you can create your own cluster and use the sample data provided in the 
@@ -20,7 +21,7 @@ type RedshiftDatasourceConfig = {
     secretKey: string;
   };
   jsonData: {
-    clusterId: string;
+    clusterIdentifier: string;
     database: string;
     dbUser: string;
     defaultRegion: string;
@@ -39,7 +40,7 @@ e2e.scenario({
   itName: 'Login, create data source, dashboard with panel',
   scenario: () => {
     e2e()
-      .readProvisions(['datasources/redshift.yaml'])
+      .readProvisions(['datasources/aws-redshift.yaml'])
       .then((RedshiftProvisions: RedshiftProvision[]) => {
         const datasource = RedshiftProvisions[0].datasources[0];
 
@@ -54,7 +55,9 @@ e2e.scenario({
               .click({ force: true })
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
-            e2eSelectors.ConfigEditor.ClusterID.testID().click({ force: true }).type(datasource.jsonData.clusterId);
+            e2eSelectors.ConfigEditor.ClusterID.testID()
+              .click({ force: true })
+              .type(datasource.jsonData.clusterIdentifier);
             e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
             e2eSelectors.ConfigEditor.DatabaseUser.testID().click({ force: true }).type(datasource.jsonData.dbUser);
           },
@@ -90,7 +93,7 @@ e2e.scenario({
   itName: 'Login, create data source with a managed secret',
   scenario: () => {
     e2e()
-      .readProvisions(['datasources/redshift.yaml'])
+      .readProvisions(['datasources/aws-redshift.yaml'])
       .then((RedshiftProvisions: RedshiftProvision[]) => {
         const datasource = RedshiftProvisions[0].datasources[1];
 
@@ -113,7 +116,7 @@ e2e.scenario({
               .type(datasource.jsonData.managedSecret.name)
               .type('{enter}');
             // wait for the secret to be retrieved
-            e2eSelectors.ConfigEditor.ClusterID.testID().should('have.value', datasource.jsonData.clusterId);
+            e2eSelectors.ConfigEditor.ClusterID.testID().should('have.value', datasource.jsonData.clusterIdentifier);
             e2eSelectors.ConfigEditor.Database.testID()
               .click({ force: true })
               .type(datasource.jsonData.database, { delay: 20 });
