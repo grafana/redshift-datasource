@@ -81,8 +81,10 @@ describe('ConfigEditor', () => {
     });
   });
 
-  it('should populate the `url` prop when clusterIdentifier is set', async () => {
+  it('should populate the `url` prop when clusterIdentifier is selected', async () => {
     const onChange = jest.fn();
+    const propsWithDB = props;
+    propsWithDB.options.jsonData.database = 'test-db';
     render(<ConfigEditor {...props} onOptionsChange={onChange} />);
 
     const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.ClusterID.input);
@@ -92,7 +94,7 @@ describe('ConfigEditor', () => {
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
-      url: 'foo.a.b.c:123/db',
+      url: 'foo.a.b.c:123/test-db',
       jsonData: { ...props.options.jsonData, clusterIdentifier: 'foo' },
     });
   });

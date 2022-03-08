@@ -67,14 +67,6 @@ export function ConfigEditor(props: Props) {
     const res: Secret = await getBackendSrv().post(resourcesURL + '/secret', { secretARN: arn });
     return res;
   };
-  const fetchClusters = async () => {
-    const res: Cluster[] = await getBackendSrv().get(resourcesURL + '/clusters');
-    return res.map((c) => ({
-      label: c.clusterIdentifier,
-      value: c.clusterIdentifier,
-      description: `${c.endpoint.address}:${c.endpoint.port}/${c.database}`,
-    }));
-  };
   const { onOptionsChange: propsOnOptionsChange } = props;
   useEffect(() => {
     if (arn) {
@@ -90,6 +82,15 @@ export function ConfigEditor(props: Props) {
       });
     }
   }, [arn]);
+
+  const fetchClusters = async () => {
+    const res: Cluster[] = await getBackendSrv().get(resourcesURL + '/clusters');
+    return res.map((c) => ({
+      label: c.clusterIdentifier,
+      value: c.clusterIdentifier,
+      description: `${c.endpoint.address}:${c.endpoint.port}`,
+    }));
+  };
 
   const onOptionsChange = (options: RedshiftDataSourceSettings) => {
     setSaved(false);
@@ -109,7 +110,7 @@ export function ConfigEditor(props: Props) {
   };
   const onChangeClusterID = (e: SelectableValue<string> | null) => {
     const value = e?.value ?? '';
-    const url = e?.description ?? '';
+    const url = e?.description + '/' + props.options.jsonData.database ?? '';
     props.onOptionsChange({
       ...props.options,
       url,
@@ -153,7 +154,7 @@ export function ConfigEditor(props: Props) {
         label={selectors.components.ConfigEditor.ClusterID.input}
         data-testid={selectors.components.ConfigEditor.ClusterID.testID}
         saveOptions={saveOptions}
-        hidden={useManagedSecret}
+        disabled={useManagedSecret}
       />
       <InlineInput
         {...props}
