@@ -57,7 +57,8 @@ e2e.scenario({
               .type('{enter}');
             e2eSelectors.ConfigEditor.ClusterID.testID()
               .click({ force: true })
-              .type(datasource.jsonData.clusterIdentifier);
+              .type(datasource.jsonData.clusterIdentifier)
+              .type('{enter}');
             e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
             e2eSelectors.ConfigEditor.DatabaseUser.testID().click({ force: true }).type(datasource.jsonData.dbUser);
           },
