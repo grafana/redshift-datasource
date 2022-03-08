@@ -55,10 +55,10 @@ e2e.scenario({
               .click({ force: true })
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
-            e2eSelectors.ConfigEditor.ClusterID.testID()
-              .click({ force: true })
-              .type(datasource.jsonData.clusterIdentifier)
-              .type('{enter}');
+            // e2eSelectors.ConfigEditor.ClusterID.input().click({ force: true });
+            // // wait for it to load
+            // e2eSelectors.ConfigEditor.ClusterID.testID().contains(datasource.jsonData.clusterIdentifier);
+            // e2eSelectors.ConfigEditor.ClusterID.input().type(datasource.jsonData.clusterIdentifier).type('{enter}');
             e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
             e2eSelectors.ConfigEditor.DatabaseUser.testID().click({ force: true }).type(datasource.jsonData.dbUser);
           },
