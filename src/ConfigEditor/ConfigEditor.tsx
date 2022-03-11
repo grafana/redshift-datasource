@@ -148,6 +148,7 @@ export function ConfigEditor(props: Props) {
       />
       <ConfigSelect
         {...props}
+        allowCustomValue={true}
         value={props.options.jsonData.clusterIdentifier ?? ''}
         onChange={onChangeClusterID}
         fetch={fetchClusters}
