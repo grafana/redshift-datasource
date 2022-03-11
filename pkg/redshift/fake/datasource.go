@@ -29,6 +29,10 @@ func (s *RedshiftFakeDatasource) Connect(config backend.DataSourceInstanceSettin
 	return &sql.DB{}, nil
 }
 
+func (s *RedshiftFakeDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (sqlds.AsyncDB, error) {
+	return nil, nil
+}
+
 func (s *RedshiftFakeDatasource) Macros() sqlds.Macros {
 	return sqlds.Macros{}
 }

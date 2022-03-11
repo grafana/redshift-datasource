@@ -114,7 +114,9 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 	case redshiftdataapiservice.StatusStringFailed,
 		redshiftdataapiservice.StatusStringAborted:
 		finished = true
-		err = errors.New(*statusResp.Error)
+		if statusResp.Error != nil {
+			err = errors.New(*statusResp.Error)
+		}
 	case redshiftdataapiservice.StatusStringFinished:
 		finished = true
 	default:
