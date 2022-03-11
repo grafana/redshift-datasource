@@ -20,6 +20,7 @@ type RedshiftDatasourceIface interface {
 	sqlds.Driver
 	sqlds.Completable
 	sqlAPI.Resources
+	sqlds.AsyncDBGetter
 	Schemas(ctx context.Context, options sqlds.Options) ([]string, error)
 	Tables(ctx context.Context, options sqlds.Options) ([]string, error)
 	Columns(ctx context.Context, options sqlds.Options) ([]string, error)
@@ -56,7 +57,17 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 		return nil, err
 	}
 
-	return s.awsDS.GetDB(config.ID, args, models.New, api.New, driver.New)
+	return s.awsDS.GetDB(config.ID, args, models.New, api.New, driver.NewSync)
+}
+
+func (s *RedshiftDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (sqlds.AsyncDB, error) {
+	s.awsDS.Init(config)
+	args, err := sqlds.ParseOptions(queryArgs)
+	if err != nil {
+		return nil, err
+	}
+
+	return s.awsDS.GetAsyncDB(config.ID, args, models.New, api.New, driver.New)
 }
 
 func (s *RedshiftDatasource) getApi(ctx context.Context, options sqlds.Options) (*api.API, error) {

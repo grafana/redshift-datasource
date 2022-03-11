@@ -1,7 +1,7 @@
 import { FillValueSelect, FormatSelect, QueryCodeEditor, ResourceSelector } from '@grafana/aws-sdk';
-import { QueryEditorProps, SelectableValue } from '@grafana/data';
-import { InlineSegmentGroup } from '@grafana/ui';
-import React from 'react';
+import { LoadingState, QueryEditorProps, SelectableValue } from '@grafana/data';
+import { Button, Icon, InlineSegmentGroup } from '@grafana/ui';
+import React, { useEffect, useState } from 'react';
 import { selectors } from 'selectors';
 import { getSuggestions } from 'Suggestions';
 
@@ -13,6 +13,17 @@ type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptio
 type QueryProperties = 'schema' | 'table' | 'column';
 
 export function QueryEditor(props: Props) {
+  const [running, setRunning] = useState(false);
+  const [lastState, setLastState] = useState(props.data?.state);
+  useEffect(() => {
+    console.log('STATE ', props.data?.state);
+    if (props.data?.state && lastState !== props.data?.state && props.data.state !== LoadingState.Loading) {
+      setRunning(false);
+      setStopping(false);
+    }
+    setLastState(props.data?.state);
+  }, [props.data?.state]);
+  const [stopping, setStopping] = useState(false);
   const fetchSchemas = async () => {
     const schemas: string[] = await props.datasource.getResource('schemas');
     return schemas.map((schema) => ({ label: schema, value: schema })).concat({ label: '-- remove --', value: '' });
@@ -38,9 +49,11 @@ export function QueryEditor(props: Props) {
     const value = e?.value;
     newQuery[prop] = value;
     props.onChange(newQuery);
-    if (props.onRunQuery) {
-      props.onRunQuery();
-    }
+  };
+
+  const cancelQuery = async () => {
+    setStopping(true);
+    await props.datasource.cancel(props.query);
   };
 
   return (
@@ -85,10 +98,12 @@ export function QueryEditor(props: Props) {
             query={props.query}
             options={SelectableFormatOptions}
             onChange={props.onChange}
-            onRunQuery={props.onRunQuery}
+            // TODO: make onRunQuery optional
+            onRunQuery={() => {}}
           />
           {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />
+            // TODO: make onRunQuery optional
+            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={() => {}} />
           )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
@@ -96,9 +111,41 @@ export function QueryEditor(props: Props) {
             language="redshift"
             query={props.query}
             onChange={props.onChange}
-            onRunQuery={props.onRunQuery}
+            // TODO: make onRunQuery optional
+            onRunQuery={() => {}}
             getSuggestions={getSuggestions}
           />
+          <Button
+            style={{ margin: '10px' }}
+            onClick={() => {
+              setRunning(true);
+              props.onRunQuery();
+            }}
+            disabled={running}
+          >
+            {running && !stopping ? (
+              <>
+                <Icon name="fa fa-spinner" style={{ marginRight: '5px' }} /> Running
+              </>
+            ) : (
+              <>
+                <Icon name="play" style={{ marginRight: '5px' }} />
+                Run
+              </>
+            )}
+          </Button>
+          <Button variant="destructive" disabled={!running || stopping} onClick={cancelQuery}>
+            {stopping ? (
+              <>
+                <Icon name="fa fa-spinner" style={{ marginRight: '5px' }} /> Stopping
+              </>
+            ) : (
+              <>
+                <Icon name="square-shape" style={{ marginRight: '5px' }} />
+                Stop
+              </>
+            )}
+          </Button>
         </div>
       </InlineSegmentGroup>
     </>

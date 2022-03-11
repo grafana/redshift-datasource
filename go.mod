@@ -12,3 +12,9 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 )
+
+replace github.com/grafana/grafana-plugin-sdk-go => ../grafana-plugin-sdk-go
+
+replace github.com/grafana/sqlds/v2 => ../sqlds
+
+replace github.com/grafana/grafana-aws-sdk => ../grafana-aws-sdk

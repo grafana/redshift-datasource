@@ -23,10 +23,10 @@ import (
 )
 
 type API struct {
-	DataClient        redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
-	SecretsClient 	  secretsmanageriface.SecretsManagerAPI
-	ManagementClient  redshiftiface.RedshiftAPI
-	settings      *models.RedshiftDataSourceSettings
+	DataClient       redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
+	SecretsClient    secretsmanageriface.SecretsManagerAPI
+	ManagementClient redshiftiface.RedshiftAPI
+	settings         *models.RedshiftDataSourceSettings
 }
 
 func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
@@ -54,10 +54,10 @@ func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWS
 	}
 
 	return &API{
-		DataClient:        redshiftdataapiservice.New(sess),
-		SecretsClient: secretsmanager.New(sess),
+		DataClient:       redshiftdataapiservice.New(sess),
+		SecretsClient:    secretsmanager.New(sess),
 		ManagementClient: redshift.New(sess),
-		settings:      redshiftSettings,
+		settings:         redshiftSettings,
 	}, nil
 }
 
@@ -113,7 +113,9 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 	case redshiftdataapiservice.StatusStringFailed,
 		redshiftdataapiservice.StatusStringAborted:
 		finished = true
-		err = errors.New(*statusResp.Error)
+		if statusResp.Error != nil {
+			err = errors.New(*statusResp.Error)
+		}
 	case redshiftdataapiservice.StatusStringFinished:
 		finished = true
 	default:
@@ -355,13 +357,13 @@ func (c *API) Cluster(options sqlds.Options) (*models.RedshiftCluster, error) {
 		return nil, fmt.Errorf("missing cluster content")
 	}
 	res := &models.RedshiftCluster{}
-	for _,r := range out.Clusters {
-		if (r != nil && r.ClusterIdentifier != nil && *r.ClusterIdentifier == clusterId && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil) {
+	for _, r := range out.Clusters {
+		if r != nil && r.ClusterIdentifier != nil && *r.ClusterIdentifier == clusterId && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil {
 			res.Endpoint = models.RedshiftEndpoint{
 				Address: *r.Endpoint.Address,
-				Port: *r.Endpoint.Port,
+				Port:    *r.Endpoint.Port,
 			}
-			if (r.DBName != nil) {
+			if r.DBName != nil {
 				res.Database = *r.DBName
 			}
 			return res, nil

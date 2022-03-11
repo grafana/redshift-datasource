@@ -21,7 +21,7 @@ var ds = &fake.RedshiftFakeDatasource{
 	RCluster: models.RedshiftCluster{
 		Endpoint: models.RedshiftEndpoint{
 			Address: "foo.a.b.c",
-			Port: 123,
+			Port:    123,
 		},
 		Database: "db-foo",
 	},

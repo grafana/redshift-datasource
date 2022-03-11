@@ -1,10 +1,10 @@
-import { DataSourceSettings, SelectableValue } from '@grafana/data';
 import {
   AwsAuthDataSourceJsonData,
   AwsAuthDataSourceSecureJsonData,
-  SQLQuery,
   FillValueOptions,
+  SQLQuery,
 } from '@grafana/aws-sdk';
+import { DataSourceSettings, SelectableValue } from '@grafana/data';
 
 export enum FormatOptions {
   TimeSeries,
@@ -28,6 +28,8 @@ export interface RedshiftQuery extends SQLQuery {
   schema?: string;
   table?: string;
   column?: string;
+
+  queryID?: string;
 }
 
 export interface RedshiftManagedSecret {
@@ -66,3 +68,8 @@ export type RedshiftDataSourceSettings = DataSourceSettings<
   RedshiftDataSourceOptions,
   RedshiftDataSourceSecureJsonData
 >;
+
+export interface RedshiftCustomMeta {
+  queryID: string;
+  status: string;
+}

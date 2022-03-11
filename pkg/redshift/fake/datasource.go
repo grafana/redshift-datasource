@@ -14,7 +14,7 @@ import (
 type RedshiftFakeDatasource struct {
 	SecretList []models.ManagedSecret
 	RSecret    models.RedshiftSecret
-	RCluster    models.RedshiftCluster
+	RCluster   models.RedshiftCluster
 }
 
 func (s *RedshiftFakeDatasource) Settings(_ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
@@ -27,6 +27,10 @@ func (s *RedshiftFakeDatasource) Converters() (sc []sqlutil.Converter) {
 
 func (s *RedshiftFakeDatasource) Connect(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (*sql.DB, error) {
 	return &sql.DB{}, nil
+}
+
+func (s *RedshiftFakeDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (sqlds.AsyncDB, error) {
+	return nil, nil
 }
 
 func (s *RedshiftFakeDatasource) Macros() sqlds.Macros {
