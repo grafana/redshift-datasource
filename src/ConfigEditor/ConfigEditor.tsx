@@ -25,7 +25,7 @@ type Cluster = {
   database: string;
 };
 
-type InputResourceType = 'clusterIdentifier' | 'dbUser' | 'database';
+type InputResourceType = 'dbUser' | 'database';
 
 export function ConfigEditor(props: Props) {
   const baseURL = `/api/datasources/${props.options.id}`;
@@ -122,8 +122,10 @@ export function ConfigEditor(props: Props) {
   };
   const onChange = (resource: InputResourceType) => (e: FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
+    const url = resource == 'database' ? props.options.url.replace(/\/.*$/, `/${value}`) : props.options.url;
     props.onOptionsChange({
       ...props.options,
+      url,
       jsonData: {
         ...props.options.jsonData,
         [resource]: value,
