@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { select } from 'react-select-event';
 
@@ -10,7 +10,7 @@ const secret = { name: 'foo', arn: 'arn:foo' };
 const clusterIdentifier = 'cluster';
 const dbUser = 'username';
 const secretFetched = { dbClusterIdentifier: clusterIdentifier, username: dbUser };
-const cluster = { clusterIdentifier: 'cluster', endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db' };
+const cluster = { clusterIdentifier, endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db' };
 
 jest.mock('@grafana/aws-sdk', () => {
   return {
@@ -83,15 +83,23 @@ describe('ConfigEditor', () => {
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
+      url: '/abcd',
       jsonData: { ...props.options.jsonData, database: 'abcd' },
     });
   });
 
   it('should populate the `url` prop when clusterIdentifier is selected', async () => {
     const onChange = jest.fn();
-    const propsWithDB = props;
-    propsWithDB.options.jsonData.database = 'test-db';
-    render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+    render(
+      <ConfigEditor
+        {...props}
+        options={{
+          ...props.options,
+          jsonData: { ...props.options.jsonData, database: 'test-db' },
+        }}
+        onOptionsChange={onChange}
+      />
+    );
 
     const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.ClusterID.input);
     expect(selectEl).toBeInTheDocument();
@@ -101,7 +109,36 @@ describe('ConfigEditor', () => {
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
       url: 'foo.a.b.c:123/test-db',
-      jsonData: { ...props.options.jsonData, clusterIdentifier: clusterIdentifier },
+      jsonData: { ...props.options.jsonData, database: 'test-db', clusterIdentifier: clusterIdentifier },
+    });
+  });
+
+  it('should update an existing url when inputing a database', async () => {
+    const onChange = jest.fn();
+    await act(async () => {
+      render(
+        <ConfigEditor
+          {...props}
+          onOptionsChange={onChange}
+          options={{
+            ...props.options,
+            url: 'my.cluster.adress:123/my-old-db',
+            jsonData: { ...props.options.jsonData, clusterIdentifier },
+          }}
+        />
+      );
+    });
+
+    const dbField = screen.getByTestId('data-testid database');
+    expect(dbField).toBeInTheDocument();
+    fireEvent.change(dbField, { target: { value: 'abcd' } });
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith({
+      ...props.options,
+      // the endpoint is updated as re-fetched
+      url: 'foo.a.b.c:123/abcd',
+      jsonData: { ...props.options.jsonData, clusterIdentifier, database: 'abcd' },
     });
   });
 
@@ -122,7 +159,7 @@ describe('ConfigEditor', () => {
     await waitFor(() =>
       expect(onChange).toHaveBeenCalledWith({
         ...props.options,
-        url: 'foo.a.b.c:123/test-db',
+        url: 'foo.a.b.c:123/',
         jsonData: {
           ...props.options.jsonData,
           dbUser,

@@ -86,23 +86,36 @@ export function ConfigEditor(props: Props) {
   }, [arn]);
 
   // Clusters
+  const [clusterEndpoint, setClusterEndpoint] = useState('');
   const fetchClusters = async () => {
-    const res: Cluster[] = await getBackendSrv().get(resourcesURL + '/clusters');
-    return res.map((c) => ({
-      label: c.clusterIdentifier,
-      value: c.clusterIdentifier,
-      description: `${c.endpoint.address}:${c.endpoint.port}`,
-    }));
+    try {
+      const res: Cluster[] = await getBackendSrv().get(resourcesURL + '/clusters');
+      return res.map((c) => ({
+        label: c.clusterIdentifier,
+        value: c.clusterIdentifier,
+        description: `${c.endpoint.address}:${c.endpoint.port}`,
+      }));
+    } catch {
+      return [];
+    }
   };
 
   const getClusterUrl = async (clusterID: string) => {
     const { jsonData } = props.options;
-    if (clusterID !== jsonData.clusterIdentifier) {
+    if (clusterID !== jsonData.clusterIdentifier || clusterEndpoint === '') {
       const clusters = await fetchClusters();
-      return `${clusters.find((c) => c.value === clusterID)?.description || clusterID}/${jsonData.database || ''}`;
+      const endpoint = clusters.find((c) => c.value === clusterID)?.description || clusterID;
+      setClusterEndpoint(endpoint || clusterID);
+      return `${endpoint}/${jsonData.database || ''}`;
     }
-    return props.options.url;
+    return `${clusterEndpoint}/${jsonData.database || ''}`;
   };
+
+  useEffect(() => {
+    if (props.options.jsonData.clusterIdentifier) {
+      getClusterUrl(props.options.jsonData.clusterIdentifier);
+    }
+  }, []);
 
   const onOptionsChange = (options: RedshiftDataSourceSettings) => {
     setSaved(false);
@@ -131,10 +144,11 @@ export function ConfigEditor(props: Props) {
         clusterIdentifier: value,
       },
     });
+    setClusterEndpoint(e?.description || e?.value || '');
   };
   const onChange = (resource: InputResourceType) => (e: FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
-    const url = resource === 'database' ? props.options.url.replace(/\/.*$/, `/${value}`) : props.options.url;
+    const url = resource === 'database' ? `${clusterEndpoint}/${value}` : props.options.url;
     props.onOptionsChange({
       ...props.options,
       url,
@@ -177,7 +191,7 @@ export function ConfigEditor(props: Props) {
         onChange={() => {}}
         label={selectors.components.ConfigEditor.ClusterIDText.input}
         data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
-        disabled={useManagedSecret}
+        disabled={true}
         hidden={!useManagedSecret}
       />
       <InlineInput

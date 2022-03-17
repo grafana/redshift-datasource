@@ -112,7 +112,7 @@ e2e.scenario({
             e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
             e2eSelectors.ConfigEditor.ManagedSecret.input().click({ force: true });
             // wait for it to load
-            // e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name);
+            e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name);
             e2eSelectors.ConfigEditor.ManagedSecret.input()
               .type(datasource.jsonData.managedSecret.name)
               .type('{enter}');
