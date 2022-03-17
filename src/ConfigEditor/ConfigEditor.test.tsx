@@ -37,17 +37,23 @@ const props = mockDatasourceOptions;
 describe('ConfigEditor', () => {
   it('should display temporary credentials by default', () => {
     render(<ConfigEditor {...props} />);
-    expect(screen.getByText(selectors.components.ConfigEditor.ClusterID.input)).toBeInTheDocument();
-    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).toBeInTheDocument();
-    expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).not.toBeVisible();
+    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
+    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).toBeVisible();
+    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeDisabled();
+    expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).not.toBeDisabled();
+    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
   });
 
   it('should switch to use the Secret Manager', () => {
     render(<ConfigEditor {...props} />);
     screen.getByText('AWS Secrets Manager').click();
-    expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeInTheDocument();
-    expect(screen.getByText(selectors.components.ConfigEditor.ClusterID.input)).toBeInTheDocument();
-    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).toBeInTheDocument();
+    expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeVisible();
+    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeVisible();
+    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
+    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
+    expect(screen.getByTestId(selectors.components.ConfigEditor.DatabaseUser.testID)).toBeDisabled();
+    expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
   });
 
   it('should select a secret', async () => {
