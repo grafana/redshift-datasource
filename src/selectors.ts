@@ -23,7 +23,7 @@ export const Components = {
       testID: 'data-testid clusterID',
     },
     ClusterIDText: {
-      input: 'Cluster Identifier text',
+      input: 'Cluster Identifier',
       testID: 'data-testid clusterID text',
     },
     Database: {
