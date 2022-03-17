@@ -10,7 +10,7 @@ const secret = { name: 'foo', arn: 'arn:foo' };
 const clusterIdentifier = 'cluster';
 const dbUser = 'username';
 const secretFetched = { dbClusterIdentifier: clusterIdentifier, username: dbUser };
-const cluster = { clusterIdentifier: 'foo', endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db' };
+const cluster = { clusterIdentifier: 'cluster', endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db' };
 
 jest.mock('@grafana/aws-sdk', () => {
   return {
@@ -95,7 +95,7 @@ describe('ConfigEditor', () => {
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
       url: 'foo.a.b.c:123/test-db',
-      jsonData: { ...props.options.jsonData, clusterIdentifier: 'foo' },
+      jsonData: { ...props.options.jsonData, clusterIdentifier: clusterIdentifier },
     });
   });
 
@@ -116,6 +116,7 @@ describe('ConfigEditor', () => {
     await waitFor(() =>
       expect(onChange).toHaveBeenCalledWith({
         ...props.options,
+        url: 'foo.a.b.c:123/test-db',
         jsonData: {
           ...props.options.jsonData,
           dbUser,

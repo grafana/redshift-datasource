@@ -71,18 +71,22 @@ export function ConfigEditor(props: Props) {
   useEffect(() => {
     if (arn) {
       fetchSecret(arn).then((s) => {
-        propsOnOptionsChange({
-          ...props.options,
-          jsonData: {
-            ...props.options.jsonData,
-            clusterIdentifier: s.dbClusterIdentifier,
-            dbUser: s.username,
-          },
+        getClusterUrl(s.dbClusterIdentifier).then((url) => {
+          propsOnOptionsChange({
+            ...props.options,
+            url,
+            jsonData: {
+              ...props.options.jsonData,
+              clusterIdentifier: s.dbClusterIdentifier,
+              dbUser: s.username,
+            },
+          });
         });
       });
     }
   }, [arn]);
 
+  // Clusters
   const fetchClusters = async () => {
     const res: Cluster[] = await getBackendSrv().get(resourcesURL + '/clusters');
     return res.map((c) => ({
@@ -90,6 +94,15 @@ export function ConfigEditor(props: Props) {
       value: c.clusterIdentifier,
       description: `${c.endpoint.address}:${c.endpoint.port}`,
     }));
+  };
+
+  const getClusterUrl = async (clusterID: string) => {
+    const { jsonData } = props.options;
+    if (clusterID != jsonData.clusterIdentifier) {
+      const clusters = await fetchClusters();
+      return `${clusters.find((c) => c.value === clusterID)?.description || clusterID}/${jsonData.database || ''}`;
+    }
+    return props.options.url;
   };
 
   const onOptionsChange = (options: RedshiftDataSourceSettings) => {
@@ -157,7 +170,16 @@ export function ConfigEditor(props: Props) {
         label={selectors.components.ConfigEditor.ClusterID.input}
         data-testid={selectors.components.ConfigEditor.ClusterID.testID}
         saveOptions={saveOptions}
+        hidden={useManagedSecret}
+      />
+      <InlineInput
+        {...props}
+        value={props.options.jsonData.clusterIdentifier ?? ''}
+        onChange={() => {}}
+        label={selectors.components.ConfigEditor.ClusterIDText.input}
+        data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
         disabled={useManagedSecret}
+        hidden={!useManagedSecret}
       />
       <InlineInput
         {...props}
