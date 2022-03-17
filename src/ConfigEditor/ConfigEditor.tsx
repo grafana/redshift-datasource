@@ -67,7 +67,6 @@ export function ConfigEditor(props: Props) {
     const res: Secret = await getBackendSrv().post(resourcesURL + '/secret', { secretARN: arn });
     return res;
   };
-  
   useEffect(() => {
     if (arn) {
       fetchSecret(arn).then((s) => {
