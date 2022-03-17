@@ -67,12 +67,12 @@ export function ConfigEditor(props: Props) {
     const res: Secret = await getBackendSrv().post(resourcesURL + '/secret', { secretARN: arn });
     return res;
   };
-  const { onOptionsChange: propsOnOptionsChange } = props;
+  
   useEffect(() => {
     if (arn) {
       fetchSecret(arn).then((s) => {
         getClusterUrl(s.dbClusterIdentifier).then((url) => {
-          propsOnOptionsChange({
+          props.onOptionsChange({
             ...props.options,
             url,
             jsonData: {
@@ -98,7 +98,7 @@ export function ConfigEditor(props: Props) {
 
   const getClusterUrl = async (clusterID: string) => {
     const { jsonData } = props.options;
-    if (clusterID != jsonData.clusterIdentifier) {
+    if (clusterID !== jsonData.clusterIdentifier) {
       const clusters = await fetchClusters();
       return `${clusters.find((c) => c.value === clusterID)?.description || clusterID}/${jsonData.database || ''}`;
     }
@@ -135,7 +135,7 @@ export function ConfigEditor(props: Props) {
   };
   const onChange = (resource: InputResourceType) => (e: FormEvent<HTMLInputElement>) => {
     const value = e.currentTarget.value;
-    const url = resource == 'database' ? props.options.url.replace(/\/.*$/, `/${value}`) : props.options.url;
+    const url = resource === 'database' ? props.options.url.replace(/\/.*$/, `/${value}`) : props.options.url;
     props.onOptionsChange({
       ...props.options,
       url,
