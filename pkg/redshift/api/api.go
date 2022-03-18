@@ -89,6 +89,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		DbUser:            commonInput.DbUser,
 		SecretArn:         commonInput.SecretARN,
 		Sql:               aws.String(input.Query),
+		WithEvent:         aws.Bool(true),
 	}
 
 	output, err := c.DataClient.ExecuteStatementWithContext(ctx, redshiftInput)
