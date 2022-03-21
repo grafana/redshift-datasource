@@ -11,6 +11,8 @@ import {
   RedshiftManagedSecret,
 } from '../types';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
+import { selectors } from 'selectors';
+import { InlineField, Switch } from '@grafana/ui';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 
@@ -209,6 +211,21 @@ export function ConfigEditor(props: Props) {
         label={selectors.components.ConfigEditor.Database.input}
         data-testid={selectors.components.ConfigEditor.Database.testID}
       />
+      <InlineField label="Send events to Amazon EventBridge" labelWidth={28}>
+        <Switch
+          value={props.options.jsonData.withEvent ?? false}
+          onChange={(e) =>
+            props.onOptionsChange({
+              ...props.options,
+              jsonData: {
+                ...props.options.jsonData,
+                withEvent: e.currentTarget.checked,
+              },
+            })
+          }
+          css={undefined}
+        />
+      </InlineField>
     </div>
   );
 }
