@@ -66,14 +66,12 @@ type apiInput struct {
 	Database          *string
 	DbUser            *string
 	SecretARN         *string
-	WithEvent         *bool
 }
 
 func (c *API) apiInput() apiInput {
 	res := apiInput{
 		ClusterIdentifier: aws.String(c.settings.ClusterIdentifier),
 		Database:          aws.String(c.settings.Database),
-		WithEvent:         aws.Bool(c.settings.WithEvent),
 	}
 	if c.settings.UseManagedSecret {
 		res.SecretARN = aws.String(c.settings.ManagedSecret.ARN)
@@ -91,7 +89,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		DbUser:            commonInput.DbUser,
 		SecretArn:         commonInput.SecretARN,
 		Sql:               aws.String(input.Query),
-		WithEvent:         commonInput.WithEvent,
+		WithEvent:         aws.Bool(c.settings.WithEvent),
 	}
 
 	output, err := c.DataClient.ExecuteStatementWithContext(ctx, redshiftInput)
