@@ -55,9 +55,10 @@ e2e.scenario({
               .click({ force: true })
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
-            e2eSelectors.ConfigEditor.ClusterID.testID()
-              .click({ force: true })
-              .type(datasource.jsonData.clusterIdentifier);
+            e2eSelectors.ConfigEditor.ClusterID.input().click({ force: true });
+            // wait for it to load
+            e2eSelectors.ConfigEditor.ClusterID.testID().contains(datasource.jsonData.clusterIdentifier);
+            e2eSelectors.ConfigEditor.ClusterID.input().type(datasource.jsonData.clusterIdentifier).type('{enter}');
             e2eSelectors.ConfigEditor.Database.testID().click({ force: true }).type(datasource.jsonData.database);
             e2eSelectors.ConfigEditor.DatabaseUser.testID().click({ force: true }).type(datasource.jsonData.dbUser);
           },
@@ -110,13 +111,15 @@ e2e.scenario({
               .type('{enter}');
             e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
             e2eSelectors.ConfigEditor.ManagedSecret.input().click({ force: true });
+            e2eSelectors.ConfigEditor.ManagedSecret.input().type(datasource.jsonData.managedSecret.name);
             // wait for it to load
             e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name);
-            e2eSelectors.ConfigEditor.ManagedSecret.input()
-              .type(datasource.jsonData.managedSecret.name)
-              .type('{enter}');
+            e2eSelectors.ConfigEditor.ManagedSecret.input().type('{enter}');
             // wait for the secret to be retrieved
-            e2eSelectors.ConfigEditor.ClusterID.testID().should('have.value', datasource.jsonData.clusterIdentifier);
+            e2eSelectors.ConfigEditor.ClusterIDText.testID().should(
+              'have.value',
+              datasource.jsonData.clusterIdentifier
+            );
             e2eSelectors.ConfigEditor.Database.testID()
               .click({ force: true })
               .type(datasource.jsonData.database, { delay: 20 });

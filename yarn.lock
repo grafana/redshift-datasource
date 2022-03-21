@@ -1098,10 +1098,10 @@
   resolved "https://registry.yarnpkg.com/@grafana/aws-sdk/-/aws-sdk-0.0.3.tgz#bc632c6c77971a5474acbe45847420503679fc75"
   integrity sha512-V0PJLk+oU1C33knurXp8BkT5N2ctDu9b21zpK16vkJAs5aOiH/OaOhQ/IP9ipxYhB+b9PFjr8RXagV/8XJ8xwg==
 
-"@grafana/aws-sdk@0.0.33":
-  version "0.0.33"
-  resolved "https://registry.yarnpkg.com/@grafana/aws-sdk/-/aws-sdk-0.0.33.tgz#ed07a9ff81c0e2667fa4de1b6cc37122302d09e7"
-  integrity sha512-rue4RtbshZbLe44C1fCknRDAEZGAcSGsrxF2Ix0+vOpeIKcFSkKQ3ANKtWz4+D6l4GehG4NPJ2CjgbxAoF7M+Q==
+"@grafana/aws-sdk@0.0.35":
+  version "0.0.35"
+  resolved "https://registry.yarnpkg.com/@grafana/aws-sdk/-/aws-sdk-0.0.35.tgz#ef1a1294decdb859f04f170f33cf45277703bb87"
+  integrity sha512-EUi4hF0NQ7c9+XfUvRfrCkxPVkzRFv4VdSMlUOyyg7FynKq4Do9HF+4gR30Krt0ct6zmloPIx2AAIHL5898g7A==
 
 "@grafana/data@8.0.5":
   version "8.0.5"
