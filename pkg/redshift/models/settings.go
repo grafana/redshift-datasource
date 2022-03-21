@@ -37,6 +37,7 @@ type RedshiftDataSourceSettings struct {
 	ClusterIdentifier string `json:"clusterIdentifier"`
 	Database          string `json:"database"`
 	UseManagedSecret  bool   `json:"useManagedSecret"`
+	WithEvent         bool   `json:"withEvent"`
 	DBUser            string `json:"dbUser"`
 	ManagedSecret     ManagedSecret
 }

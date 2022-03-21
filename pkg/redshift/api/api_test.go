@@ -33,6 +33,7 @@ func Test_apiInput(t *testing.T) {
 				ClusterIdentifier: aws.String("cluster"),
 				Database:          aws.String("db"),
 				DbUser:            aws.String("user"),
+				WithEvent:         aws.Bool(false),
 			},
 		},
 		{
@@ -49,6 +50,22 @@ func Test_apiInput(t *testing.T) {
 				ClusterIdentifier: aws.String("cluster"),
 				Database:          aws.String("db"),
 				SecretARN:         aws.String("arn:..."),
+				WithEvent:         aws.Bool(false),
+			},
+		},
+		{
+			"with event",
+			&models.RedshiftDataSourceSettings{
+				WithEvent:         true,
+				ClusterIdentifier: "cluster",
+				Database:          "db",
+				DBUser:            "user",
+			},
+			apiInput{
+				WithEvent:         aws.Bool(true),
+				ClusterIdentifier: aws.String("cluster"),
+				Database:          aws.String("db"),
+				DbUser:            aws.String("user"),
 			},
 		},
 	}
@@ -250,14 +267,14 @@ func Test_GetClusters(t *testing.T) {
 			expectedClusters: []models.RedshiftCluster{*expectedCluster1, *expectedCluster2},
 		},
 		{
-			c:         errC,
-			desc:      "Error with DescribeCluster",
-			errMsg:    "Boom!",
+			c:      errC,
+			desc:   "Error with DescribeCluster",
+			errMsg: "Boom!",
 		},
 		{
-			c:         nilC,
-			desc:      "DescribeCluster returned nil",
-			errMsg:    "missing clusters content",
+			c:      nilC,
+			desc:   "DescribeCluster returned nil",
+			errMsg: "missing clusters content",
 		},
 	}
 	for _, tt := range tests {
