@@ -210,7 +210,7 @@ export function ConfigEditor(props: Props) {
         label={selectors.components.ConfigEditor.Database.input}
         data-testid={selectors.components.ConfigEditor.Database.testID}
       />
-      <InlineField label="Send events to Amazon EventBridge" labelWidth={28}>
+      <InlineField label="Send events to Amazon EventBridge" labelWidth={28} style={{ alignItems: 'center' }}>
         <Switch
           value={props.options.jsonData.withEvent ?? false}
           onChange={(e) =>
