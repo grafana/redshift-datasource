@@ -46,6 +46,10 @@ export const Components = {
       input: 'Column',
       testID: 'data-testid column',
     },
+    WithEvent: {
+      input: 'Send events to Amazon EventBridge',
+      testID: 'data-testid withEvent',
+    },
   },
   QueryEditor: {
     CodeEditor: {
