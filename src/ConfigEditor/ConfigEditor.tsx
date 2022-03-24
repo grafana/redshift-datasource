@@ -210,7 +210,12 @@ export function ConfigEditor(props: Props) {
         label={selectors.components.ConfigEditor.Database.input}
         data-testid={selectors.components.ConfigEditor.Database.testID}
       />
-      <InlineField label={selectors.components.ConfigEditor.WithEvent.input} labelWidth={28} style={{ alignItems: 'center' }}>
+      <InlineField
+        {...props}
+        label={selectors.components.ConfigEditor.WithEvent.input}
+        labelWidth={28}
+        style={{ alignItems: 'center' }}
+      >
         <Switch
           value={props.options.jsonData.withEvent ?? false}
           onChange={(e) =>
