@@ -89,6 +89,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		DbUser:            commonInput.DbUser,
 		SecretArn:         commonInput.SecretARN,
 		Sql:               aws.String(input.Query),
+		WithEvent:         aws.Bool(c.settings.WithEvent),
 	}
 
 	output, err := c.DataClient.ExecuteStatementWithContext(ctx, redshiftInput)
@@ -352,7 +353,7 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 	}
 	res := []models.RedshiftCluster{}
 	for _, r := range out.Clusters {
-		if (r != nil && r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil) {
+		if r != nil && r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil {
 			res = append(res, models.RedshiftCluster{
 				ClusterIdentifier: *r.ClusterIdentifier,
 				Endpoint: models.RedshiftEndpoint{

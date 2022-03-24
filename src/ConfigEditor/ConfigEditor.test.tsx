@@ -88,6 +88,21 @@ describe('ConfigEditor', () => {
     });
   });
 
+  it('should enable WithEvent when it is toggled on', async () => {
+    const onChange = jest.fn();
+    render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+    const withEventField = screen.getByTestId(selectors.components.ConfigEditor.WithEvent.testID);
+    expect(withEventField).toBeInTheDocument();
+
+    fireEvent.click(withEventField);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith({
+      ...props.options,
+      jsonData: { ...props.options.jsonData, withEvent: true },
+    });
+  });
+
   it('should populate the `url` prop when clusterIdentifier is selected', async () => {
     const onChange = jest.fn();
     render(

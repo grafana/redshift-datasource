@@ -47,6 +47,7 @@ export const defaultQuery: Partial<RedshiftQuery> = {
  * These are options configured for each DataSource instance
  */
 export interface RedshiftDataSourceOptions extends AwsAuthDataSourceJsonData {
+  withEvent?: boolean;
   useManagedSecret?: boolean;
   clusterIdentifier?: string;
   database?: string;

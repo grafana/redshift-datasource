@@ -11,6 +11,7 @@ import {
   RedshiftManagedSecret,
 } from '../types';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
+import { InlineField, Switch } from '@grafana/ui';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 
@@ -209,6 +210,27 @@ export function ConfigEditor(props: Props) {
         label={selectors.components.ConfigEditor.Database.input}
         data-testid={selectors.components.ConfigEditor.Database.testID}
       />
+      <InlineField
+        {...props}
+        label={selectors.components.ConfigEditor.WithEvent.input}
+        labelWidth={28}
+        style={{ alignItems: 'center' }}
+      >
+        <Switch
+          value={props.options.jsonData.withEvent ?? false}
+          onChange={(e) =>
+            props.onOptionsChange({
+              ...props.options,
+              jsonData: {
+                ...props.options.jsonData,
+                withEvent: e.currentTarget.checked,
+              },
+            })
+          }
+          css={undefined}
+          data-testid={selectors.components.ConfigEditor.WithEvent.testID}
+        />
+      </InlineField>
     </div>
   );
 }

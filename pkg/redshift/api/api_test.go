@@ -250,14 +250,14 @@ func Test_GetClusters(t *testing.T) {
 			expectedClusters: []models.RedshiftCluster{*expectedCluster1, *expectedCluster2},
 		},
 		{
-			c:         errC,
-			desc:      "Error with DescribeCluster",
-			errMsg:    "Boom!",
+			c:      errC,
+			desc:   "Error with DescribeCluster",
+			errMsg: "Boom!",
 		},
 		{
-			c:         nilC,
-			desc:      "DescribeCluster returned nil",
-			errMsg:    "missing clusters content",
+			c:      nilC,
+			desc:   "DescribeCluster returned nil",
+			errMsg: "missing clusters content",
 		},
 	}
 	for _, tt := range tests {
