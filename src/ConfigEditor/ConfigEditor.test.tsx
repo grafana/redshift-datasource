@@ -91,7 +91,7 @@ describe('ConfigEditor', () => {
   it('should enable WithEvent when it is toggled on', async () => {
     const onChange = jest.fn();
     render(<ConfigEditor {...props} onOptionsChange={onChange} />);
-    const withEventField = screen.getByTestId('data-testid withEvent');
+    const withEventField = screen.getByTestId(selectors.components.ConfigEditor.WithEvent.testID);
     expect(withEventField).toBeInTheDocument();
 
     fireEvent.click(withEventField);
