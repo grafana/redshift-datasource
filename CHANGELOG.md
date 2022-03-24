@@ -3,7 +3,7 @@
 ## 1.0.4
 
 * Add details in the datasource card #130
-* Enable WithEvent to send an event ot the AWS EventBridge #132
+* Enable WithEvent to send an event to the AWS EventBridge #132
 
 ## 1.0.3
 
