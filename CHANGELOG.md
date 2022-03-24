@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.1.0
+## 1.0.4
 
 * Add details in the datasource card #130
 * Enable WithEvent to send an event ot the AWS EventBridge #132
