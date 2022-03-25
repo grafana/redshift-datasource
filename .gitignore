@@ -41,9 +41,14 @@ e2e-results/
 # Editor
 .idea
 .vscode
+.idea/
+*.iml
 
 # End to End tests
 provisioning/
 cypress/report.json
 cypress/screenshots/actual
 cypress/videos/
+
+# OS
+*.DS_Store
