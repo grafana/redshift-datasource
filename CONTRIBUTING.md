@@ -46,6 +46,45 @@ Make sure you have the following dependencies installed first:
    mage -v
    ```
 
+## Local development with Grafana
+
+For developing or debugging a plugin, it's useful to link it with a local copy of Grafana so you can see the changes while you are adding them. To do so:
+
+1. Clone [Grafana](https://github.com/grafana/grafana)
+
+   a. [optional] Checkout to the specific version you want to target (e.g. `git checkout v8.3.4`)
+
+2. Install its dependencies
+
+   ```bash
+   yarn install
+   ```
+
+3. Grafana will look for plugins, by default, on its `data/plugins` directory. You can create a symbolic link to your plugin repository to detect new changes:
+
+   ```bash
+   ln -s <plugin-path>/dist data/plugins/<plugin-name>
+   ```
+
+4. Build your plugin backend and start the frontend in watch mode (if you haven't done that already):
+
+   ```bash
+   mage -v
+   yarn watch
+   ```
+
+5. Start Grafana backend and frontend:
+
+   ```bash
+   make run
+   ```
+
+   ```bash
+   yarn start
+   ```
+
+After this, you should be able to see your plugin listed in Grafana and test your changes. Note that any change in the fronted will require you to refresh your browser while changes in the backend may require to rebuild your plugin binaries and restart the Grafana backend.
+
 ## Build a release for the Redshift data source plugin
 
 You need to have commit rights to the GitHub repository to publish a release.
