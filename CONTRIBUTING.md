@@ -46,9 +46,13 @@ Make sure you have the following dependencies installed first:
    mage -v
    ```
 
-## Local development with Grafana
+## Development with local Grafana
 
-For developing or debugging a plugin, it's useful to link it with a local copy of Grafana so you can see the changes while you are adding them. To do so:
+This guide allows you to setup a development environment where you run Grafana and your plugin locally. With this, you will be able to see your changes as you add them.
+
+### Run Grafana in your host
+
+If you have git, Go and the required version of NodeJS in your system, you can clone and run Grafana locally:
 
 1. Clone [Grafana](https://github.com/grafana/grafana)
 
@@ -66,14 +70,51 @@ For developing or debugging a plugin, it's useful to link it with a local copy o
    ln -s <plugin-path>/dist data/plugins/<plugin-name>
    ```
 
-4. Build your plugin backend and start the frontend in watch mode (if you haven't done that already):
+4. (Optional) If the step above doesn't work for you (e.g. you are running on Windows), you can also modify the default path in the Grafana configuration (that can be found at `conf/custom.ini`) and point to the directory with your plugin:
+
+   ```ini
+   [paths]
+   plugins = <path-to-your-plugin-parent-directory>
+   ```
+
+### Run Grafana with docker-compose
+
+Another possibility is to run Grafana with docker-compose so it runs in a container. For doing so, create the docker-compose file in your plugin directory:
+
+```yaml
+version: '3.7'
+
+services:
+  grafana:
+    # Change latest with your target version, if needed
+    image: grafana/grafana:latest
+    ports:
+      - '3000:3000'
+    volumes:
+      # Use your plugin folder (e.g. redshift-datasource)
+      - ./:/var/lib/grafana/plugins/<plugin-folder>
+    environment:
+      - TERM=linux
+      - GF_LOG_LEVEL=debug
+      - GF_DATAPROXY_LOGGING=true
+      # Use your plugin name (e.g. grafana-redshift-datasource)
+      - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=<plugin-name>
+```
+
+### Run your plugin
+
+Finally start your plugin in development mode:
+
+1. Build your plugin backend and start the frontend in watch mode (if you haven't done that already):
 
    ```bash
    mage -v
    yarn watch
    ```
 
-5. Start Grafana backend and frontend:
+2. Start Grafana backend and frontend:
+
+   2.1 For a local copy of Grafana:
 
    ```bash
    make run
@@ -83,7 +124,13 @@ For developing or debugging a plugin, it's useful to link it with a local copy o
    yarn start
    ```
 
-After this, you should be able to see your plugin listed in Grafana and test your changes. Note that any change in the fronted will require you to refresh your browser while changes in the backend may require to rebuild your plugin binaries and restart the Grafana backend.
+   2.2 For docker-compose:
+
+   ```bash
+   docker-compose up
+   ```
+
+After this, you should be able to see your plugin listed in Grafana and test your changes. Note that any change in the fronted will require you to refresh your browser while changes in the backend may require to rebuild your plugin binaries and reload the plugin (`mage && mage reloadPlugin` for local development or `docker-compose up` again if you are using docker-compose).
 
 ## Build a release for the Redshift data source plugin
 
