@@ -9,7 +9,7 @@ import (
 const SinglePageResponseQueryId = "singlePageResponse"
 const MultiPageResponseQueryId = "multiPageResponse"
 
-var columnMetaData []*redshiftdataapiservice.ColumnMetadata = []*redshiftdataapiservice.ColumnMetadata{
+var columnMetaData = []*redshiftdataapiservice.ColumnMetadata{
 	{
 		Name:     aws.String("col1"),
 		Nullable: aws.Int64(1),
