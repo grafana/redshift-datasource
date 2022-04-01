@@ -18,7 +18,7 @@ var ds = &fake.RedshiftFakeDatasource{
 		{Name: "secret1", ARN: "arn:secret1"},
 	},
 	RSecret: models.RedshiftSecret{ClusterIdentifier: "clu", DBUser: "user"},
-	RClusters: []models.RedshiftCluster{models.RedshiftCluster{
+	RClusters: []models.RedshiftCluster{{
 		ClusterIdentifier: "foo",
 		Endpoint: models.RedshiftEndpoint{
 			Address: "foo.a.b.c",

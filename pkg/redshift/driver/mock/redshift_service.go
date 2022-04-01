@@ -9,7 +9,7 @@ import (
 const SinglePageResponseQueryId = "singlePageResponse"
 const MultiPageResponseQueryId = "multiPageResponse"
 
-var columnMetaData []*redshiftdataapiservice.ColumnMetadata = []*redshiftdataapiservice.ColumnMetadata{
+var columnMetaData = []*redshiftdataapiservice.ColumnMetadata{
 	{
 		Name:     aws.String("col1"),
 		Nullable: aws.Int64(1),
@@ -239,5 +239,17 @@ func (s *RedshiftService) ListTablesPages(*redshiftdataapiservice.ListTablesInpu
 }
 
 func (s *RedshiftService) ListTablesPagesWithContext(aws.Context, *redshiftdataapiservice.ListTablesInput, func(*redshiftdataapiservice.ListTablesOutput, bool) bool, ...request.Option) error {
+	panic("not implemented")
+}
+
+func (s *RedshiftService) BatchExecuteStatement(input *redshiftdataapiservice.BatchExecuteStatementInput) (*redshiftdataapiservice.BatchExecuteStatementOutput, error) {
+	panic("not implemented")
+}
+
+func (s *RedshiftService) BatchExecuteStatementWithContext(context aws.Context, input *redshiftdataapiservice.BatchExecuteStatementInput, option ...request.Option) (*redshiftdataapiservice.BatchExecuteStatementOutput, error) {
+	panic("not implemented")
+}
+
+func (s *RedshiftService) BatchExecuteStatementRequest(input *redshiftdataapiservice.BatchExecuteStatementInput) (*request.Request, *redshiftdataapiservice.BatchExecuteStatementOutput) {
 	panic("not implemented")
 }

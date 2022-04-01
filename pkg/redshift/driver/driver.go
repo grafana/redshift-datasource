@@ -40,7 +40,7 @@ func (d *Driver) OpenDB() (*sql.DB, error) {
 	return sql.Open(d.name, "")
 }
 
-// Open registers a new driver with a unique name
+// New registers a new driver with a unique name
 func New(dsAPI sqlAPI.AWSAPI) (sqlDriver.Driver, error) {
 	// The API is stored as a generic object but we need to parse it as a Athena API
 	if reflect.TypeOf(dsAPI) != reflect.TypeOf(&api.API{}) {
