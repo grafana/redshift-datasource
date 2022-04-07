@@ -46,6 +46,10 @@ Make sure you have the following dependencies installed first:
    mage -v
    ```
 
+## Development with local Grafana
+
+Checkout the guide available at https://grafana.com/docs/grafana/latest/developers/plugins/development-with-local-grafana/.
+
 ## Build a release for the Redshift data source plugin
 
 You need to have commit rights to the GitHub repository to publish a release.
