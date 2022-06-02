@@ -1,0 +1,100 @@
+import { MacroType } from '@grafana/experimental';
+
+const COLUMN = 'column',
+  RELATIVE_TIME_STRING = "'1m'";
+
+export const MACROS = [
+  {
+    id: '$__timeFilter(dateColumn)',
+    name: '$__timeFilter(dateColumn)',
+    text: '$__timeFilter',
+    args: [COLUMN],
+    type: MacroType.Filter,
+    description:
+      "Will be replaced by a time range filter using the specified column name. For example, time BETWEEN '2017-07-18T11:15:52Z' AND '2017-07-18T11:15:52Z'",
+  },
+  {
+    id: '$__timeFrom()',
+    name: '$__timeFrom()',
+    text: '$__timeFrom',
+    args: [],
+    type: MacroType.Filter,
+    description:
+      "Will be replaced by the start of the currently active time selection. For example, '2017-07-18T11:15:52Z'",
+  },
+  {
+    id: '$__timeTo()',
+    name: '$__timeTo()',
+    text: '$__timeTo',
+    args: [],
+    type: MacroType.Filter,
+    description:
+      "Will be replaced by the end of the currently active time selection. For example, '2017-07-18T11:15:52Z'",
+  },
+  {
+    id: '$__timeEpoch()',
+    name: '$__timeEpoch()',
+    text: '$__timeEpoch',
+    args: [COLUMN],
+    type: MacroType.Filter,
+    description:
+      'Will be replaced by an expression to convert to a UNIX timestamp and rename the column to time. For example, UNIX_TIMESTAMP(dateColumn) as "time"',
+  },
+  {
+    id: '$__unixEpochFilter()',
+    name: '$__unixEpochFilter()',
+    text: '$__unixEpochFilter',
+    args: [COLUMN],
+    type: MacroType.Filter,
+    description:
+      'Will be replaced by a time range filter using the specified column name with times represented as Unix timestamp. For example, column >= 1624406400 AND column <= 1624410000',
+  },
+  {
+    id: "$__timeGroup(dateColumn, '1m')",
+    name: "$__timeGroup(dateColumn, '1m')",
+    text: '$__timeGroup',
+    args: [COLUMN, RELATIVE_TIME_STRING],
+    type: MacroType.Group,
+    description: `Will be replace by an expression that will group timestamps so that there is only 1 point for every period on the graph. For example, 'floor(extract(epoch from time)/60)*60 AS "time"'`,
+  },
+  {
+    id: "$__unixEpochGroup(dateColumn, '1m')",
+    name: "$__unixEpochGroup(dateColumn, '1m')",
+    text: '$__unixEpochGroup',
+    args: [COLUMN, RELATIVE_TIME_STRING],
+    type: MacroType.Filter,
+    description: `Will be replace by an expression that will group epoch timestamps so that there is only 1 point for every period on the graph. For example, 'floor(time/60)*60 AS "time"'`,
+  },
+  {
+    id: '$__table',
+    name: '$__table',
+    text: '$__table',
+    args: [],
+    type: MacroType.Table,
+    description: 'Will be replaced by the query table.',
+  },
+  {
+    id: '$__column',
+    name: '$__column',
+    text: '$__column',
+    args: [],
+    type: MacroType.Column,
+    description: 'Will be replaced by the query column.',
+  },
+  {
+    id: '$__table',
+    name: '$__table',
+    text: '$__table',
+    args: [],
+    type: MacroType.Table,
+    description: 'Will be replaced by the query table.',
+  },
+  {
+    id: '$__column',
+    name: '$__column',
+    text: '$__column',
+    args: [],
+    type: MacroType.Column,
+    description: 'Will be replaced by the query column.',
+  },
+];
