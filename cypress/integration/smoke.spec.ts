@@ -45,7 +45,6 @@ e2e.scenario({
         const datasource = RedshiftProvisions[0].datasources[0];
 
         e2e.flows.addDataSource({
-          checkHealth: false,
           expectedAlertMessage: 'Data source is working',
           form: () => {
             e2eSelectors.ConfigEditor.AuthenticationProvider.input().type('Access & secret key').type('{enter}');
