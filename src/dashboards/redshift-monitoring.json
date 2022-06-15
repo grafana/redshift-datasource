@@ -2594,7 +2594,7 @@
                 "mode": 0
               },
               "format": 0,
-              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(queue_end_time, $__interval),\n    percentile_cont(1)    WITHIN GROUP (ORDER BY total_queue_time) AS p100,\n    percentile_cont(0.75) WITHIN GROUP (ORDER BY total_queue_time) AS p75,\n    percentile_cont(0.50) WITHIN GROUP (ORDER BY total_queue_time) AS p50\nFROM stl_wlm_query\nWHERE\n    service_class = split_part($service_class, ':', 1) AND\n    $__timeFilter(queue_end_time)\nGROUP BY 1\nORDER BY 1",
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(queue_end_time, $__interval),\n    percentile_cont(1)    WITHIN GROUP (ORDER BY total_queue_time) AS p100,\n    percentile_cont(0.75) WITHIN GROUP (ORDER BY total_queue_time) AS p75,\n    percentile_cont(0.50) WITHIN GROUP (ORDER BY total_queue_time) AS p50\nFROM stl_wlm_query\nWHERE\n    service_class = split_part(${service_class:singlequote}, ':', 1) AND\n    $__timeFilter(queue_end_time)\nGROUP BY 1\nORDER BY 1",
               "refId": "A"
             }
           ],
@@ -2737,7 +2737,7 @@
                 "mode": 0
               },
               "format": 0,
-              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(exec_end_time, $__interval),\n    percentile_cont(1)    WITHIN GROUP (ORDER BY total_exec_time) AS p100,\n    percentile_cont(0.75) WITHIN GROUP (ORDER BY total_exec_time) AS p75,\n    percentile_cont(0.50) WITHIN GROUP (ORDER BY total_exec_time) AS p50\nFROM stl_wlm_query\nWHERE\n    service_class = split_part($service_class, ':', 1) AND\n    $__timeFilter(exec_end_time)\nGROUP BY 1\nORDER BY 1",
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(exec_end_time, $__interval),\n    percentile_cont(1)    WITHIN GROUP (ORDER BY total_exec_time) AS p100,\n    percentile_cont(0.75) WITHIN GROUP (ORDER BY total_exec_time) AS p75,\n    percentile_cont(0.50) WITHIN GROUP (ORDER BY total_exec_time) AS p50\nFROM stl_wlm_query\nWHERE\n    service_class = split_part(${service_class:singlequote}, ':', 1) AND\n    $__timeFilter(exec_end_time)\nGROUP BY 1\nORDER BY 1",
               "refId": "A"
             }
           ],
