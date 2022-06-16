@@ -44,55 +44,54 @@ export function QueryEditor(props: Props) {
   };
 
   return (
-    <>
-      <InlineSegmentGroup>
-        <div className="gf-form-group">
-          <h6>Macros</h6>
-          <ResourceSelector
-            onChange={onChange('schema')}
-            fetch={fetchSchemas}
-            value={props.query.schema || null}
-            tooltip="Use the selected schema with the $__schema macro"
-            label={selectors.components.ConfigEditor.schema.input}
-            data-testid={selectors.components.ConfigEditor.schema.testID}
-            labelWidth={11}
-            className="width-12"
-          />
-          <ResourceSelector
-            onChange={onChange('table')}
-            fetch={fetchTables}
-            value={props.query.table || null}
-            dependencies={[props.query.schema]}
-            tooltip="Use the selected table with the $__table macro"
-            label={selectors.components.ConfigEditor.table.input}
-            data-testid={selectors.components.ConfigEditor.table.testID}
-            labelWidth={11}
-            className="width-12"
-          />
-          <ResourceSelector
-            onChange={onChange('column')}
-            fetch={fetchColumns}
-            value={props.query.column || null}
-            dependencies={[props.query.table]}
-            tooltip="Use the selected column with the $__column macro"
-            label={selectors.components.ConfigEditor.column.input}
-            data-testid={selectors.components.ConfigEditor.column.testID}
-            labelWidth={11}
-            className="width-12"
-          />
-          <h6>Frames</h6>
-          <FormatSelect
-            query={props.query}
-            options={SelectableFormatOptions}
-            onChange={props.onChange}
-            onRunQuery={props.onRunQuery}
-          />
-          {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />
-          )}
-        </div>
-        <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
-          {/* <QueryCodeEditor
+    <InlineSegmentGroup>
+      <div className="gf-form-group">
+        <h6>Macros</h6>
+        <ResourceSelector
+          onChange={onChange('schema')}
+          fetch={fetchSchemas}
+          value={props.query.schema || null}
+          tooltip="Use the selected schema with the $__schema macro"
+          label={selectors.components.ConfigEditor.schema.input}
+          data-testid={selectors.components.ConfigEditor.schema.testID}
+          labelWidth={11}
+          className="width-12"
+        />
+        <ResourceSelector
+          onChange={onChange('table')}
+          fetch={fetchTables}
+          value={props.query.table || null}
+          dependencies={[props.query.schema]}
+          tooltip="Use the selected table with the $__table macro"
+          label={selectors.components.ConfigEditor.table.input}
+          data-testid={selectors.components.ConfigEditor.table.testID}
+          labelWidth={11}
+          className="width-12"
+        />
+        <ResourceSelector
+          onChange={onChange('column')}
+          fetch={fetchColumns}
+          value={props.query.column || null}
+          dependencies={[props.query.table]}
+          tooltip="Use the selected column with the $__column macro"
+          label={selectors.components.ConfigEditor.column.input}
+          data-testid={selectors.components.ConfigEditor.column.testID}
+          labelWidth={11}
+          className="width-12"
+        />
+        <h6>Frames</h6>
+        <FormatSelect
+          query={props.query}
+          options={SelectableFormatOptions}
+          onChange={props.onChange}
+          onRunQuery={props.onRunQuery}
+        />
+        {props.query.format === FormatOptions.TimeSeries && (
+          <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />
+        )}
+      </div>
+      <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
+        {/* <QueryCodeEditor
             language="redshift"
             query={props.query}
             onChange={props.onChange}
@@ -101,9 +100,8 @@ export function QueryEditor(props: Props) {
           />
         </div> */}
 
-          <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
-        </div>
-      </InlineSegmentGroup>
-    </>
+        <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
+      </div>
+    </InlineSegmentGroup>
   );
 }
