@@ -175,7 +175,7 @@ export const keywords = [
   'WITHOUT',
 ];
 
-export const builtInFunctions = [
+export const builtinFunctions = [
   'current_schema',
   'current_schemas',
   'has_database_privilege',
@@ -655,7 +655,7 @@ export const language: SQLMonarchLanguage = {
   keywords,
   comparisonOperators,
   logicalOperators,
-  builtInFunctions,
+  builtinFunctions,
 };
 
 export const conf = grafanaStandardSQLLanguageConf;
