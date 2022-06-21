@@ -10,7 +10,7 @@ require (
 	github.com/grafana/sqlds/v2 v2.3.3
 	github.com/mattn/go-runewidth v0.0.10 // indirect
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.2
 )
 
 replace github.com/grafana/grafana-plugin-sdk-go => ../grafana-plugin-sdk-go
