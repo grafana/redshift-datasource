@@ -42,7 +42,7 @@ func (d *Driver) OpenDB() (*sql.DB, error) {
 
 // New registers a new driver with a unique name
 func New(dsAPI sqlAPI.AWSAPI) (sqlDriver.Driver, error) {
-	// The API is stored as a generic object but we need to parse it as a Athena API
+	// The API is stored as a generic object but we need to parse it as a Redshift API
 	if reflect.TypeOf(dsAPI) != reflect.TypeOf(&api.API{}) {
 		return nil, fmt.Errorf("wrong API type")
 	}

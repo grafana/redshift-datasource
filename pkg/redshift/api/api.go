@@ -100,6 +100,10 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
 }
 
+func (c *API) ListStatements(ctx context.Context, query string) (string, error) {
+	return "", nil
+}
+
 func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.ExecuteQueryStatus, error) {
 	statusResp, err := c.DataClient.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
 		Id: aws.String(output.ID),
