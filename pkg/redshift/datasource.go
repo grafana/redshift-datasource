@@ -59,19 +59,14 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 	return s.awsDS.GetDB(config.ID, args, models.New, api.New, driver.New)
 }
 
-func (s *RedshiftDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (sqlds.AsyncDB, error) {
+func (s *RedshiftDatasource) ConnectAsync(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (sqlds.AsyncDB, error) {
 	s.awsDS.Init(config)
 	args, err := sqlds.ParseOptions(queryArgs)
 	if err != nil {
 		return nil, err
 	}
 
-	res, err := s.awsDS.GetAPI(config.ID, args, models.New, api.New)
-	if err != nil {
-		return nil, err
-	}
-
-	return &driver.DB{API: res.(*api.API)}, nil
+	return s.awsDS.GetAsyncDB(config.ID, args, models.New, api.New, driver.NewAsync)
 }
 
 func (s *RedshiftDatasource) getApi(ctx context.Context, options sqlds.Options) (*api.API, error) {

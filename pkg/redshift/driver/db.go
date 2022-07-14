@@ -11,11 +11,11 @@ import (
 
 type DB struct {
 	sqlds.AsyncDB
-	API *api.API
+	api *api.API
 }
 
 func (d *DB) StartQuery(ctx context.Context, query string, args ...interface{}) (string, error) {
-	output, err := d.API.Execute(ctx, &sqlAPI.ExecuteQueryInput{Query: query})
+	output, err := d.api.Execute(ctx, &sqlAPI.ExecuteQueryInput{Query: query})
 	if err != nil {
 		return "", err
 	}
@@ -23,7 +23,7 @@ func (d *DB) StartQuery(ctx context.Context, query string, args ...interface{}) 
 }
 
 func (d *DB) GetQueryID(ctx context.Context, query string, args ...interface{}) (bool, string, error) {
-	res, err := d.API.ListStatements(ctx, query)
+	res, err := d.api.ListStatements(ctx, query)
 
 	if err != nil {
 		return false, "", err
@@ -33,7 +33,7 @@ func (d *DB) GetQueryID(ctx context.Context, query string, args ...interface{}) 
 }
 
 func (d *DB) QueryStatus(ctx context.Context, queryID string) (bool, string, error) {
-	status, err := d.API.Status(ctx, &sqlAPI.ExecuteQueryOutput{ID: queryID})
+	status, err := d.api.Status(ctx, &sqlAPI.ExecuteQueryOutput{ID: queryID})
 	if err != nil {
 		return false, "", err
 	}
@@ -41,9 +41,9 @@ func (d *DB) QueryStatus(ctx context.Context, queryID string) (bool, string, err
 }
 
 func (d *DB) CancelQuery(ctx context.Context, queryID string) error {
-	return d.API.Stop(&sqlAPI.ExecuteQueryOutput{ID: queryID})
+	return d.api.Stop(&sqlAPI.ExecuteQueryOutput{ID: queryID})
 }
 
 func (d *DB) GetRows(ctx context.Context, queryID string) (driver.Rows, error) {
-	return newRows(d.API.DataClient, queryID)
+	return newRows(d.api.DataClient, queryID)
 }
