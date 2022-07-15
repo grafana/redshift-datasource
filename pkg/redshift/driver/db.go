@@ -9,8 +9,9 @@ import (
 	"github.com/grafana/sqlds/v2"
 )
 
+var _ sqlds.AsyncDB = &DB{}
+
 type DB struct {
-	sqlds.AsyncDB
 	api *api.API
 }
 
@@ -23,13 +24,7 @@ func (d *DB) StartQuery(ctx context.Context, query string, args ...interface{}) 
 }
 
 func (d *DB) GetQueryID(ctx context.Context, query string, args ...interface{}) (bool, string, error) {
-	res, err := d.api.ListStatements(ctx, query)
-
-	if err != nil {
-		return false, "", err
-	}
-
-	return false, res, nil
+	return d.api.GetQueryID(ctx, query, args)
 }
 
 func (d *DB) QueryStatus(ctx context.Context, queryID string) (bool, string, error) {

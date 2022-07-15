@@ -78,6 +78,73 @@ func Test_Execute(t *testing.T) {
 	}
 }
 
+func Test_GetQueryID(t *testing.T) {
+	testCases := map[string]struct {
+		query  string
+		output []*redshiftdataapiservice.ListStatementsOutput
+		found  bool
+		id     string
+	}{
+		"found": {
+			"foo",
+			[]*redshiftdataapiservice.ListStatementsOutput{{Statements: []*redshiftdataapiservice.StatementData{
+				{Id: aws.String("a"), QueryString: aws.String("foo"), Status: aws.String("STARTED")},
+				{Id: aws.String("b"), QueryString: aws.String("bar"), Status: aws.String("STARTED")},
+			}}},
+			true,
+			"a",
+		},
+		"found but invalid": {
+			"foo",
+			[]*redshiftdataapiservice.ListStatementsOutput{{Statements: []*redshiftdataapiservice.StatementData{
+				{Id: aws.String("a"), QueryString: aws.String("foo"), Status: aws.String("FAILED")},
+				{Id: aws.String("b"), QueryString: aws.String("bar"), Status: aws.String("STARTED")},
+			}}},
+			false,
+			"",
+		},
+		"not found": {
+			"baz",
+			[]*redshiftdataapiservice.ListStatementsOutput{{Statements: []*redshiftdataapiservice.StatementData{
+				{Id: aws.String("a"), QueryString: aws.String("foo"), Status: aws.String("STARTED")},
+				{Id: aws.String("b"), QueryString: aws.String("bar"), Status: aws.String("STARTED")},
+			}}},
+			false,
+			"",
+		},
+		"multiple calls": {
+			"foo",
+			[]*redshiftdataapiservice.ListStatementsOutput{
+				{Statements: []*redshiftdataapiservice.StatementData{
+					{Id: aws.String("c"), QueryString: aws.String("blah"), Status: aws.String("STARTED")},
+					{Id: aws.String("d"), QueryString: aws.String("boo"), Status: aws.String("STARTED")},
+				},
+					NextToken: aws.String("next"),
+				},
+				{Statements: []*redshiftdataapiservice.StatementData{
+					{Id: aws.String("a"), QueryString: aws.String("foo"), Status: aws.String("SUBMITTED")},
+					{Id: aws.String("b"), QueryString: aws.String("bar"), Status: aws.String("STARTED")},
+				}}},
+			true,
+			"a",
+		},
+	}
+
+	for name, test := range testCases {
+		t.Run(name, func(t *testing.T) {
+			c := &API{
+				settings:   &models.RedshiftDataSourceSettings{},
+				DataClient: &redshiftclientmock.MockRedshiftClient{ListStatementsOutput: test.output},
+			}
+
+			found, res, err := c.GetQueryID(context.Background(), test.query)
+			assert.Nil(t, err)
+			assert.Equal(t, test.found, found)
+			assert.Equal(t, test.id, res)
+		})
+	}
+}
+
 func Test_Status(t *testing.T) {
 	tests := []struct {
 		description string
@@ -252,7 +319,7 @@ func Test_GetClusters(t *testing.T) {
 		{
 			c:      errC,
 			desc:   "Error with DescribeCluster",
-			errMsg: "Boom!",
+			errMsg: "Boom",
 		},
 		{
 			c:      nilC,
