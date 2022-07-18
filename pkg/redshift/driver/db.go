@@ -23,6 +23,10 @@ func (d *DB) StartQuery(ctx context.Context, query string, args ...interface{}) 
 	return output.ID, nil
 }
 
+func (d *DB) GetQueryID(ctx context.Context, query string, args ...interface{}) (bool, string, error) {
+	return d.api.GetQueryID(ctx, query, args)
+}
+
 func (d *DB) QueryStatus(ctx context.Context, queryID string) (bool, string, error) {
 	status, err := d.api.Status(ctx, &sqlAPI.ExecuteQueryOutput{ID: queryID})
 	if err != nil {
