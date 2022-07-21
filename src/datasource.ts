@@ -10,12 +10,12 @@ import { RedshiftCustomMeta, RedshiftDataSourceOptions, RedshiftQuery } from './
 let requestCounter = 100;
 
 export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDataSourceOptions> {
-  private runninQueries: { [hash: string]: string };
+  private runningQueries: { [hash: string]: string };
 
   constructor(instanceSettings: DataSourceInstanceSettings<RedshiftDataSourceOptions>) {
     super(instanceSettings);
     this.variables = new RedshiftVariableSupport(this);
-    this.runninQueries = {};
+    this.runningQueries = {};
   }
 
   // This will support annotation queries for 7.2+
@@ -43,17 +43,17 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
 
   storeQuery(target: RedshiftQuery, queryID: string) {
     const key = JSON.stringify(target);
-    this.runninQueries[key] = queryID;
+    this.runningQueries[key] = queryID;
   }
 
   getQuery(target: RedshiftQuery) {
     const key = JSON.stringify(target);
-    return this.runninQueries[key];
+    return this.runningQueries[key];
   }
 
   removeQuery(target: RedshiftQuery) {
     const key = JSON.stringify(target);
-    delete this.runninQueries[key];
+    delete this.runningQueries[key];
   }
 
   doSingle(target: RedshiftQuery, request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {

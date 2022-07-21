@@ -7,7 +7,10 @@ import (
 
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
+	"github.com/grafana/sqlds/v2"
 )
+
+var _ sqlds.AsyncDB = &DB{}
 
 // Implements AsyncDB
 type DB struct {
@@ -27,12 +30,25 @@ func (d *DB) GetQueryID(ctx context.Context, query string, args ...interface{}) 
 	return d.api.GetQueryID(ctx, query, args)
 }
 
-func (d *DB) QueryStatus(ctx context.Context, queryID string) (bool, string, error) {
+func (d *DB) QueryStatus(ctx context.Context, queryID string) (sqlds.QueryStatus, error) {
 	status, err := d.api.Status(ctx, &sqlAPI.ExecuteQueryOutput{ID: queryID})
 	if err != nil {
-		return false, "", err
+		return sqlds.QueryUnknown, err
 	}
-	return status.Finished, status.State, nil
+	var returnStatus sqlds.QueryStatus
+	switch status.State {
+	case "SUBMITTED", "PICKED":
+		returnStatus = sqlds.QuerySubmitted
+	case "STARTED":
+		returnStatus = sqlds.QueryRunning
+	case "FINISHED":
+		returnStatus = sqlds.QueryFinished
+	case "ABORTED":
+		returnStatus = sqlds.QueryCanceled
+	case "FAILED":
+		returnStatus = sqlds.QueryFailed
+	}
+	return returnStatus, nil
 
 }
 

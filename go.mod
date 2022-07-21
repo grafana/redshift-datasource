@@ -12,6 +12,7 @@ require (
 	github.com/stretchr/testify v1.8.0
 )
 
-replace github.com/grafana/sqlds/v2 => ../../sqlds
-
-replace github.com/grafana/grafana-aws-sdk => ../../grafana-aws-sdk
+replace (
+	github.com/grafana/grafana-aws-sdk => ../../code/grafana-aws-sdk
+	github.com/grafana/sqlds/v2 => ../../code/sqlds
+)
