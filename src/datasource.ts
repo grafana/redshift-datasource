@@ -1,8 +1,15 @@
 import { applySQLTemplateVariables, filterSQLQuery } from '@grafana/aws-sdk';
 import { DataFrame, DataQueryRequest, DataQueryResponse, DataSourceInstanceSettings, ScopedVars } from '@grafana/data';
-import { DataSourceWithBackend, getTemplateSrv } from '@grafana/runtime';
+import {
+  DataSourceWithBackend,
+  getTemplateSrv,
+  getBackendSrv,
+  toDataQueryResponse,
+  BackendDataSourceResponse,
+} from '@grafana/runtime';
 import { getRequestLooper } from 'requestLooper';
 import { merge, Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { RedshiftVariableSupport } from 'variables';
 
 import { RedshiftCustomMeta, RedshiftDataSourceOptions, RedshiftQuery } from './types';
@@ -27,7 +34,14 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
     applySQLTemplateVariables(query, scopedVars, getTemplateSrv);
 
   query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
-    const targets = request.targets;
+    const { intervalMs, maxDataPoints } = request;
+    const targets = request.targets.filter(this.filterQuery).map((q) => ({
+      ...q,
+      intervalMs,
+      maxDataPoints,
+      datasource: this.getRef(),
+      ...this.applyTemplateVariables(q, request.scopedVars),
+    }));
     if (!targets.length) {
       return of({ data: [] });
     }
@@ -70,9 +84,12 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
             if (meta && meta.queryID) {
               queryId = meta.queryID;
               this.storeQuery(target, meta.queryID);
+              const status = meta.status;
+              const notFinished = status === 'submitted' || status === 'running';
               return {
                 ...target,
                 queryID: meta.queryID,
+                skipCache: notFinished,
               } as RedshiftQuery;
             }
           }
@@ -84,7 +101,39 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
          * The original request
          */
         query: (request: DataQueryRequest<RedshiftQuery>) => {
-          return super.query(request);
+          const { range, targets, requestId } = request;
+          const [target] = targets;
+          const { skipCache, ...query } = target;
+          const data = {
+            queries: [query],
+            range: range,
+            from: range.from.valueOf().toString(),
+            to: range.to.valueOf().toString(),
+          };
+
+          let headers = {};
+          if (skipCache) {
+            headers = {
+              'X-Cache-Skip': true,
+            };
+          }
+          const options = {
+            method: 'POST',
+            url: '/api/ds/query',
+            data,
+            requestId,
+            headers,
+          };
+
+          return getBackendSrv()
+            .fetch<BackendDataSourceResponse>(options)
+            .pipe(map((result) => result.data))
+            .pipe(
+              map((r) => {
+                const frames = toDataQueryResponse({ data: r }).data as DataFrame[];
+                return { data: frames };
+              })
+            );
         },
 
         /**
