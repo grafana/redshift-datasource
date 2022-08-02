@@ -84,6 +84,7 @@ export function ConfigEditor(props: Props) {
         });
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arn]);
 
   // Clusters
@@ -116,6 +117,7 @@ export function ConfigEditor(props: Props) {
     if (props.options.jsonData.clusterIdentifier) {
       getClusterUrl(props.options.jsonData.clusterIdentifier);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const onOptionsChange = (options: RedshiftDataSourceSettings) => {
@@ -227,7 +229,6 @@ export function ConfigEditor(props: Props) {
               },
             })
           }
-          css={undefined}
           data-testid={selectors.components.ConfigEditor.WithEvent.testID}
         />
       </InlineField>

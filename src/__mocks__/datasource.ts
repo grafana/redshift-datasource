@@ -8,6 +8,7 @@ export const mockDatasource = new DataSource({
   type: 'redshift-datasource',
   name: 'Redshift Data Source',
   jsonData: {},
+  access: 'direct',
   meta: {
     id: 'redshift-datasource',
     name: 'Redshift Data Source',

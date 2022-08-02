@@ -15,6 +15,7 @@ import { RedshiftVariableSupport } from 'variables';
 import { RedshiftCustomMeta, RedshiftDataSourceOptions, RedshiftQuery } from './types';
 
 let requestCounter = 100;
+const runningStatuses = ['started', 'submitted', 'running'];
 
 export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDataSourceOptions> {
   private runningQueries: { [hash: string]: string };
@@ -71,7 +72,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
   }
 
   doSingle(target: RedshiftQuery, request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
-    let queryId: string | undefined = undefined;
+    let queryID: string | undefined = undefined;
     let allData: DataFrame[] = [];
     return getRequestLooper(
       { ...request, targets: [target], requestId: `aws_ts_${requestCounter++}` },
@@ -81,15 +82,15 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           if (rsp.data?.length) {
             const first = rsp.data[0] as DataFrame;
             const meta = first.meta?.custom as RedshiftCustomMeta;
-            if (meta && meta.queryID) {
-              queryId = meta.queryID;
-              this.storeQuery(target, meta.queryID);
-              const status = meta.status;
-              const notFinished = status === 'submitted' || status === 'running';
+            const status = meta.status;
+            const notFinished = runningStatuses.includes(status);
+            if (meta && notFinished) {
+              queryID = meta.queryID;
+              this.storeQuery(target, queryID);
               return {
                 ...target,
-                queryID: meta.queryID,
-                skipCache: notFinished,
+                queryID,
+                status,
               } as RedshiftQuery;
             }
           }
@@ -103,7 +104,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
         query: (request: DataQueryRequest<RedshiftQuery>) => {
           const { range, targets, requestId } = request;
           const [target] = targets;
-          const { skipCache, ...query } = target;
+          const { status, ...query } = target;
           const data = {
             queries: [query],
             range: range,
@@ -112,7 +113,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           };
 
           let headers = {};
-          if (skipCache) {
+          if (runningStatuses.includes(status || '')) {
             headers = {
               'X-Cache-Skip': true,
             };
@@ -153,10 +154,10 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
          * Callback that gets executed when unsubscribed
          */
         onCancel: () => {
-          if (queryId) {
+          if (queryID) {
             this.removeQuery(target);
             this.postResource('cancel', {
-              queryId,
+              queryID,
             })
               .then((v) => {
                 console.log('Query canceled:', v);

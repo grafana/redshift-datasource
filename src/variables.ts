@@ -5,7 +5,7 @@ import { VariableQueryCodeEditor } from 'VariableQueryEditor';
 import { DataSource } from './datasource';
 import { RedshiftQuery, defaultQuery } from './types';
 
-export class RedshiftVariableSupport extends CustomVariableSupport<DataSource, RedshiftQuery> {
+export class RedshiftVariableSupport extends CustomVariableSupport<DataSource, RedshiftQuery, RedshiftQuery> {
   constructor(private readonly datasource: DataSource) {
     super();
     this.datasource = datasource;
