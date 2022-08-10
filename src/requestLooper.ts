@@ -34,7 +34,7 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
     let nextQuery: T | undefined = undefined;
     let subscription: Subscription | undefined = undefined;
     let loadingState: LoadingState | undefined = LoadingState.Loading;
-    let nextRequestDelay = 1; // Secods until the next request
+    let nextRequestDelay = 1; // Seconds until the next request
     let count = 1;
 
     // Single observer gets reused for each request
