@@ -75,24 +75,25 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
   doSingle(target: RedshiftQuery, request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
     let queryID: string | undefined = undefined;
     let allData: DataFrame[] = [];
+
     return getRequestLooper(
       { ...request, targets: [target], requestId: `aws_ts_${requestCounter++}` },
       {
-        // Check for a "queryID" in the response
+        /**
+         * Additional query to execute if the current query is still in a running state
+         */
         getNextQuery: (rsp: DataQueryResponse) => {
           if (rsp.data?.length) {
             const first = rsp.data[0] as DataFrame;
             const meta = first.meta?.custom as RedshiftCustomMeta;
+
             if (meta && isRunning(meta.status)) {
-              const status = meta.status;
               queryID = meta.queryID;
-              this.storeQuery(target, queryID, status);
-              return {
-                ...target,
-                queryID,
-              } as RedshiftQuery;
+              this.storeQuery(target, queryID, meta.status);
+              return { ...target, queryID };
             }
           }
+
           this.removeQuery(target);
           return undefined;
         },
@@ -113,9 +114,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           let headers = {};
           const queryInfo = this.getQuery(target);
           if (queryInfo && isRunning(queryInfo.status)) {
-            headers = {
-              'X-Cache-Skip': true,
-            };
+            headers = { 'X-Cache-Skip': true };
           }
           const options = {
             method: 'POST',
@@ -130,7 +129,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
             .pipe(map((result) => result.data))
             .pipe(
               map((r) => {
-                const frames = toDataQueryResponse({ data: r }).data as DataFrame[];
+                const frames: DataFrame[] = toDataQueryResponse({ data: r }).data;
                 return { data: frames };
               })
             );
@@ -157,14 +156,10 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
             this.removeQuery(target);
             this.postResource('cancel', {
               queryID,
-            })
-              .then((v) => {
-                console.log('Query canceled:', v);
-              })
-              .catch((err) => {
-                err.isHandled = true; // avoid the popup
-                console.log('error killing', err);
-              });
+            }).catch((err) => {
+              err.isHandled = true; // avoid the popup
+              console.log(`error cancelling query ID: ${queryID}`, err);
+            });
           }
         },
       }
@@ -178,7 +173,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
       await this.postResource('cancel', { queryID });
     } catch (err: any) {
       err.isHandled = true; // avoid the popup
-      console.log('error killing', err);
+      console.log(`error cancelling query ID: ${queryID}`, err);
     }
   }
 }
