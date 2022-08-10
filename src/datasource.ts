@@ -15,11 +15,14 @@ import { RedshiftVariableSupport } from 'variables';
 import { RedshiftCustomMeta, RedshiftDataSourceOptions, RedshiftQuery } from './types';
 
 let requestCounter = 100;
-const runningStatuses = ['started', 'submitted', 'running'];
-const isRunning = (status = '') => runningStatuses.includes(status);
+const RUNNING_STATUSES = ['started', 'submitted', 'running'];
+const isRunning = (status = '') => RUNNING_STATUSES.includes(status);
+const isRedshiftCustomMeta = (meta: unknown): meta is RedshiftCustomMeta => {
+  return !!(typeof meta === 'object' && meta?.hasOwnProperty('queryID') && meta?.hasOwnProperty('status'));
+};
 
 export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDataSourceOptions> {
-  private runningQueries: { [hash: string]: { queryID: string; status: string } };
+  private runningQueries: { [hash: string]: string };
 
   constructor(instanceSettings: DataSourceInstanceSettings<RedshiftDataSourceOptions>) {
     super(instanceSettings);
@@ -57,9 +60,9 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
     return merge(...all);
   }
 
-  storeQuery(target: RedshiftQuery, queryID: string, status = '') {
+  storeQuery(target: RedshiftQuery, queryID: string) {
     const key = JSON.stringify(target);
-    this.runningQueries[key] = { queryID, status };
+    this.runningQueries[key] = queryID;
   }
 
   getQuery(target: RedshiftQuery) {
@@ -74,6 +77,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
 
   doSingle(target: RedshiftQuery, request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
     let queryID: string | undefined = undefined;
+    let status: string | undefined = undefined;
     let allData: DataFrame[] = [];
 
     return getRequestLooper(
@@ -84,12 +88,13 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
          */
         getNextQuery: (rsp: DataQueryResponse) => {
           if (rsp.data?.length) {
-            const first = rsp.data[0] as DataFrame;
-            const meta = first.meta?.custom as RedshiftCustomMeta;
+            const first: DataFrame = rsp.data[0];
+            const meta = first.meta?.custom;
 
-            if (meta && isRunning(meta.status)) {
+            if (isRedshiftCustomMeta(meta) && isRunning(meta.status)) {
               queryID = meta.queryID;
-              this.storeQuery(target, queryID, meta.status);
+              status = meta.status;
+              this.storeQuery(target, queryID);
               return { ...target, queryID };
             }
           }
@@ -112,8 +117,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           };
 
           let headers = {};
-          const queryInfo = this.getQuery(target);
-          if (queryInfo && isRunning(queryInfo.status)) {
+          if (isRunning(status)) {
             headers = { 'X-Cache-Skip': true };
           }
           const options = {
