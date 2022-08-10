@@ -30,7 +30,6 @@ export interface RedshiftQuery extends SQLQuery {
   column?: string;
 
   queryID?: string;
-  status?: string;
 }
 
 export interface RedshiftManagedSecret {

@@ -16,9 +16,10 @@ import { RedshiftCustomMeta, RedshiftDataSourceOptions, RedshiftQuery } from './
 
 let requestCounter = 100;
 const runningStatuses = ['started', 'submitted', 'running'];
+const isRunning = (status = '') => runningStatuses.includes(status);
 
 export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDataSourceOptions> {
-  private runningQueries: { [hash: string]: string };
+  private runningQueries: { [hash: string]: { queryID: string; status: string } };
 
   constructor(instanceSettings: DataSourceInstanceSettings<RedshiftDataSourceOptions>) {
     super(instanceSettings);
@@ -56,9 +57,9 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
     return merge(...all);
   }
 
-  storeQuery(target: RedshiftQuery, queryID: string) {
+  storeQuery(target: RedshiftQuery, queryID: string, status = '') {
     const key = JSON.stringify(target);
-    this.runningQueries[key] = queryID;
+    this.runningQueries[key] = { queryID, status };
   }
 
   getQuery(target: RedshiftQuery) {
@@ -82,15 +83,13 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           if (rsp.data?.length) {
             const first = rsp.data[0] as DataFrame;
             const meta = first.meta?.custom as RedshiftCustomMeta;
-            const status = meta.status;
-            const notFinished = runningStatuses.includes(status);
-            if (meta && notFinished) {
+            if (meta && isRunning(meta.status)) {
+              const status = meta.status;
               queryID = meta.queryID;
-              this.storeQuery(target, queryID);
+              this.storeQuery(target, queryID, status);
               return {
                 ...target,
                 queryID,
-                status,
               } as RedshiftQuery;
             }
           }
@@ -103,8 +102,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
          */
         query: (request: DataQueryRequest<RedshiftQuery>) => {
           const { range, targets, requestId } = request;
-          const [target] = targets;
-          const { status, ...query } = target;
+          const [query] = targets;
           const data = {
             queries: [query],
             range: range,
@@ -113,7 +111,8 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           };
 
           let headers = {};
-          if (runningStatuses.includes(status || '')) {
+          const queryInfo = this.getQuery(target);
+          if (queryInfo && isRunning(queryInfo.status)) {
             headers = {
               'X-Cache-Skip': true,
             };
@@ -173,10 +172,10 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
   }
 
   async cancel(target: RedshiftQuery) {
-    const queryId = this.getQuery(target);
+    const queryID = this.getQuery(target);
     try {
       this.removeQuery(target);
-      await this.postResource('cancel', { queryId });
+      await this.postResource('cancel', { queryID });
     } catch (err: any) {
       err.isHandled = true; // avoid the popup
       console.log('error killing', err);
