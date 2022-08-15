@@ -39,14 +39,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
     applySQLTemplateVariables(query, scopedVars, getTemplateSrv);
 
   query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
-    const { intervalMs, maxDataPoints } = request;
-    const targets = request.targets.filter(this.filterQuery).map((q) => ({
-      ...q,
-      intervalMs,
-      maxDataPoints,
-      datasource: this.getRef(),
-      ...this.applyTemplateVariables(q, request.scopedVars),
-    }));
+    const targets = request.targets.filter(this.filterQuery);
     if (!targets.length) {
       return of({ data: [] });
     }
@@ -107,10 +100,20 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
          * The original request
          */
         query: (request: DataQueryRequest<RedshiftQuery>) => {
-          const { range, targets, requestId } = request;
+          const { range, targets, requestId, intervalMs, maxDataPoints } = request;
           const [query] = targets;
+
           const data = {
-            queries: [query],
+            queries: [
+              {
+                ...query,
+                intervalMs,
+                maxDataPoints,
+                datasource: this?.getRef(),
+                datasourceId: this.id,
+                ...this.applyTemplateVariables(query, request.scopedVars),
+              },
+            ],
             range: range,
             from: range.from.valueOf().toString(),
             to: range.to.valueOf().toString(),
@@ -159,7 +162,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           if (queryID) {
             this.removeQuery(target);
             this.postResource('cancel', {
-              queryID,
+              queryId: queryID,
             }).catch((err) => {
               err.isHandled = true; // avoid the popup
               console.log(`error cancelling query ID: ${queryID}`, err);
@@ -172,12 +175,17 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
 
   async cancel(target: RedshiftQuery) {
     const queryID = this.getQuery(target);
-    try {
-      this.removeQuery(target);
-      await this.postResource('cancel', { queryID });
-    } catch (err: any) {
-      err.isHandled = true; // avoid the popup
-      console.log(`error cancelling query ID: ${queryID}`, err);
+    if (queryID) {
+      try {
+        this.removeQuery(target);
+        await this.postResource('cancel', { queryId: queryID });
+      } catch (err: any) {
+        err.isHandled = true; // avoid the popup
+        console.log(`error cancelling query ID: ${queryID}`, err);
+      }
+      // the query might not have been started, we haven't received a
+      // queryID yet, but it has already run
+    } else {
     }
   }
 }

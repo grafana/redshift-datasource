@@ -9,7 +9,7 @@ This topic explains options, variables, querying, and other options specific to 
 To access data source settings, hover your mouse over the **Configuration** (gear) icon, then click **Data Sources**, and then click the AWS Redshift data source.
 
 | Name                         | Description                                                                                                             |
-|------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `Name`                       | The data source name. This is how you refer to the data source in panels and queries.                                   |
 | `Default`                    | Default data source means that it will be pre-selected for new panels.                                                  |
 | `Auth Provider`              | Specify the provider to get credentials.                                                                                |
@@ -50,6 +50,7 @@ Here is a minimal policy example:
         "redshift-data:DescribeStatement",
         "redshift-data:ListSchemas",
         "redshift-data:ExecuteStatement",
+        "redshift-data:CancelStatement",
         "redshift:GetClusterCredentials",
         "redshift:DescribeClusters",
         "secretsmanager:ListSecrets"
