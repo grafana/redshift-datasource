@@ -95,7 +95,7 @@ export function QueryEditor(props: Props) {
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
           {config.featureToggles.redshiftExperimentalUI ? (
-            <RedshiftSQLEditor query={props.query} onChange={props.onChange} />
+            <RedshiftSQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
           ) : (
             <QueryCodeEditor
               language="redshift"
