@@ -12,6 +12,11 @@ interface RawEditorProps {
 }
 
 export default function RedshiftSQLEditor({ query, datasource, onChange }: RawEditorProps) {
+  const getSchemas = useCallback(async () => {
+    const schemas: string[] = await datasource.postResource('schemas');
+    return schemas.map((schema) => ({ name: schema, completion: schema }));
+  }, [query.schema]);
+
   const getTables = useCallback(
     async (schema?: string) => {
       const tables: string[] = await datasource.postResource('tables', {
@@ -35,10 +40,12 @@ export default function RedshiftSQLEditor({ query, datasource, onChange }: RawEd
     [query.schema]
   );
 
-  const getColumnsRef = useRef(getColumns);
+  const getSchemasRef = useRef(getSchemas);
   const getTablesRef = useRef(getTables);
+  const getColumnsRef = useRef(getColumns);
   const completionProvider = useMemo(
-    () => getRedshiftCompletionProvider({ getTables: getTablesRef, getColumns: getColumnsRef }),
+    () =>
+      getRedshiftCompletionProvider({ getTables: getTablesRef, getColumns: getColumnsRef, getSchemas: getSchemasRef }),
     []
   );
 
