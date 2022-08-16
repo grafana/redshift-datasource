@@ -25,7 +25,7 @@
     "@grafana/runtime": "8.0.5",
     "@grafana/toolkit": "8.0.5",
     "@grafana/ui": "8.0.5",
-    "@grafana/experimental": "^0.0.2-canary.33",
+    "@grafana/experimental": "^0.0.2-canary.37",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.1.9",
