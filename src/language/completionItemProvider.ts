@@ -6,6 +6,7 @@ import {
   TableIdentifier,
   // getStandardSQLCompletionProvider,
 } from '@grafana/experimental';
+import { MACROS } from './macros';
 
 interface CompletionProviderGetterArgs {
   getColumns: React.MutableRefObject<(table: string, schema?: string) => Promise<ColumnDefinition[]>>;
@@ -27,5 +28,6 @@ export const getRedshiftCompletionProvider: (args: CompletionProviderGetterArgs)
       columns: {
         resolve: async (t: TableIdentifier) => getColumns.current(t.table!, t.schema),
       },
+      supportedMacros: () => MACROS,
     };
   };
