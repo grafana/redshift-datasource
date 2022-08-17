@@ -5,7 +5,6 @@ import {
   TableDefinition,
   TableIdentifier,
   SchemaDefinition,
-  // getStandardSQLCompletionProvider,
 } from '@grafana/experimental';
 import { MACROS } from './macros';
 

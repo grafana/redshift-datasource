@@ -3,6 +3,9 @@ import { MacroType } from '@grafana/experimental';
 const COLUMN = 'column',
   RELATIVE_TIME_STRING = "'1m'";
 
+export const SCHEMA_MACRO = '$__schema';
+export const TABLE_MACRO = '$__table';
+
 export const MACROS = [
   {
     id: '$__timeFilter(dateColumn)',
@@ -66,14 +69,6 @@ export const MACROS = [
     description: `Will be replace by an expression that will group epoch timestamps so that there is only 1 point for every period on the graph. For example, 'floor(time/60)*60 AS "time"'`,
   },
   {
-    id: '$__table',
-    name: '$__table',
-    text: '$__table',
-    args: [],
-    type: MacroType.Table,
-    description: 'Will be replaced by the query table.',
-  },
-  {
     id: '$__column',
     name: '$__column',
     text: '$__column',
@@ -82,17 +77,17 @@ export const MACROS = [
     description: 'Will be replaced by the query column.',
   },
   {
-    id: '$__table',
-    name: '$__table',
-    text: '$__table',
+    id: TABLE_MACRO,
+    name: TABLE_MACRO,
+    text: TABLE_MACRO,
     args: [],
     type: MacroType.Table,
     description: 'Will be replaced by the query table.',
   },
   {
-    id: '$__schema',
-    name: '$__schema',
-    text: '$__schema',
+    id: SCHEMA_MACRO,
+    name: SCHEMA_MACRO,
+    text: SCHEMA_MACRO,
     args: [],
     type: MacroType.Table,
     description: 'Will be replaced by the query schema.',
