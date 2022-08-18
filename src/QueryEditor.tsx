@@ -4,7 +4,7 @@ import { config } from '@grafana/runtime';
 import { InlineSegmentGroup } from '@grafana/ui';
 import React from 'react';
 import { selectors } from 'selectors';
-import RedshiftSQLEditor from 'RedshiftSQLEditor';
+import SQLEditor from './SQLEditor';
 import { getSuggestions } from 'Suggestions';
 
 import { DataSource } from './datasource';
@@ -95,7 +95,7 @@ export function QueryEditor(props: Props) {
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
           {config.featureToggles.redshiftExperimentalUI ? (
-            <RedshiftSQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
+            <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
           ) : (
             <QueryCodeEditor
               language="redshift"
