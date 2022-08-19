@@ -45,6 +45,7 @@ e2e.scenario({
         const datasource = RedshiftProvisions[0].datasources[0];
 
         e2e.flows.addDataSource({
+          name: 'e2e-redshift-datasource',
           checkHealth: false,
           expectedAlertMessage: 'Data source is working',
           form: () => {
@@ -76,13 +77,31 @@ e2e.scenario({
           matchScreenshot: false,
           visitDashboardAtStart: false,
           queriesForm: () => {
+            // The follwing section will verify that autocompletion in behaving as expected.
+            // Throughout the composition of the SQL query, the autocompletion engine will provide appropriate suggestions.
+            // In this test the first few suggestions are accepted by hitting enter which will create a basic query.
+            // Increasing delay to allow tables names and columns names to be resolved async by the plugin
+            e2eSelectors.QueryEditor.CodeEditor.container()
+              .click({ force: true })
+              .type(`s{enter}{enter}{enter}pub{enter}avg{enter}{enter}{enter}`, { delay: 3000 });
+            e2eSelectors.QueryEditor.CodeEditor.container().contains(
+              'SELECT * FROM public.average_temperature GROUP BY berlin'
+            );
+
             e2eSelectors.QueryEditor.CodeEditor.container()
               .click({ force: true })
               .type(
                 `{selectall} select saletime as time, commission as commission from sales where $__timeFilter(time)`
               );
 
-            e2eSelectors.RefreshPicker.runButton().first().click({ force: true });
+            // blur and wait for loading
+            cy.get('.panel-content').click();
+            cy.get('.panel-loading');
+            cy.get('.panel-loading', { timeout: 10000 }).should('not.exist');
+
+            e2eSelectors.QueryEditor.TableView.input().click({ force: true });
+            // check that the table content contains at least an entry
+            cy.get('div[role="table"]').should('include.text', '32.7');
           },
         });
       });
