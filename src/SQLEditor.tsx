@@ -9,11 +9,12 @@ import { RedshiftQuery } from 'types';
 
 interface RawEditorProps {
   query: RedshiftQuery;
+  onRunQuery: () => void;
   onChange: (q: RedshiftQuery) => void;
   datasource: DataSource;
 }
 
-export default function SQLEditor({ query, datasource, onChange }: RawEditorProps) {
+export default function SQLEditor({ query, datasource, onRunQuery, onChange }: RawEditorProps) {
   const queryRef = useRef<RedshiftQuery>(query);
   useEffect(() => {
     queryRef.current = query;
@@ -71,6 +72,7 @@ export default function SQLEditor({ query, datasource, onChange }: RawEditorProp
   return (
     <SQLCodeEditor
       query={query.rawSQL}
+      onBlur={() => onRunQuery()}
       onChange={(rawSQL) => onChange({ ...queryRef.current, rawSQL })}
       language={{
         ...redshiftLanguageDefinition,
