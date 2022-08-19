@@ -6,6 +6,7 @@ import React from 'react';
 import { select } from 'react-select-event';
 import { FillValueOptions } from '@grafana/aws-sdk';
 import { FormatOptions } from 'types';
+import * as experimental from '@grafana/experimental';
 
 import { mockDatasource, mockQuery } from './__mocks__/datasource';
 import { QueryEditor } from './QueryEditor';
@@ -13,6 +14,13 @@ import { QueryEditor } from './QueryEditor';
 jest
   .spyOn(runtime, 'getTemplateSrv')
   .mockImplementation(() => ({ getVariables: jest.fn().mockReturnValue([]), replace: jest.fn() }));
+
+jest.mock('@grafana/experimental', () => ({
+  ...jest.requireActual<typeof experimental>('@grafana/experimental'),
+  SQLEditor: function SQLEditor() {
+    return <></>;
+  },
+}));
 
 const ds = mockDatasource;
 const q = mockQuery;
