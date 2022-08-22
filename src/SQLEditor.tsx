@@ -35,7 +35,7 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
   const getSchemas = useCallback(async () => {
     const schemas: string[] = await datasource.postResource('schemas');
     return schemas.map((schema) => ({ name: schema, completion: schema }));
-  }, [queryRef.current]);
+  }, [datasource]);
 
   const getTables = useCallback(
     async (schema?: string) => {
@@ -45,7 +45,7 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
       });
       return tables.map((table) => ({ name: table, completion: table }));
     },
-    [queryRef.current]
+    [datasource]
   );
 
   const getColumns = useCallback(
@@ -57,7 +57,7 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
       });
       return columns.map((column) => ({ name: column, completion: column }));
     },
-    [queryRef.current.schema]
+    [datasource]
   );
 
   const getSchemasRef = useRef(getSchemas);
