@@ -48,7 +48,7 @@ describe('QueryEditor', () => {
       ...q,
       schema: 'foo',
     });
-    expect(onRunQuery).toHaveBeenCalled();
+    expect(onRunQuery).not.toHaveBeenCalled();
   });
 
   it('should request select tables and execute the query', async () => {
@@ -70,7 +70,7 @@ describe('QueryEditor', () => {
       schema: 'bar',
       table: 'foo',
     });
-    expect(onRunQuery).toHaveBeenCalled();
+    expect(onRunQuery).not.toHaveBeenCalled();
   });
 
   it('should request select column and execute the query', async () => {
@@ -92,7 +92,7 @@ describe('QueryEditor', () => {
       table: 'bar',
       column: 'foo',
     });
-    expect(onRunQuery).toHaveBeenCalled();
+    expect(onRunQuery).not.toHaveBeenCalled();
   });
 
   it('should include the Format As input', async () => {
