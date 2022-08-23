@@ -60,14 +60,7 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
     [datasource]
   );
 
-  const getSchemasRef = useRef(getSchemas);
-  const getTablesRef = useRef(getTables);
-  const getColumnsRef = useRef(getColumns);
-  const completionProvider = useMemo(
-    () =>
-      getRedshiftCompletionProvider({ getTables: getTablesRef, getColumns: getColumnsRef, getSchemas: getSchemasRef }),
-    []
-  );
+  const completionProvider = useMemo(() => getRedshiftCompletionProvider({ getTables, getColumns, getSchemas }), []);
 
   return (
     <SQLCodeEditor
