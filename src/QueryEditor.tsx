@@ -10,23 +10,25 @@ import { getSuggestions } from 'Suggestions';
 import { DataSource } from './datasource';
 import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
 
+// @ts-ignore
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
 type QueryProperties = 'schema' | 'table' | 'column';
 
 export function QueryEditor(props: Props) {
+  const state = props.data?.state;
   const [running, setRunning] = useState(false);
   const [stopping, setStopping] = useState(false);
-  const [lastState, setLastState] = useState(props.data?.state);
-  const state = props.data?.state;
+  const [lastState, setLastState] = useState(state);
 
   useEffect(() => {
     if (state && lastState !== state && state !== LoadingState.Loading) {
       setRunning(false);
       setStopping(false);
     }
+
     setLastState(state);
-  }, [state]);
+  }, [state, lastState]);
 
   const fetchSchemas = async () => {
     const schemas: string[] = await props.datasource.getResource('schemas');
@@ -55,9 +57,9 @@ export function QueryEditor(props: Props) {
     props.onChange(newQuery);
   };
 
-  const cancelQuery = async () => {
+  const cancelQuery = () => {
     setStopping(true);
-    await props.datasource.cancel(props.query);
+    props.datasource.cancel(props.query);
   };
 
   return (

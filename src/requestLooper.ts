@@ -18,6 +18,11 @@ export interface RequestLoopOptions<TQuery extends DataQuery = DataQuery> {
   process: (data: DataFrame[]) => DataFrame[];
 
   /**
+   * Check if the query should be cancelled
+   */
+  shouldCancel: () => boolean;
+
+  /**
    * Callback that gets executed when unsubscribed
    */
   onCancel: () => void;
@@ -36,6 +41,7 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
     let loadingState: LoadingState | undefined = LoadingState.Loading;
     let nextRequestDelay = 1; // Seconds until the next request
     let count = 1;
+    let shouldCancel = false;
 
     // Single observer gets reused for each request
     const observer = {
@@ -44,6 +50,12 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
         let checkstate = false;
         if (loadingState !== LoadingState.Error) {
           nextQuery = options.getNextQuery(rsp);
+          shouldCancel = options.shouldCancel();
+
+          if (nextQuery && shouldCancel) {
+            nextQuery = undefined;
+          }
+
           checkstate = true;
         }
         const data = options.process(rsp.data);
@@ -95,7 +107,7 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
 
     return () => {
       observer.complete();
-      if (nextQuery) {
+      if (nextQuery || shouldCancel) {
         options.onCancel();
       }
       nextQuery = undefined;
