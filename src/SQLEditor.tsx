@@ -60,7 +60,10 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
     [datasource]
   );
 
-  const completionProvider = useMemo(() => getRedshiftCompletionProvider({ getTables, getColumns, getSchemas }), []);
+  const completionProvider = useMemo(
+    () => getRedshiftCompletionProvider({ getTables, getColumns, getSchemas }),
+    [getTables, getColumns, getSchemas]
+  );
 
   return (
     <SQLCodeEditor

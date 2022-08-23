@@ -22,15 +22,15 @@ export const getRedshiftCompletionProvider: (args: CompletionProviderGetterArgs)
       ...(language && getStandardSQLCompletionProvider(monaco, language)),
       triggerCharacters: ['.', ' ', '$', ',', '(', "'"],
       schemas: {
-        resolve: async () => getSchemas(),
+        resolve: () => getSchemas(),
       },
       tables: {
-        resolve: async (t: TableIdentifier) => {
-          return await getTables(t?.schema);
+        resolve: (t: TableIdentifier) => {
+          return getTables(t?.schema);
         },
       },
       columns: {
-        resolve: async (t: TableIdentifier) => getColumns(t.table!, t.schema),
+        resolve: (t: TableIdentifier) => getColumns(t.table!, t.schema),
       },
       supportedMacros: () => MACROS,
     };
