@@ -10,7 +10,6 @@ import { getSuggestions } from 'Suggestions';
 import { DataSource } from './datasource';
 import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
 
-// @ts-ignore
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
 type QueryProperties = 'schema' | 'table' | 'column';
@@ -100,9 +99,14 @@ export function QueryEditor(props: Props) {
             className="width-12"
           />
           <h6>Frames</h6>
-          <FormatSelect query={props.query} options={SelectableFormatOptions} onChange={props.onChange} />
+          <FormatSelect
+            query={props.query}
+            options={SelectableFormatOptions}
+            onChange={props.onChange}
+            onRunQuery={() => {}}
+          />
           {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} />
+            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={() => {}} />
           )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
@@ -113,9 +117,8 @@ export function QueryEditor(props: Props) {
               language="redshift"
               query={props.query}
               onChange={props.onChange}
-              onRunQuery={props.onRunQuery}
+              onRunQuery={() => {}}
               getSuggestions={getSuggestions}
-              disableRunQueryOnBlur
             />
           )}
           <div style={{ marginTop: 8 }}>

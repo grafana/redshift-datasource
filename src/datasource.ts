@@ -158,7 +158,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
 
         shouldCancel: () => {
           const { shouldCancel } = this.getQuery(target);
-          return shouldCancel;
+          return !!shouldCancel;
         },
 
         /**
