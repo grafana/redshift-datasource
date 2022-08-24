@@ -12,7 +12,12 @@ import { QueryEditor } from './QueryEditor';
 
 jest
   .spyOn(runtime, 'getTemplateSrv')
-  .mockImplementation(() => ({ getVariables: jest.fn().mockReturnValue([]), replace: jest.fn() }));
+  .mockImplementation(() => ({
+    getVariables: jest.fn().mockReturnValue([]),
+    replace: jest.fn(),
+    containsTemplate: jest.fn(),
+    updateTimeRange: jest.fn(),
+  }));
 
 const ds = mockDatasource;
 const q = mockQuery;
