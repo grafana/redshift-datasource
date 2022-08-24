@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0
+
+- Add support for context aware autocompletion by @sunker in https://github.com/grafana/timestream-datasource/pull/188
+
 ## 1.0.7
 
 - Bug fix for auth issues with when using keys and dependency upgrades (https://github.com/grafana/redshift-datasource/pull/165)
