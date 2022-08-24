@@ -6,6 +6,9 @@
 
 ## 1.0.7
 
+- Bug fix for auth issues with when using keys and dependency upgrades (https://github.com/grafana/redshift-datasource/pull/165)
+- Updates to code coverage
+
 ## 1.0.6
 
 ### What's Changed
