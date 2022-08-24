@@ -22,7 +22,7 @@ export const getRedshiftCompletionProvider: (args: CompletionProviderGetterArgs)
       ...(language && getStandardSQLCompletionProvider(monaco, language)),
       triggerCharacters: ['.', ' ', '$', ',', '(', "'"],
       schemas: {
-        resolve: () => getSchemas(),
+        resolve: getSchemas,
       },
       tables: {
         resolve: (t: TableIdentifier) => {
