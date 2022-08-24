@@ -50,9 +50,12 @@ export function getRequestLooper<T extends DataQuery = DataQuery>(
         let checkstate = false;
         if (loadingState !== LoadingState.Error) {
           nextQuery = options.getNextQuery(rsp);
-          shouldCancel = options.shouldCancel();
+          const _shouldCancel = options.shouldCancel();
 
-          if (nextQuery && shouldCancel) {
+          if (nextQuery && _shouldCancel) {
+            // `shouldCancel` is set here only if there is a `nextQuery`, otherwise
+            // we would try to cancel a finished query in the cleanup function
+            shouldCancel = _shouldCancel;
             nextQuery = undefined;
           }
 
