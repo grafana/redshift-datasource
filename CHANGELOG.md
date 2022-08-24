@@ -2,7 +2,7 @@
 
 ## 1.1.0
 
-- Add support for context aware autocompletion by @sunker in https://github.com/grafana/timestream-datasource/pull/188
+- Add support for context aware autocompletion by @sunker in https://github.com/grafana/redshift-datasource/pull/174
 
 ## 1.0.7
 
