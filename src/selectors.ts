@@ -55,6 +55,9 @@ export const Components = {
     CodeEditor: {
       container: 'Code editor container',
     },
+    TableView: {
+      input: 'toggle-table-view',
+    },
   },
   RefreshPicker: {
     runButton: 'RefreshPicker run button',

@@ -1,11 +1,9 @@
-import { FillValueSelect, FormatSelect, QueryCodeEditor, ResourceSelector } from '@grafana/aws-sdk';
+import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sdk';
 import { LoadingState, QueryEditorProps, SelectableValue } from '@grafana/data';
-import { config } from '@grafana/runtime';
 import { Button, HorizontalGroup, InlineSegmentGroup, Spinner } from '@grafana/ui';
 import React, { useEffect, useState } from 'react';
 import { selectors } from 'selectors';
-import RedshiftSQLEditor from 'RedshiftSQLEditor';
-import { getSuggestions } from 'Suggestions';
+import SQLEditor from './SQLEditor';
 
 import { DataSource } from './datasource';
 import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
@@ -110,17 +108,12 @@ export function QueryEditor(props: Props) {
           )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
-          {config.featureToggles.redshiftExperimentalUI ? (
-            <RedshiftSQLEditor query={props.query} onChange={props.onChange} />
-          ) : (
-            <QueryCodeEditor
-              language="redshift"
-              query={props.query}
-              onChange={props.onChange}
-              onRunQuery={() => {}}
-              getSuggestions={getSuggestions}
-            />
-          )}
+          <SQLEditor
+            query={props.query}
+            onRunQuery={() => {}}
+            onChange={props.onChange}
+            datasource={props.datasource}
+          />
           <div style={{ marginTop: 8 }}>
             <HorizontalGroup>
               <Button
