@@ -1,13 +1,20 @@
 # Changelog
 
+## 1.1.0
+
+Add support for context aware autocompletion by @sunker in https://github.com/grafana/timestream-datasource/pull/188
+
+## 1.0.7
+
 ## 1.0.6
 
 ### What's Changed
-* Update grafana-aws-sdk by @andresmgot in https://github.com/grafana/redshift-datasource/pull/146
-* Autocomplete: Render SQL editor in case feature toggle is enabled by @sunker in https://github.com/grafana/redshift-datasource/pull/151
-* fix: WLM panels query fix by @vgkowski in https://github.com/grafana/redshift-datasource/pull/152
-* Custom redshift language by @sunker in https://github.com/grafana/redshift-datasource/pull/154
-* Align Monaco language with official language ref by @sunker in https://github.com/grafana/redshift-datasource/pull/156
+
+- Update grafana-aws-sdk by @andresmgot in https://github.com/grafana/redshift-datasource/pull/146
+- Autocomplete: Render SQL editor in case feature toggle is enabled by @sunker in https://github.com/grafana/redshift-datasource/pull/151
+- fix: WLM panels query fix by @vgkowski in https://github.com/grafana/redshift-datasource/pull/152
+- Custom redshift language by @sunker in https://github.com/grafana/redshift-datasource/pull/154
+- Align Monaco language with official language ref by @sunker in https://github.com/grafana/redshift-datasource/pull/156
 
 **Full Changelog**: https://github.com/grafana/redshift-datasource/compare/v1.0.5...v1.0.6
 
