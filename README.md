@@ -48,6 +48,7 @@ Here is a minimal policy example:
         "redshift-data:DescribeTable",
         "redshift-data:GetStatementResult",
         "redshift-data:DescribeStatement",
+        "redshift-data:ListStatements",
         "redshift-data:ListSchemas",
         "redshift-data:ExecuteStatement",
         "redshift-data:CancelStatement",
