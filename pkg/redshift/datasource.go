@@ -20,7 +20,7 @@ type RedshiftDatasourceIface interface {
 	sqlds.Driver
 	sqlds.Completable
 	sqlAPI.Resources
-	sqlds.AsyncDBGetter
+	sqlds.AsyncDriver
 	Schemas(ctx context.Context, options sqlds.Options) ([]string, error)
 	Tables(ctx context.Context, options sqlds.Options) ([]string, error)
 	Columns(ctx context.Context, options sqlds.Options) ([]string, error)
