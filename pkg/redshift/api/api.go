@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
@@ -179,7 +180,8 @@ func (c *API) Stop(output *api.ExecuteQueryOutput) error {
 	_, err := c.DataClient.CancelStatement(&redshiftdataapiservice.CancelStatementInput{
 		Id: &output.ID,
 	})
-	if err != nil {
+	// ignore finished query error
+	if err != nil && !strings.Contains(err.Error(), "Could not cancel a query that is already in FINISHED state") {
 		return fmt.Errorf("%w: %v", err, api.StopError)
 	}
 	return nil
