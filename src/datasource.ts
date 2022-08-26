@@ -6,6 +6,7 @@ import {
   getBackendSrv,
   toDataQueryResponse,
   BackendDataSourceResponse,
+  config,
 } from '@grafana/runtime';
 import { getRequestLooper } from 'requestLooper';
 import { merge, Observable, of } from 'rxjs';
@@ -39,18 +40,22 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
     applySQLTemplateVariables(query, scopedVars, getTemplateSrv);
 
   query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
-    const targets = request.targets.filter(this.filterQuery);
-    if (!targets.length) {
-      return of({ data: [] });
-    }
-    const all: Array<Observable<DataQueryResponse>> = [];
-    for (let target of targets) {
-      if (target.hide) {
-        continue;
+    if (config.featureToggles.redshiftLongRunningQueries) {
+      const targets = request.targets.filter(this.filterQuery);
+      if (!targets.length) {
+        return of({ data: [] });
       }
-      all.push(this.doSingle(target, request));
+      const all: Array<Observable<DataQueryResponse>> = [];
+      for (let target of targets) {
+        if (target.hide) {
+          continue;
+        }
+        all.push(this.doSingle(target, request));
+      }
+      return merge(...all);
+    } else {
+      return super.query(request);
     }
-    return merge(...all);
   }
 
   storeQuery(target: RedshiftQuery, queryInfo: RedshiftRunningQueryInfo) {
@@ -102,7 +107,11 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
          */
         query: (request: DataQueryRequest<RedshiftQuery>) => {
           const { range, targets, requestId, intervalMs, maxDataPoints } = request;
-          const [query] = targets;
+          const [_query] = targets;
+          const query: RedshiftQuery = {
+            ..._query,
+            ...(config.featureToggles.redshiftLongRunningQueries ? { meta: { queryFlow: 'async' } } : {}),
+          };
 
           const data = {
             queries: [
