@@ -15,6 +15,7 @@ import (
 type MockRedshiftClient struct {
 	ExecutionResult         *redshiftdataapiservice.ExecuteStatementOutput
 	DescribeStatementOutput *redshiftdataapiservice.DescribeStatementOutput
+	ListStatementsOutput    *redshiftdataapiservice.ListStatementsOutput
 	// Schemas > Tables > Columns
 	Resources map[string]map[string][]string
 	Secrets   []string
@@ -40,6 +41,10 @@ func (m *MockRedshiftClient) ExecuteStatementWithContext(ctx aws.Context, input 
 
 func (m *MockRedshiftClient) DescribeStatementWithContext(_ aws.Context, input *redshiftdataapiservice.DescribeStatementInput, _ ...request.Option) (*redshiftdataapiservice.DescribeStatementOutput, error) {
 	return m.DescribeStatementOutput, nil
+}
+
+func (m *MockRedshiftClient) ListStatementsWithContext(_ aws.Context, input *redshiftdataapiservice.ListStatementsInput, _ ...request.Option) (*redshiftdataapiservice.ListStatementsOutput, error) {
+	return m.ListStatementsOutput, nil
 }
 
 func (m *MockRedshiftClient) ListSchemasWithContext(ctx aws.Context, input *redshiftdataapiservice.ListSchemasInput, opts ...request.Option) (*redshiftdataapiservice.ListSchemasOutput, error) {
@@ -86,9 +91,9 @@ func (m *MockRedshiftClient) DescribeClusters(input *redshift.DescribeClustersIn
 	for _, c := range m.Clusters {
 		r = append(r, &redshift.Cluster{
 			ClusterIdentifier: aws.String(c),
-			Endpoint: &redshift.Endpoint {
+			Endpoint: &redshift.Endpoint{
 				Address: aws.String(c),
-				Port: aws.Int64(123),
+				Port:    aws.Int64(123),
 			},
 			DBName: aws.String(c),
 		})
@@ -100,7 +105,7 @@ func (m *MockRedshiftClient) DescribeClusters(input *redshift.DescribeClustersIn
 }
 
 func (m *MockRedshiftClientError) DescribeClusters(input *redshift.DescribeClustersInput) (*redshift.DescribeClustersOutput, error) {
-	return nil, fmt.Errorf("Boom!")
+	return nil, fmt.Errorf("Boom")
 }
 func (m *MockRedshiftClientNil) DescribeClusters(input *redshift.DescribeClustersInput) (*redshift.DescribeClustersOutput, error) {
 	return nil, nil

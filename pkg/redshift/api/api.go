@@ -23,7 +23,12 @@ import (
 	"github.com/grafana/sqlds/v2"
 )
 
-var validStatuses = []string{"SUBMITTED", "PICKED", "STARTED", "FINISHED"}
+var validStatuses = []string{
+	redshiftdataapiservice.StatementStatusStringSubmitted,
+	redshiftdataapiservice.StatementStatusStringPicked,
+	redshiftdataapiservice.StatementStatusStringStarted,
+	redshiftdataapiservice.StatementStatusStringFinished,
+}
 
 type API struct {
 	DataClient       redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
