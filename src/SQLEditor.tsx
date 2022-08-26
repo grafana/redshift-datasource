@@ -9,7 +9,7 @@ import { RedshiftQuery } from 'types';
 
 interface RawEditorProps {
   query: RedshiftQuery;
-  onRunQuery: () => void;
+  onRunQuery?: () => void;
   onChange: (q: RedshiftQuery) => void;
   datasource: DataSource;
 }
@@ -72,7 +72,6 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
   return (
     <SQLCodeEditor
       query={query.rawSQL}
-      onBlur={() => onRunQuery()}
       onChange={(rawSQL) => onChange({ ...queryRef.current, rawSQL })}
       language={{
         ...redshiftLanguageDefinition,

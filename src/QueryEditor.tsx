@@ -97,23 +97,13 @@ export function QueryEditor(props: Props) {
             className="width-12"
           />
           <h6>Frames</h6>
-          <FormatSelect
-            query={props.query}
-            options={SelectableFormatOptions}
-            onChange={props.onChange}
-            onRunQuery={() => {}}
-          />
+          <FormatSelect query={props.query} options={SelectableFormatOptions} onChange={props.onChange} />
           {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={() => {}} />
+            <FillValueSelect query={props.query} onChange={props.onChange} />
           )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
-          <SQLEditor
-            query={props.query}
-            onRunQuery={() => {}}
-            onChange={props.onChange}
-            datasource={props.datasource}
-          />
+          <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
           <div style={{ marginTop: 8 }}>
             <HorizontalGroup>
               <Button
