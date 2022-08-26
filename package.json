@@ -1,6 +1,6 @@
 {
   "name": "grafana-redshift-datasource",
-  "version": "1.0.7",
+  "version": "1.1.0",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "grafana-toolkit plugin:build",
@@ -17,6 +17,9 @@
   },
   "author": "Grafana Labs",
   "license": "Apache-2.0",
+  "dependencies": {
+    "@grafana/experimental": "^0.0.2-canary.39"
+  },
   "devDependencies": {
     "@grafana/aws-sdk": "0.0.37",
     "@grafana/data": "8.0.5",
@@ -25,7 +28,6 @@
     "@grafana/runtime": "8.0.5",
     "@grafana/toolkit": "8.0.5",
     "@grafana/ui": "8.0.5",
-    "@grafana/experimental": "^0.0.2-canary.33",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.1.9",

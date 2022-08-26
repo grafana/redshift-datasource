@@ -182,8 +182,16 @@ export const keywords = [
 ];
 
 export const builtinFunctions = [
+  //aggregate
+  'SUM',
+  'AVG',
+  'COUNT',
+  'MIN',
+  'MAX',
+  'MEDIAN',
+  'ANY_VALUE',
+  'PERCENTILE_CONT',
   //compute node only
-
   'LISTAGG',
   'MEDIAN',
   'PERCENTILE_CONT',

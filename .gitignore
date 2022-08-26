@@ -9,6 +9,7 @@ __debug_bin
 # Test binary, built with `go test -c`
 *.test
 
+provisioning
 
 # Logs
 logs
