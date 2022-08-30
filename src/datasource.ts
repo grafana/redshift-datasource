@@ -40,7 +40,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
     applySQLTemplateVariables(query, scopedVars, getTemplateSrv);
 
   query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
-    if (config.featureToggles.redshiftLongRunningQueries) {
+    if (config.featureToggles.redshiftAsyncQueryDataSupport) {
       const targets = request.targets.filter(this.filterQuery);
       if (!targets.length) {
         return of({ data: [] });
@@ -110,7 +110,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
           const [_query] = targets;
           const query: RedshiftQuery = {
             ..._query,
-            ...(config.featureToggles.redshiftLongRunningQueries ? { meta: { queryFlow: 'async' } } : {}),
+            ...(config.featureToggles.redshiftAsyncQueryDataSupport ? { meta: { queryFlow: 'async' } } : {}),
           };
 
           const data = {
