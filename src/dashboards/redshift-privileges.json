@@ -80,7 +80,10 @@
             "type": "text"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "Assigned roles including inherited roles",
             "fieldConfig": {
               "defaults": {
@@ -133,7 +136,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "-- This queries 5 layers of Role for given user. \n-- Searching parent roles for more than 6 layer is disabled for performance reason. You can add more levels if you need to retrive parents over level 6 but keep in mind that this may impact query performance. \n-- Note: The query can be rewritten by recursive CTE but recursive CTE does not work with system table due to restriction of leader node function. \nselect \ncase when level=0 then role_name else repeat(chr(160), level*4) ||  role_name end as role, \nlevel\nfrom (\n\nWITH\ntarget_roles (role_id, role_name) as (\nselect role_id, role_name\nfrom svv_user_grants \nwhere user_name in (${users:singlequote})\n),\n\nancestors1 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 1 as level, role_id::varchar as levelpath\nfrom svv_role_grants\nwhere role_id in (select role_id from target_roles)\n\nunion all\n\n-- get records without parents (top node)\nselect role_id as role_id, role_name as role_name, null as granted_role_id, null as granted_role_name, 1 as level, role_id::varchar as levelpath\nfrom target_roles\nwhere role_id not in (select role_id from svv_role_grants)\n),\n\nancestors2 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 2 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors1 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors1)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 2 as level, levelpath || '@' || granted_role_id\nfrom ancestors1\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors3 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 3 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors2 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors2)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 3 as level, levelpath || '@' || granted_role_id\nfrom ancestors2\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors4 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 4 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors1 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors3)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 4 as level, levelpath || '@' || granted_role_id\nfrom ancestors3\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors5 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 5 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors1 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors4)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 5 as level, levelpath || '@' || granted_role_id\nfrom ancestors4\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n)\n\nselect * from ancestors1\nunion all\nselect * from ancestors2\nunion all\nselect * from ancestors3\nunion all\nselect * from ancestors4\nunion all\nselect * from ancestors5\n\nunion all\n\nselect null as role_id, ${users:singlequote} as role_name, null as granted_role_id, null as granted_role_name, 0 as level, '' as levelpath\n\n)\norder by levelpath\n;",
                 "refId": "A"
@@ -158,7 +164,10 @@
             "type": "text"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -211,7 +220,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "SELECT\n  t1.groname as group\nFROM pg_group t1, pg_user t2\nWHERE t2.usesysid = ANY(t1.grolist) \nAND t2.usename in (${users:singlequote})\nORDER BY 1\n;",
                 "refId": "A"
@@ -250,7 +262,10 @@
             "type": "text"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "List of database user. num_group_assigned, num_roles_granted are the number of groups/roles assigned to each users. ",
             "fieldConfig": {
               "defaults": {
@@ -320,13 +335,19 @@
             "pluginVersion": "8.4.7",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select\n  t1.usename, \n  t1.usecreatedb, \n  t1.usesuper, \n  t1.usecatupd,\n  nvl(t2.num_groups_assigned, 0) as num_groups_assigned,\n  nvl(t3.num_roles_granted, 0) as num_roles_granted\nfrom pg_user t1\n\n-- # of assigned groups\nleft join (\n  select pg_user.usesysid, count(*) as num_groups_assigned\n  from pg_user, pg_group\n  where pg_user.usesysid = ANY(pg_group.grolist)\n  group by pg_user.usesysid\n  ) t2\non t1.usesysid = t2.usesysid\n\n-- # of assigned roles\nleft join (\n  select pg_user.usesysid, count(*) as num_roles_granted\n  from pg_user\n  where pg_user.usesysid in (select user_id from svv_user_grants)\n  group by pg_user.usesysid\n  ) t3\non t1.usesysid = t3.usesysid\n\nwhere t1.usename in (${users:singlequote})\n;",
                 "refId": "A"
               },
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select\n  usename, \n  usecreatedb,\n  usesuper,\n  usecatupd,\n  useconnlimit,\n  syslogaccess,\n  sessiontimeout,\n  external_id\nfrom SVL_USER_INFO\nwhere usename not like 'f346c9b8%'  -- ignore internal user\nand usename in (${users:singlequote})\n;",
                 "refId": "B"
@@ -403,7 +424,10 @@
             "type": "text"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -451,7 +475,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n  t1.database_name,\n  t1.identity_type, \n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as usage,\n  case when t3.privilege_type is null then null else 'GRANTED' end as create,\n  case when t4.privilege_type is null then null else 'GRANTED' end as temp\nfrom SVV_DATABASE_PRIVILEGES t1\n\nleft join SVV_DATABASE_PRIVILEGES t2\non t1.database_name = t2.database_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'USAGE'\n\nleft join SVV_DATABASE_PRIVILEGES t3\non t1.database_name = t3.database_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'CREATE'\n\nleft join SVV_DATABASE_PRIVILEGES t4\non t1.database_name = t4.database_name\nand t1.identity_type = t4.identity_type\nand t1.identity_name = t4.identity_name\nand t4.privilege_type = 'TEMP'\n\nwhere t1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n\norder by 1, 2, 3\n;\n",
                 "refId": "B"
@@ -461,7 +488,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "fieldConfig": {
               "defaults": {
                 "color": {
@@ -509,7 +539,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n\tcurrent_database() as database,\n\tt1.namespace_name as schema,\n\tt1.identity_type,\n\tt1.identity_name,\n\tcase when t2.privilege_type is null then null else 'GRANTED' end as usage,\n\tcase when t3.privilege_type is null then null else 'GRANTED' end as create\nfrom SVV_SCHEMA_PRIVILEGES t1\n\nleft join SVV_SCHEMA_PRIVILEGES t2\non t1.namespace_name = t2.namespace_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'USAGE'\n\nleft join SVV_SCHEMA_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'CREATE'\n\nwhere t1.namespace_name not in ('information_schema', 'pg_catalog', 'catalog_history', 'pg_automv', 'pg_toast', 'pg_internal', 'pg_temp_1')\nand (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4\n;\n",
                 "refId": "B"
@@ -519,7 +552,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -569,7 +605,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n\tcurrent_database() as database,\n\tt1.namespace_name as schema,\n    t2.table_type as relation_type,\n    t1.relation_name as relation_name,\n    t1.identity_type,\n    t1.identity_name,\n    case when t3.privilege_type is null then null else 'GRANTED' end as insert,\n    case when t4.privilege_type is null then null else 'GRANTED' end as select,\n    case when t5.privilege_type is null then null else 'GRANTED' end as update,\n    case when t6.privilege_type is null then null else 'GRANTED' end as delete,\n    case when t7.privilege_type is null then null else 'GRANTED' end as references,\n    case when t8.privilege_type is null then null else 'GRANTED' end as drop\nfrom SVV_RELATION_PRIVILEGES t1\n\n-- add table_type\nleft join SVV_ALL_TABLES t2\non t1.namespace_name = t2.schema_name\nand t1.relation_name = t2.table_name\nand t2.database_name = current_database()\n\nleft join SVV_RELATION_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.relation_name = t3.relation_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'INSERT'\n\nleft join SVV_RELATION_PRIVILEGES t4\non t1.namespace_name = t4.namespace_name\nand t1.relation_name = t4.relation_name\nand t1.identity_type = t4.identity_type\nand t1.identity_name = t4.identity_name\nand t4.privilege_type = 'SELECT'\n\nleft join SVV_RELATION_PRIVILEGES t5\non t1.namespace_name = t5.namespace_name\nand t1.relation_name = t5.relation_name\nand t1.identity_type = t5.identity_type\nand t1.identity_name = t5.identity_name\nand t5.privilege_type = 'UPDATE'\n\nleft join SVV_RELATION_PRIVILEGES t6\non t1.namespace_name = t6.namespace_name\nand t1.relation_name = t6.relation_name\nand t1.identity_type = t6.identity_type\nand t1.identity_name = t6.identity_name\nand t6.privilege_type = 'DELETE'\n\nleft join SVV_RELATION_PRIVILEGES t7\non t1.namespace_name = t7.namespace_name\nand t1.relation_name = t7.relation_name\nand t1.identity_type = t7.identity_type\nand t1.identity_name = t7.identity_name\nand t7.privilege_type = 'REFERENCES'\n\nleft join SVV_RELATION_PRIVILEGES t8\non t1.namespace_name = t8.namespace_name\nand t1.relation_name = t8.relation_name\nand t1.identity_type = t8.identity_type\nand t1.identity_name = t8.identity_name\nand t8.privilege_type = 'DROP'\n\nwhere t1.namespace_name not in ('information_schema', 'pg_catalog')\nand (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4, 5, 6\n;",
                 "refId": "A"
@@ -579,7 +618,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -628,7 +670,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n  current_database() as database,\n  t1.namespace_name as schema,\n  t1.relation_name as table,\n  t1.column_name as column,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as select,\n  case when t3.privilege_type is null then null else 'GRANTED' end as update\nfrom SVV_COLUMN_PRIVILEGES t1\n\nleft join SVV_COLUMN_PRIVILEGES t2\non t1.namespace_name = t2.namespace_name\nand t1.relation_name = t2.relation_name\nand t1.column_name = t2.column_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'SELECT'\n\nleft join SVV_COLUMN_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.relation_name = t3.relation_name\nand t1.column_name = t3.column_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'UPDATE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4, 5, 6\n;",
                 "refId": "A"
@@ -638,7 +683,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -687,7 +735,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n  t1.namespace_name as schema_name,\n  t1.function_name,\n  t1.argument_types,\n  t2.function_type,\n  t1.identity_type,\n  t1.identity_name,\n  case when t3.privilege_type is null then null else 'GRANTED' end as execute\nfrom SVV_FUNCTION_PRIVILEGES t1\n\n-- add function_type\nleft join SVV_REDSHIFT_FUNCTIONS t2\non t1.namespace_name = t2.schema_name\nand t1.function_name = t2.function_name\nand t2.database_name = current_database()\n\nleft join SVV_FUNCTION_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.function_name = t3.function_name\nand t1.argument_types = t3.argument_types\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'EXECUTE'\n\nwhere t2.schema_name not in ('pg_catalog', 'information_schema')\nand t2.database_name = current_database()\nand (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\n\norder by 1, 2, 3, 4, 5, 6\n;",
                 "refId": "A"
@@ -697,7 +748,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -746,7 +800,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n  t1.language_name,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as usage\nfrom SVV_LANGUAGE_PRIVILEGES t1\n\nleft join SVV_LANGUAGE_PRIVILEGES t2\non t1.language_name = t2.language_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'USAGE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3\n;\n",
                 "refId": "A"
@@ -756,7 +813,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -805,7 +865,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n  t1.namespace_name,\n  t1.model_name,\n  t1.model_version,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as execute\nfrom SVV_ML_MODEL_PRIVILEGES t1\n\nleft join SVV_ML_MODEL_PRIVILEGES t2\non t1.namespace_name = t2.namespace_name\nand t1.model_name = t2.model_name\nand t1.model_version = t2.model_version\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'EXECUTE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4, 5\n;\n",
                 "refId": "A"
@@ -815,7 +878,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -864,7 +930,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select distinct\n  t1.datashare_name,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as alter,\n  case when t3.privilege_type is null then null else 'GRANTED' end as share\nfrom SVV_DATASHARE_PRIVILEGES t1\n\nleft join SVV_DATASHARE_PRIVILEGES t2\non t1.datashare_name = t2.datashare_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'ALTER'\n\n\nleft join SVV_DATASHARE_PRIVILEGES t3\non t1.datashare_name = t3.datashare_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'SHARE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3\n;\n",
                 "refId": "A"
@@ -874,7 +943,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "",
             "fieldConfig": {
               "defaults": {
@@ -923,7 +995,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "SELECT\n  identity_type,\n  identity_name,\n  system_privilege\nFROM svv_system_privileges\nwhere (\n\tidentity_type = 'user' and identity_name in (${users:singlequote})\nor identity_type = 'group' and identity_name in (${groups:singlequote})\nor identity_type = 'role' and identity_name in (${roles:singlequote})\nor identity_type = 'public' and identity_name in ('public')\n)\nORDER BY 1, 2, 3\n;",
                 "refId": "A"
@@ -962,7 +1037,10 @@
             "type": "text"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "Policies attached to relations and user/roles. Policies not attached are not shown in this panel. ",
             "gridPos": {
               "h": 22,
@@ -975,13 +1053,19 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "-- nodes\nselect distinct\n  *\nfrom (\n\nselect \n  granteekind || grantee as id,\n  grantee || ' (' || granteekind || ')' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  polname as id,\n  polname || ' (policy)' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (table)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'table'\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (view)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'view'\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || role_name as id, \n  role_name || ' (role)' as title\nfrom svv_role_grants\n\nunion all \n\nselect\n  'role' || granted_role_name as id, \n  granted_role_name || ' (role)' as title\nfrom svv_role_grants t1\n\nunion all\n\nselect\n  'user' || user_name as id, \n  user_name || ' (user)'as title\nfrom svv_user_grants\n)\n;\n",
                 "refId": "nodes"
               },
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "-- edges\nselect \n  *\nfrom (\n\nselect\n  relschema || relkind || relname as source,\n  polname as target,\n  relschema || relkind || relname || polname as id\nfrom svv_rls_attached_policy\n\nunion all\n\nselect\n  polname as source,\n  granteekind || grantee as target,\n  granteekind || grantee || polname as id\nfrom svv_rls_attached_policy\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || granted_role_name as source,\n  'role' || role_name as target, \n  role_name || granted_role_name as id\nfrom svv_role_grants\n\nunion all\n\nselect \n  'role' || role_name as source, \n  'user' || user_name as target, \n  user_name || role_name as id\nfrom svv_user_grants\n)\n\nwhere source in (\nselect distinct id\nfrom (\n\nselect \n  granteekind || grantee as id,\n  grantee || ' (' || granteekind || ')' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  polname as id,\n  polname || ' (policy)' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (table)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'table'\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (view)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'view'\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || role_name as id, \n  role_name || ' (role)' as title\nfrom svv_role_grants\n\nunion all \n\nselect\n  'role' || granted_role_name as id, \n  granted_role_name || ' (role)' as title\nfrom svv_role_grants t1\n\nunion all\n\nselect\n  'user' || user_name as id, \n  user_name || ' (user)'as title\nfrom svv_user_grants\n))\n\nand target in (\nselect distinct id\nfrom (\n\nselect \n  granteekind || grantee as id,\n  grantee || ' (' || granteekind || ')' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  polname as id,\n  polname || ' (policy)' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (table)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'table'\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (view)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'view'\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || role_name as id, \n  role_name || ' (role)' as title\nfrom svv_role_grants\n\nunion all \n\nselect\n  'role' || granted_role_name as id, \n  granted_role_name || ' (role)' as title\nfrom svv_role_grants t1\n\nunion all\n\nselect\n  'user' || user_name as id, \n  user_name || ' (user)'as title\nfrom svv_user_grants\n)\n)\n;\n",
                 "refId": "edges"
@@ -992,7 +1076,10 @@
             "type": "nodeGraph"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "List of RLS policies. CREATE/DROP RLS POLICY to manage",
             "fieldConfig": {
               "defaults": {
@@ -1041,7 +1128,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select \n  poldb,\n  polname,\n  polalias,\n  polatts,\n  polqual,\n  polenabled,\n  polmodifiedby,\n  polmodifiedtime\nfrom svv_rls_policy\n;\n",
                 "refId": "B"
@@ -1051,7 +1141,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "Each row represents policy attached to identity and relation",
             "fieldConfig": {
               "defaults": {
@@ -1098,7 +1191,10 @@
             "pluginVersion": "8.4.7",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "rawSQL": "select \n  granteekind,\n  grantee,\n  polname,\n  relschema,\n  relname,\n  relkind,\n  grantor,\n  is_pol_on,\n  is_rls_on\nfrom svv_rls_attached_policy\n;",
                 "refId": "A"
               }
@@ -1107,7 +1203,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "Tables attached with RLS policies. ",
             "fieldConfig": {
               "defaults": {
@@ -1156,7 +1255,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select\n    t1.database_name as database, \n    t1.schema_name as schema, \n    t1.table_type as relation_type,\n    t1.table_name as relation,\n    t2.is_rls_on\nfrom SVV_ALL_TABLES t1\n\nleft join svv_rls_relation t2\non t1.database_name = t2.datname\nand t1.schema_name = t2.relschema\nand t1.table_type = t2.relkind\nand t1.table_name = t2.relname\n\nwhere t1.schema_name not in ('pg_catalog', 'information_schema')\nand t1.database_name = current_database()\n\norder by 1, 2, 3, 4\n;\n",
                 "refId": "B"
@@ -1166,7 +1268,10 @@
             "type": "table"
           },
           {
-            "datasource": "${ds}",
+            "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+            },
             "description": "Query info of  RLS policy applied",
             "fieldConfig": {
               "defaults": {
@@ -1229,7 +1334,10 @@
             "repeatDirection": "h",
             "targets": [
               {
-                "datasource": "${ds}",
+                "datasource": {
+                    "type": "grafana-redshift-datasource",
+                    "uid": "${ds}"
+                },
                 "hide": false,
                 "rawSQL": "select \n  recordtime::varchar,\n  pid as process_id,\n  xid as transaction_id,\n  query::varchar as query_id,\n  username as user, \n  datname as database,\n  relschema as schema,\n  relname as relation_name,\n  polname as policy_name,\n  poldefault as policy_default\nfrom svv_rls_applied_policy\norder by recordtime\n;",
                 "refId": "B"
@@ -1270,7 +1378,10 @@
         },
         {
           "current": {},
-          "datasource": "${ds}",
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
           "definition": "",
           "hide": 0,
           "includeAll": true,
@@ -1290,7 +1401,10 @@
         {
           "allValue": "",
           "current": {},
-          "datasource": "${ds}",
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
           "definition": "",
           "description": "Groups user is assigned to",
           "hide": 0,
@@ -1310,7 +1424,10 @@
         },
         {
           "current": {},
-          "datasource": "${ds}",
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
           "definition": "",
           "description": "Roles user is directly assigned or inherited",
           "hide": 0,
