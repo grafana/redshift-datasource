@@ -4,7 +4,7 @@ on:
 jobs:
   workflow-call:
     if: |
-      !starts_with(github.head_ref, 'dependabot')
+      !startsWith(github.head_ref, 'dependabot')
     uses: grafana/code-coverage/.github/workflows/code-coverage.yml@v0.1.10
     with:
       frontend-path-regexp: src
