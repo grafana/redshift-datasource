@@ -13,6 +13,16 @@
       "type": "dashboard",
       "name": "Redshift Monitoring",
       "path": "dashboards/redshift-monitoring.json"
+    },
+    {
+        "type": "dashboard",
+        "name": "Redshift Privileges",
+        "path": "dashboards/redshift-privileges.json"
+    },
+    {
+        "type": "dashboard",
+        "name": "Redshift Identities and Objects",
+        "path": "dashboards/redshift-identities-and-objects.json"
     }
   ],
   "info": {
