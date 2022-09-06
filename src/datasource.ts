@@ -119,6 +119,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
                 ...query,
                 intervalMs,
                 maxDataPoints,
+                // getRef optionally chained to support < v8.3.x of Grafana
                 datasource: this?.getRef(),
                 datasourceId: this.id,
                 ...this.applyTemplateVariables(query, request.scopedVars),
@@ -131,6 +132,8 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
 
           let headers = {};
           if (isRunning(status)) {
+            // bypass query caching for Grafana Enterprise to
+            // prevent an infinite loop
             headers = { 'X-Cache-Skip': true };
           }
           const options = {
@@ -180,7 +183,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
               queryId: queryID,
             }).catch((err) => {
               err.isHandled = true; // avoid the popup
-              console.log(`error cancelling query ID: ${queryID}`, err);
+              console.error(`error cancelling query ID: ${queryID}`, err);
             });
           }
         },
