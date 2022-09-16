@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
@@ -29,7 +30,7 @@ func (s *RedshiftFakeDatasource) Connect(config backend.DataSourceInstanceSettin
 	return &sql.DB{}, nil
 }
 
-func (s *RedshiftFakeDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (sqlds.AsyncDB, error) {
+func (s *RedshiftFakeDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (awsds.AsyncDB, error) {
 	return nil, nil
 }
 

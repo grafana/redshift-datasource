@@ -7,11 +7,11 @@ import (
 	"reflect"
 	"sync"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	sqlDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver"
 	asyncSQLDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver/async"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
-	"github.com/grafana/sqlds/v2"
 )
 
 const DriverName string = "redshift"
@@ -42,7 +42,7 @@ func (d *Driver) OpenDB() (*sql.DB, error) {
 	return sql.Open(d.name, "")
 }
 
-func (d *Driver) GetAsyncDB() (sqlds.AsyncDB, error) {
+func (d *Driver) GetAsyncDB() (awsds.AsyncDB, error) {
 	return d.asyncDB, nil
 }
 

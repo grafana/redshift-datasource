@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -20,7 +21,7 @@ type RedshiftDatasourceIface interface {
 	sqlds.Driver
 	sqlds.Completable
 	sqlAPI.Resources
-	sqlds.AsyncDriver
+	awsds.AsyncDriver
 	Schemas(ctx context.Context, options sqlds.Options) ([]string, error)
 	Tables(ctx context.Context, options sqlds.Options) ([]string, error)
 	Columns(ctx context.Context, options sqlds.Options) ([]string, error)
@@ -60,7 +61,7 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 	return s.awsDS.GetDB(config.ID, args, models.New, api.New, driver.NewSync)
 }
 
-func (s *RedshiftDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (sqlds.AsyncDB, error) {
+func (s *RedshiftDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (awsds.AsyncDB, error) {
 	s.awsDS.Init(config)
 	args, err := sqlds.ParseOptions(queryArgs)
 	if err != nil {

@@ -5,12 +5,12 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
-	"github.com/grafana/sqlds/v2"
 )
 
-var _ sqlds.AsyncDB = &DB{}
+var _ awsds.AsyncDB = &DB{}
 
 // Implements AsyncDB
 type DB struct {
@@ -30,23 +30,23 @@ func (d *DB) GetQueryID(ctx context.Context, query string, args ...interface{}) 
 	return d.api.GetQueryID(ctx, query, args)
 }
 
-func (d *DB) QueryStatus(ctx context.Context, queryID string) (sqlds.QueryStatus, error) {
+func (d *DB) QueryStatus(ctx context.Context, queryID string) (awsds.QueryStatus, error) {
 	status, err := d.api.Status(ctx, &sqlAPI.ExecuteQueryOutput{ID: queryID})
 	if err != nil {
-		return sqlds.QueryUnknown, err
+		return awsds.QueryUnknown, err
 	}
-	var returnStatus sqlds.QueryStatus
+	var returnStatus awsds.QueryStatus
 	switch status.State {
 	case "SUBMITTED", "PICKED":
-		returnStatus = sqlds.QuerySubmitted
+		returnStatus = awsds.QuerySubmitted
 	case "STARTED":
-		returnStatus = sqlds.QueryRunning
+		returnStatus = awsds.QueryRunning
 	case "FINISHED":
-		returnStatus = sqlds.QueryFinished
+		returnStatus = awsds.QueryFinished
 	case "ABORTED":
-		returnStatus = sqlds.QueryCanceled
+		returnStatus = awsds.QueryCanceled
 	case "FAILED":
-		returnStatus = sqlds.QueryFailed
+		returnStatus = awsds.QueryFailed
 	}
 	return returnStatus, nil
 
