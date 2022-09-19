@@ -97,9 +97,14 @@ export function QueryEditor(props: Props) {
             className="width-12"
           />
           <h6>Frames</h6>
-          <FormatSelect query={props.query} options={SelectableFormatOptions} onChange={props.onChange} />
+          <FormatSelect
+            query={props.query}
+            options={SelectableFormatOptions}
+            onChange={props.onChange}
+            onRunQuery={props.onRunQuery}
+          />
           {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} />
+            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />
           )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
