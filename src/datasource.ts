@@ -191,6 +191,7 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
     );
   }
 
+  // cancel sets shouldCancel to tell requestLooper to cancel the query
   cancel(target: RedshiftQuery) {
     this.storeQuery(target, { shouldCancel: true });
   }

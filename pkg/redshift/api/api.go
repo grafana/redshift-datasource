@@ -118,7 +118,6 @@ func sliceContains(slice []string, str string) bool {
 }
 
 func (c *API) GetQueryID(ctx context.Context, query string, args ...interface{}) (bool, string, error) {
-	// alternatively, search individually for each status we care about
 	input := &redshiftdataapiservice.ListStatementsInput{
 		Status: aws.String("ALL"),
 	}

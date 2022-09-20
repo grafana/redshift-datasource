@@ -48,7 +48,6 @@ func (d *Driver) GetAsyncDB() (awsds.AsyncDB, error) {
 
 // Open registers a new driver with a unique name
 func New(dsAPI sqlAPI.AWSAPI) (asyncSQLDriver.Driver, error) {
-	// func New(dsAPI sqlAPI.AWSAPI) (sqlDriver.Driver, error) {
 	// The API is stored as a generic object but we need to parse it as a Athena API
 	if reflect.TypeOf(dsAPI) != reflect.TypeOf(&api.API{}) {
 		return nil, fmt.Errorf("wrong API type")
