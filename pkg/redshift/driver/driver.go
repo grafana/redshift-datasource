@@ -46,7 +46,7 @@ func (d *Driver) GetAsyncDB() (awsds.AsyncDB, error) {
 	return d.asyncDB, nil
 }
 
-// Open registers a new driver with a unique name
+// New registers a new driver with a unique name
 func New(dsAPI sqlAPI.AWSAPI) (asyncSQLDriver.Driver, error) {
 	// The API is stored as a generic object but we need to parse it as a Athena API
 	if reflect.TypeOf(dsAPI) != reflect.TypeOf(&api.API{}) {
@@ -57,13 +57,13 @@ func New(dsAPI sqlAPI.AWSAPI) (asyncSQLDriver.Driver, error) {
 	name := fmt.Sprintf("%s-%d", DriverName, openFromSessionCount)
 	openFromSessionMutex.Unlock()
 	d := &Driver{api: dsAPI.(*api.API), name: name}
-	d.asyncDB = &db{api: d.api}
+	d.asyncDB = newDB(d.api)
 	d.connection = asyncSQLDriver.NewConnection(d.asyncDB)
 	sql.Register(name, d)
 	return d, nil
 }
 
-// Open registers a new driver with a unique name
+// NewSync registers a new synchronous driver with a unique name
 func NewSync(dsAPI sqlAPI.AWSAPI) (sqlDriver.Driver, error) {
 	return New(dsAPI)
 }

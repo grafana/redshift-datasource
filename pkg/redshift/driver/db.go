@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
+	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
@@ -16,6 +17,12 @@ var _ awsds.AsyncDB = &db{}
 type db struct {
 	api    *api.API
 	closed bool
+}
+
+func newDB(api *api.API) *db {
+	return &db{
+		api: api,
+	}
 }
 
 func (d *db) StartQuery(ctx context.Context, query string, args ...interface{}) (string, error) {
@@ -37,29 +44,27 @@ func (d *db) QueryStatus(ctx context.Context, queryID string) (awsds.QueryStatus
 	}
 	var returnStatus awsds.QueryStatus
 	switch status.State {
-	case "SUBMITTED", "PICKED":
+	case redshiftdataapiservice.StatementStatusStringSubmitted,
+		redshiftdataapiservice.StatementStatusStringPicked:
 		returnStatus = awsds.QuerySubmitted
-	case "STARTED":
+	case redshiftdataapiservice.StatementStatusStringStarted:
 		returnStatus = awsds.QueryRunning
-	case "FINISHED":
+	case redshiftdataapiservice.StatementStatusStringFinished:
 		returnStatus = awsds.QueryFinished
-	case "ABORTED":
+	case redshiftdataapiservice.StatementStatusStringAborted:
 		returnStatus = awsds.QueryCanceled
-	case "FAILED":
+	case redshiftdataapiservice.StatementStatusStringFailed:
 		returnStatus = awsds.QueryFailed
 	}
 	return returnStatus, nil
-
 }
 
 func (d *db) CancelQuery(ctx context.Context, queryID string) error {
 	return d.api.Stop(&sqlAPI.ExecuteQueryOutput{ID: queryID})
-
 }
 
 func (d *db) GetRows(ctx context.Context, queryID string) (driver.Rows, error) {
 	return newRows(d.api.DataClient, queryID)
-
 }
 
 func (d *db) Ping(ctx context.Context) error {
@@ -68,21 +73,17 @@ func (d *db) Ping(ctx context.Context) error {
 		return err
 	}
 	return nil
-
 }
 
 func (d *db) Begin() (driver.Tx, error) {
 	return nil, fmt.Errorf("redshift driver doesn't support begin statements")
-
 }
 
 func (d *db) Prepare(query string) (driver.Stmt, error) {
 	return nil, fmt.Errorf("redshift driver doesn't support prepared statements")
-
 }
 
 func (d *db) Close() error {
 	d.closed = true
 	return nil
-
 }
