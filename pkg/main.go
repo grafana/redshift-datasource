@@ -14,8 +14,8 @@ func main() {
 	// Start listening to requests sent from Grafana.
 	s := redshift.New()
 	ds := awsds.NewAsyncAWSDatasource(s)
-	ds.SqlDatasource.Completable = s
-	ds.SqlDatasource.CustomRoutes = routes.New(s).Routes()
+	ds.Completable = s
+	ds.CustomRoutes = routes.New(s).Routes()
 
 	if err := datasource.Manage(
 		"grafana-redshift-datasource",

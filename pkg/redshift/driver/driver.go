@@ -25,7 +25,7 @@ var (
 type Driver struct {
 	name       string
 	api        *api.API
-	asyncDB    *DB
+	asyncDB    *db
 	connection *asyncSQLDriver.Conn
 }
 
@@ -57,7 +57,7 @@ func New(dsAPI sqlAPI.AWSAPI) (asyncSQLDriver.Driver, error) {
 	name := fmt.Sprintf("%s-%d", DriverName, openFromSessionCount)
 	openFromSessionMutex.Unlock()
 	d := &Driver{api: dsAPI.(*api.API), name: name}
-	d.asyncDB = &DB{api: d.api}
+	d.asyncDB = &db{api: d.api}
 	d.connection = asyncSQLDriver.NewConnection(d.asyncDB)
 	sql.Register(name, d)
 	return d, nil
