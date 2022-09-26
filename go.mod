@@ -7,12 +7,9 @@ require (
 	github.com/google/go-cmp v0.5.8
 	github.com/grafana/grafana-aws-sdk v0.10.8
 	github.com/grafana/grafana-plugin-sdk-go v0.139.0
-	github.com/grafana/sqlds/v2 v2.3.8
+	github.com/grafana/sqlds/v2 v2.3.10
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.8.0
 )
 
-replace (
-	github.com/grafana/grafana-aws-sdk => ../../code/grafana-aws-sdk
-	github.com/grafana/sqlds/v2 => ../../code/sqlds
-)
+replace github.com/grafana/grafana-aws-sdk => ../../code/grafana-aws-sdk
