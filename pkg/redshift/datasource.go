@@ -101,6 +101,14 @@ func (s *RedshiftDatasource) Databases(ctx context.Context, options sqlds.Option
 	return dbs, nil
 }
 
+func (s *RedshiftDatasource) CancelQuery(ctx context.Context, options sqlds.Options, queryID string) error {
+	api, err := s.getApi(ctx, options)
+	if err != nil {
+		return err
+	}
+	return api.CancelQuery(ctx, options, queryID)
+}
+
 func (s *RedshiftDatasource) Schemas(ctx context.Context, options sqlds.Options) ([]string, error) {
 	api, err := s.getApi(ctx, options)
 	if err != nil {

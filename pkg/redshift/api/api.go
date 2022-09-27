@@ -180,6 +180,10 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 	}, err
 }
 
+func (c *API) CancelQuery(ctx context.Context, options sqlds.Options, queryID string) error {
+	return c.Stop(&api.ExecuteQueryOutput{ID: queryID})
+}
+
 func (c *API) Stop(output *api.ExecuteQueryOutput) error {
 	_, err := c.DataClient.CancelStatement(&redshiftdataapiservice.CancelStatementInput{
 		Id: &output.ID,
