@@ -1,7 +1,7 @@
-import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sdk';
-import { LoadingState, QueryEditorProps, SelectableValue } from '@grafana/data';
-import { Button, HorizontalGroup, InlineSegmentGroup, Spinner } from '@grafana/ui';
-import React, { useEffect, useState } from 'react';
+import { FillValueSelect, FormatSelect, ResourceSelector, RunQueryButtons } from '@grafana/aws-sdk';
+import { QueryEditorProps, SelectableValue } from '@grafana/data';
+import { InlineSegmentGroup } from '@grafana/ui';
+import React from 'react';
 import { selectors } from 'selectors';
 import SQLEditor from './SQLEditor';
 
@@ -13,20 +13,6 @@ type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptio
 type QueryProperties = 'schema' | 'table' | 'column';
 
 export function QueryEditor(props: Props) {
-  const state = props.data?.state;
-  const [running, setRunning] = useState(false);
-  const [stopping, setStopping] = useState(false);
-  const [lastState, setLastState] = useState(state);
-
-  useEffect(() => {
-    if (state && lastState !== state && state !== LoadingState.Loading) {
-      setRunning(false);
-      setStopping(false);
-    }
-
-    setLastState(state);
-  }, [state, lastState]);
-
   const fetchSchemas = async () => {
     const schemas: string[] = await props.datasource.getResource('schemas');
     return schemas.map((schema) => ({ label: schema, value: schema })).concat({ label: '-- remove --', value: '' });
@@ -55,7 +41,6 @@ export function QueryEditor(props: Props) {
   };
 
   const cancelQuery = () => {
-    setStopping(true);
     props.datasource.cancel(props.query);
   };
 
@@ -110,33 +95,7 @@ export function QueryEditor(props: Props) {
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
           <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
           <div style={{ marginTop: 8 }}>
-            <HorizontalGroup>
-              <Button
-                icon={running ? undefined : 'play'}
-                disabled={running}
-                onClick={() => {
-                  setRunning(true);
-                  props.onRunQuery();
-                }}
-              >
-                {running && !stopping ? (
-                  <HorizontalGroup>
-                    <Spinner /> Running
-                  </HorizontalGroup>
-                ) : (
-                  'Run'
-                )}
-              </Button>
-              <Button icon={running ? undefined : 'square-shape'} disabled={!running || stopping} onClick={cancelQuery}>
-                {stopping ? (
-                  <HorizontalGroup>
-                    <Spinner /> Stopping
-                  </HorizontalGroup>
-                ) : (
-                  'Stop'
-                )}
-              </Button>
-            </HorizontalGroup>
+            <RunQueryButtons onRunQuery={props.onRunQuery} onCancelQuery={cancelQuery} state={props.data?.state} />
           </div>
         </div>
       </InlineSegmentGroup>
