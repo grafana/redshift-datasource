@@ -46,6 +46,10 @@ func (s *RedshiftFakeDatasource) Databases(ctx context.Context, options sqlds.Op
 	return []string{}, nil
 }
 
+func (s *RedshiftFakeDatasource) CancelQuery(ctx context.Context, options sqlds.Options, queryID string) error {
+	return nil
+}
+
 func (s *RedshiftFakeDatasource) Schemas(ctx context.Context, options sqlds.Options) ([]string, error) {
 	return []string{}, nil
 }
