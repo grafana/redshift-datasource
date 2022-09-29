@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -164,9 +163,6 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 	case redshiftdataapiservice.StatusStringFailed,
 		redshiftdataapiservice.StatusStringAborted:
 		finished = true
-		if statusResp.Error != nil {
-			err = errors.New(*statusResp.Error)
-		}
 	case redshiftdataapiservice.StatusStringFinished:
 		finished = true
 	default:
@@ -177,7 +173,7 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 		ID:       output.ID,
 		State:    state,
 		Finished: finished,
-	}, err
+	}, nil
 }
 
 func (c *API) CancelQuery(ctx context.Context, options sqlds.Options, queryID string) error {
