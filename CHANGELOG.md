@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.3.0
+- Upgrade to grafana-aws-sdk v0.11.0 by @fridgepoet in https://github.com/grafana/redshift-datasource/pull/183
+
 ## 1.2.0
 
 - Add database security monitoring dashboards by @yota-p in https://github.com/grafana/redshift-datasource/pull/175
