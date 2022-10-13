@@ -1,11 +1,11 @@
-import { applySQLTemplateVariables, filterSQLQuery, AsyncDatasourceWithBackend } from '@grafana/aws-sdk';
+import { applySQLTemplateVariables, filterSQLQuery, DatasourceWithAsyncBackend } from '@grafana/aws-sdk';
 import { DataSourceInstanceSettings, ScopedVars } from '@grafana/data';
 import { getTemplateSrv, config } from '@grafana/runtime';
 import { RedshiftVariableSupport } from 'variables';
 
 import { RedshiftDataSourceOptions, RedshiftQuery } from './types';
 
-export class DataSource extends AsyncDatasourceWithBackend<RedshiftQuery, RedshiftDataSourceOptions> {
+export class DataSource extends DatasourceWithAsyncBackend<RedshiftQuery, RedshiftDataSourceOptions> {
   constructor(instanceSettings: DataSourceInstanceSettings<RedshiftDataSourceOptions>) {
     super(instanceSettings, config.featureToggles.redshiftAsyncQueryDataSupport);
     this.variables = new RedshiftVariableSupport(this);
