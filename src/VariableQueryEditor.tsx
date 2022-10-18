@@ -5,5 +5,5 @@ import { DataSource } from 'datasource';
 import { QueryEditor } from 'QueryEditor';
 
 export function VariableQueryCodeEditor(props: QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>) {
-  return <QueryEditor {...props}></QueryEditor>;
+  return <QueryEditor {...props} hideRunQueryButtons></QueryEditor>;
 }

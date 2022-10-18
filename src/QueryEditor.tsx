@@ -8,7 +8,9 @@ import SQLEditor from './SQLEditor';
 import { DataSource } from './datasource';
 import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
 
-type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
+type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions> & {
+  hideRunQueryButtons?: boolean;
+};
 
 type QueryProperties = 'schema' | 'table' | 'column';
 
@@ -94,9 +96,11 @@ export function QueryEditor(props: Props) {
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
           <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
-          <div style={{ marginTop: 8 }}>
-            <RunQueryButtons onRunQuery={props.onRunQuery} onCancelQuery={cancelQuery} state={props.data?.state} />
-          </div>
+          {!props.hideRunQueryButtons && (
+            <div style={{ marginTop: 8 }}>
+              <RunQueryButtons onRunQuery={props.onRunQuery} onCancelQuery={cancelQuery} state={props.data?.state} />
+            </div>
+          )}
         </div>
       </InlineSegmentGroup>
     </>
