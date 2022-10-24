@@ -1,6 +1,11 @@
 # Changelog
 
+## 1.3.1
+
+- Security: Upgrade Go in build process to 1.19.2
+
 ## 1.3.0
+
 - Upgrade to grafana-aws-sdk v0.11.0 by @fridgepoet in https://github.com/grafana/redshift-datasource/pull/183
 
 ## 1.2.0
