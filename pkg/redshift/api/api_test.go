@@ -168,7 +168,7 @@ func Test_Status(t *testing.T) {
 			if err != nil && tt.err == "" {
 				t.Errorf("unexpected error %v", err)
 			}
-			if status.Finished != tt.finished {
+			if status != nil && status.Finished != tt.finished {
 				t.Errorf("expecting status.Finished to be %v but got %v", tt.finished, status.Finished)
 			}
 		})

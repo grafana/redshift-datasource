@@ -157,6 +157,10 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 		return nil, fmt.Errorf("%w: %v", api.StatusError, err)
 	}
 
+	if statusResp.Error != nil && *statusResp.Error != "" {
+		return nil, fmt.Errorf("%w: %v", api.ExecuteError, *statusResp.Error)
+	}
+
 	var finished bool
 	state := *statusResp.Status
 	switch state {
