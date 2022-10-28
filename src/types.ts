@@ -70,11 +70,6 @@ export type RedshiftDataSourceSettings = DataSourceSettings<
   RedshiftDataSourceSecureJsonData
 >;
 
-export interface RedshiftCustomMeta {
-  queryID: string;
-  status: string;
-}
-
 export interface RedshiftRunningQueryInfo {
   queryID?: string;
   shouldCancel?: boolean;
