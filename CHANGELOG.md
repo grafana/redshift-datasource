@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.0
+
+- Add database security monitoring dashboards by @yota-p in https://github.com/grafana/redshift-datasource/pull/175
+
 ## 1.1.0
 
 - Add support for context aware autocompletion by @sunker in https://github.com/grafana/redshift-datasource/pull/174
