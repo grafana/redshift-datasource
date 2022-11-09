@@ -1576,7 +1576,7 @@
                   "uid": "${ds}"
                 },
                 "hide": false,
-                "rawSQL": "select\n  t1.grosysid::int as id,\n  t1.groname::varchar || ' (group)' as title\nfrom pg_group t1\nleft join (\n  select \n\tpg_group.grosysid,\n\tcount(*) as num_user_assigned\n  from pg_group, pg_user\n  where pg_user.usesysid = ANY(pg_group.grolist) \n  group by pg_group.grosysid\n  ) t2\non t1.grosysid = t2.grosysid\nwhere t2.num_user_assigned > 0\n\nunion all\n\nselect\n  usesysid as id, \n  usename::varchar || ' (user)' as title\nfrom pg_user, pg_group\nWHERE pg_user.usesysid = ANY(pg_group.grolist) \n;\n",
+                "rawSQL": "select\n  t1.grosysid::int as id,\n  t1.groname::varchar || ' (group)' as title\nfrom pg_group t1\nleft join (\n  select \n\tpg_group.grosysid,\n\tcount(*) as num_user_assigned\n  from pg_group, pg_user\n  where pg_user.usesysid = ANY(pg_group.grolist) \n  group by pg_group.grosysid\n  ) t2\non t1.grosysid = t2.grosysid\nwhere t2.num_user_assigned > 0\n\nunion all\n\nselect\n  usesysid as id, \n  usename::varchar || ' (user)' as title\nfrom pg_user, pg_group\nWHERE pg_user.usesysid = ANY(pg_group.grolist) \n\nunion all \n\n-- add a dummy record to return at least 1 record for this query\n-- Node Graph panel raises 'id field is required for nodes data frame' error if dataframe `nodes` is empty\n-- this dummy record will be excluded by Transform > Filter data by values in Grafana to avoid being rendered\nselect null as id, null as title\n;\n",
                 "refId": "nodes"
               },
               {
@@ -1590,7 +1590,25 @@
               }
             ],
             "title": "Group assigned to User",
-            "type": "nodeGraph"
+            "transformations": [
+                {
+                  "id": "filterByValue",
+                  "options": {
+                    "filters": [
+                      {
+                        "config": {
+                          "id": "isNull",
+                          "options": {}
+                        },
+                        "fieldName": "nodes id"
+                      }
+                    ],
+                    "match": "all",
+                    "type": "exclude"
+                  }
+                }
+              ],
+              "type": "nodeGraph"
           }
         ],
         "title": "Identities",
