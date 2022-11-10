@@ -1,4 +1,5 @@
-import { FillValueSelect, FormatSelect, ResourceSelector, RunQueryButtons } from '@grafana/aws-sdk';
+import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sdk';
+import { RunQueryButtons } from '@grafana/async-query-data';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { InlineSegmentGroup } from '@grafana/ui';
 import React from 'react';
@@ -80,14 +81,9 @@ export function QueryEditor(props: Props) {
             className="width-12"
           />
           <h6>Frames</h6>
-          <FormatSelect
-            query={props.query}
-            options={SelectableFormatOptions}
-            onChange={props.onChange}
-            onRunQuery={props.onRunQuery}
-          />
+          <FormatSelect query={props.query} options={SelectableFormatOptions} onChange={props.onChange} />
           {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />
+            <FillValueSelect query={props.query} onChange={props.onChange} />
           )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
