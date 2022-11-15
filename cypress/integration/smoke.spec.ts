@@ -94,8 +94,8 @@ e2e.scenario({
                 `{selectall} select saletime as time, commission as commission from sales where $__timeFilter(time)`
               );
 
-            // blur and wait for loading
-            cy.get('.panel-content').click();
+            // click run and wait for loading
+            cy.contains('button', 'Run').click();
             cy.get('.panel-loading');
             cy.get('.panel-loading', { timeout: 10000 }).should('not.exist');
 
