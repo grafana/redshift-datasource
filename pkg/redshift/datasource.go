@@ -30,10 +30,12 @@ type RedshiftDatasourceIface interface {
 
 type RedshiftDatasource struct {
 	awsDS *datasource.AWSDatasource
+	backend.QueryDataHandler
 }
 
 func New() *RedshiftDatasource {
-	return &RedshiftDatasource{awsDS: datasource.New()}
+	ds := &RedshiftDatasource{awsDS: datasource.New()}
+	return ds
 }
 
 func (s *RedshiftDatasource) Settings(_ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
