@@ -4,13 +4,11 @@ go 1.19
 
 require (
 	github.com/aws/aws-sdk-go v1.44.9
-	github.com/google/go-cmp v0.5.8
 	github.com/grafana/grafana-aws-sdk v0.11.0
 	github.com/grafana/grafana-plugin-sdk-go v0.142.0
 	github.com/grafana/sqlds/v2 v2.3.7
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.7.2
-	github.com/sunker/async-datasource v0.0.0
+	github.com/sunker/async-datasource v0.0.1
 )
 
 require (
@@ -19,7 +17,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cheekybits/genny v1.0.0 // indirect
 	github.com/chromedp/cdproto v0.0.0-20220208224320-6efb837e6bc2 // indirect
-	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/elazarl/goproxy v0.0.0-20220115173737-adb46da277ac // indirect
 	github.com/fatih/color v1.7.0 // indirect
 	github.com/getkin/kin-openapi v0.94.0 // indirect
@@ -29,6 +26,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/google/flatbuffers v2.0.0+incompatible // indirect
+	github.com/google/go-cmp v0.5.8 // indirect
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
@@ -54,7 +52,6 @@ require (
 	github.com/oklog/run v1.0.0 // indirect
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
 	github.com/pierrec/lz4/v4 v4.1.8 // indirect
-	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_golang v1.12.1 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.32.1 // indirect
@@ -67,7 +64,4 @@ require (
 	google.golang.org/grpc v1.41.0 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/sunker/async-datasource => /home/erik/code/private/async-datasource

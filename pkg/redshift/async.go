@@ -8,7 +8,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/pkg/errors"
 	"github.com/sunker/async-datasource/pkg/asyncds"
@@ -84,22 +83,28 @@ func (async RedshiftAsyncQueryData) CancelQuery(ctx context.Context, queryId str
 	}
 	return nil
 }
-func (async RedshiftAsyncQueryData) GetResult(ctx context.Context, queryId string) (data.Frames, error) {
+func (async RedshiftAsyncQueryData) GetResult(ctx context.Context, refId, queryId string) backend.DataResponse {
 	service, err := async.ds.GetClient(async.ds.Settings.Region)
 	if err != nil {
-		return data.Frames{}, fmt.Errorf("%w: %v", api.ExecuteError, err)
+		return backend.DataResponse{
+			Error: fmt.Errorf("%w: %v", api.ExecuteError, err),
+		}
 	}
 	//TODO: add pagination supports
 	result, err := service.GetStatementResult(&redshiftdataapiservice.GetStatementResultInput{
 		Id: aws.String(queryId),
 	})
 	if err != nil {
-		return data.Frames{}, fmt.Errorf("%w: %v", api.ExecuteError, err)
+		return backend.DataResponse{
+			Error: fmt.Errorf("%w: %v", api.ExecuteError, err),
+		}
 	}
 
-	frames, err := QueryResultToDataFrame(queryId, result)
+	frames, err := QueryResultToDataFrame(refId, result)
 	if err != nil {
-		return data.Frames{}, fmt.Errorf("%w: %v", api.ExecuteError, err)
+		return backend.DataResponse{
+			Error: fmt.Errorf("%w: %v", api.ExecuteError, err),
+		}
 	}
-	return frames, nil
+	return backend.DataResponse{Frames: frames}
 }
