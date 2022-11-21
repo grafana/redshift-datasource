@@ -3,7 +3,7 @@ import { assign } from 'lodash';
 import { Observable } from 'rxjs';
 import { VariableQueryCodeEditor } from 'VariableQueryEditor';
 import { DataSource } from './datasource';
-import { RedshiftQuery, defaultQuery } from './types';
+import { RedshiftQuery } from './types';
 
 export class RedshiftVariableSupport extends CustomVariableSupport<DataSource, RedshiftQuery> {
   constructor(private readonly datasource: DataSource) {
@@ -16,7 +16,7 @@ export class RedshiftVariableSupport extends CustomVariableSupport<DataSource, R
 
   query(request: DataQueryRequest<RedshiftQuery>): Observable<DataQueryResponse> {
     // fill query params with default data
-    assign(request.targets, [{ ...defaultQuery, ...request.targets[0], refId: 'A' }]);
+    assign(request.targets, [{ ...request.targets[0], refId: 'A' }]);
     return this.datasource.query(request);
   }
 }

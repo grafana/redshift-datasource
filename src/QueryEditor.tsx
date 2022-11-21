@@ -54,7 +54,6 @@ export function QueryEditor(props: Props) {
             value={props.query.schema || null}
             tooltip="Use the selected schema with the $__schema macro"
             label={selectors.components.ConfigEditor.schema.input}
-            data-testid={selectors.components.ConfigEditor.schema.testID}
             labelWidth={11}
             className="width-12"
           />

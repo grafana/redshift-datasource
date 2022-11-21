@@ -85,6 +85,7 @@ export function ConfigEditor(props: Props) {
       });
     }
   }, [arn]);
+  // }, [arn, getClusterUrl, fetchSecret, props.options.jsonData, props.onOptionsChange]);
 
   // Clusters
   const [clusterEndpoint, setClusterEndpoint] = useState('');
@@ -117,6 +118,7 @@ export function ConfigEditor(props: Props) {
       getClusterUrl(props.options.jsonData.clusterIdentifier);
     }
   }, []);
+  // }, [props.options.jsonData.clusterIdentifier, getClusterUrl]);
 
   const onOptionsChange = (options: RedshiftDataSourceSettings) => {
     setSaved(false);
@@ -227,7 +229,6 @@ export function ConfigEditor(props: Props) {
               },
             })
           }
-          css={undefined}
           data-testid={selectors.components.ConfigEditor.WithEvent.testID}
         />
       </InlineField>

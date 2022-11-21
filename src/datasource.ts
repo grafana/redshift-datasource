@@ -1,7 +1,7 @@
 import { DataSourceInstanceSettings, ScopedVars } from '@grafana/data';
 import { DataSourceWithBackend, getTemplateSrv } from '@grafana/runtime';
 import { RedshiftVariableSupport } from 'variables';
-import { RedshiftDataSourceOptions, RedshiftQuery } from './types';
+import { defaultQuery, RedshiftDataSourceOptions, RedshiftQuery } from './types';
 import { filterSQLQuery, applySQLTemplateVariables } from '@grafana/aws-sdk';
 
 export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDataSourceOptions> {
@@ -17,4 +17,12 @@ export class DataSource extends DataSourceWithBackend<RedshiftQuery, RedshiftDat
 
   applyTemplateVariables = (query: RedshiftQuery, scopedVars: ScopedVars) =>
     applySQLTemplateVariables(query, scopedVars, getTemplateSrv);
+
+  getDefaultQuery() {
+    return defaultQuery;
+  }
+
+  getRef() {
+    return {};
+  }
 }
