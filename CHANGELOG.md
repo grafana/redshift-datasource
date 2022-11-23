@@ -40,7 +40,7 @@
 ## 1.0.5
 
 - Reduces backoff time factor to retrieve results.
-- Upgrades internal dependecies.
+- Upgrades internal dependencies.
 
 ## 1.0.4
 
