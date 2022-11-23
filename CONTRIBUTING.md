@@ -67,7 +67,7 @@ Amazon Redshift is a fully managed, petabyte-scale data warehouse service in the
 
 Redshift is based on an older version of PostgreSQL (fork of 8.0.2). It still has a lot in common and it is possible to use the Postgres data source in core Grafana to query Redshift. However, in the last couple of years it has started to diverge more and more. [While the SQL language in Redshift has started to diverge from Postgres](https://docs.aws.amazon.com/redshift/latest/dg/c_redshift-and-postgres-sql.html), the biggest differences have been in the underlying fundamentals of how the data is stored - PostgreSQL is a row-store database while RedShift is column-stored database.
 
-While it's possible to use the PostgreSQL datasource to query Redshift, this plugins provides better integration with AWS authentication and provides Redshift exclusive features like its query editor, which uses Redshift built-in functions and specific syntax hightlight.
+While it's possible to use the PostgreSQL datasource to query Redshift, this plugins provides better integration with AWS authentication and provides Redshift exclusive features like its query editor, which uses Redshift built-in functions and specific syntax highlight.
 
 ## Authentication
 

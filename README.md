@@ -9,7 +9,7 @@ This topic explains options, variables, querying, and other options specific to 
 To access data source settings, hover your mouse over the **Configuration** (gear) icon, then click **Data Sources**, and then click the AWS Redshift data source.
 
 | Name                         | Description                                                                                                             |
-|------------------------------|-------------------------------------------------------------------------------------------------------------------------|
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
 | `Name`                       | The data source name. This is how you refer to the data source in panels and queries.                                   |
 | `Default`                    | Default data source means that it will be pre-selected for new panels.                                                  |
 | `Auth Provider`              | Specify the provider to get credentials.                                                                                |
@@ -230,7 +230,7 @@ datasources:
       defaultRegion: eu-west-2
 ```
 
-## Preconfigured Redshift dashboards
+## Pre-configured Redshift dashboards
 
 Redshift data source ships with a pre-configured dashboard for some advanced monitoring parameters. This curated dashboard is based on similar dashboards in the [AWS Labs repository for Redshift](https://github.com/awslabs/amazon-redshift-monitoring). Check it out for more details.
 
