@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.2
+
+- Security: Upgrade Go in build process to 1.19.3
+
 ## 1.3.1
 
 - Security: Upgrade Go in build process to 1.19.2
@@ -36,7 +40,7 @@
 ## 1.0.5
 
 - Reduces backoff time factor to retrieve results.
-- Upgrades internal dependecies.
+- Upgrades internal dependencies.
 
 ## 1.0.4
 

@@ -128,7 +128,7 @@ describe('ConfigEditor', () => {
     });
   });
 
-  it('should update an existing url when inputing a database', async () => {
+  it('should update an existing url when specifying a database', async () => {
     const onChange = jest.fn();
     await act(async () => {
       render(
@@ -137,7 +137,7 @@ describe('ConfigEditor', () => {
           onOptionsChange={onChange}
           options={{
             ...props.options,
-            url: 'my.cluster.adress:123/my-old-db',
+            url: 'my.cluster.address:123/my-old-db',
             jsonData: { ...props.options.jsonData, clusterIdentifier },
           }}
         />
