@@ -15,6 +15,10 @@ type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptio
 
 type QueryProperties = 'schema' | 'table' | 'column';
 
+function isQueryValid(query: RedshiftQuery) {
+  return !!query.rawSQL;
+}
+
 export function QueryEditor(props: Props) {
   const fetchSchemas = async () => {
     const schemas: string[] = await props.datasource.getResource('schemas');
@@ -95,6 +99,7 @@ export function QueryEditor(props: Props) {
                 query={props.query}
                 onRunQuery={props.onRunQuery}
                 onCancelQuery={props.datasource.cancel}
+                isQueryValid={isQueryValid}
               />
             </div>
           )}
