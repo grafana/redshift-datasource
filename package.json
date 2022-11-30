@@ -1,6 +1,6 @@
 {
   "name": "grafana-redshift-datasource",
-  "version": "1.3.2",
+  "version": "1.3.3",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "spellcheck": "cspell -c cspell.config.json \"**/*.{ts,tsx,js,go,md,mdx,yml,yaml,json,scss,css}\"",

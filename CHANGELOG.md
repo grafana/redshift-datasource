@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.3.3
+
+- Update @grafana dependencies to v8.5.10
+
 ## 1.3.2
 
 - Security: Upgrade Go in build process to 1.19.3
