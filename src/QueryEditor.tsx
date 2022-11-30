@@ -88,7 +88,7 @@ export function QueryEditor(props: Props) {
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
           <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
-          {!props.hideRunQueryButtons && (
+          {!props.hideRunQueryButtons && props?.app !== 'explore' && (
             <div style={{ marginTop: 8 }}>
               <RunQueryButtons
                 state={props.data?.state}
