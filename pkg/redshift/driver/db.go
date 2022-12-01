@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
+	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
 )
 
@@ -56,6 +57,7 @@ func (d *db) QueryStatus(ctx context.Context, queryID string) (awsds.QueryStatus
 	case redshiftdataapiservice.StatementStatusStringFailed:
 		returnStatus = awsds.QueryFailed
 	}
+	backend.Logger.Debug("QueryStatus", "state", status.State, "queryID", queryID)
 	return returnStatus, nil
 }
 
