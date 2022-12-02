@@ -1,7 +1,7 @@
 import '@testing-library/jest-dom';
 
 import * as runtime from '@grafana/runtime';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { select } from 'react-select-event';
 import { FillValueOptions } from '@grafana/aws-sdk';
@@ -41,7 +41,7 @@ const props = {
 };
 
 describe('QueryEditor', () => {
-  it('should request select schemas and execute the query', async () => {
+  it('should request select schemas but not execute the query', async () => {
     const onChange = jest.fn();
     const onRunQuery = jest.fn();
     ds.getResource = jest.fn().mockResolvedValue(['foo']);
@@ -59,10 +59,10 @@ describe('QueryEditor', () => {
       ...q,
       schema: 'foo',
     });
-    expect(onRunQuery).toHaveBeenCalled();
+    expect(onRunQuery).not.toHaveBeenCalled();
   });
 
-  it('should request select tables and execute the query', async () => {
+  it('should request select tables but not execute the query', async () => {
     const onChange = jest.fn();
     const onRunQuery = jest.fn();
     ds.postResource = jest.fn().mockResolvedValue(['foo']);
@@ -81,10 +81,10 @@ describe('QueryEditor', () => {
       schema: 'bar',
       table: 'foo',
     });
-    expect(onRunQuery).toHaveBeenCalled();
+    expect(onRunQuery).not.toHaveBeenCalled();
   });
 
-  it('should request select column and execute the query', async () => {
+  it('should request select column but not execute the query', async () => {
     const onChange = jest.fn();
     const onRunQuery = jest.fn();
     ds.postResource = jest.fn().mockResolvedValue(['foo']);
@@ -103,7 +103,7 @@ describe('QueryEditor', () => {
       table: 'bar',
       column: 'foo',
     });
-    expect(onRunQuery).toHaveBeenCalled();
+    expect(onRunQuery).not.toHaveBeenCalled();
   });
 
   it('should include the Format As input', async () => {
@@ -138,5 +138,33 @@ describe('QueryEditor', () => {
       ...q,
       fillMode: { mode: FillValueOptions.Null },
     });
+  });
+
+  it('run button should be disabled if the query is not valid', () => {
+    render(<QueryEditor {...props} query={{ ...props.query, rawSQL: '' }} />);
+    const runButton = screen.getByRole('button', { name: 'Run' });
+    expect(runButton).toBeDisabled();
+  });
+
+  it('should run queries when the run button is clicked', () => {
+    const onChange = jest.fn();
+    const onRunQuery = jest.fn();
+    render(<QueryEditor {...props} onRunQuery={onRunQuery} onChange={onChange} />);
+    const runButton = screen.getByRole('button', { name: 'Run' });
+    expect(runButton).toBeInTheDocument();
+
+    expect(onRunQuery).not.toBeCalled();
+    fireEvent.click(runButton);
+    expect(onRunQuery).toBeCalledTimes(1);
+  });
+
+  it('stop button should be disabled until run button is clicked', () => {
+    render(<QueryEditor {...props} />);
+    const runButton = screen.getByRole('button', { name: 'Run' });
+    const stopButton = screen.getByRole('button', { name: 'Stop' });
+    expect(stopButton).toBeInTheDocument();
+    expect(stopButton).toBeDisabled();
+    fireEvent.click(runButton);
+    expect(stopButton).not.toBeDisabled();
   });
 });

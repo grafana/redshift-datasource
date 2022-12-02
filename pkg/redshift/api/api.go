@@ -3,8 +3,8 @@ package api
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
+	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
@@ -21,6 +21,13 @@ import (
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v2"
 )
+
+var validStatuses = []string{
+	redshiftdataapiservice.StatementStatusStringSubmitted,
+	redshiftdataapiservice.StatementStatusStringPicked,
+	redshiftdataapiservice.StatementStatusStringStarted,
+	redshiftdataapiservice.StatementStatusStringFinished,
+}
 
 type API struct {
 	DataClient       redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
@@ -100,6 +107,48 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
 }
 
+func sliceContains(slice []string, str string) bool {
+	for _, val := range slice {
+		if val == str {
+			return true
+		}
+	}
+	return false
+}
+
+func (c *API) GetQueryID(ctx context.Context, query string, args ...interface{}) (bool, string, error) {
+	input := &redshiftdataapiservice.ListStatementsInput{
+		Status: aws.String("ALL"),
+	}
+
+	output, err := c.DataClient.ListStatementsWithContext(ctx, input)
+	if err != nil {
+		return false, "", fmt.Errorf("%w: %v", api.ExecuteError, err)
+	}
+
+	for {
+		for _, statement := range output.Statements {
+			if statement.QueryString != nil && *statement.QueryString == query {
+				if statement.Status != nil && sliceContains(validStatuses, *statement.Status) {
+					return true, *statement.Id, nil
+				}
+				return false, "", nil
+			}
+		}
+
+		if output.NextToken == nil {
+			break
+		}
+		input.SetNextToken(*output.NextToken)
+		output, err = c.DataClient.ListStatementsWithContext(ctx, input)
+		if err != nil {
+			return false, "", fmt.Errorf("%w: %v", api.ExecuteError, err)
+		}
+	}
+
+	return false, "", nil
+}
+
 func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.ExecuteQueryStatus, error) {
 	statusResp, err := c.DataClient.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
 		Id: aws.String(output.ID),
@@ -108,13 +157,16 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 		return nil, fmt.Errorf("%w: %v", api.StatusError, err)
 	}
 
+	if statusResp.Error != nil && *statusResp.Error != "" {
+		return nil, fmt.Errorf("%w: %v", api.ExecuteError, *statusResp.Error)
+	}
+
 	var finished bool
 	state := *statusResp.Status
 	switch state {
 	case redshiftdataapiservice.StatusStringFailed,
 		redshiftdataapiservice.StatusStringAborted:
 		finished = true
-		err = errors.New(*statusResp.Error)
 	case redshiftdataapiservice.StatusStringFinished:
 		finished = true
 	default:
@@ -125,14 +177,19 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 		ID:       output.ID,
 		State:    state,
 		Finished: finished,
-	}, err
+	}, nil
+}
+
+func (c *API) CancelQuery(ctx context.Context, options sqlds.Options, queryID string) error {
+	return c.Stop(&api.ExecuteQueryOutput{ID: queryID})
 }
 
 func (c *API) Stop(output *api.ExecuteQueryOutput) error {
 	_, err := c.DataClient.CancelStatement(&redshiftdataapiservice.CancelStatementInput{
 		Id: &output.ID,
 	})
-	if err != nil {
+	// ignore finished query error
+	if err != nil && !strings.Contains(err.Error(), "Could not cancel a query that is already in FINISHED state") {
 		return fmt.Errorf("%w: %v", err, api.StopError)
 	}
 	return nil

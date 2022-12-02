@@ -1,8 +1,9 @@
 import { DataSourcePlugin } from '@grafana/data';
-import { DataSource } from './datasource';
+
 import { ConfigEditor } from './ConfigEditor';
+import { DataSource } from './datasource';
 import { QueryEditor } from './QueryEditor';
-import { RedshiftQuery, RedshiftDataSourceOptions } from './types';
+import { RedshiftDataSourceOptions, RedshiftQuery } from './types';
 
 export const plugin = new DataSourcePlugin<DataSource, RedshiftQuery, RedshiftDataSourceOptions>(DataSource)
   .setConfigEditor(ConfigEditor)

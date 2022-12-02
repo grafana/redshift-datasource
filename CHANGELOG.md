@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.4.0
+
+- Add Async Query Data Support
+
 ## 1.3.3
 
 - Update @grafana dependencies to v8.5.10

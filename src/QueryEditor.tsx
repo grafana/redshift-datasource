@@ -1,4 +1,5 @@
 import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sdk';
+import { RunQueryButtons } from '@grafana/async-query-data';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { InlineSegmentGroup } from '@grafana/ui';
 import React from 'react';
@@ -8,9 +9,15 @@ import SQLEditor from './SQLEditor';
 import { DataSource } from './datasource';
 import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
 
-type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
+type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions> & {
+  hideRunQueryButtons?: boolean;
+};
 
 type QueryProperties = 'schema' | 'table' | 'column';
+
+function isQueryValid(query: RedshiftQuery) {
+  return !!query.rawSQL;
+}
 
 export function QueryEditor(props: Props) {
   const fetchSchemas = async () => {
@@ -38,9 +45,6 @@ export function QueryEditor(props: Props) {
     const value = e?.value;
     newQuery[prop] = value;
     props.onChange(newQuery);
-    if (props.onRunQuery) {
-      props.onRunQuery();
-    }
   };
 
   return (
@@ -81,23 +85,24 @@ export function QueryEditor(props: Props) {
             className="width-12"
           />
           <h6>Frames</h6>
-          <FormatSelect
-            query={props.query}
-            options={SelectableFormatOptions}
-            onChange={props.onChange}
-            onRunQuery={props.onRunQuery}
-          />
+          <FormatSelect query={props.query} options={SelectableFormatOptions} onChange={props.onChange} />
           {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} onRunQuery={props.onRunQuery} />
+            <FillValueSelect query={props.query} onChange={props.onChange} />
           )}
         </div>
         <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
-          <SQLEditor
-            query={props.query}
-            onRunQuery={props.onRunQuery}
-            onChange={props.onChange}
-            datasource={props.datasource}
-          />
+          <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
+          {!props.hideRunQueryButtons && props?.app !== 'explore' && (
+            <div style={{ marginTop: 8 }}>
+              <RunQueryButtons
+                state={props.data?.state}
+                query={props.query}
+                onRunQuery={props.onRunQuery}
+                onCancelQuery={props.datasource.cancel}
+                isQueryValid={isQueryValid}
+              />
+            </div>
+          )}
         </div>
       </InlineSegmentGroup>
     </>

@@ -78,6 +78,56 @@ func Test_Execute(t *testing.T) {
 	}
 }
 
+func Test_QueryID(t *testing.T) {
+	tests := map[string]struct {
+		query  string
+		status string
+		found  bool
+	}{
+		"found": {
+			query:  "foo bar",
+			status: redshiftdataapiservice.StatusStringFinished,
+			found:  true,
+		},
+		"ignored": {
+			query:  "foo bar",
+			status: redshiftdataapiservice.StatusStringFailed,
+			found:  false,
+		},
+		"not found": {
+			query:  "baz",
+			status: redshiftdataapiservice.StatusStringStarted,
+			found:  false,
+		},
+	}
+	for name, tt := range tests {
+		t.Run(name, func(t *testing.T) {
+			c := &API{
+				settings: &models.RedshiftDataSourceSettings{},
+				DataClient: &redshiftclientmock.MockRedshiftClient{
+					ListStatementsOutput: &redshiftdataapiservice.ListStatementsOutput{
+						Statements: []*redshiftdataapiservice.StatementData{{
+							Id:          aws.String("foo"),
+							Status:      aws.String(tt.status),
+							QueryString: aws.String("foo bar"),
+						}},
+					},
+				},
+			}
+			found, id, err := c.GetQueryID(context.TODO(), tt.query)
+			if err != nil {
+				t.Errorf("unexpected error %v", err)
+			}
+			if found != tt.found {
+				t.Errorf("expecting found to be %v but got %v", tt.found, found)
+			}
+			if found && id != "foo" {
+				t.Errorf("expected an id to be returned")
+			}
+		})
+	}
+}
+
 func Test_Status(t *testing.T) {
 	tests := []struct {
 		description string
@@ -118,7 +168,7 @@ func Test_Status(t *testing.T) {
 			if err != nil && tt.err == "" {
 				t.Errorf("unexpected error %v", err)
 			}
-			if status.Finished != tt.finished {
+			if status != nil && status.Finished != tt.finished {
 				t.Errorf("expecting status.Finished to be %v but got %v", tt.finished, status.Finished)
 			}
 		})
@@ -252,7 +302,7 @@ func Test_GetClusters(t *testing.T) {
 		{
 			c:      errC,
 			desc:   "Error with DescribeCluster",
-			errMsg: "Boom!",
+			errMsg: "Boom",
 		},
 		{
 			c:      nilC,

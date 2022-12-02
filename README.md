@@ -48,8 +48,10 @@ Here is a minimal policy example:
         "redshift-data:DescribeTable",
         "redshift-data:GetStatementResult",
         "redshift-data:DescribeStatement",
+        "redshift-data:ListStatements",
         "redshift-data:ListSchemas",
         "redshift-data:ExecuteStatement",
+        "redshift-data:CancelStatement",
         "redshift:GetClusterCredentials",
         "redshift:DescribeClusters",
         "secretsmanager:ListSecrets"
@@ -244,3 +246,9 @@ Imported dashboards can be found in Configuration > Data Sources > select your R
 - Configure and use [Templates and variables](https://grafana.com/docs/grafana/latest/variables/).
 - Add [Transformations](https://grafana.com/docs/grafana/latest/panels/transformations/).
 - Set up alerting; refer to [Alerts overview](https://grafana.com/docs/grafana/latest/alerting/).
+
+## Async Query Data Support
+
+Async Query Data support enables an asynchronous query handling flow. With Async Query Data support enabled, queries will be handled over multiple requests (starting, checking its status, and fetching the results) instead of having a query be started and resolved over a single request. This is useful for queries that can potentially run for a long time and timeout.
+
+To enable async query data support, you need to set feature toggle `redshiftAsyncQueryDataSupport` to `true`. Here are instructions to [configure feature toggles](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#feature_toggles). You'll also need to ensure the IAM policy used by Grafana allows the following actions `redshift-data:ListStatements` and `redshift-data:CancelStatement`.

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/json"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
@@ -29,6 +30,10 @@ func (s *RedshiftFakeDatasource) Connect(config backend.DataSourceInstanceSettin
 	return &sql.DB{}, nil
 }
 
+func (s *RedshiftFakeDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (awsds.AsyncDB, error) {
+	return nil, nil
+}
+
 func (s *RedshiftFakeDatasource) Macros() sqlds.Macros {
 	return sqlds.Macros{}
 }
@@ -39,6 +44,10 @@ func (s *RedshiftFakeDatasource) Regions(ctx context.Context) ([]string, error) 
 
 func (s *RedshiftFakeDatasource) Databases(ctx context.Context, options sqlds.Options) ([]string, error) {
 	return []string{}, nil
+}
+
+func (s *RedshiftFakeDatasource) CancelQuery(ctx context.Context, options sqlds.Options, queryID string) error {
+	return nil
 }
 
 func (s *RedshiftFakeDatasource) Schemas(ctx context.Context, options sqlds.Options) ([]string, error) {

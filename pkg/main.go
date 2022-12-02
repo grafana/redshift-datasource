@@ -3,17 +3,17 @@ package main
 import (
 	"os"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
 	"github.com/grafana/redshift-datasource/pkg/redshift"
 	"github.com/grafana/redshift-datasource/pkg/redshift/routes"
-	"github.com/grafana/sqlds/v2"
 )
 
 func main() {
 	// Start listening to requests sent from Grafana.
 	s := redshift.New()
-	ds := sqlds.NewDatasource(s)
+	ds := awsds.NewAsyncAWSDatasource(s)
 	ds.Completable = s
 	ds.CustomRoutes = routes.New(s).Routes()
 
