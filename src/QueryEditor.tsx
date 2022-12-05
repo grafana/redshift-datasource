@@ -2,6 +2,7 @@ import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sd
 import { RunQueryButtons } from '@grafana/async-query-data';
 import { QueryEditorProps, SelectableValue } from '@grafana/data';
 import { InlineSegmentGroup } from '@grafana/ui';
+import { config } from '@grafana/runtime';
 import React from 'react';
 import { selectors } from 'selectors';
 import SQLEditor from './SQLEditor';
@@ -98,7 +99,9 @@ export function QueryEditor(props: Props) {
                 state={props.data?.state}
                 query={props.query}
                 onRunQuery={props.onRunQuery}
-                onCancelQuery={props.datasource.cancel}
+                onCancelQuery={
+                  config.featureToggles.redshiftAsyncQueryDataSupport ? props.datasource.cancel : undefined
+                }
                 isQueryValid={isQueryValid}
               />
             </div>
