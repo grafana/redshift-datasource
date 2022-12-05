@@ -1,12 +1,16 @@
 # Changelog
 
+## 1.4.1
+
+- Hide the stop button when async query data support is not enabled https://github.com/grafana/redshift-datasource/pull/196
+
 ## 1.4.0
 
-- Add Async Query Data Support
+- Add Async Query Data Support https://github.com/grafana/redshift-datasource/pull/177
 
 ## 1.3.3
 
-- Update @grafana dependencies to v8.5.10
+- Update @grafana dependencies to v8.5.10 https://github.com/grafana/redshift-datasource/pull/194
 
 ## 1.3.2
 
