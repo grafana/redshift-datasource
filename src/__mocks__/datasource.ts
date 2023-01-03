@@ -9,6 +9,7 @@ export const mockDatasource = new DataSource({
   name: 'Redshift Data Source',
   jsonData: {},
   access: 'direct',
+  readOnly: true,
   meta: {
     id: 'redshift-datasource',
     name: 'Redshift Data Source',
@@ -46,10 +47,8 @@ export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
     typeName: '',
     access: '',
     url: '',
-    password: '',
     user: '',
     basicAuth: false,
-    basicAuthPassword: '',
     basicAuthUser: '',
     database: '',
     isDefault: false,
