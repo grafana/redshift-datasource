@@ -9,11 +9,11 @@ To run these e2e tests:
 - first make sure you have access to the internal grafana redshift cluster
 - set up a copy of your credentials in a provisioning/datasource/aws-redshift.yaml file
 - (TODO: add test credentials to provisioning repo for symlinking)
-
+ 
 OR if you are an external grafana contributor you can create your own cluster and use the sample data provided in the 
 "Getting Started with Amazon Redshift" docs:
 https://docs.aws.amazon.com/redshift/latest/gsg/cm-dev-t-load-sample-data.html
-*/
+ */
 
 type RedshiftDatasourceConfig = {
   secureJsonData: {
@@ -46,7 +46,6 @@ e2e.scenario({
 
         e2e.flows.addDataSource({
           name: 'e2e-redshift-datasource',
-          checkHealth: false,
           expectedAlertMessage: 'Data source is working',
           form: () => {
             e2eSelectors.ConfigEditor.AuthenticationProvider.input().type('Access & secret key').type('{enter}');
@@ -118,7 +117,6 @@ e2e.scenario({
         const datasource = RedshiftProvisions[0].datasources[1];
 
         e2e.flows.addDataSource({
-          checkHealth: false,
           expectedAlertMessage: 'Data source is working',
           form: () => {
             e2eSelectors.ConfigEditor.AuthenticationProvider.input().type('Access & secret key').type('{enter}');
