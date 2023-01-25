@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0
+
+- Migrate to create-plugin by @iwysiu in https://github.com/grafana/redshift-datasource/pull/195
+- Update code coverage in workflow to latest by @idastambuk in https://github.com/grafana/redshift-datasource/pull/198
+- Update @grafana/aws-sdk by @kevinwcyu in https://github.com/grafana/redshift-datasource/pull/199
+- Update @grafana/ packages by @idastambuk in https://github.com/grafana/redshift-datasource/pull/201
+- Upgrade grafana-aws-sdk to v0.12.0 by @fridgepoet in https://github.com/grafana/redshift-datasource/pull/202
+
 ## 1.4.1
 
 - Hide the stop button when async query data support is not enabled https://github.com/grafana/redshift-datasource/pull/196
