@@ -5,6 +5,7 @@ import { getTemplateSrv, config } from '@grafana/runtime';
 import { RedshiftVariableSupport } from 'variables';
 
 import { RedshiftDataSourceOptions, RedshiftQuery } from './types';
+import { RedshiftAnnotationsSupport } from './annotations';
 
 export class DataSource extends DatasourceWithAsyncBackend<RedshiftQuery, RedshiftDataSourceOptions> {
   constructor(instanceSettings: DataSourceInstanceSettings<RedshiftDataSourceOptions>) {
@@ -13,7 +14,7 @@ export class DataSource extends DatasourceWithAsyncBackend<RedshiftQuery, Redshi
   }
 
   // This will support annotation queries for 7.2+
-  annotations = {};
+  annotations = RedshiftAnnotationsSupport;
 
   filterQuery = filterSQLQuery;
 
