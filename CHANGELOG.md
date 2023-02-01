@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.6.0
+
+- Remove run and cancel buttons in annotations editor in https://github.com/grafana/redshift-datasource/pull/206 
+
 ## 1.5.0
 
 - Migrate to create-plugin by @iwysiu in https://github.com/grafana/redshift-datasource/pull/195
