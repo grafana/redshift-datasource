@@ -126,13 +126,14 @@ func Test_convertRow(t *testing.T) {
 		{
 			name: "numeric type float4",
 			metadata: &redshiftdataapiservice.ColumnMetadata{
+				Name:     aws.String("other"),
 				TypeName: aws.String(REDSHIFT_FLOAT4),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: aws.String("1.1"),
+				DoubleValue: aws.Float64(1.1),
 			},
 			expectedType:  "float64",
-			expectedValue: "1.100000023841858",
+			expectedValue: "1.1",
 		},
 		{
 			name: "numeric type numeric",
@@ -174,7 +175,7 @@ func Test_convertRow(t *testing.T) {
 				TypeName: aws.String(REDSHIFT_BOOL),
 			},
 			data: &redshiftdataapiservice.Field{
-				StringValue: aws.String("false"),
+				BooleanValue: aws.Bool(false),
 			},
 			expectedType:  "bool",
 			expectedValue: "false",
