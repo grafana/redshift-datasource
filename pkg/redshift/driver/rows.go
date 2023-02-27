@@ -221,13 +221,13 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			}
 		case REDSHIFT_INT8:
 			ret[i] = *curr.LongValue
-		case REDSHIFT_NUMERIC, REDSHIFT_FLOAT:
+		case REDSHIFT_NUMERIC:
 			v, err := strconv.ParseFloat(*curr.StringValue, 64)
 			if err != nil {
 				return err
 			}
 			ret[i] = v
-		case REDSHIFT_FLOAT4, REDSHIFT_FLOAT8:
+		case REDSHIFT_FLOAT, REDSHIFT_FLOAT4, REDSHIFT_FLOAT8:
 			if *col.Name == "time" {
 				ret[i] = time.Unix(int64(*curr.DoubleValue), 0).UTC()
 			} else {
