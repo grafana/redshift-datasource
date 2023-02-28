@@ -221,29 +221,20 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			}
 		case REDSHIFT_INT8:
 			ret[i] = *curr.LongValue
-		case REDSHIFT_NUMERIC, REDSHIFT_FLOAT, REDSHIFT_FLOAT4:
-			bitSize := 64
-			if typeName == REDSHIFT_FLOAT4 {
-				bitSize = 32
-			}
-			v, err := strconv.ParseFloat(*curr.StringValue, bitSize)
+		case REDSHIFT_NUMERIC:
+			v, err := strconv.ParseFloat(*curr.StringValue, 64)
 			if err != nil {
 				return err
 			}
 			ret[i] = v
-		case REDSHIFT_FLOAT8:
+		case REDSHIFT_FLOAT, REDSHIFT_FLOAT4, REDSHIFT_FLOAT8:
 			if *col.Name == "time" {
 				ret[i] = time.Unix(int64(*curr.DoubleValue), 0).UTC()
 			} else {
 				ret[i] = *curr.DoubleValue
 			}
 		case REDSHIFT_BOOL:
-			// don't know why boolean values are not passed as curr.BooleanValue
-			boolValue, err := strconv.ParseBool(*curr.StringValue)
-			if err != nil {
-				return err
-			}
-			ret[i] = boolValue
+			ret[i] = *curr.BooleanValue
 
 		case REDSHIFT_CHARACTER,
 			REDSHIFT_VARCHAR,
