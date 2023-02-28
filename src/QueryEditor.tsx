@@ -1,113 +1,38 @@
-import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sdk';
-import { RunQueryButtons } from '@grafana/async-query-data';
-import { QueryEditorProps, SelectableValue } from '@grafana/data';
-import { InlineSegmentGroup } from '@grafana/ui';
+import React, { useCallback, useEffect, useState } from 'react';
 import { config } from '@grafana/runtime';
-import React from 'react';
-import { selectors } from 'selectors';
-import SQLEditor from './SQLEditor';
-
+import { QueryEditorProps } from '@grafana/data';
+import { QueryEditorHeader } from '@grafana/aws-sdk';
+import { RedshiftDataSourceOptions, RedshiftQuery } from './types';
 import { DataSource } from './datasource';
-import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
+import { QueryEditorForm } from './QueryEditorForm';
 
-type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions> & {
-  hideRunQueryButtons?: boolean;
-};
+export function QueryEditor(props: QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>) {
+  const [dataIsStale, setDataIsStale] = useState(false);
+  const { onChange } = props;
 
-type QueryProperties = 'schema' | 'table' | 'column';
+  useEffect(() => {
+    setDataIsStale(false);
+  }, [props.data]);
 
-function isQueryValid(query: RedshiftQuery) {
-  return !!query.rawSQL;
-}
-
-export function QueryEditor(props: Props) {
-  const fetchSchemas = async () => {
-    const schemas: string[] = await props.datasource.getResource('schemas');
-    return schemas.map((schema) => ({ label: schema, value: schema })).concat({ label: '-- remove --', value: '' });
-  };
-
-  const fetchTables = async () => {
-    const tables: string[] = await props.datasource.postResource('tables', {
-      schema: props.query.schema || '',
-    });
-    return tables.map((table) => ({ label: table, value: table })).concat({ label: '-- remove --', value: '' });
-  };
-
-  const fetchColumns = async () => {
-    const columns: string[] = await props.datasource.postResource('columns', {
-      schema: props.query.schema,
-      table: props.query.table,
-    });
-    return columns.map((column) => ({ label: column, value: column })).concat({ label: '-- remove --', value: '' });
-  };
-
-  const onChange = (prop: QueryProperties) => (e: SelectableValue<string> | null) => {
-    const newQuery = { ...props.query };
-    const value = e?.value;
-    newQuery[prop] = value;
-    props.onChange(newQuery);
-  };
+  const onChangeInternal = useCallback(
+    (query: RedshiftQuery) => {
+      setDataIsStale(true);
+      onChange(query);
+    },
+    [onChange]
+  );
 
   return (
     <>
-      <InlineSegmentGroup>
-        <div className="gf-form-group">
-          <h6>Macros</h6>
-          <ResourceSelector
-            onChange={onChange('schema')}
-            fetch={fetchSchemas}
-            value={props.query.schema || null}
-            tooltip="Use the selected schema with the $__schema macro"
-            label={selectors.components.ConfigEditor.schema.input}
-            data-testid={selectors.components.ConfigEditor.schema.testID}
-            labelWidth={11}
-            className="width-12"
-          />
-          <ResourceSelector
-            onChange={onChange('table')}
-            fetch={fetchTables}
-            value={props.query.table || null}
-            dependencies={[props.query.schema]}
-            tooltip="Use the selected table with the $__table macro"
-            label={selectors.components.ConfigEditor.table.input}
-            data-testid={selectors.components.ConfigEditor.table.testID}
-            labelWidth={11}
-            className="width-12"
-          />
-          <ResourceSelector
-            onChange={onChange('column')}
-            fetch={fetchColumns}
-            value={props.query.column || null}
-            dependencies={[props.query.table]}
-            tooltip="Use the selected column with the $__column macro"
-            label={selectors.components.ConfigEditor.column.input}
-            data-testid={selectors.components.ConfigEditor.column.testID}
-            labelWidth={11}
-            className="width-12"
-          />
-          <h6>Frames</h6>
-          <FormatSelect query={props.query} options={SelectableFormatOptions} onChange={props.onChange} />
-          {props.query.format === FormatOptions.TimeSeries && (
-            <FillValueSelect query={props.query} onChange={props.onChange} />
-          )}
-        </div>
-        <div style={{ minWidth: '400px', marginLeft: '10px', flex: 1 }}>
-          <SQLEditor query={props.query} onChange={props.onChange} datasource={props.datasource} />
-          {!props.hideRunQueryButtons && props?.app !== 'explore' && (
-            <div style={{ marginTop: 8 }}>
-              <RunQueryButtons
-                state={props.data?.state}
-                query={props.query}
-                onRunQuery={props.onRunQuery}
-                onCancelQuery={
-                  config.featureToggles.redshiftAsyncQueryDataSupport ? props.datasource.cancel : undefined
-                }
-                isQueryValid={isQueryValid}
-              />
-            </div>
-          )}
-        </div>
-      </InlineSegmentGroup>
+      {props?.app !== 'explore' && (
+        <QueryEditorHeader<DataSource, RedshiftQuery, RedshiftDataSourceOptions>
+          {...props}
+          enableRunButton={dataIsStale && !!props.query.rawSQL}
+          showAsyncQueryButtons={config.featureToggles.redshiftAsyncQueryDataSupport}
+          cancel={config.featureToggles.redshiftAsyncQueryDataSupport ? props.datasource.cancel : undefined}
+        />
+      )}
+      <QueryEditorForm {...props} onChange={onChangeInternal} />
     </>
   );
 }
