@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.7.0
+
+- Fix converting rows with FLOAT, FLOAT4, and BOOLEAN by @iwysiu in [#213](https://github.com/grafana/redshift-datasource/pull/213)
+- Add header component to queryeditor by @idastambuk in [#214](https://github.com/grafana/redshift-datasource/pull/214)
+- Use organization ISSUE_COMMANDS_TOKEN with reduced scope by @iwysiu in [#210](https://github.com/grafana/redshift-datasource/pull/210)
+
 ## 1.6.0
 
 - Remove run and cancel buttons in annotations editor in https://github.com/grafana/redshift-datasource/pull/206 
