@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.0
+
+- Update backend dependencies
+
 ## 1.7.0
 
 - Fix converting rows with FLOAT, FLOAT4, and BOOLEAN by @iwysiu in [#213](https://github.com/grafana/redshift-datasource/pull/213)
