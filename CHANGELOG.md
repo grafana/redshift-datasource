@@ -1,4 +1,5 @@
 # Changelog
+
  ## 1.8.1
 
 - Update async-query-data with a fix for errors (#220) [#220](https://github.com/grafana/redshift-datasource/pull/220)
