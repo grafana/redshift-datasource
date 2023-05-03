@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0
+
+- Update grafana-aws-sdk version
+- Security: Upgrade Go in build process to 1.20.4
+
 ## 1.8.1
 
 - Update async-query-data with a fix for errors in [#220](https://github.com/grafana/redshift-datasource/pull/220)
