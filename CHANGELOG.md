@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.9.0
+## 1.8.2
 
 - Update grafana-aws-sdk version to include new region in opt-in region list https://github.com/grafana/grafana-aws-sdk/pull/80 
 - Security: Upgrade Go in build process to 1.20.4
