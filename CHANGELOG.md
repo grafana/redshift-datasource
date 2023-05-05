@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.8.2
+
+- Update grafana-aws-sdk version to include new region in opt-in region list https://github.com/grafana/grafana-aws-sdk/pull/80 
+- Security: Upgrade Go in build process to 1.20.4
+- Update grafana-plugin-sdk-go version to 0.161.0 to avoid a potential http header problem. https://github.com/grafana/athena-datasource/issues/233
+
 ## 1.8.1
 
 - Update async-query-data with a fix for errors in [#220](https://github.com/grafana/redshift-datasource/pull/220)
