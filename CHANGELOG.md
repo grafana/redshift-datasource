@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.3
+
+- Upgrade grafana/aws-sdk-react to 0.0.46 https://github.com/grafana/redshift-datasource/pull/81
+
 ## 1.8.2
 
 - Update grafana-aws-sdk version to include new region in opt-in region list https://github.com/grafana/grafana-aws-sdk/pull/80 
