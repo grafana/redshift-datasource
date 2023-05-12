@@ -1,4 +1,4 @@
-## Grafana 10 breaking change: update Redshift datasource plugin to >=2.9.3
+## Grafana 10 breaking change: update Redshift datasource plugin to >=1.8.3
 
 Grafana 10.0.0 was shipped with the new React 18 upgrade. Changes in batching of state updates in React 18 cause a bug in the query editor in Redshift versions <=1.8.2 If you’re using Grafana@>=10.0.0, please update your plugin to version 1.8.3 or higher in your Grafana instance management console.
 
