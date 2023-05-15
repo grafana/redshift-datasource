@@ -1,8 +1,12 @@
 # Changelog
 
+## 1.8.4
+
+- Upgrade Readme.md re: Grafana 10 https://github.com/grafana/redshift-datasource/pull/224
+
 ## 1.8.3
 
-- Upgrade grafana/aws-sdk-react to 0.0.46 https://github.com/grafana/redshift-datasource/pull/81
+- Upgrade grafana/aws-sdk-react to 0.0.46 https://github.com/grafana/redshift-datasource/pull/223
 
 ## 1.8.2
 
