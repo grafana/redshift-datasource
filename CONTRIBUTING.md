@@ -50,6 +50,25 @@ Make sure you have the following dependencies installed first:
 
 Checkout the guide available at https://grafana.com/docs/grafana/latest/developers/plugins/development-with-local-grafana/.
 
+## Setting up a go workspace
+
+Setting up go workspace can be helpful when making changes across modules like `grafana-aws-sdk` and `sqlds` and wanting to see those changes reflected in the Redshift data source.
+
+From https://go.dev/blog/get-familiar-with-workspaces:
+> Workspaces in Go 1.18 let you work on multiple modules simultaneously without having to edit go.mod files for each module. Each module within a workspace is treated as a main module when resolving dependencies.
+>
+> Previously, to add a feature to one module and use it in another module, you needed to either publish the changes to the first module, or edit the go.mod file of the dependent module with a replace directive for your local, unpublished module changes. In order to publish without errors, you had to remove the replace directive from the dependent module’s go.mod file after you published the local changes to the first module.
+
+1. Make a new directory somewhere, for example `redshift_workspace`
+2. `cd redshift_workspace`
+3. `git clone https://github.com/grafana/redshift-datasource.git`
+4. `git clone https://github.com/grafana/grafana-aws-sdk`
+5. `git clone https://github.com/grafana/sqlds`
+6. `go work init ./redshift-datasource ./grafana-aws-sdk ./sqlds`
+7. Make modifications in any of these directories and build the backend in `redshift-datasource` with `mage` as usual. The changes in these directories will be taken into account.
+
+If you build Grafana locally, you can for example symlink `redshift-datasource` to your clone of `github.com/grafana/grafana`'s `data/plugins` directory, e.g. `cd <path to your Grafana repo>/github.com/grafana/grafana/data/plugins && ln -s <path to your workspaces>/redshift_workspace/redshift-datasource redshift-datasource`
+
 ## Build a release for the Redshift data source plugin
 
 You need to have commit rights to the GitHub repository to publish a release.
