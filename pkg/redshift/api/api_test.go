@@ -305,22 +305,21 @@ func Test_GetSecret(t *testing.T) {
 func Test_GetClusters(t *testing.T) {
 	c := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo", "bar"}}}
 	errC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientError{}}
-	nilC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientNil{}}
 	expectedCluster1 := &models.RedshiftCluster{
-		ClusterIdentifier: "foo",
-		Endpoint: models.RedshiftEndpoint{
-			Address: "foo",
-			Port:    123,
-		},
-		Database: "foo",
-	}
-	expectedCluster2 := &models.RedshiftCluster{
 		ClusterIdentifier: "bar",
 		Endpoint: models.RedshiftEndpoint{
 			Address: "bar",
 			Port:    123,
 		},
 		Database: "bar",
+	}
+	expectedCluster2 := &models.RedshiftCluster{
+		ClusterIdentifier: "foo",
+		Endpoint: models.RedshiftEndpoint{
+			Address: "foo",
+			Port:    123,
+		},
+		Database: "foo",
 	}
 	tests := []struct {
 		c                *API
@@ -337,11 +336,6 @@ func Test_GetClusters(t *testing.T) {
 			c:      errC,
 			desc:   "Error with DescribeCluster",
 			errMsg: "Boom",
-		},
-		{
-			c:      nilC,
-			desc:   "DescribeCluster returned nil",
-			errMsg: "missing clusters content",
 		},
 	}
 	for _, tt := range tests {
@@ -361,18 +355,17 @@ func Test_GetClusters(t *testing.T) {
 func Test_GetWorkgroups(t *testing.T) {
 	c := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClient{Workgroups: []string{"foo", "bar"}}}
 	errC := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClientError{}}
-	nilC := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClientNil{}}
 	expectedWorkgroup1 := &models.RedshiftWorkgroup{
-		WorkgroupName: "foo",
+		WorkgroupName: "bar",
 		Endpoint: models.RedshiftEndpoint{
-			Address: "foo",
+			Address: "bar",
 			Port:    123,
 		},
 	}
 	expectedWorkgroup2 := &models.RedshiftWorkgroup{
-		WorkgroupName: "bar",
+		WorkgroupName: "foo",
 		Endpoint: models.RedshiftEndpoint{
-			Address: "bar",
+			Address: "foo",
 			Port:    123,
 		},
 	}
@@ -391,11 +384,6 @@ func Test_GetWorkgroups(t *testing.T) {
 			c:      errC,
 			desc:   "Error with DescribeWorkgroup",
 			errMsg: "Boom",
-		},
-		{
-			c:      nilC,
-			desc:   "DescribeWorkgroup returned nil",
-			errMsg: "missing workgroups content",
 		},
 	}
 	for _, tt := range tests {

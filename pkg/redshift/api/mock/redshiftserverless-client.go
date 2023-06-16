@@ -31,10 +31,6 @@ type MockRedshiftServerlessClientError struct {
 	redshiftserverlessiface.RedshiftServerlessAPI
 }
 
-type MockRedshiftServerlessClientNil struct {
-	redshiftserverlessiface.RedshiftServerlessAPI
-}
-
 func (m *MockRedshiftServerlessClient) ExecuteStatementWithContext(ctx aws.Context, input *redshiftdataapiservice.ExecuteStatementInput, opts ...request.Option) (*redshiftdataapiservice.ExecuteStatementOutput, error) {
 	return m.ExecutionResult, nil
 }
@@ -105,8 +101,4 @@ func (m *MockRedshiftServerlessClient) ListWorkgroups(input *redshiftserverless.
 
 func (m *MockRedshiftServerlessClientError) ListWorkgroups(input *redshiftserverless.ListWorkgroupsInput) (*redshiftserverless.ListWorkgroupsOutput, error) {
 	return nil, fmt.Errorf("Boom")
-}
-
-func (m *MockRedshiftServerlessClientNil) ListWorkgroups(input *redshiftserverless.ListWorkgroupsInput) (*redshiftserverless.ListWorkgroupsOutput, error) {
-	return nil, nil
 }
