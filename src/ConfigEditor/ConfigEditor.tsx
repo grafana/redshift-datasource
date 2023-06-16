@@ -250,6 +250,7 @@ export function ConfigEditor(props: Props) {
         {...props}
         label={selectors.components.ConfigEditor.UseServerless.input}
         labelWidth={28}
+        tooltip={'If this is a Datasource to query Redshift Serverless.'}
         style={{ alignItems: 'center' }}
       >
         <Switch
@@ -326,6 +327,7 @@ export function ConfigEditor(props: Props) {
         {...props}
         label={selectors.components.ConfigEditor.WithEvent.input}
         labelWidth={28}
+        tooltip={'To send query execution results to Amazon EventBridge for monitoring purpose.'}
         style={{ alignItems: 'center' }}
       >
         <Switch
