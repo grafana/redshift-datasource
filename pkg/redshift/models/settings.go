@@ -31,11 +31,19 @@ type RedshiftCluster struct {
 	Database          string           `json:"database"`
 }
 
+type RedshiftWorkgroup struct {
+	WorkgroupName string           `json:"workgroupName"`
+	Endpoint      RedshiftEndpoint `json:"endpoint"`
+	Database      string           `json:"database"`
+}
+
 type RedshiftDataSourceSettings struct {
 	awsds.AWSDatasourceSettings
 	Config            backend.DataSourceInstanceSettings
 	ClusterIdentifier string `json:"clusterIdentifier"`
+	WorkgroupName     string `json:"workgroupName"`
 	Database          string `json:"database"`
+	UseServerless     bool   `json:"useServerless"`
 	UseManagedSecret  bool   `json:"useManagedSecret"`
 	WithEvent         bool   `json:"withEvent"`
 	DBUser            string `json:"dbUser"`

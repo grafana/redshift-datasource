@@ -11,10 +11,10 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
     <Label
       description={
         useManagedSecret ? (
-          <div style={{ marginTop: '10px', marginBottom: '10px' }}>
-            Use a stored secret to authenticate access.{' '}
+          <div style={{ marginTop: '10px', marginBottom: '10px', minWidth: '670px' }}>
+            Use database username and password stored in Secrets Manager.{' '}
             <a
-              href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/intro.html"
+              href="https://docs.aws.amazon.com/redshift/latest/mgmt/data-api-access.html#data-api-secrets"
               target="_blank"
               rel="noreferrer"
             >
@@ -23,8 +23,7 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
           </div>
         ) : (
           <div style={{ marginTop: '10px', marginBottom: '10px', minWidth: '670px' }}>
-            Use the <code>GetClusterCredentials</code> IAM permission and your database user to generate temporary
-            access credentials.{' '}
+            Use the IAM permission to generate temporary database username and password.{' '}
             <a
               href="https://docs.aws.amazon.com/redshift/latest/mgmt/generating-user-credentials.html"
               target="_blank"
@@ -38,8 +37,8 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
     >
       <RadioButtonGroup
         options={[
-          { label: 'Temporary credentials', value: false },
           { label: 'AWS Secrets Manager', value: true },
+          { label: 'Temporary credentials', value: false },
         ]}
         value={useManagedSecret}
         onChange={onChangeAuthType}

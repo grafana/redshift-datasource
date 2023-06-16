@@ -22,8 +22,41 @@ func Test_apiInput(t *testing.T) {
 		expected    apiInput
 	}{
 		{
-			"using temporary creds",
+			"serverless using temporary creds",
 			&models.RedshiftDataSourceSettings{
+				UseServerless:    true,
+				UseManagedSecret: false,
+				WorkgroupName:    "workgroup",
+				Database:         "db",
+				// ignored
+				DBUser: "user",
+			},
+			apiInput{
+				WorkgroupName: aws.String("workgroup"),
+				Database:      aws.String("db"),
+			},
+		},
+		{
+			"serverless using managed secret",
+			&models.RedshiftDataSourceSettings{
+				UseServerless:    true,
+				UseManagedSecret: true,
+				WorkgroupName:    "workgroup",
+				Database:         "db",
+				ManagedSecret:    models.ManagedSecret{ARN: "arn:..."},
+				// ignored
+				DBUser: "user",
+			},
+			apiInput{
+				WorkgroupName: aws.String("workgroup"),
+				Database:      aws.String("db"),
+				SecretARN:     aws.String("arn:..."),
+			},
+		},
+		{
+			"provisioned using temporary creds",
+			&models.RedshiftDataSourceSettings{
+				UseServerless:     false,
 				UseManagedSecret:  false,
 				ClusterIdentifier: "cluster",
 				Database:          "db",
@@ -36,8 +69,9 @@ func Test_apiInput(t *testing.T) {
 			},
 		},
 		{
-			"using managed secret",
+			"provisioned using managed secret",
 			&models.RedshiftDataSourceSettings{
+				UseServerless:     false,
 				UseManagedSecret:  true,
 				ClusterIdentifier: "cluster",
 				Database:          "db",
@@ -318,6 +352,60 @@ func Test_GetClusters(t *testing.T) {
 				assert.Equal(t, tt.expectedClusters, clusters)
 			} else {
 				assert.Nil(t, clusters)
+				assert.EqualError(t, err, tt.errMsg)
+			}
+		})
+	}
+}
+
+func Test_GetWorkgroups(t *testing.T) {
+	c := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClient{Workgroups: []string{"foo", "bar"}}}
+	errC := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClientError{}}
+	nilC := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClientNil{}}
+	expectedWorkgroup1 := &models.RedshiftWorkgroup{
+		WorkgroupName: "foo",
+		Endpoint: models.RedshiftEndpoint{
+			Address: "foo",
+			Port:    123,
+		},
+	}
+	expectedWorkgroup2 := &models.RedshiftWorkgroup{
+		WorkgroupName: "bar",
+		Endpoint: models.RedshiftEndpoint{
+			Address: "bar",
+			Port:    123,
+		},
+	}
+	tests := []struct {
+		c                  *API
+		desc               string
+		errMsg             string
+		expectedWorkgroups []models.RedshiftWorkgroup
+	}{
+		{
+			c:                  c,
+			desc:               "Happy Path",
+			expectedWorkgroups: []models.RedshiftWorkgroup{*expectedWorkgroup1, *expectedWorkgroup2},
+		},
+		{
+			c:      errC,
+			desc:   "Error with DescribeWorkgroup",
+			errMsg: "Boom",
+		},
+		{
+			c:      nilC,
+			desc:   "DescribeWorkgroup returned nil",
+			errMsg: "missing workgroups content",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.desc, func(t *testing.T) {
+			workgroups, err := tt.c.Workgroups()
+			if tt.errMsg == "" {
+				assert.NoError(t, err)
+				assert.Equal(t, tt.expectedWorkgroups, workgroups)
+			} else {
+				assert.Nil(t, workgroups)
 				assert.EqualError(t, err, tt.errMsg)
 			}
 		})

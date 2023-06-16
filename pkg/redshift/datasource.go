@@ -28,6 +28,7 @@ type RedshiftDatasourceIface interface {
 	Secrets(ctx context.Context, options sqlds.Options) ([]models.ManagedSecret, error)
 	Secret(ctx context.Context, options sqlds.Options) (*models.RedshiftSecret, error)
 	Clusters(ctx context.Context, options sqlds.Options) ([]models.RedshiftCluster, error)
+	Workgroups(ctx context.Context, options sqlds.Options) ([]models.RedshiftWorkgroup, error)
 }
 
 type RedshiftDatasource struct {
@@ -167,4 +168,12 @@ func (s *RedshiftDatasource) Clusters(ctx context.Context, options sqlds.Options
 		return nil, err
 	}
 	return api.Clusters()
+}
+
+func (s *RedshiftDatasource) Workgroups(ctx context.Context, options sqlds.Options) ([]models.RedshiftWorkgroup, error) {
+	api, err := s.getApi(ctx, options)
+	if err != nil {
+		return nil, err
+	}
+	return api.Workgroups()
 }

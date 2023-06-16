@@ -14,9 +14,21 @@ export const Components = {
     DefaultRegion: {
       input: 'Default Region',
     },
+    UseServerless: {
+      input: 'Serverless',
+      testID: 'data-testid useServerless',
+    },
     ManagedSecret: {
       input: 'Managed Secret',
       testID: 'data-testid managedSecret',
+    },
+    Workgroup: {
+      input: 'Workgroup',
+      testID: 'data-testid workgroup',
+    },
+    WorkgroupText: {
+      input: 'Workgroup',
+      testID: 'data-testid workgroup text',
     },
     ClusterID: {
       input: 'Cluster Identifier',

@@ -11,25 +11,29 @@ This topic explains options, variables, querying, and other options specific to 
 
 ## Configure the data source in Grafana
 
-To access data source settings, hover your mouse over the **Configuration** (gear) icon, then click **Data Sources**, and then click the AWS Redshift data source.
+To access data source settings, hover your mouse over the **Configuration** (gear) icon, then click **Data Sources**, and then click the Amazon Redshift data source.
 
-| Name                         | Description                                                                                                             |
-| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| `Name`                       | The data source name. This is how you refer to the data source in panels and queries.                                   |
-| `Default`                    | Default data source means that it will be pre-selected for new panels.                                                  |
-| `Auth Provider`              | Specify the provider to get credentials.                                                                                |
-| `Access Key ID`              | If `Access & secret key` is selected, specify the Access Key of the security credentials to use.                        |
-| `Secret Access Key`          | If `Access & secret key` is selected, specify the Secret Key of the security credentials to use.                        |
-| `Credentials Profile Name`   | Specify the name of the profile to use (if you use `~/.aws/credentials` file), leave blank for default.                 |
-| `Assume Role Arn` (optional) | Specify the ARN of the role to assume.                                                                                  |
-| `External ID` (optional)     | If you are assuming a role in another account, that has been created with an external ID, specify the external ID here. |
-| `Endpoint` (optional)        | Optionally, specify a custom endpoint for the service.                                                                  |
-| `Default Region`             | Region in which the cluster is deployed.                                                                                |
-| `Authentication`             | To authenticate with AWS Redshift you can use AWS temporary credentials or AWS Secrets Manager.                         |
-| `Managed Secret`             | When using AWS Secrets Manager, select the secret containing the credentials to access the database.                    |
-| `Cluster Identifier`         | Redshift Cluster to use (automatically set if using AWS Secrets Manager).                                               |
-| `DB User`                    | User of the database (automatically set if using AWS Secrets Manager).                                                  |
-| `Database`                   | Name of the database within the cluster.                                                                                |
+| Name                                | Description                                                                                                             |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| `Name`                              | The data source name. This is how you refer to the data source in panels and queries.                                   |
+| `Default`                           | Default data source means that it will be pre-selected for new panels.                                                  |
+| `Authentication Provider`           | Specify the provider to get credentials.                                                                                |
+| `Access Key ID`                     | If `Access & secret key` is selected, specify the Access Key of the security credentials to use.                        |
+| `Secret Access Key`                 | If `Access & secret key` is selected, specify the Secret Key of the security credentials to use.                        |
+| `Credentials Profile Name`          | Specify the name of the profile to use (if you use `~/.aws/credentials` file), leave blank for default.                 |
+| `Assume Role Arn` (optional)        | Specify the ARN of the role to assume.                                                                                  |
+| `External ID` (optional)            | If you are assuming a role in another account, that has been created with an external ID, specify the external ID here. |
+| `Endpoint` (optional)               | Optionally, specify a custom endpoint for the service.                                                                  |
+| `Default Region`                    | Region in which the cluster is deployed.                                                                                |
+| `AWS Secrets Manager`               | To authenticate with Amazon Redshift using AWS Secrets Manager.                                                         |
+| `Temporary credentials`             | To authenticate with Amazon Redshift using temporary database credentials.                                              |
+| `Serverless`                        | To use a Redshift Serverless workgroup.                                                                                   |
+| `Cluster Identifier`                | Redshift Provisioned Cluster to use (automatically set if using AWS Secrets Manager).                                   |
+| `Workgroup`                         | Redshift Serverless Workgroup to use.                                                                                   |
+| `Managed Secret`                    | When using AWS Secrets Manager, select the secret containing the credentials to access the database.                    |
+| `Database User`                     | User of the database. Automatically set if using AWS Secrets Manager.                                                   |
+| `Database`                          | Name of the database within the cluster or workgroup.                                                                                |
+| `Send events to Amazon EventBridge` | To send Data API events to Amazon EventBridge for monitoring purpose.                                                   |
 
 ## Authentication
 
@@ -59,6 +63,8 @@ Here is a minimal policy example:
         "redshift-data:CancelStatement",
         "redshift:GetClusterCredentials",
         "redshift:DescribeClusters",
+        "redshift-serverless:ListWorkgroups",
+        "redshift-serverless:GetCredentials",
         "secretsmanager:ListSecrets"
       ],
       "Resource": "*"
