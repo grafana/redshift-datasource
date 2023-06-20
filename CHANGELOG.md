@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.9.0
+
+- Upgrade @grafana/aws-sdk to v0.0.47 to support numeric values when applying template variables to SQL queries
+- Fix async queries and expressions https://github.com/grafana/redshift-datasource/pull/225
+
 ## 1.8.4
 
 - Upgrade Readme.md re: Grafana 10 https://github.com/grafana/redshift-datasource/pull/224
@@ -10,7 +15,7 @@
 
 ## 1.8.2
 
-- Update grafana-aws-sdk version to include new region in opt-in region list https://github.com/grafana/grafana-aws-sdk/pull/80 
+- Update grafana-aws-sdk version to include new region in opt-in region list https://github.com/grafana/grafana-aws-sdk/pull/80
 - Security: Upgrade Go in build process to 1.20.4
 - Update grafana-plugin-sdk-go version to 0.161.0 to avoid a potential http header problem. https://github.com/grafana/athena-datasource/issues/233
 
@@ -30,7 +35,7 @@
 
 ## 1.6.0
 
-- Remove run and cancel buttons in annotations editor in https://github.com/grafana/redshift-datasource/pull/206 
+- Remove run and cancel buttons in annotations editor in https://github.com/grafana/redshift-datasource/pull/206
 
 ## 1.5.0
 
