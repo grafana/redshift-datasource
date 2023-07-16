@@ -30,7 +30,7 @@ To access data source settings, hover your mouse over the **Configuration** (gea
 | `Serverless`                        | To use a Redshift Serverless workgroup.                                                                                   |
 | `Cluster Identifier`                | Redshift Provisioned Cluster to use (automatically set if using AWS Secrets Manager).                                   |
 | `Workgroup`                         | Redshift Serverless Workgroup to use.                                                                                   |
-| `Managed Secret`                    | When using AWS Secrets Manager, select the secret containing the credentials to access the database.                    |
+| `Managed Secret`                    | When using AWS Secrets Manager, select the secret containing the credentials to access the database. Note that Provisioned and Serverless stores credentials in a different format. Refer to [Storing database credentials in AWS Secrets Manager](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api-access.html#data-api-secrets) for instructions. |
 | `Database User`                     | User of the database. Automatically set if using AWS Secrets Manager.                                                   |
 | `Database`                          | Name of the database within the cluster or workgroup.                                                                                |
 | `Send events to Amazon EventBridge` | To send Data API events to Amazon EventBridge for monitoring purpose.                                                   |
