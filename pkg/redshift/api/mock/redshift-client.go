@@ -31,6 +31,10 @@ type MockRedshiftClientError struct {
 	redshiftiface.RedshiftAPI
 }
 
+type MockRedshiftClientNil struct {
+	redshiftiface.RedshiftAPI
+}
+
 func (m *MockRedshiftClient) ExecuteStatementWithContext(ctx aws.Context, input *redshiftdataapiservice.ExecuteStatementInput, opts ...request.Option) (*redshiftdataapiservice.ExecuteStatementOutput, error) {
 	return m.ExecutionResult, nil
 }
@@ -102,4 +106,7 @@ func (m *MockRedshiftClient) DescribeClusters(input *redshift.DescribeClustersIn
 
 func (m *MockRedshiftClientError) DescribeClusters(input *redshift.DescribeClustersInput) (*redshift.DescribeClustersOutput, error) {
 	return nil, fmt.Errorf("Boom")
+}
+func (m *MockRedshiftClientNil) DescribeClusters(input *redshift.DescribeClustersInput) (*redshift.DescribeClustersOutput, error) {
+	return nil, nil
 }

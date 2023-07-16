@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"sort"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -267,7 +266,6 @@ func (c *API) Databases(ctx aws.Context, options sqlds.Options) ([]string, error
 			isFinished = true
 		}
 	}
-	sort.Strings(res)
 	return res, nil
 }
 
@@ -297,7 +295,6 @@ func (c *API) Schemas(ctx aws.Context, options sqlds.Options) ([]string, error) 
 			isFinished = true
 		}
 	}
-	sort.Strings(res)
 	return res, nil
 }
 
@@ -333,7 +330,6 @@ func (c *API) Tables(ctx aws.Context, options sqlds.Options) ([]string, error) {
 			isFinished = true
 		}
 	}
-	sort.Strings(res)
 	return res, nil
 }
 
@@ -366,7 +362,6 @@ func (c *API) Columns(ctx aws.Context, options sqlds.Options) ([]string, error) 
 			isFinished = true
 		}
 	}
-	sort.Strings(res)
 	return res, nil
 }
 
@@ -402,7 +397,6 @@ func (c *API) Secrets(ctx aws.Context) ([]models.ManagedSecret, error) {
 			})
 		}
 	}
-	sort.Slice(redshiftSecrets, func(i, j int) bool { return redshiftSecrets[i].Name < redshiftSecrets[j].Name })
 	return redshiftSecrets, nil
 }
 
@@ -431,6 +425,9 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 	if err != nil {
 		return nil, err
 	}
+	if out == nil {
+		return nil, fmt.Errorf("missing clusters content")
+	}
 	res := []models.RedshiftCluster{}
 	for _, r := range out.Clusters {
 		if r != nil && r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil {
@@ -444,7 +441,6 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 			})
 		}
 	}
-	sort.Slice(res, func(i, j int) bool { return res[i].ClusterIdentifier < res[j].ClusterIdentifier })
 	return res, nil
 }
 
@@ -452,6 +448,9 @@ func (c *API) Workgroups() ([]models.RedshiftWorkgroup, error) {
 	out, err := c.ServerlessManagementClient.ListWorkgroups(&redshiftserverless.ListWorkgroupsInput{})
 	if err != nil {
 		return nil, err
+	}
+	if out == nil {
+		return nil, fmt.Errorf("missing workgroups content")
 	}
 	res := []models.RedshiftWorkgroup{}
 	for _, r := range out.Workgroups {
@@ -465,6 +464,5 @@ func (c *API) Workgroups() ([]models.RedshiftWorkgroup, error) {
 			})
 		}
 	}
-	sort.Slice(res, func(i, j int) bool { return res[i].WorkgroupName < res[j].WorkgroupName })
 	return res, nil
 }
