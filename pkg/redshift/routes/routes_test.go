@@ -8,12 +8,12 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/grafana/redshift-datasource/pkg/redshift/mock"
+	"github.com/grafana/redshift-datasource/pkg/redshift/fake"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/stretchr/testify/assert"
 )
 
-var ds = &mock.RedshiftMockDatasource{
+var ds = &fake.RedshiftFakeDatasource{
 	SecretList: []models.ManagedSecret{
 		{Name: "secret1", ARN: "arn:secret1"},
 	},
