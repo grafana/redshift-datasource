@@ -23,7 +23,23 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
           </div>
         ) : (
           <div style={{ marginTop: '10px', marginBottom: '10px', minWidth: '670px' }}>
-            Use the IAM permission to generate temporary database username and password.{' '}
+            Use
+            <a
+              href="https://docs.aws.amazon.com/redshift/latest/APIReference/API_GetClusterCredentials.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <code>GetClusterCredentials</code>
+            </a>
+            or
+            <a
+              href="https://docs.aws.amazon.com/redshift-serverless/latest/APIReference/API_GetCredentials.html"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <code>GetCredentials</code>
+            </a>
+            to generate temporary database username and password.{' '}
             <a
               href="https://docs.aws.amazon.com/redshift/latest/mgmt/generating-user-credentials.html"
               target="_blank"
