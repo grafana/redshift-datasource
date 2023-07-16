@@ -9,7 +9,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/redshiftserverless"
 	"github.com/aws/aws-sdk-go/service/redshiftserverless/redshiftserverlessiface"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
-	// "github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
 )
 
 type MockRedshiftServerlessClient struct {
@@ -22,7 +21,6 @@ type MockRedshiftServerlessClient struct {
 	Secret     string
 	Workgroups []string
 
-	// secretsmanageriface.SecretsManagerAPI  // SecretsManagerAPI.DeleteResourcePolicy conflicts with RedshiftServerlessAPI.DeleteResourcePolicy
 	redshiftdataapiservice.RedshiftDataAPIService
 	redshiftserverlessiface.RedshiftServerlessAPI
 }
