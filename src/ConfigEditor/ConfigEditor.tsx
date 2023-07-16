@@ -121,7 +121,8 @@ export function ConfigEditor(props: Props) {
         value: c.clusterIdentifier,
         description: `${c.endpoint.address}:${c.endpoint.port}`,
       }));
-    } catch {
+    } catch (error) {
+      console.error('error while fetching clusters', error);
       return [];
     }
   };
@@ -136,7 +137,8 @@ export function ConfigEditor(props: Props) {
         value: w.workgroupName,
         description: `${w.endpoint.address}:${w.endpoint.port}`,
       }));
-    } catch {
+    } catch (error) {
+      console.error('error while fetching workgroups', error);
       return [];
     }
   };
