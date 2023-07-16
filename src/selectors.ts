@@ -59,7 +59,7 @@ export const Components = {
       testID: 'data-testid column',
     },
     WithEvent: {
-      input: 'Send events to EventBridge',
+      input: 'Send events to Amazon EventBridge',
       testID: 'data-testid withEvent',
     },
   },
