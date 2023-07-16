@@ -37,8 +37,8 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
     >
       <RadioButtonGroup
         options={[
-          { label: 'AWS Secrets Manager', value: true },
           { label: 'Temporary credentials', value: false },
+          { label: 'AWS Secrets Manager', value: true },
         ]}
         value={useManagedSecret}
         onChange={onChangeAuthType}

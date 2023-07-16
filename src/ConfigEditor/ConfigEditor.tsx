@@ -54,15 +54,6 @@ export function ConfigEditor(props: Props) {
     setSaved(true);
   };
 
-  // Redshift type
-  if (props.options.jsonData.useServerless === undefined) {
-    props.options.jsonData.useServerless = false; // set default value
-  }
-
-  // Auth type
-  if (props.options.jsonData.useManagedSecret === undefined) {
-    props.options.jsonData.useManagedSecret = true; // set default value
-  }
   const [useManagedSecret, setUseManagedSecret] = useState(!!props.options.jsonData.useManagedSecret);
   const onChangeAuthType = (newAuthType: boolean) => {
     setUseManagedSecret(newAuthType);
