@@ -38,10 +38,16 @@ func (r *RedshiftResourceHandler) clusters(rw http.ResponseWriter, req *http.Req
 	routes.SendResources(rw, clusters, err)
 }
 
+func (r *RedshiftResourceHandler) workgroups(rw http.ResponseWriter, req *http.Request) {
+	workgroups, err := r.redshift.Workgroups(req.Context(), sqlds.Options{})
+	routes.SendResources(rw, workgroups, err)
+}
+
 func (r *RedshiftResourceHandler) Routes() map[string]func(http.ResponseWriter, *http.Request) {
 	routes := r.DefaultRoutes()
 	routes["/secrets"] = r.secrets
 	routes["/secret"] = r.secret
 	routes["/clusters"] = r.clusters
+	routes["/workgroups"] = r.workgroups
 	return routes
 }

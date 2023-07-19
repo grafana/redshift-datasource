@@ -54,6 +54,8 @@ export const mockDatasourceOptions: DataSourcePluginOptionsEditorProps<
     isDefault: false,
     jsonData: {
       defaultRegion: 'us-east-2',
+      useServerless: false,
+      useManagedSecret: true,
     },
     secureJsonFields: {},
     readOnly: false,

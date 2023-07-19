@@ -18,14 +18,25 @@ var ds = &fake.RedshiftFakeDatasource{
 		{Name: "secret1", ARN: "arn:secret1"},
 	},
 	RSecret: models.RedshiftSecret{ClusterIdentifier: "clu", DBUser: "user"},
-	RClusters: []models.RedshiftCluster{{
-		ClusterIdentifier: "foo",
-		Endpoint: models.RedshiftEndpoint{
-			Address: "foo.a.b.c",
-			Port:    123,
+	RClusters: []models.RedshiftCluster{
+		{
+			ClusterIdentifier: "foo",
+			Endpoint: models.RedshiftEndpoint{
+				Address: "foo.a.b.c",
+				Port:    123,
+			},
+			Database: "db-foo",
 		},
-		Database: "db-foo",
 	},
+	RWorkgroups: []models.RedshiftWorkgroup{
+		{
+			WorkgroupName: "bar",
+			Endpoint: models.RedshiftEndpoint{
+				Address: "bar.a.b.c",
+				Port:    456,
+			},
+			Database: "db-bar",
+		},
 	},
 }
 
@@ -54,6 +65,12 @@ func TestRoutes(t *testing.T) {
 			expectedCode:   http.StatusOK,
 			expectedResult: `[{"clusterIdentifier":"foo","endpoint":{"address":"foo.a.b.c","port":123},"database":"db-foo"}]`,
 		},
+		{
+			description:    "return workgroups",
+			route:          "workgroups",
+			expectedCode:   http.StatusOK,
+			expectedResult: `[{"workgroupName":"bar","endpoint":{"address":"bar.a.b.c","port":456},"database":"db-bar"}]`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.description, func(t *testing.T) {
@@ -67,6 +84,8 @@ func TestRoutes(t *testing.T) {
 				rh.secret(rw, req)
 			case "clusters":
 				rh.clusters(rw, req)
+			case "workgroups":
+				rh.workgroups(rw, req)
 			default:
 				t.Fatalf("unexpected route %s", tt.route)
 			}
@@ -92,5 +111,6 @@ func Test_Routes(t *testing.T) {
 	r := rh.Routes()
 	assert.Contains(t, r, "/secrets")
 	assert.Contains(t, r, "/secret")
+	assert.Contains(t, r, "/workgroups")
 	assert.Contains(t, r, "/clusters")
 }

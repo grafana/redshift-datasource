@@ -11,6 +11,8 @@ import (
 	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
+	"github.com/aws/aws-sdk-go/service/redshiftserverless"
+	"github.com/aws/aws-sdk-go/service/redshiftserverless/redshiftserverlessiface"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
@@ -30,10 +32,11 @@ var validStatuses = []string{
 }
 
 type API struct {
-	DataClient       redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
-	SecretsClient    secretsmanageriface.SecretsManagerAPI
-	ManagementClient redshiftiface.RedshiftAPI
-	settings         *models.RedshiftDataSourceSettings
+	DataClient                 redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
+	SecretsClient              secretsmanageriface.SecretsManagerAPI
+	ManagementClient           redshiftiface.RedshiftAPI
+	ServerlessManagementClient redshiftserverlessiface.RedshiftServerlessAPI
+	settings                   *models.RedshiftDataSourceSettings
 }
 
 func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
@@ -61,15 +64,17 @@ func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWS
 	}
 
 	return &API{
-		DataClient:       redshiftdataapiservice.New(sess),
-		SecretsClient:    secretsmanager.New(sess),
-		ManagementClient: redshift.New(sess),
-		settings:         redshiftSettings,
+		DataClient:                 redshiftdataapiservice.New(sess),
+		SecretsClient:              secretsmanager.New(sess),
+		ManagementClient:           redshift.New(sess),
+		ServerlessManagementClient: redshiftserverless.New(sess),
+		settings:                   redshiftSettings,
 	}, nil
 }
 
 type apiInput struct {
 	ClusterIdentifier *string
+	WorkgroupName     *string
 	Database          *string
 	DbUser            *string
 	SecretARN         *string
@@ -77,13 +82,24 @@ type apiInput struct {
 
 func (c *API) apiInput() apiInput {
 	res := apiInput{
-		ClusterIdentifier: aws.String(c.settings.ClusterIdentifier),
-		Database:          aws.String(c.settings.Database),
+		Database: aws.String(c.settings.Database),
 	}
-	if c.settings.UseManagedSecret {
+	switch {
+	// Serverless + Temporary credential
+	case c.settings.UseServerless && !c.settings.UseManagedSecret:
+		res.WorkgroupName = aws.String(c.settings.WorkgroupName)
+	// Serverless + Managed Secret
+	case c.settings.UseServerless && c.settings.UseManagedSecret:
+		res.WorkgroupName = aws.String(c.settings.WorkgroupName)
 		res.SecretARN = aws.String(c.settings.ManagedSecret.ARN)
-	} else {
+	// Provisioned + Temporary credential
+	case !c.settings.UseServerless && !c.settings.UseManagedSecret:
+		res.ClusterIdentifier = aws.String(c.settings.ClusterIdentifier)
 		res.DbUser = aws.String(c.settings.DBUser)
+	// Provisioned + Managed Secret
+	case !c.settings.UseServerless && c.settings.UseManagedSecret:
+		res.ClusterIdentifier = aws.String(c.settings.ClusterIdentifier)
+		res.SecretARN = aws.String(c.settings.ManagedSecret.ARN)
 	}
 	return res
 }
@@ -97,8 +113,8 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		SecretArn:         commonInput.SecretARN,
 		Sql:               aws.String(input.Query),
 		WithEvent:         aws.Bool(c.settings.WithEvent),
+		WorkgroupName:     commonInput.WorkgroupName,
 	}
-
 	output, err := c.DataClient.ExecuteStatementWithContext(ctx, redshiftInput)
 	if err != nil {
 		return nil, fmt.Errorf("%w: %v", api.ExecuteError, err)
@@ -231,6 +247,7 @@ func (c *API) Databases(ctx aws.Context, options sqlds.Options) ([]string, error
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
 		SecretArn:         commonInput.SecretARN,
+		WorkgroupName:     commonInput.WorkgroupName,
 	}
 	isFinished := false
 	res := []string{}
@@ -259,6 +276,7 @@ func (c *API) Schemas(ctx aws.Context, options sqlds.Options) ([]string, error) 
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
 		SecretArn:         commonInput.SecretARN,
+		WorkgroupName:     commonInput.WorkgroupName,
 	}
 	isFinished := false
 	res := []string{}
@@ -293,6 +311,7 @@ func (c *API) Tables(ctx aws.Context, options sqlds.Options) ([]string, error) {
 		DbUser:            commonInput.DbUser,
 		SecretArn:         commonInput.SecretARN,
 		SchemaPattern:     aws.String(schema),
+		WorkgroupName:     commonInput.WorkgroupName,
 	}
 	isFinished := false
 	res := []string{}
@@ -324,6 +343,7 @@ func (c *API) Columns(ctx aws.Context, options sqlds.Options) ([]string, error) 
 		SecretArn:         commonInput.SecretARN,
 		Schema:            aws.String(schema),
 		Table:             aws.String(table),
+		WorkgroupName:     commonInput.WorkgroupName,
 	}
 	isFinished := false
 	res := []string{}
@@ -418,6 +438,29 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 					Port:    *r.Endpoint.Port,
 				},
 				Database: *r.DBName,
+			})
+		}
+	}
+	return res, nil
+}
+
+func (c *API) Workgroups() ([]models.RedshiftWorkgroup, error) {
+	out, err := c.ServerlessManagementClient.ListWorkgroups(&redshiftserverless.ListWorkgroupsInput{})
+	if err != nil {
+		return nil, err
+	}
+	if out == nil {
+		return nil, fmt.Errorf("missing workgroups content")
+	}
+	res := []models.RedshiftWorkgroup{}
+	for _, r := range out.Workgroups {
+		if r != nil && r.WorkgroupName != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil {
+			res = append(res, models.RedshiftWorkgroup{
+				WorkgroupName: *r.WorkgroupName,
+				Endpoint: models.RedshiftEndpoint{
+					Address: *r.Endpoint.Address,
+					Port:    *r.Endpoint.Port,
+				},
 			})
 		}
 	}
