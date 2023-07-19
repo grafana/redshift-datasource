@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.0
+
+- Add support for Redshift Serverless https://github.com/grafana/redshift-datasource/pull/228 by @yota-p
+
 ## 1.9.0
 
 - Upgrade @grafana/aws-sdk to v0.0.47 to support numeric values when applying template variables to SQL queries
