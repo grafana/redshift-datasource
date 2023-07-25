@@ -263,3 +263,7 @@ Imported dashboards can be found in Configuration > Data Sources > select your R
 Async Query Data support enables an asynchronous query handling flow. With Async Query Data support enabled, queries will be handled over multiple requests (starting, checking its status, and fetching the results) instead of having a query be started and resolved over a single request. This is useful for queries that can potentially run for a long time and timeout.
 
 To enable async query data support, you need to set feature toggle `redshiftAsyncQueryDataSupport` to `true`. Here are instructions to [configure feature toggles](https://grafana.com/docs/grafana/latest/setup-grafana/configure-grafana/#feature_toggles). You'll also need to ensure the IAM policy used by Grafana allows the following actions `redshift-data:ListStatements` and `redshift-data:CancelStatement`.
+
+### Async Query Caching
+
+To enable [query caching](https://grafana.com/docs/grafana/latest/administration/data-source-management/#query-caching) for async queries, you need to be on Grafana version 10.1 or above, and to set the feature toggles `useCachingService` and `awsAsyncQueryCaching` to `true`. You'll also need to [configure query caching](https://grafana.com/docs/grafana/latest/administration/data-source-management/#query-caching) for the specific Redshift datasource.
