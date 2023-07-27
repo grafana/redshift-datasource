@@ -8,6 +8,9 @@ import (
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/datasource"
+	awsDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver"
+	asyncDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver/async"
+	sqlModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
@@ -31,8 +34,15 @@ type RedshiftDatasourceIface interface {
 	Workgroups(ctx context.Context, options sqlds.Options) ([]models.RedshiftWorkgroup, error)
 }
 
+type awsDSClient interface {
+	Init(config backend.DataSourceInstanceSettings)
+	GetDB(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader, driverLoader awsDriver.Loader) (*sql.DB, error)
+	GetAsyncDB(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader, driverLoader asyncDriver.Loader) (awsds.AsyncDB, error)
+	GetAPI(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader) (sqlAPI.AWSAPI, error)
+}
+
 type RedshiftDatasource struct {
-	awsDS *datasource.AWSDatasource
+	awsDS awsDSClient
 }
 
 func New() *RedshiftDatasource {
@@ -58,6 +68,7 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 	if err != nil {
 		return nil, err
 	}
+	args["updated"] = config.Updated.String()
 
 	return s.awsDS.GetDB(config.ID, args, models.New, api.New, driver.NewSync)
 }
@@ -68,13 +79,25 @@ func (s *RedshiftDatasource) GetAsyncDB(config backend.DataSourceInstanceSetting
 	if err != nil {
 		return nil, err
 	}
+	args["updated"] = config.Updated.String()
 
 	return s.awsDS.GetAsyncDB(config.ID, args, models.New, api.New, driver.New)
 }
 
 func (s *RedshiftDatasource) getApi(ctx context.Context, options sqlds.Options) (*api.API, error) {
 	id := datasource.GetDatasourceID(ctx)
-	res, err := s.awsDS.GetAPI(id, options, models.New, api.New)
+	args := sqlds.Options{}
+	for key, val := range options {
+		args[key] = val
+	}
+	// the updated time makes sure that we don't use a token for a stale version of the datasource
+	args["updated"] = datasource.GetDatasourceLastUpdatedTime(ctx)
+
+	res, err := s.awsDS.GetAPI(id, args, models.New, api.New)
+	if err != nil {
+		return nil, err
+	}
+
 	return res.(*api.API), err
 }
 
