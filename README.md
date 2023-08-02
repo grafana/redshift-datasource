@@ -73,7 +73,7 @@ Here is a minimal policy example:
       "Sid": "AllowReadingRedshiftQuerySecrets",
       "Effect": "Allow",
       "Action": ["secretsmanager:GetSecretValue"],
-      "Resource": "",
+      "Resource": "*",
       "Condition": {
         "Null": {
           "secretsmanager:ResourceTag/RedshiftQueryOwner": ""
