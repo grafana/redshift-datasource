@@ -75,7 +75,7 @@ Here is a minimal policy example:
       "Action": ["secretsmanager:GetSecretValue"],
       "Resource": "*",
       "Condition": {
-        "Null": {
+        "StringEquals": {
           "secretsmanager:ResourceTag/RedshiftQueryOwner": ""
         }
       }
