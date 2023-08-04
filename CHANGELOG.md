@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.10.1
+
+- Upgrade @grafana/async-query-data to reduce minimum query time https://github.com/grafana/redshift-datasource/pull/237
+
 ## 1.10.0
 
 - Add support for Redshift Serverless https://github.com/grafana/redshift-datasource/pull/228 by @yota-p
