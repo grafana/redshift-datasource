@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.11.0
+
+- Upgrade grafana/aws-sdk-react dependency [#239](https://github.com/grafana/redshift-datasource/pull/236)
+- Fix connection error when changing access and secret key [#235](https://github.com/grafana/redshift-datasource/pull/235)
+- Support async query caching [#233](https://github.com/grafana/redshift-datasource/pull/233)
+
 ## 1.10.0
 
 - Add support for Redshift Serverless https://github.com/grafana/redshift-datasource/pull/228 by @yota-p
