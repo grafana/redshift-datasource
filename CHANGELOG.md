@@ -4,6 +4,10 @@
 
 - Update grafana-aws-sdk to v0.19.0 to add `il-central-1` to opt-in region list
 
+## 1.11.1
+
+- Upgrade @grafana/async-query-data to reduce minimum query time https://github.com/grafana/redshift-datasource/pull/237
+
 ## 1.11.0
 
 - Upgrade grafana/aws-sdk-react dependency [#239](https://github.com/grafana/redshift-datasource/pull/236)
