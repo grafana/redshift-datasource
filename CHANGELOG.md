@@ -2,7 +2,7 @@
 
 ## 1.12.0
 
-- Update grafana-aws-sdk to v0.19.0 to add `il-central-1` to opt-in region list
+- Update grafana-aws-sdk to v0.19.1 to add `il-central-1` to opt-in region list
 
 ## 1.11.1
 
