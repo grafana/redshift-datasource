@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.12.1
+
+- upgrade @grafana/aws-sdk to fix a bug in temporary credentials
+
 ## 1.12.0
 
 - Update grafana-aws-sdk to v0.19.1 to add `il-central-1` to opt-in region list
