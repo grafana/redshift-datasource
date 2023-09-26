@@ -26,4 +26,4 @@ jobs:
         uses: ./actions/commands
         with:
           token: ${{ steps.generate_token.outputs.token }}
-          configPath: issue_commands
+          configPath: issue_and_pr_commands
