@@ -1,5 +1,7 @@
 import React from 'react';
-import { Label, RadioButtonGroup } from '@grafana/ui';
+import { Label, RadioButtonGroup, useStyles2 } from '@grafana/ui';
+import { GrafanaTheme2 } from '@grafana/data';
+import { css } from '@emotion/css';
 
 export type Props = {
   useManagedSecret: boolean;
@@ -7,11 +9,13 @@ export type Props = {
 };
 
 export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
+  const styles = useStyles2(getStyles);
   return (
     <Label
+      className={styles.label}
       description={
         useManagedSecret ? (
-          <div style={{ marginTop: '10px', marginBottom: '10px', minWidth: '670px' }}>
+          <div style={{ marginTop: '10px', marginBottom: '10px' }}>
             Use database username and password stored in Secrets Manager.{' '}
             <a
               href="https://docs.aws.amazon.com/redshift/latest/mgmt/data-api-access.html#data-api-secrets"
@@ -22,7 +26,7 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
             </a>
           </div>
         ) : (
-          <div style={{ marginTop: '10px', marginBottom: '10px', minWidth: '670px' }}>
+          <div style={{ marginTop: '10px', marginBottom: '10px' }}>
             Use
             <a
               href="https://docs.aws.amazon.com/redshift/latest/APIReference/API_GetClusterCredentials.html"
@@ -52,13 +56,25 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
       }
     >
       <RadioButtonGroup
+        className={styles.buttonGroup}
         options={[
           { label: 'Temporary credentials', value: false },
           { label: 'AWS Secrets Manager', value: true },
         ]}
         value={useManagedSecret}
         onChange={onChangeAuthType}
+        fullWidth
       />
     </Label>
   );
 }
+
+const getStyles = (theme: GrafanaTheme2) => ({
+  label: css({
+    width: '100%',
+    lineHeight: theme.typography.body.lineHeight,
+  }),
+  buttonGroup: css({
+    flexGrow: 1,
+  }),
+});
