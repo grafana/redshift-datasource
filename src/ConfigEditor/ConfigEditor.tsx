@@ -327,6 +327,7 @@ export function ConfigEditor(props: Props) {
             onChange={onChangeManagedSecret}
             fetch={fetchSecrets}
             saveOptions={saveOptions}
+            allowCustomValue
           />
         </Field>
 

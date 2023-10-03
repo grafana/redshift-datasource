@@ -63,6 +63,7 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
         ]}
         value={useManagedSecret}
         onChange={onChangeAuthType}
+        fullWidth
       />
     </Label>
   );
