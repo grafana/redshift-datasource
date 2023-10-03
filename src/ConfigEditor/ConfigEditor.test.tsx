@@ -209,7 +209,7 @@ describe('ConfigEditor', () => {
         {...props}
         options={{
           ...props.options,
-          jsonData: { ...props.options.jsonData, database: 'test-db' },
+          jsonData: { ...props.options.jsonData, database: 'test-db', useManagedSecret: false },
         }}
         onOptionsChange={onChange}
       />
@@ -224,7 +224,12 @@ describe('ConfigEditor', () => {
     expect(onChange).toHaveBeenCalledWith({
       ...props.options,
       url: 'bar.d.e.f:456/test-db',
-      jsonData: { ...props.options.jsonData, database: 'test-db', clusterIdentifier: clusterIdentifier },
+      jsonData: {
+        ...props.options.jsonData,
+        database: 'test-db',
+        clusterIdentifier: clusterIdentifier,
+        useManagedSecret: false,
+      },
     });
   });
 

@@ -346,12 +346,10 @@ export function ConfigEditor(props: Props) {
           />
         </Field>
 
-        <Field
-          label={selectors.components.ConfigEditor.Database.input}
-          data-testid={selectors.components.ConfigEditor.Database.testID}
-        >
+        <Field label={selectors.components.ConfigEditor.Database.input}>
           <Input
             {...props}
+            data-testid={selectors.components.ConfigEditor.Database.testID}
             value={props.options.jsonData.database ?? ''}
             aria-label={selectors.components.ConfigEditor.Database.input}
             onChange={onChange('database')}
