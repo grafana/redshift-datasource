@@ -12,7 +12,6 @@ import {
 } from '../types';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
 import { Field, Input, Switch } from '@grafana/ui';
-import { css } from '@emotion/css';
 import { ConfigSection } from '@grafana/experimental';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
@@ -243,11 +242,13 @@ export function ConfigEditor(props: Props) {
       <ConfigSection title="Redshift Details">
         <AuthTypeSwitch key="managedSecret" useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
         <Field
-          {...props}
           label={selectors.components.ConfigEditor.UseServerless.input}
           data-testid={selectors.components.ConfigEditor.UseServerless.testID}
+          htmlFor="useServerless"
         >
           <Switch
+            {...props}
+            id="useServerless"
             value={props.options.jsonData.useServerless}
             onChange={(e) =>
               props.onOptionsChange({
@@ -264,6 +265,7 @@ export function ConfigEditor(props: Props) {
           label={selectors.components.ConfigEditor.ClusterID.input}
           data-testid={selectors.components.ConfigEditor.ClusterID.testID}
           hidden={props.options.jsonData.useServerless || useManagedSecret}
+          htmlFor="clusterId"
         >
           <ConfigSelect
             {...props}
@@ -280,8 +282,11 @@ export function ConfigEditor(props: Props) {
           hidden={props.options.jsonData.useServerless || !useManagedSecret}
           label={selectors.components.ConfigEditor.ClusterIDText.input}
           data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
+          htmlFor="clusterIdText"
         >
           <Input
+            {...props}
+            id="clusterIdText"
             value={props.options.jsonData.clusterIdentifier ?? ''}
             onChange={() => {}}
             label={selectors.components.ConfigEditor.ClusterIDText.input}
@@ -293,6 +298,7 @@ export function ConfigEditor(props: Props) {
           hidden={!props.options.jsonData.useServerless}
           label={selectors.components.ConfigEditor.WorkgroupText.input}
           data-testid={selectors.components.ConfigEditor.WorkgroupText.testID}
+          htmlFor="workgroupName"
         >
           <ConfigSelect
             {...props}
@@ -307,6 +313,7 @@ export function ConfigEditor(props: Props) {
           label={selectors.components.ConfigEditor.ManagedSecret.input}
           hidden={!useManagedSecret}
           data-testid={selectors.components.ConfigEditor.ManagedSecret.testID}
+          htmlFor="managedSecret"
         >
           <ConfigSelect
             {...props}
@@ -323,19 +330,22 @@ export function ConfigEditor(props: Props) {
           hidden={props.options.jsonData.useServerless && !useManagedSecret}
           data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
           disabled={useManagedSecret}
+          htmlFor="dbUser"
         >
-          <Input {...props} value={props.options.jsonData.dbUser ?? ''} onChange={onChange('dbUser')} />
+          <Input {...props} id="dbUser" value={props.options.jsonData.dbUser ?? ''} onChange={onChange('dbUser')} />
         </Field>
 
         <Field
           label={selectors.components.ConfigEditor.Database.input}
           data-testid={selectors.components.ConfigEditor.Database.testID}
         >
-          <Input value={props.options.jsonData.database ?? ''} onChange={onChange('database')} />
+          <Input {...props} value={props.options.jsonData.database ?? ''} onChange={onChange('database')} />
         </Field>
 
-        <Field label={selectors.components.ConfigEditor.WithEvent.input}>
+        <Field label={selectors.components.ConfigEditor.WithEvent.input} htmlFor="withEvent">
           <Switch
+            {...props}
+            id="withEvent"
             value={props.options.jsonData.withEvent ?? false}
             onChange={(e) =>
               props.onOptionsChange({

@@ -44,22 +44,31 @@ export function QueryEditorForm(props: Props) {
     <EditorRows>
       <EditorRow>
         <EditorFieldGroup>
-          {/* <h6>Macros</h6> */}
           <EditorField
-            className="width-20"
+            width={15}
             label={selectors.components.ConfigEditor.schema.input}
             tooltip="Use the selected schema with the $__schema macro"
             data-testid={selectors.components.ConfigEditor.schema.testID}
+            htmlFor="schema"
           >
-            <ResourceSelector onChange={onChange('schema')} fetch={fetchSchemas} value={props.query.schema || null} />
+            <ResourceSelector
+              id="schema"
+              aria-label={selectors.components.ConfigEditor.schema.input}
+              onChange={onChange('schema')}
+              fetch={fetchSchemas}
+              value={props.query.schema || null}
+            />
           </EditorField>
           <EditorField
-            className="width-20"
+            width={15}
             label={selectors.components.ConfigEditor.table.input}
             tooltip="Use the selected table with the $__table macro"
             data-testid={selectors.components.ConfigEditor.table.testID}
+            htmlFor="table"
           >
             <ResourceSelector
+              id="table"
+              aria-label={selectors.components.ConfigEditor.table.input}
               onChange={onChange('table')}
               fetch={fetchTables}
               value={props.query.table || null}
@@ -67,12 +76,15 @@ export function QueryEditorForm(props: Props) {
             />
           </EditorField>
           <EditorField
-            className="width-20"
+            width={15}
             label={selectors.components.ConfigEditor.column.input}
             tooltip="Use the selected column with the $__column macro"
             data-testid={selectors.components.ConfigEditor.column.testID}
+            htmlFor="column"
           >
             <ResourceSelector
+              id="column"
+              aria-label={selectors.components.ConfigEditor.column.input}
               onChange={onChange('column')}
               fetch={fetchColumns}
               value={props.query.column || null}
@@ -80,10 +92,15 @@ export function QueryEditorForm(props: Props) {
             />
           </EditorField>
         </EditorFieldGroup>
-      </EditorRow>
-      <EditorRow>
         <EditorFieldGroup>
-          <FormatSelect query={props.query} options={SelectableFormatOptions} onChange={props.onChange} />
+          <EditorField label="Format frames as" htmlFor="formatAs" width={20}>
+            <FormatSelect
+              id="formatAs"
+              query={props.query}
+              options={SelectableFormatOptions}
+              onChange={props.onChange}
+            />
+          </EditorField>
           {props.query.format === FormatOptions.TimeSeries && (
             <FillValueSelect query={props.query} onChange={props.onChange} />
           )}
