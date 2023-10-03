@@ -215,7 +215,8 @@ describe('ConfigEditor', () => {
       />
     );
 
-    const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.ClusterID.input);
+    const selectEl = screen.getByRole('combobox', { name: selectors.components.ConfigEditor.ClusterID.input });
+
     expect(selectEl).toBeInTheDocument();
     await select(selectEl, cluster.clusterIdentifier, { container: document.body });
 

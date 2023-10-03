@@ -250,6 +250,7 @@ export function ConfigEditor(props: Props) {
             {...props}
             id="useServerless"
             value={props.options.jsonData.useServerless}
+            aria-label={selectors.components.ConfigEditor.UseServerless.input}
             onChange={(e) =>
               props.onOptionsChange({
                 ...props.options,
@@ -270,6 +271,7 @@ export function ConfigEditor(props: Props) {
           <ConfigSelect
             {...props}
             id="clusterId"
+            aria-label={selectors.components.ConfigEditor.ClusterID.input}
             allowCustomValue={true}
             value={props.options.jsonData.clusterIdentifier ?? ''}
             onChange={onChangeClusterID}
@@ -281,16 +283,17 @@ export function ConfigEditor(props: Props) {
         <Field
           hidden={props.options.jsonData.useServerless || !useManagedSecret}
           label={selectors.components.ConfigEditor.ClusterIDText.input}
-          data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
+          disabled={true}
           htmlFor="clusterIdText"
         >
           <Input
             {...props}
             id="clusterIdText"
+            aria-label={selectors.components.ConfigEditor.ClusterIDText.input}
             value={props.options.jsonData.clusterIdentifier ?? ''}
             onChange={() => {}}
             label={selectors.components.ConfigEditor.ClusterIDText.input}
-            disabled={true}
+            data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
           />
         </Field>
 
@@ -303,6 +306,7 @@ export function ConfigEditor(props: Props) {
           <ConfigSelect
             {...props}
             id="workgroupName"
+            aria-label={selectors.components.ConfigEditor.WorkgroupText.input}
             value={props.options.jsonData.workgroupName ?? ''}
             onChange={onChangeWorkgroupName}
             fetch={fetchWorkgroups}
@@ -318,6 +322,7 @@ export function ConfigEditor(props: Props) {
           <ConfigSelect
             {...props}
             id="managedSecret"
+            aria-label={selectors.components.ConfigEditor.ManagedSecret.input}
             value={props.options.jsonData.managedSecret?.arn ?? ''}
             onChange={onChangeManagedSecret}
             fetch={fetchSecrets}
@@ -328,24 +333,36 @@ export function ConfigEditor(props: Props) {
         <Field
           label={selectors.components.ConfigEditor.DatabaseUser.input}
           hidden={props.options.jsonData.useServerless && !useManagedSecret}
-          data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
           disabled={useManagedSecret}
           htmlFor="dbUser"
         >
-          <Input {...props} id="dbUser" value={props.options.jsonData.dbUser ?? ''} onChange={onChange('dbUser')} />
+          <Input
+            {...props}
+            id="dbUser"
+            aria-label={selectors.components.ConfigEditor.DatabaseUser.input}
+            value={props.options.jsonData.dbUser ?? ''}
+            onChange={onChange('dbUser')}
+            data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
+          />
         </Field>
 
         <Field
           label={selectors.components.ConfigEditor.Database.input}
           data-testid={selectors.components.ConfigEditor.Database.testID}
         >
-          <Input {...props} value={props.options.jsonData.database ?? ''} onChange={onChange('database')} />
+          <Input
+            {...props}
+            value={props.options.jsonData.database ?? ''}
+            aria-label={selectors.components.ConfigEditor.Database.input}
+            onChange={onChange('database')}
+          />
         </Field>
 
         <Field label={selectors.components.ConfigEditor.WithEvent.input} htmlFor="withEvent">
           <Switch
             {...props}
             id="withEvent"
+            aria-label={selectors.components.ConfigEditor.WithEvent.input}
             value={props.options.jsonData.withEvent ?? false}
             onChange={(e) =>
               props.onOptionsChange({

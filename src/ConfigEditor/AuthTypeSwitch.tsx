@@ -15,7 +15,7 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
       className={styles.label}
       description={
         useManagedSecret ? (
-          <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+          <div className={styles.gap}>
             Use database username and password stored in Secrets Manager.{' '}
             <a
               href="https://docs.aws.amazon.com/redshift/latest/mgmt/data-api-access.html#data-api-secrets"
@@ -26,7 +26,7 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
             </a>
           </div>
         ) : (
-          <div style={{ marginTop: '10px', marginBottom: '10px' }}>
+          <div className={styles.gap}>
             Use
             <a
               href="https://docs.aws.amazon.com/redshift/latest/APIReference/API_GetClusterCredentials.html"
@@ -63,7 +63,6 @@ export function AuthTypeSwitch({ useManagedSecret, onChangeAuthType }: Props) {
         ]}
         value={useManagedSecret}
         onChange={onChangeAuthType}
-        fullWidth
       />
     </Label>
   );
@@ -76,5 +75,9 @@ const getStyles = (theme: GrafanaTheme2) => ({
   }),
   buttonGroup: css({
     flexGrow: 1,
+  }),
+  gap: css({
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   }),
 });
