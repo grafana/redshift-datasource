@@ -24,13 +24,6 @@ import (
 	"github.com/grafana/sqlds/v2"
 )
 
-var validStatuses = []string{
-	redshiftdataapiservice.StatementStatusStringSubmitted,
-	redshiftdataapiservice.StatementStatusStringPicked,
-	redshiftdataapiservice.StatementStatusStringStarted,
-	redshiftdataapiservice.StatementStatusStringFinished,
-}
-
 type API struct {
 	DataClient                 redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
 	SecretsClient              secretsmanageriface.SecretsManagerAPI
@@ -123,45 +116,9 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
 }
 
-func sliceContains(slice []string, str string) bool {
-	for _, val := range slice {
-		if val == str {
-			return true
-		}
-	}
-	return false
-}
-
+// GetQueryID always returns not found. To actually check if the query has been called requires calling ListStatements, which can lead to timeouts
+// when there are many statements to page through
 func (c *API) GetQueryID(ctx context.Context, query string, args ...interface{}) (bool, string, error) {
-	input := &redshiftdataapiservice.ListStatementsInput{
-		Status: aws.String("ALL"),
-	}
-
-	output, err := c.DataClient.ListStatementsWithContext(ctx, input)
-	if err != nil {
-		return false, "", fmt.Errorf("%w: %v", api.ExecuteError, err)
-	}
-
-	for {
-		for _, statement := range output.Statements {
-			if statement.QueryString != nil && *statement.QueryString == query {
-				if statement.Status != nil && sliceContains(validStatuses, *statement.Status) {
-					return true, *statement.Id, nil
-				}
-				return false, "", nil
-			}
-		}
-
-		if output.NextToken == nil {
-			break
-		}
-		input.SetNextToken(*output.NextToken)
-		output, err = c.DataClient.ListStatementsWithContext(ctx, input)
-		if err != nil {
-			return false, "", fmt.Errorf("%w: %v", api.ExecuteError, err)
-		}
-	}
-
 	return false, "", nil
 }
 
