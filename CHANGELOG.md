@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.12.2
+
+- Fix async queries by not calling ListStatements in GetQueryID [#252](https://github.com/grafana/redshift-datasource/pull/252)
+
 ## 1.12.1
 
 - upgrade @grafana/aws-sdk to fix a bug in temporary credentials
