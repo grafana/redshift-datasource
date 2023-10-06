@@ -221,7 +221,7 @@ apiVersion: 1
 
 datasources:
   - name: Redshift
-    type: redshift
+    type: grafana-redshift-datasource
     jsonData:
       authType: keys
       defaultRegion: eu-west-2
@@ -236,7 +236,7 @@ datasources:
 apiVersion: 1
 datasources:
   - name: Redshift
-    type: redshift
+    type: grafana-redshift-datasource
     jsonData:
       authType: default
       assumeRoleArn: arn:aws:iam::123456789012:root
