@@ -1,6 +1,6 @@
-import { ConfigSelect, ConnectionConfig, InlineInput } from '@grafana/aws-sdk';
+import { ConfigSelect, ConnectionConfig, InlineInput, Divider } from '@grafana/aws-sdk';
 import { DataSourcePluginOptionsEditorProps, SelectableValue } from '@grafana/data';
-import { getBackendSrv } from '@grafana/runtime';
+import { config, getBackendSrv } from '@grafana/runtime';
 import React, { FormEvent, useEffect, useState } from 'react';
 import { selectors } from 'selectors';
 
@@ -11,7 +11,8 @@ import {
   RedshiftManagedSecret,
 } from '../types';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
-import { InlineField, Switch } from '@grafana/ui';
+import { Field, InlineField, Input, Switch } from '@grafana/ui';
+import { ConfigSection } from '@grafana/experimental';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 
@@ -42,6 +43,7 @@ export function ConfigEditor(props: Props) {
   const resourcesURL = `${baseURL}/resources`;
   const { jsonData } = props.options;
   const [saved, setSaved] = useState(!!jsonData.defaultRegion);
+  const newFormStylingEnabled = config.featureToggles.awsDatasourcesNewFormStyling;
   const saveOptions = async () => {
     if (saved) {
       return;
@@ -235,106 +237,259 @@ export function ConfigEditor(props: Props) {
   };
 
   return (
-    <div className="gf-form-group">
-      <ConnectionConfig {...props} onOptionsChange={onOptionsChange} />
-      <h3>Redshift Details</h3>
-      <AuthTypeSwitch key="managedSecret" useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
-      <InlineField
-        {...props}
-        label={selectors.components.ConfigEditor.UseServerless.input}
-        labelWidth={28}
-        style={{ alignItems: 'center' }}
-      >
-        <Switch
-          value={props.options.jsonData.useServerless}
-          onChange={(e) =>
-            props.onOptionsChange({
-              ...props.options,
-              jsonData: {
-                ...props.options.jsonData,
-                useServerless: e.currentTarget.checked,
-              },
-            })
-          }
-          data-testid={selectors.components.ConfigEditor.UseServerless.testID}
-        />
-      </InlineField>
-      <ConfigSelect
-        {...props}
-        allowCustomValue={true}
-        value={props.options.jsonData.clusterIdentifier ?? ''}
-        onChange={onChangeClusterID}
-        fetch={fetchClusters}
-        label={selectors.components.ConfigEditor.ClusterID.input}
-        data-testid={selectors.components.ConfigEditor.ClusterID.testID}
-        saveOptions={saveOptions}
-        hidden={props.options.jsonData.useServerless || useManagedSecret}
-      />
-      <InlineInput
-        {...props}
-        value={props.options.jsonData.clusterIdentifier ?? ''}
-        onChange={() => {}}
-        label={selectors.components.ConfigEditor.ClusterIDText.input}
-        data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
-        disabled={true}
-        hidden={props.options.jsonData.useServerless || !useManagedSecret}
-      />
-      <ConfigSelect
-        {...props}
-        value={props.options.jsonData.workgroupName ?? ''}
-        onChange={onChangeWorkgroupName}
-        fetch={fetchWorkgroups}
-        label={selectors.components.ConfigEditor.WorkgroupText.input}
-        data-testid={selectors.components.ConfigEditor.WorkgroupText.testID}
-        saveOptions={saveOptions}
-        hidden={!props.options.jsonData.useServerless}
-      />
-      <ConfigSelect
-        {...props}
-        value={props.options.jsonData.managedSecret?.arn ?? ''}
-        onChange={onChangeManagedSecret}
-        fetch={fetchSecrets}
-        label={selectors.components.ConfigEditor.ManagedSecret.input}
-        data-testid={selectors.components.ConfigEditor.ManagedSecret.testID}
-        saveOptions={saveOptions}
-        hidden={!useManagedSecret}
-      />
-      <InlineInput
-        {...props}
-        value={props.options.jsonData.dbUser ?? ''}
-        onChange={onChange('dbUser')}
-        label={selectors.components.ConfigEditor.DatabaseUser.input}
-        data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
-        disabled={useManagedSecret}
-        hidden={props.options.jsonData.useServerless && !useManagedSecret}
-      />
-      <InlineInput
-        {...props}
-        value={props.options.jsonData.database ?? ''}
-        onChange={onChange('database')}
-        label={selectors.components.ConfigEditor.Database.input}
-        data-testid={selectors.components.ConfigEditor.Database.testID}
-      />
-      <InlineField
-        {...props}
-        label={selectors.components.ConfigEditor.WithEvent.input}
-        labelWidth={28}
-        style={{ alignItems: 'center' }}
-      >
-        <Switch
-          value={props.options.jsonData.withEvent ?? false}
-          onChange={(e) =>
-            props.onOptionsChange({
-              ...props.options,
-              jsonData: {
-                ...props.options.jsonData,
-                withEvent: e.currentTarget.checked,
-              },
-            })
-          }
-          data-testid={selectors.components.ConfigEditor.WithEvent.testID}
-        />
-      </InlineField>
+    <div className="width-30">
+      <ConnectionConfig {...props} onOptionsChange={onOptionsChange} newFormStylingEnabled={newFormStylingEnabled} />
+      {newFormStylingEnabled ? (
+        <>
+          <Divider />
+          <ConfigSection title="Redshift Details">
+            <AuthTypeSwitch
+              key="managedSecret"
+              useManagedSecret={useManagedSecret}
+              onChangeAuthType={onChangeAuthType}
+            />
+            <Field
+              label={selectors.components.ConfigEditor.UseServerless.input}
+              data-testid={selectors.components.ConfigEditor.UseServerless.testID}
+              htmlFor="useServerless"
+            >
+              <Switch
+                {...props}
+                id="useServerless"
+                value={props.options.jsonData.useServerless}
+                aria-label={selectors.components.ConfigEditor.UseServerless.input}
+                onChange={(e) =>
+                  props.onOptionsChange({
+                    ...props.options,
+                    jsonData: {
+                      ...props.options.jsonData,
+                      useServerless: e.currentTarget.checked,
+                    },
+                  })
+                }
+              />
+            </Field>
+            <Field
+              label={selectors.components.ConfigEditor.ClusterID.input}
+              data-testid={selectors.components.ConfigEditor.ClusterID.testID}
+              hidden={props.options.jsonData.useServerless || useManagedSecret}
+              htmlFor="clusterId"
+            >
+              <ConfigSelect
+                {...props}
+                id="clusterId"
+                label={selectors.components.ConfigEditor.ClusterID.input}
+                allowCustomValue={true}
+                value={props.options.jsonData.clusterIdentifier ?? ''}
+                onChange={onChangeClusterID}
+                fetch={fetchClusters}
+                saveOptions={saveOptions}
+                newFormStylingEnabled={true}
+              />
+            </Field>
+
+            <Field
+              hidden={props.options.jsonData.useServerless || !useManagedSecret}
+              label={selectors.components.ConfigEditor.ClusterIDText.input}
+              disabled={true}
+              htmlFor="clusterIdText"
+            >
+              <Input
+                {...props}
+                id="clusterIdText"
+                aria-label={selectors.components.ConfigEditor.ClusterIDText.input}
+                value={props.options.jsonData.clusterIdentifier ?? ''}
+                onChange={() => {}}
+                label={selectors.components.ConfigEditor.ClusterIDText.input}
+                data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
+              />
+            </Field>
+
+            <Field
+              hidden={!props.options.jsonData.useServerless}
+              label={selectors.components.ConfigEditor.WorkgroupText.input}
+              data-testid={selectors.components.ConfigEditor.WorkgroupText.testID}
+              htmlFor="workgroupName"
+            >
+              <ConfigSelect
+                {...props}
+                id="workgroupName"
+                label={selectors.components.ConfigEditor.WorkgroupText.input}
+                value={props.options.jsonData.workgroupName ?? ''}
+                onChange={onChangeWorkgroupName}
+                fetch={fetchWorkgroups}
+                saveOptions={saveOptions}
+                newFormStylingEnabled={true}
+              />
+            </Field>
+            <Field
+              label={selectors.components.ConfigEditor.ManagedSecret.input}
+              hidden={!useManagedSecret}
+              data-testid={selectors.components.ConfigEditor.ManagedSecret.testID}
+              htmlFor="managedSecret"
+            >
+              <ConfigSelect
+                {...props}
+                id="managedSecret"
+                label={selectors.components.ConfigEditor.ManagedSecret.input}
+                value={props.options.jsonData.managedSecret?.arn ?? ''}
+                onChange={onChangeManagedSecret}
+                fetch={fetchSecrets}
+                saveOptions={saveOptions}
+                allowCustomValue
+                newFormStylingEnabled={true}
+              />
+            </Field>
+
+            <Field
+              label={selectors.components.ConfigEditor.DatabaseUser.input}
+              hidden={props.options.jsonData.useServerless && !useManagedSecret}
+              disabled={useManagedSecret}
+              htmlFor="dbUser"
+            >
+              <Input
+                {...props}
+                id="dbUser"
+                aria-label={selectors.components.ConfigEditor.DatabaseUser.input}
+                value={props.options.jsonData.dbUser ?? ''}
+                onChange={onChange('dbUser')}
+                data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
+              />
+            </Field>
+
+            <Field label={selectors.components.ConfigEditor.Database.input}>
+              <Input
+                {...props}
+                data-testid={selectors.components.ConfigEditor.Database.testID}
+                value={props.options.jsonData.database ?? ''}
+                aria-label={selectors.components.ConfigEditor.Database.input}
+                onChange={onChange('database')}
+              />
+            </Field>
+
+            <Field label={selectors.components.ConfigEditor.WithEvent.input} htmlFor="withEvent">
+              <Switch
+                {...props}
+                id="withEvent"
+                aria-label={selectors.components.ConfigEditor.WithEvent.input}
+                value={props.options.jsonData.withEvent ?? false}
+                onChange={(e) =>
+                  props.onOptionsChange({
+                    ...props.options,
+                    jsonData: {
+                      ...props.options.jsonData,
+                      withEvent: e.currentTarget.checked,
+                    },
+                  })
+                }
+                data-testid={selectors.components.ConfigEditor.WithEvent.testID}
+              />
+            </Field>
+          </ConfigSection>
+        </>
+      ) : (
+        <>
+          <ConnectionConfig {...props} onOptionsChange={onOptionsChange} newFormStylingEnabled={false} />
+          <h3>Redshift Details</h3>
+          <AuthTypeSwitch key="managedSecret" useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
+          <InlineField
+            {...props}
+            label={selectors.components.ConfigEditor.UseServerless.input}
+            labelWidth={28}
+            style={{ alignItems: 'center' }}
+          >
+            <Switch
+              value={props.options.jsonData.useServerless}
+              onChange={(e) =>
+                props.onOptionsChange({
+                  ...props.options,
+                  jsonData: {
+                    ...props.options.jsonData,
+                    useServerless: e.currentTarget.checked,
+                  },
+                })
+              }
+              data-testid={selectors.components.ConfigEditor.UseServerless.testID}
+            />
+          </InlineField>
+          <ConfigSelect
+            {...props}
+            allowCustomValue={true}
+            value={props.options.jsonData.clusterIdentifier ?? ''}
+            onChange={onChangeClusterID}
+            fetch={fetchClusters}
+            label={selectors.components.ConfigEditor.ClusterID.input}
+            data-testid={selectors.components.ConfigEditor.ClusterID.testID}
+            saveOptions={saveOptions}
+            hidden={props.options.jsonData.useServerless || useManagedSecret}
+          />
+          <InlineInput
+            {...props}
+            value={props.options.jsonData.clusterIdentifier ?? ''}
+            onChange={() => {}}
+            label={selectors.components.ConfigEditor.ClusterIDText.input}
+            data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
+            disabled={true}
+            hidden={props.options.jsonData.useServerless || !useManagedSecret}
+          />
+          <ConfigSelect
+            {...props}
+            value={props.options.jsonData.workgroupName ?? ''}
+            onChange={onChangeWorkgroupName}
+            fetch={fetchWorkgroups}
+            label={selectors.components.ConfigEditor.WorkgroupText.input}
+            data-testid={selectors.components.ConfigEditor.WorkgroupText.testID}
+            saveOptions={saveOptions}
+            hidden={!props.options.jsonData.useServerless}
+          />
+          <ConfigSelect
+            {...props}
+            value={props.options.jsonData.managedSecret?.arn ?? ''}
+            onChange={onChangeManagedSecret}
+            fetch={fetchSecrets}
+            label={selectors.components.ConfigEditor.ManagedSecret.input}
+            data-testid={selectors.components.ConfigEditor.ManagedSecret.testID}
+            saveOptions={saveOptions}
+            hidden={!useManagedSecret}
+          />
+          <InlineInput
+            {...props}
+            value={props.options.jsonData.dbUser ?? ''}
+            onChange={onChange('dbUser')}
+            label={selectors.components.ConfigEditor.DatabaseUser.input}
+            data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
+            disabled={useManagedSecret}
+            hidden={props.options.jsonData.useServerless && !useManagedSecret}
+          />
+          <InlineInput
+            {...props}
+            value={props.options.jsonData.database ?? ''}
+            onChange={onChange('database')}
+            label={selectors.components.ConfigEditor.Database.input}
+            data-testid={selectors.components.ConfigEditor.Database.testID}
+          />
+          <InlineField
+            {...props}
+            label={selectors.components.ConfigEditor.WithEvent.input}
+            labelWidth={28}
+            style={{ alignItems: 'center' }}
+          >
+            <Switch
+              value={props.options.jsonData.withEvent ?? false}
+              onChange={(e) =>
+                props.onOptionsChange({
+                  ...props.options,
+                  jsonData: {
+                    ...props.options.jsonData,
+                    withEvent: e.currentTarget.checked,
+                  },
+                })
+              }
+              data-testid={selectors.components.ConfigEditor.WithEvent.testID}
+            />
+          </InlineField>
+        </>
+      )}
     </div>
   );
 }
