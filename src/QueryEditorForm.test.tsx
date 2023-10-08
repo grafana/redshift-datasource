@@ -5,7 +5,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { select } from 'react-select-event';
 import { FillValueOptions } from '@grafana/aws-sdk';
-import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery } from 'types';
+import { FormatOptions } from 'types';
 import * as experimental from '@grafana/experimental';
 
 import { mockDatasource, mockQuery } from './__mocks__/datasource';

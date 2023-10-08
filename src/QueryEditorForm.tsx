@@ -127,6 +127,7 @@ export function QueryEditorForm(props: Props) {
           <div className="gf-form-group">
             <h6>Macros</h6>
             <ResourceSelector
+              id="schema"
               onChange={onChange('schema')}
               fetch={fetchSchemas}
               value={props.query.schema || null}
@@ -137,6 +138,7 @@ export function QueryEditorForm(props: Props) {
               className="width-12"
             />
             <ResourceSelector
+              id="table"
               onChange={onChange('table')}
               fetch={fetchTables}
               value={props.query.table || null}
@@ -148,6 +150,7 @@ export function QueryEditorForm(props: Props) {
               className="width-12"
             />
             <ResourceSelector
+              id="column"
               onChange={onChange('column')}
               fetch={fetchColumns}
               value={props.query.column || null}

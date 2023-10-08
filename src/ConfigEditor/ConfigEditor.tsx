@@ -389,7 +389,6 @@ export function ConfigEditor(props: Props) {
         </>
       ) : (
         <>
-          <ConnectionConfig {...props} onOptionsChange={onOptionsChange} newFormStylingEnabled={false} />
           <h3>Redshift Details</h3>
           <AuthTypeSwitch key="managedSecret" useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />
           <InlineField
@@ -414,6 +413,7 @@ export function ConfigEditor(props: Props) {
           </InlineField>
           <ConfigSelect
             {...props}
+            id="clusterId"
             allowCustomValue={true}
             value={props.options.jsonData.clusterIdentifier ?? ''}
             onChange={onChangeClusterID}
@@ -434,6 +434,7 @@ export function ConfigEditor(props: Props) {
           />
           <ConfigSelect
             {...props}
+            id="workgroupName"
             value={props.options.jsonData.workgroupName ?? ''}
             onChange={onChangeWorkgroupName}
             fetch={fetchWorkgroups}
@@ -444,6 +445,7 @@ export function ConfigEditor(props: Props) {
           />
           <ConfigSelect
             {...props}
+            id="managedSecret"
             value={props.options.jsonData.managedSecret?.arn ?? ''}
             onChange={onChangeManagedSecret}
             fetch={fetchSecrets}

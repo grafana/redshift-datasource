@@ -25,12 +25,12 @@ export const getRedshiftCompletionProvider: (args: CompletionProviderGetterArgs)
         resolve: getSchemas,
       },
       tables: {
-        resolve: (t: TableIdentifier) => {
+        resolve: (t?: TableIdentifier | null) => {
           return getTables(t?.schema);
         },
       },
       columns: {
-        resolve: (t: TableIdentifier) => getColumns(t.table!, t.schema),
+        resolve: (t?: TableIdentifier | null) => getColumns(t?.table ?? '', t?.schema ?? ''),
       },
       supportedMacros: () => MACROS,
     };
