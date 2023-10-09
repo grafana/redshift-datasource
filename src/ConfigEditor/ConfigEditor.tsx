@@ -297,7 +297,6 @@ export function ConfigEditor(props: Props) {
               <Input
                 {...props}
                 id="clusterIdText"
-                aria-label={selectors.components.ConfigEditor.ClusterIDText.input}
                 value={props.options.jsonData.clusterIdentifier ?? ''}
                 onChange={() => {}}
                 label={selectors.components.ConfigEditor.ClusterIDText.input}
@@ -350,7 +349,6 @@ export function ConfigEditor(props: Props) {
               <Input
                 {...props}
                 id="dbUser"
-                aria-label={selectors.components.ConfigEditor.DatabaseUser.input}
                 value={props.options.jsonData.dbUser ?? ''}
                 onChange={onChange('dbUser')}
                 data-testid={selectors.components.ConfigEditor.DatabaseUser.testID}
@@ -362,7 +360,6 @@ export function ConfigEditor(props: Props) {
                 {...props}
                 data-testid={selectors.components.ConfigEditor.Database.testID}
                 value={props.options.jsonData.database ?? ''}
-                aria-label={selectors.components.ConfigEditor.Database.input}
                 onChange={onChange('database')}
               />
             </Field>
@@ -371,7 +368,6 @@ export function ConfigEditor(props: Props) {
               <Switch
                 {...props}
                 id="withEvent"
-                aria-label={selectors.components.ConfigEditor.WithEvent.input}
                 value={props.options.jsonData.withEvent ?? false}
                 onChange={(e) =>
                   props.onOptionsChange({

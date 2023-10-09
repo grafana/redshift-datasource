@@ -130,7 +130,7 @@ describe('QueryEditorForm', () => {
       it('should include the Format As input', async () => {
         render(<QueryEditorForm {...props} />);
         await waitFor(() =>
-          screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format dataframes as' : 'Format as')
+          screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
         );
       });
 
@@ -144,7 +144,9 @@ describe('QueryEditorForm', () => {
             onChange={onChange}
           />
         );
-        await waitFor(() => screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format dataframes as' : 'Format as'));
+        await waitFor(() =>
+          screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
+        );
         const selectEl = screen.queryByLabelText(
           config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value'
         );
@@ -154,7 +156,9 @@ describe('QueryEditorForm', () => {
       it('should allow to change the fill mode', async () => {
         const onChange = jest.fn();
         render(<QueryEditorForm {...props} queries={[]} onChange={onChange} />);
-        const selectEl = screen.getByLabelText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value');
+        const selectEl = screen.getByLabelText(
+          config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value'
+        );
         expect(selectEl).toBeInTheDocument();
 
         await select(selectEl, 'NULL', { container: document.body });

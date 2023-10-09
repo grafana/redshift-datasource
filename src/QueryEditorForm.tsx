@@ -102,7 +102,7 @@ export function QueryEditorForm(props: Props) {
               </EditorField>
             </EditorFieldGroup>
             <EditorFieldGroup>
-              <EditorField label="Format dataframes as" htmlFor="formatAs" width={20}>
+              <EditorField label="Format data frames as" htmlFor="formatAs" width={20}>
                 <FormatSelect
                   newFormStylingEnabled={true}
                   id="formatAs"
