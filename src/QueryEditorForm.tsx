@@ -1,6 +1,6 @@
 import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sdk';
-import { QueryEditorProps, SelectableValue } from '@grafana/data';
-import { InlineSegmentGroup } from '@grafana/ui';
+import { GrafanaTheme2, QueryEditorProps, SelectableValue } from '@grafana/data';
+import { CollapsableSection, InlineSegmentGroup, useStyles2 } from '@grafana/ui';
 import React from 'react';
 import { selectors } from 'selectors';
 import SQLEditor from './SQLEditor';
@@ -9,6 +9,7 @@ import { DataSource } from './datasource';
 import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
 import { config } from '@grafana/runtime';
 import { EditorField, EditorFieldGroup, EditorRow, EditorRows } from '@grafana/experimental';
+import { css } from '@emotion/css';
 
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;
 
@@ -16,6 +17,7 @@ type QueryProperties = 'schema' | 'table' | 'column';
 
 export function QueryEditorForm(props: Props) {
   const newFormStylingEnabled = config.featureToggles.awsDatasourcesNewFormStyling;
+  const styles = getStyles;
 
   const fetchSchemas = async () => {
     const schemas: string[] = await props.datasource.getResource('schemas');
@@ -51,7 +53,7 @@ export function QueryEditorForm(props: Props) {
           <EditorRow>
             <EditorFieldGroup>
               <EditorField
-                width={15}
+                width={20}
                 label={selectors.components.ConfigEditor.schema.input}
                 tooltip="Use the selected schema with the $__schema macro"
                 data-testid={selectors.components.ConfigEditor.schema.testID}
@@ -67,7 +69,7 @@ export function QueryEditorForm(props: Props) {
                 />
               </EditorField>
               <EditorField
-                width={15}
+                width={20}
                 label={selectors.components.ConfigEditor.table.input}
                 tooltip="Use the selected table with the $__table macro"
                 data-testid={selectors.components.ConfigEditor.table.testID}
@@ -84,7 +86,7 @@ export function QueryEditorForm(props: Props) {
                 />
               </EditorField>
               <EditorField
-                width={15}
+                width={20}
                 label={selectors.components.ConfigEditor.column.input}
                 tooltip="Use the selected column with the $__column macro"
                 data-testid={selectors.components.ConfigEditor.column.testID}
@@ -101,20 +103,35 @@ export function QueryEditorForm(props: Props) {
                 />
               </EditorField>
             </EditorFieldGroup>
-            <EditorFieldGroup>
-              <EditorField label="Format data frames as" htmlFor="formatAs" width={20}>
-                <FormatSelect
-                  newFormStylingEnabled={true}
-                  id="formatAs"
-                  query={props.query}
-                  options={SelectableFormatOptions}
-                  onChange={props.onChange}
-                />
-              </EditorField>
-              {props.query.format === FormatOptions.TimeSeries && (
-                <FillValueSelect newFormStylingEnabled={true} query={props.query} onChange={props.onChange} />
-              )}
-            </EditorFieldGroup>
+          </EditorRow>
+          <EditorRow>
+            <div className={styles.collapseRow}>
+              <CollapsableSection
+                className={styles.collapse}
+                label={
+                  <p className={styles.collapseTitle} data-testid="collapse-title">
+                    Format
+                  </p>
+                }
+                isOpen={false}
+              >
+                <EditorFieldGroup>
+                  <EditorField label="Format data frames as" htmlFor="formatAs" width={20}>
+                    <FormatSelect
+                      newFormStylingEnabled={true}
+                      id="formatAs"
+                      query={props.query}
+                      options={SelectableFormatOptions}
+                      onChange={props.onChange}
+                    />
+                  </EditorField>
+
+                  {props.query.format === FormatOptions.TimeSeries && (
+                    <FillValueSelect newFormStylingEnabled={true} query={props.query} onChange={props.onChange} />
+                  )}
+                </EditorFieldGroup>
+              </CollapsableSection>
+            </div>
           </EditorRow>
           <EditorRow>
             <div style={{ width: '100%' }}>
@@ -175,3 +192,26 @@ export function QueryEditorForm(props: Props) {
     </>
   );
 }
+
+const getStyles = {
+  collapse: css({
+    alignItems: 'flex-start',
+    paddingTop: 0,
+  }),
+  collapseTitle: css({
+    fontSize: 14,
+    fontWeight: 500,
+    marginBottom: 0,
+  }),
+  collapseRow: css({
+    display: 'flex',
+    flexDirection: 'column',
+    '>div': {
+      alignItems: 'baseline',
+      justifyContent: 'flex-end',
+    },
+    '*[id^="collapse-content-"]': {
+      padding: 'unset',
+    },
+  }),
+};

@@ -2,6 +2,7 @@ import '@testing-library/jest-dom';
 
 import * as runtime from '@grafana/runtime';
 import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { select } from 'react-select-event';
 import { FillValueOptions } from '@grafana/aws-sdk';
@@ -129,6 +130,10 @@ describe('QueryEditorForm', () => {
 
       it('should include the Format As input', async () => {
         render(<QueryEditorForm {...props} />);
+        // if newFormStyling is enabled, the Format section is hidden under a Collapse
+        if (config.featureToggles.awsDatasourcesNewFormStyling) {
+          openFormatCollapse();
+        }
         await waitFor(() =>
           screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
         );
@@ -144,6 +149,10 @@ describe('QueryEditorForm', () => {
             onChange={onChange}
           />
         );
+        // if newFormStyling is enabled, the Format section is hidden under a Collapse
+        if (config.featureToggles.awsDatasourcesNewFormStyling) {
+          openFormatCollapse();
+        }
         await waitFor(() =>
           screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
         );
@@ -156,6 +165,10 @@ describe('QueryEditorForm', () => {
       it('should allow to change the fill mode', async () => {
         const onChange = jest.fn();
         render(<QueryEditorForm {...props} queries={[]} onChange={onChange} />);
+        // if newFormStyling is enabled, the Format section is hidden under a Collapse
+        if (config.featureToggles.awsDatasourcesNewFormStyling) {
+          openFormatCollapse();
+        }
         const selectEl = screen.getByLabelText(
           config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value'
         );
@@ -174,3 +187,10 @@ describe('QueryEditorForm', () => {
   config.featureToggles.awsDatasourcesNewFormStyling = true;
   run('QueryEditorForm with newFormStylingProps=true');
 });
+
+function openFormatCollapse() {
+  if (config.featureToggles.awsDatasourcesNewFormStyling) {
+    const collapseTitle = screen.getByTestId('collapse-title');
+    userEvent.click(collapseTitle);
+  }
+}
