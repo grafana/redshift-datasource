@@ -84,6 +84,7 @@
     "JDBC",
     "ODBC",
     "codebases",
-    "fillmode"
+    "fillmode",
+    "Collapsable"
   ]
 }

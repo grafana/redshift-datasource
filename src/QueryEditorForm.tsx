@@ -1,6 +1,6 @@
 import { FillValueSelect, FormatSelect, ResourceSelector } from '@grafana/aws-sdk';
-import { GrafanaTheme2, QueryEditorProps, SelectableValue } from '@grafana/data';
-import { CollapsableSection, InlineSegmentGroup, useStyles2 } from '@grafana/ui';
+import { QueryEditorProps, SelectableValue } from '@grafana/data';
+import { CollapsableSection, InlineSegmentGroup } from '@grafana/ui';
 import React from 'react';
 import { selectors } from 'selectors';
 import SQLEditor from './SQLEditor';
