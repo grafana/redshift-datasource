@@ -54,7 +54,7 @@ jest.mock('@grafana/runtime', () => {
     }),
     config: {
       featureToggles: {
-        awsDatasourcesNewFormStyling: true,
+        awsDatasourcesNewFormStyling: false,
       },
     },
   };
@@ -63,298 +63,305 @@ jest.mock('@grafana/runtime', () => {
 const props = mockDatasourceOptions;
 
 describe('ConfigEditor', () => {
-  function run(testName: string) {
-    describe(testName, () => {
-      it('should display Provisioned using Secrets Manager', () => {
-        render(<ConfigEditor {...props} />);
-        expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
-        expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
-      });
+  function run() {
+    it('should display Provisioned using Secrets Manager', () => {
+      render(<ConfigEditor {...props} />);
+      expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
+      expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
+    });
 
-      it('should display Provisioned using Temporary credentials', () => {
-        render(<ConfigEditor {...props} />);
-        screen.getByText('Temporary credentials').click();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
-        expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).not.toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).not.toBeDisabled();
-        expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
-      });
+    it('should display Provisioned using Temporary credentials', () => {
+      render(<ConfigEditor {...props} />);
+      screen.getByText('Temporary credentials').click();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
+      expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).not.toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).not.toBeDisabled();
+      expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
+    });
 
-      it('should display Serverless using Secrets Manager', () => {
-        render(
-          <ConfigEditor
-            {...{
-              ...props,
-              options: {
-                ...props.options,
-                jsonData: {
-                  ...props.options.jsonData,
-                  useServerless: true,
-                },
-              },
-            }}
-          />
-        );
-        expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
-        expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
-      });
-
-      it('should display Serverless using Temporary credentials', () => {
-        render(
-          <ConfigEditor
-            {...{
-              ...props,
-              options: {
-                ...props.options,
-                jsonData: {
-                  ...props.options.jsonData,
-                  useServerless: true,
-                },
-              },
-            }}
-          />
-        );
-        screen.getByText('Temporary credentials').click();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
-        expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
-        expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).not.toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).not.toBeVisible();
-        expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
-      });
-
-      it('should select a secret', async () => {
-        const onChange = jest.fn();
-        render(<ConfigEditor {...props} onOptionsChange={onChange} />);
-
-        screen.getByText('AWS Secrets Manager').click();
-
-        const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.ManagedSecret.input);
-        expect(selectEl).toBeInTheDocument();
-        await select(selectEl, provisionedSecret.arn, { container: document.body });
-
-        expect(onChange).toHaveBeenCalledWith({
-          ...props.options,
-          jsonData: { ...props.options.jsonData, managedSecret: provisionedSecret },
-        });
-      });
-
-      it('should allow user to enter a database', async () => {
-        const onChange = jest.fn();
-        render(<ConfigEditor {...props} onOptionsChange={onChange} />);
-
-        const dbField = screen.getByTestId('data-testid database');
-        expect(dbField).toBeInTheDocument();
-        fireEvent.change(dbField, { target: { value: 'abcd' } });
-
-        expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith({
-          ...props.options,
-          url: '/abcd',
-          jsonData: { ...props.options.jsonData, database: 'abcd' },
-        });
-      });
-
-      it('should enable WithEvent when it is toggled on', async () => {
-        const onChange = jest.fn();
-        render(<ConfigEditor {...props} onOptionsChange={onChange} />);
-        const withEventField = screen.getByTestId(selectors.components.ConfigEditor.WithEvent.testID);
-        expect(withEventField).toBeInTheDocument();
-
-        fireEvent.click(withEventField);
-
-        expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith({
-          ...props.options,
-          jsonData: { ...props.options.jsonData, withEvent: true },
-        });
-      });
-
-      it('should populate the `url` prop when workGroupName is selected', async () => {
-        const onChange = jest.fn();
-        render(
-          <ConfigEditor
-            {...props}
-            options={{
-              ...props.options,
-              jsonData: { ...props.options.jsonData, database: 'test-db' },
-            }}
-            onOptionsChange={onChange}
-          />
-        );
-
-        const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.WorkgroupText.input);
-        expect(selectEl).toBeInTheDocument();
-        await select(selectEl, workgroup.workgroupName, { container: document.body });
-
-        await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
-        expect(onChange).toHaveBeenCalledWith({
-          ...props.options,
-          url: 'foo.a.b.c:123/test-db',
-          jsonData: { ...props.options.jsonData, database: 'test-db', workgroupName },
-        });
-      });
-
-      it('should populate the `url` prop when clusterIdentifier is selected', async () => {
-        const onChange = jest.fn();
-        render(
-          <ConfigEditor
-            {...props}
-            options={{
-              ...props.options,
-              jsonData: { ...props.options.jsonData, database: 'test-db', useManagedSecret: false },
-            }}
-            onOptionsChange={onChange}
-          />
-        );
-
-        const selectEl = screen.getByRole('combobox', { name: selectors.components.ConfigEditor.ClusterID.input });
-        expect(selectEl).toBeInTheDocument();
-        await select(selectEl, cluster.clusterIdentifier, { container: document.body });
-
-        await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
-        expect(onChange).toHaveBeenCalledWith({
-          ...props.options,
-          url: 'bar.d.e.f:456/test-db',
-          jsonData: {
-            ...props.options.jsonData,
-            database: 'test-db',
-            clusterIdentifier: clusterIdentifier,
-            useManagedSecret: false,
-          },
-        });
-      });
-
-      it('should update an existing url when specifying a database', async () => {
-        const onChange = jest.fn();
-        await act(async () => {
-          render(
-            <ConfigEditor
-              {...props}
-              onOptionsChange={onChange}
-              options={{
-                ...props.options,
-                url: 'my.cluster.address:123/my-old-db',
-                jsonData: {
-                  ...props.options.jsonData,
-                  clusterIdentifier,
-                  useServerless: false,
-                  useManagedSecret: false,
-                },
-              }}
-            />
-          );
-        });
-
-        const dbField = screen.getByTestId('data-testid database');
-        expect(dbField).toBeInTheDocument();
-        fireEvent.change(dbField, { target: { value: 'abcd' } });
-
-        expect(onChange).toHaveBeenCalledTimes(1);
-        expect(onChange).toHaveBeenCalledWith({
-          ...props.options,
-          // the endpoint is updated as re-fetched
-          url: 'bar.d.e.f:456/abcd',
-          jsonData: {
-            ...props.options.jsonData,
-            clusterIdentifier,
-            useServerless: false,
-            useManagedSecret: false,
-            database: 'abcd',
-          },
-        });
-      });
-
-      it('should show the cluster identifier and the db user', async () => {
-        const onChange = jest.fn();
-        render(
-          <ConfigEditor
-            {...props}
-            onOptionsChange={onChange}
-            // setting the managedSecret will trigger the secret retrieval
-            options={{
-              ...props.options,
-              jsonData: {
-                ...props.options.jsonData,
-                useServerless: false,
-                useManagedSecret: true,
-                managedSecret: provisionedSecret,
-              },
-            }}
-          />
-        );
-
-        // the clusterIdentifier and dbUser update is delegated to the onChange function
-        await waitFor(() =>
-          expect(onChange).toHaveBeenCalledWith({
-            ...props.options,
-            url: 'bar.d.e.f:456/',
-            jsonData: {
-              ...props.options.jsonData,
-              dbUser,
-              useServerless: false,
-              useManagedSecret: true,
-              managedSecret: provisionedSecret,
-              clusterIdentifier,
-            },
-          })
-        );
-      });
-
-      it('should show the dbUser', async () => {
-        const onChange = jest.fn();
-        render(
-          <ConfigEditor
-            {...props}
-            onOptionsChange={onChange}
-            // setting the managedSecret will trigger the secret retrieval
-            options={{
+    it('should display Serverless using Secrets Manager', () => {
+      render(
+        <ConfigEditor
+          {...{
+            ...props,
+            options: {
               ...props.options,
               jsonData: {
                 ...props.options.jsonData,
                 useServerless: true,
-                useManagedSecret: true,
-                managedSecret: serverlessSecret,
-                workgroupName,
+              },
+            },
+          }}
+        />
+      );
+      expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
+      expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
+    });
+
+    it('should display Serverless using Temporary credentials', () => {
+      render(
+        <ConfigEditor
+          {...{
+            ...props,
+            options: {
+              ...props.options,
+              jsonData: {
+                ...props.options.jsonData,
+                useServerless: true,
+              },
+            },
+          }}
+        />
+      );
+      screen.getByText('Temporary credentials').click();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
+      expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
+      expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).not.toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).not.toBeVisible();
+      expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
+    });
+
+    it('should select a secret', async () => {
+      const onChange = jest.fn();
+      render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+
+      screen.getByText('AWS Secrets Manager').click();
+
+      const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.ManagedSecret.input);
+      expect(selectEl).toBeInTheDocument();
+      await select(selectEl, provisionedSecret.arn, { container: document.body });
+
+      expect(onChange).toHaveBeenCalledWith({
+        ...props.options,
+        jsonData: { ...props.options.jsonData, managedSecret: provisionedSecret },
+      });
+    });
+
+    it('should allow user to enter a database', async () => {
+      const onChange = jest.fn();
+      render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+
+      const dbField = screen.getByTestId('data-testid database');
+      expect(dbField).toBeInTheDocument();
+      fireEvent.change(dbField, { target: { value: 'abcd' } });
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith({
+        ...props.options,
+        url: '/abcd',
+        jsonData: { ...props.options.jsonData, database: 'abcd' },
+      });
+    });
+
+    it('should enable WithEvent when it is toggled on', async () => {
+      const onChange = jest.fn();
+      render(<ConfigEditor {...props} onOptionsChange={onChange} />);
+      const withEventField = screen.getByTestId(selectors.components.ConfigEditor.WithEvent.testID);
+      expect(withEventField).toBeInTheDocument();
+
+      fireEvent.click(withEventField);
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith({
+        ...props.options,
+        jsonData: { ...props.options.jsonData, withEvent: true },
+      });
+    });
+
+    it('should populate the `url` prop when workGroupName is selected', async () => {
+      const onChange = jest.fn();
+      render(
+        <ConfigEditor
+          {...props}
+          options={{
+            ...props.options,
+            jsonData: { ...props.options.jsonData, database: 'test-db' },
+          }}
+          onOptionsChange={onChange}
+        />
+      );
+
+      const selectEl = screen.getByLabelText(selectors.components.ConfigEditor.WorkgroupText.input);
+      expect(selectEl).toBeInTheDocument();
+      await select(selectEl, workgroup.workgroupName, { container: document.body });
+
+      await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+      expect(onChange).toHaveBeenCalledWith({
+        ...props.options,
+        url: 'foo.a.b.c:123/test-db',
+        jsonData: { ...props.options.jsonData, database: 'test-db', workgroupName },
+      });
+    });
+
+    it('should populate the `url` prop when clusterIdentifier is selected', async () => {
+      const onChange = jest.fn();
+      render(
+        <ConfigEditor
+          {...props}
+          options={{
+            ...props.options,
+            jsonData: { ...props.options.jsonData, database: 'test-db', useManagedSecret: false },
+          }}
+          onOptionsChange={onChange}
+        />
+      );
+
+      const selectEl = screen.getByRole('combobox', { name: selectors.components.ConfigEditor.ClusterID.input });
+      expect(selectEl).toBeInTheDocument();
+      await select(selectEl, cluster.clusterIdentifier, { container: document.body });
+
+      await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+      expect(onChange).toHaveBeenCalledWith({
+        ...props.options,
+        url: 'bar.d.e.f:456/test-db',
+        jsonData: {
+          ...props.options.jsonData,
+          database: 'test-db',
+          clusterIdentifier: clusterIdentifier,
+          useManagedSecret: false,
+        },
+      });
+    });
+
+    it('should update an existing url when specifying a database', async () => {
+      const onChange = jest.fn();
+      await act(async () => {
+        render(
+          <ConfigEditor
+            {...props}
+            onOptionsChange={onChange}
+            options={{
+              ...props.options,
+              url: 'my.cluster.address:123/my-old-db',
+              jsonData: {
+                ...props.options.jsonData,
+                clusterIdentifier,
+                useServerless: false,
+                useManagedSecret: false,
               },
             }}
           />
         );
+      });
 
-        // the dbUser update is delegated to the onChange function
-        await waitFor(() =>
-          expect(onChange).toHaveBeenCalledWith({
+      const dbField = screen.getByTestId('data-testid database');
+      expect(dbField).toBeInTheDocument();
+      fireEvent.change(dbField, { target: { value: 'abcd' } });
+
+      expect(onChange).toHaveBeenCalledTimes(1);
+      expect(onChange).toHaveBeenCalledWith({
+        ...props.options,
+        // the endpoint is updated as re-fetched
+        url: 'bar.d.e.f:456/abcd',
+        jsonData: {
+          ...props.options.jsonData,
+          clusterIdentifier,
+          useServerless: false,
+          useManagedSecret: false,
+          database: 'abcd',
+        },
+      });
+    });
+
+    it('should show the cluster identifier and the db user', async () => {
+      const onChange = jest.fn();
+      render(
+        <ConfigEditor
+          {...props}
+          onOptionsChange={onChange}
+          // setting the managedSecret will trigger the secret retrieval
+          options={{
             ...props.options,
-            url: 'foo.a.b.c:123/',
             jsonData: {
               ...props.options.jsonData,
-              dbUser,
+              useServerless: false,
+              useManagedSecret: true,
+              managedSecret: provisionedSecret,
+            },
+          }}
+        />
+      );
+
+      // the clusterIdentifier and dbUser update is delegated to the onChange function
+      await waitFor(() =>
+        expect(onChange).toHaveBeenCalledWith({
+          ...props.options,
+          url: 'bar.d.e.f:456/',
+          jsonData: {
+            ...props.options.jsonData,
+            dbUser,
+            useServerless: false,
+            useManagedSecret: true,
+            managedSecret: provisionedSecret,
+            clusterIdentifier,
+          },
+        })
+      );
+    });
+
+    it('should show the dbUser', async () => {
+      const onChange = jest.fn();
+      render(
+        <ConfigEditor
+          {...props}
+          onOptionsChange={onChange}
+          // setting the managedSecret will trigger the secret retrieval
+          options={{
+            ...props.options,
+            jsonData: {
+              ...props.options.jsonData,
               useServerless: true,
               useManagedSecret: true,
               managedSecret: serverlessSecret,
               workgroupName,
             },
-          })
-        );
-      });
+          }}
+        />
+      );
+
+      // the dbUser update is delegated to the onChange function
+      await waitFor(() =>
+        expect(onChange).toHaveBeenCalledWith({
+          ...props.options,
+          url: 'foo.a.b.c:123/',
+          jsonData: {
+            ...props.options.jsonData,
+            dbUser,
+            useServerless: true,
+            useManagedSecret: true,
+            managedSecret: serverlessSecret,
+            workgroupName,
+          },
+        })
+      );
     });
   }
-  run('ConfigEditor with new form styling disabled');
-  config.featureToggles.awsDatasourcesNewFormStyling = true;
-  run('ConfigEditor with new form styling enabled');
+  describe('ConfigEditor with awsDatasourcesNewFormStyling feature toggle disabled', () => {
+    beforeAll(() => {
+      config.featureToggles.awsDatasourcesNewFormStyling = false;
+    });
+    run();
+  });
+  describe('ConfigEditor with awsDatasourcesNewFormStyling feature toggle enabled', () => {
+    beforeAll(() => {
+      config.featureToggles.awsDatasourcesNewFormStyling = true;
+    });
+    run();
+  });
 });

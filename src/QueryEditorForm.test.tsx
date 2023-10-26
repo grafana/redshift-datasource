@@ -46,146 +46,153 @@ const props = {
 };
 
 describe('QueryEditorForm', () => {
-  function run(testName: string) {
-    describe(testName, () => {
-      it('should request select schemas but not execute the query', async () => {
-        const onChange = jest.fn();
-        const onRunQuery = jest.fn();
-        ds.getResource = jest.fn().mockResolvedValue(['foo']);
-        render(
-          <QueryEditorForm
-            {...props}
-            onChange={onChange}
-            onRunQuery={onRunQuery}
-            query={{ ...props.query, schema: 'bar' }}
-          />
-        );
+  function run() {
+    it('should request select schemas but not execute the query', async () => {
+      const onChange = jest.fn();
+      const onRunQuery = jest.fn();
+      ds.getResource = jest.fn().mockResolvedValue(['foo']);
+      render(
+        <QueryEditorForm
+          {...props}
+          onChange={onChange}
+          onRunQuery={onRunQuery}
+          query={{ ...props.query, schema: 'bar' }}
+        />
+      );
 
-        const selectEl = screen.getByLabelText('Schema');
-        expect(selectEl).toBeInTheDocument();
+      const selectEl = screen.getByLabelText('Schema');
+      expect(selectEl).toBeInTheDocument();
 
-        await select(selectEl, 'foo', { container: document.body });
+      await select(selectEl, 'foo', { container: document.body });
 
-        expect(ds.getResource).toHaveBeenCalledWith('schemas');
-        expect(onChange).toHaveBeenCalledWith({
-          ...q,
-          schema: 'foo',
-        });
-        expect(onRunQuery).not.toHaveBeenCalled();
+      expect(ds.getResource).toHaveBeenCalledWith('schemas');
+      expect(onChange).toHaveBeenCalledWith({
+        ...q,
+        schema: 'foo',
       });
+      expect(onRunQuery).not.toHaveBeenCalled();
+    });
 
-      it('should request select tables but not execute the query', async () => {
-        const onChange = jest.fn();
-        const onRunQuery = jest.fn();
-        ds.postResource = jest.fn().mockResolvedValue(['foo']);
-        render(
-          <QueryEditorForm
-            {...props}
-            onChange={onChange}
-            onRunQuery={onRunQuery}
-            query={{ ...props.query, schema: 'bar' }}
-          />
-        );
+    it('should request select tables but not execute the query', async () => {
+      const onChange = jest.fn();
+      const onRunQuery = jest.fn();
+      ds.postResource = jest.fn().mockResolvedValue(['foo']);
+      render(
+        <QueryEditorForm
+          {...props}
+          onChange={onChange}
+          onRunQuery={onRunQuery}
+          query={{ ...props.query, schema: 'bar' }}
+        />
+      );
 
-        const selectEl = screen.getByLabelText('Table');
-        expect(selectEl).toBeInTheDocument();
+      const selectEl = screen.getByLabelText('Table');
+      expect(selectEl).toBeInTheDocument();
 
-        await select(selectEl, 'foo', { container: document.body });
+      await select(selectEl, 'foo', { container: document.body });
 
-        expect(ds.postResource).toHaveBeenCalledWith('tables', { schema: 'bar' });
-        expect(onChange).toHaveBeenCalledWith({
-          ...q,
-          schema: 'bar',
-          table: 'foo',
-        });
-        expect(onRunQuery).not.toHaveBeenCalled();
+      expect(ds.postResource).toHaveBeenCalledWith('tables', { schema: 'bar' });
+      expect(onChange).toHaveBeenCalledWith({
+        ...q,
+        schema: 'bar',
+        table: 'foo',
       });
+      expect(onRunQuery).not.toHaveBeenCalled();
+    });
 
-      it('should request select column but not execute the query', async () => {
-        const onChange = jest.fn();
-        const onRunQuery = jest.fn();
-        ds.postResource = jest.fn().mockResolvedValue(['foo']);
-        render(
-          <QueryEditorForm
-            {...props}
-            onChange={onChange}
-            onRunQuery={onRunQuery}
-            query={{ ...props.query, table: 'bar' }}
-          />
-        );
+    it('should request select column but not execute the query', async () => {
+      const onChange = jest.fn();
+      const onRunQuery = jest.fn();
+      ds.postResource = jest.fn().mockResolvedValue(['foo']);
+      render(
+        <QueryEditorForm
+          {...props}
+          onChange={onChange}
+          onRunQuery={onRunQuery}
+          query={{ ...props.query, table: 'bar' }}
+        />
+      );
 
-        const selectEl = screen.getByLabelText('Column');
-        expect(selectEl).toBeInTheDocument();
+      const selectEl = screen.getByLabelText('Column');
+      expect(selectEl).toBeInTheDocument();
 
-        await select(selectEl, 'foo', { container: document.body });
+      await select(selectEl, 'foo', { container: document.body });
 
-        expect(ds.postResource).toHaveBeenCalledWith('columns', { table: 'bar' });
-        expect(onChange).toHaveBeenCalledWith({
-          ...q,
-          table: 'bar',
-          column: 'foo',
-        });
-        expect(onRunQuery).not.toHaveBeenCalled();
+      expect(ds.postResource).toHaveBeenCalledWith('columns', { table: 'bar' });
+      expect(onChange).toHaveBeenCalledWith({
+        ...q,
+        table: 'bar',
+        column: 'foo',
       });
+      expect(onRunQuery).not.toHaveBeenCalled();
+    });
 
-      it('should include the Format As input', async () => {
-        render(<QueryEditorForm {...props} />);
-        // if newFormStyling is enabled, the Format section is hidden under a Collapse
-        if (config.featureToggles.awsDatasourcesNewFormStyling) {
-          openFormatCollapse();
-        }
-        await waitFor(() =>
-          screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
-        );
-      });
+    it('should include the Format As input', async () => {
+      render(<QueryEditorForm {...props} />);
+      // if newFormStyling is enabled, the Format section is hidden under a Collapse
+      if (config.featureToggles.awsDatasourcesNewFormStyling) {
+        openFormatCollapse();
+      }
+      await waitFor(() =>
+        screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
+      );
+    });
 
-      it('should skip the fill mode input if the format is not TimeSeries', async () => {
-        const onChange = jest.fn();
-        render(
-          <QueryEditorForm
-            {...props}
-            query={{ ...props.query, format: FormatOptions.Table }}
-            queries={[]}
-            onChange={onChange}
-          />
-        );
-        // if newFormStyling is enabled, the Format section is hidden under a Collapse
-        if (config.featureToggles.awsDatasourcesNewFormStyling) {
-          openFormatCollapse();
-        }
-        await waitFor(() =>
-          screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
-        );
-        const selectEl = screen.queryByLabelText(
-          config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value'
-        );
-        expect(selectEl).not.toBeInTheDocument();
-      });
+    it('should skip the fill mode input if the format is not TimeSeries', async () => {
+      const onChange = jest.fn();
+      render(
+        <QueryEditorForm
+          {...props}
+          query={{ ...props.query, format: FormatOptions.Table }}
+          queries={[]}
+          onChange={onChange}
+        />
+      );
+      // if newFormStyling is enabled, the Format section is hidden under a Collapse
+      if (config.featureToggles.awsDatasourcesNewFormStyling) {
+        openFormatCollapse();
+      }
+      await waitFor(() =>
+        screen.getByText(config.featureToggles.awsDatasourcesNewFormStyling ? 'Format data frames as' : 'Format as')
+      );
+      const selectEl = screen.queryByLabelText(
+        config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value'
+      );
+      expect(selectEl).not.toBeInTheDocument();
+    });
 
-      it('should allow to change the fill mode', async () => {
-        const onChange = jest.fn();
-        render(<QueryEditorForm {...props} queries={[]} onChange={onChange} />);
-        // if newFormStyling is enabled, the Format section is hidden under a Collapse
-        if (config.featureToggles.awsDatasourcesNewFormStyling) {
-          openFormatCollapse();
-        }
-        const selectEl = screen.getByLabelText(
-          config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value'
-        );
-        expect(selectEl).toBeInTheDocument();
+    it('should allow to change the fill mode', async () => {
+      const onChange = jest.fn();
+      render(<QueryEditorForm {...props} queries={[]} onChange={onChange} />);
+      // if newFormStyling is enabled, the Format section is hidden under a Collapse
+      if (config.featureToggles.awsDatasourcesNewFormStyling) {
+        openFormatCollapse();
+      }
+      const selectEl = screen.getByLabelText(
+        config.featureToggles.awsDatasourcesNewFormStyling ? 'Fill with' : 'Fill value'
+      );
+      expect(selectEl).toBeInTheDocument();
 
-        await select(selectEl, 'NULL', { container: document.body });
+      await select(selectEl, 'NULL', { container: document.body });
 
-        expect(onChange).toHaveBeenCalledWith({
-          ...q,
-          fillMode: { mode: FillValueOptions.Null },
-        });
+      expect(onChange).toHaveBeenCalledWith({
+        ...q,
+        fillMode: { mode: FillValueOptions.Null },
       });
     });
   }
-  run('QueryEditorForm with newFormStylingProps=false');
-  config.featureToggles.awsDatasourcesNewFormStyling = true;
-  run('QueryEditorForm with newFormStylingProps=true');
+  describe('QueryEditor with awsDatasourcesNewFormStyling feature toggle disabled', () => {
+    beforeAll(() => {
+      config.featureToggles.awsDatasourcesNewFormStyling = false;
+    });
+    run();
+  });
+  describe('QueryEditor with awsDatasourcesNewFormStyling feature toggle enabled', () => {
+    beforeAll(() => {
+      config.featureToggles.awsDatasourcesNewFormStyling = true;
+    });
+    run();
+  });
 });
 
 function openFormatCollapse() {
