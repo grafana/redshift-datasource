@@ -16,6 +16,11 @@ const provisionedSecretFetched = { dbClusterIdentifier: clusterIdentifier, usern
 const serverlessSecretFetched = { dbClusterIdentifier: '', username: dbUser };
 const cluster = { clusterIdentifier, endpoint: { address: 'bar.d.e.f', port: 456 }, database: 'db2' };
 const workgroup = { workgroupName, endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db1' };
+const originalFormFeatureToggleValue = config.featureToggles.awsDatasourcesNewFormStyling;
+
+const cleanupFeatureToggle = () => {
+  config.featureToggles.awsDatasourcesNewFormStyling = originalFormFeatureToggleValue;
+};
 
 jest.mock('@grafana/aws-sdk', () => {
   return {
@@ -352,15 +357,22 @@ describe('ConfigEditor', () => {
       );
     });
   }
-  describe('ConfigEditor with awsDatasourcesNewFormStyling feature toggle disabled', () => {
+
+  describe('QueryEditorForm with awsDatasourcesNewFormStyling feature toggle disabled', () => {
     beforeAll(() => {
       config.featureToggles.awsDatasourcesNewFormStyling = false;
     });
+    afterAll(() => {
+      cleanupFeatureToggle();
+    });
     run();
   });
-  describe('ConfigEditor with awsDatasourcesNewFormStyling feature toggle enabled', () => {
+  describe('QueryEditorForm with awsDatasourcesNewFormStyling feature toggle enabled', () => {
     beforeAll(() => {
       config.featureToggles.awsDatasourcesNewFormStyling = true;
+    });
+    afterAll(() => {
+      cleanupFeatureToggle();
     });
     run();
   });

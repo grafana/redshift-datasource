@@ -32,6 +32,11 @@ jest.mock('@grafana/runtime', () => ({
 
 const ds = mockDatasource;
 const q = mockQuery;
+const originalFormFeatureToggleValue = runtime.config.featureToggles.awsDatasourcesNewFormStyling;
+
+const cleanupFeatureToggle = () => {
+  config.featureToggles.awsDatasourcesNewFormStyling = originalFormFeatureToggleValue;
+};
 
 beforeEach(() => {
   ds.getResource = jest.fn().mockResolvedValue([]);
@@ -181,15 +186,22 @@ describe('QueryEditorForm', () => {
       });
     });
   }
-  describe('QueryEditor with awsDatasourcesNewFormStyling feature toggle disabled', () => {
+
+  describe('QueryEditorForm with awsDatasourcesNewFormStyling feature toggle disabled', () => {
     beforeAll(() => {
       config.featureToggles.awsDatasourcesNewFormStyling = false;
     });
+    afterAll(() => {
+      cleanupFeatureToggle();
+    });
     run();
   });
-  describe('QueryEditor with awsDatasourcesNewFormStyling feature toggle enabled', () => {
+  describe('QueryEditorForm with awsDatasourcesNewFormStyling feature toggle enabled', () => {
     beforeAll(() => {
       config.featureToggles.awsDatasourcesNewFormStyling = true;
+    });
+    afterAll(() => {
+      cleanupFeatureToggle();
     });
     run();
   });
