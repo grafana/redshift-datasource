@@ -208,8 +208,6 @@ describe('QueryEditorForm', () => {
 });
 
 function openFormatCollapse() {
-  if (config.featureToggles.awsDatasourcesNewFormStyling) {
-    const collapseTitle = screen.getByTestId('collapse-title');
-    userEvent.click(collapseTitle);
-  }
+  const collapseTitle = screen.getByTestId('collapse-title');
+  userEvent.click(collapseTitle);
 }
