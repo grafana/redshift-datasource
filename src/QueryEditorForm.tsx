@@ -106,6 +106,7 @@ export function QueryEditorForm(props: Props) {
           </EditorRow>
           <EditorRow>
             <div className={styles.collapseRow}>
+              {/* temporary solution until we have a collapse section compatible with Editor Fields in grafana/ui */}
               <CollapsableSection
                 className={styles.collapse}
                 label={
