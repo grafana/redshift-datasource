@@ -3,6 +3,7 @@
 ## 1.13.0
 
 - Migrate Query and config editors to new form styling under feature toggle [#255](https://github.com/grafana/redshift-datasource/pull/255)
+- Support Node 18 [#249](https://github.com/grafana/redshift-datasource/pull/249)
 - Fix datasource type in provisioning docs in [#246](https://github.com/grafana/redshift-datasource/pull/246)
 
 ## 1.12.2
