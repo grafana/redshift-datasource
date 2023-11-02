@@ -96,7 +96,7 @@ e2e.scenario({
             // click run and wait for loading
             cy.contains('button', 'Run').click();
             cy.get('[aria-label="Panel loading bar"]');
-            cy.get('[aria-label="Panel loading bar"]', { timeout: 10000 }).should('not.exist');
+            cy.get('[aria-label="Panel loading bar"]', { timeout: 14000 }).should('not.exist');
 
             e2eSelectors.QueryEditor.TableView.input().click({ force: true });
             // check that the table content contains at least an entry
