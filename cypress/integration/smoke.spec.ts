@@ -82,7 +82,7 @@ e2e.scenario({
             // Increasing delay to allow tables names and columns names to be resolved async by the plugin
             e2eSelectors.QueryEditor.CodeEditor.container()
               .click({ force: true })
-              .type(`s{enter}{enter}{enter}pub{enter}avg{enter}{enter}{enter}`, { delay: 5000 });
+              .type(`s{enter}{enter}{enter}pub{enter}avg{enter}{enter}{enter}`, { delay: 8000 });
             e2eSelectors.QueryEditor.CodeEditor.container().contains(
               'SELECT * FROM public.average_temperature GROUP BY berlin'
             );
