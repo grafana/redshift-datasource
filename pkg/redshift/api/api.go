@@ -36,7 +36,7 @@ func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWS
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
 
 	httpClientProvider := sdkhttpclient.NewProvider()
-	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions()
+	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(context.TODO()) // TODO: Context needs to be added, see https://github.com/grafana/oss-plugin-partnerships/issues/648
 	if err != nil {
 		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
 		return nil, err
