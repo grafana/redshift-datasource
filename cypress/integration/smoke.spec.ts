@@ -82,7 +82,7 @@ e2e.scenario({
             // Increasing delay to allow tables names and columns names to be resolved async by the plugin
             e2eSelectors.QueryEditor.CodeEditor.container()
               .click({ force: true })
-              .type(`s{enter}{enter}{enter}pub{enter}avg{enter}{enter}{enter}`, { delay: 8000 });
+              .type(`s{enter}{enter}{enter}pub{enter}avg{enter}{enter}{enter}`, { delay: 3000 });
             e2eSelectors.QueryEditor.CodeEditor.container().contains(
               'SELECT * FROM public.average_temperature GROUP BY berlin'
             );
@@ -96,7 +96,7 @@ e2e.scenario({
             // click run and wait for loading
             cy.contains('button', 'Run').click();
             cy.get('[aria-label="Panel loading bar"]');
-            cy.get('[aria-label="Panel loading bar"]', { timeout: 14000 }).should('not.exist');
+            cy.get('[aria-label="Panel loading bar"]', { timeout: 10000 }).should('not.exist');
 
             e2eSelectors.QueryEditor.TableView.input().click({ force: true });
             // check that the table content contains at least an entry
