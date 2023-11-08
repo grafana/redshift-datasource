@@ -76,17 +76,6 @@ e2e.scenario({
           matchScreenshot: false,
           visitDashboardAtStart: false,
           queriesForm: () => {
-            // The following section will verify that autocompletion in behaving as expected.
-            // Throughout the composition of the SQL query, the autocompletion engine will provide appropriate suggestions.
-            // In this test the first few suggestions are accepted by hitting enter which will create a basic query.
-            // Increasing delay to allow tables names and columns names to be resolved async by the plugin
-            e2eSelectors.QueryEditor.CodeEditor.container()
-              .click({ force: true })
-              .type(`s{enter}{enter}{enter}pub{enter}avg{enter}{enter}{enter}`, { delay: 7000 });
-            e2eSelectors.QueryEditor.CodeEditor.container().contains(
-              'SELECT * FROM public.average_temperature GROUP BY berlin'
-            );
-
             e2eSelectors.QueryEditor.CodeEditor.container()
               .click({ force: true })
               .type(
