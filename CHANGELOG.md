@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.13.1
+
+- Bump go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace from 0.37.0 to 0.44.0 by @dependabot in https://github.com/grafana/redshift-datasource/pull/257
+- Upgrade grafana-plugin-sdk-go; add underscore, debug to package resolutions by @fridgepoet in https://github.com/grafana/redshift-datasource/pull/265
+
+**Full Changelog**: https://github.com/grafana/redshift-datasource/compare/v1.13.0...v1.13.1
+
 ## 1.13.0
 
 - Migrate Query and config editors to new form styling under feature toggle [#255](https://github.com/grafana/redshift-datasource/pull/255)
