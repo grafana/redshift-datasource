@@ -87,7 +87,9 @@
     "jest-environment-jsdom": "^29.5.0"
   },
   "resolutions": {
-    "@grafana/e2e-selectors": "10.0.0"
+    "@grafana/e2e-selectors": "10.0.0",
+    "debug": "2.6.9",
+    "underscore": "1.12.1"
   },
   "engines": {
     "node": ">=18"
