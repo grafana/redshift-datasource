@@ -86,6 +86,9 @@
     "codebases",
     "fillmode",
     "Collapsable",
-    "instancemgmt"
+    "instancemgmt",
+    "opentelemetry",
+    "httptrace",
+    "otelhttptrace"
   ]
 }
