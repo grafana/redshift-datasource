@@ -2,7 +2,7 @@
 
 ## 1.13.2
 
-- BUpdate grafana/aws-sdk-go to 0.20.0 https://github.com/grafana/redshift-datasource/pull/268
+- Update grafana/aws-sdk-go to 0.20.0 https://github.com/grafana/redshift-datasource/pull/268
 
 ## 1.13.1
 
