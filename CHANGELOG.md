@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.13.2
+
+- Update grafana/aws-sdk-go to 0.20.0 https://github.com/grafana/redshift-datasource/pull/268
+
 ## 1.13.1
 
 - Bump go.opentelemetry.io/contrib/instrumentation/net/http/httptrace/otelhttptrace from 0.37.0 to 0.44.0 by @dependabot in https://github.com/grafana/redshift-datasource/pull/257
