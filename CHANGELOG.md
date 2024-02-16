@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.13.3
+
+- Upgrade @grafana/async-query-data from 0.1.10 to 0.1.11 https://github.com/grafana/redshift-datasource/pull/269
+
 ## 1.13.2
 
 - Update grafana/aws-sdk-go to 0.20.0 https://github.com/grafana/redshift-datasource/pull/268
