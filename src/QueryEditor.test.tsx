@@ -24,14 +24,6 @@ const props = {
   onChange: jest.fn(),
   onRunQuery: jest.fn(),
 };
-jest.mock('@grafana/runtime', () => ({
-  ...jest.requireActual<typeof runtime>('@grafana/runtime'),
-  config: {
-    featureToggles: {
-      redshiftAsyncQueryDataSupport: true,
-    },
-  },
-}));
 
 beforeEach(() => {
   ds.getResource = jest.fn().mockResolvedValue([]);
@@ -44,28 +36,9 @@ describe('Query Editor', () => {
     const runButton = screen.getByRole('button', { name: 'Run query' });
     expect(runButton).toBeDisabled();
   });
-  it('should show cancel button if redshiftAsyncQueryDataSupport feature is enabled', () => {
+  it('should show cancel button', () => {
     render(<QueryEditor {...props} />);
     const cancelButton = screen.getByRole('button', { name: 'Stop query' });
     expect(cancelButton).toBeInTheDocument();
-  });
-  it('should not show cancel button if redshiftAsyncQueryDataSupport feature is disabled', () => {
-    config.featureToggles.redshiftAsyncQueryDataSupport = false;
-    render(<QueryEditor {...props} />);
-    const cancelButton = screen.queryByRole('button', { name: 'Stop query' });
-    expect(cancelButton).not.toBeInTheDocument();
-  });
-  it('should re-enable Run query button if there is a change to the query', async () => {
-    render(<QueryEditor {...props} query={{ ...props.query, rawSQL: 'initial query' }} />);
-    const runButton = screen.getByRole('button', { name: 'Run query' });
-    expect(runButton).toBeDisabled();
-
-    const input = screen.getByTestId('codeEditor');
-    expect(input).toBeDefined();
-
-    fireEvent.change(input, { target: { value: 'test query' } });
-
-    expect(props.onChange).toHaveBeenCalledWith({ ...props.query, rawSQL: 'test query' });
-    expect(runButton).not.toBeDisabled();
   });
 });

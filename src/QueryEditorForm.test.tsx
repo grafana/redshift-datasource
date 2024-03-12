@@ -25,7 +25,6 @@ jest.mock('@grafana/runtime', () => ({
   config: {
     featureToggles: {
       awsDatasourcesNewFormStyling: false,
-      redshiftAsyncQueryDataSupport: true,
     },
   },
 }));

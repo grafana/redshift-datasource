@@ -9,7 +9,7 @@ import { RedshiftAnnotationsSupport } from './annotations';
 
 export class DataSource extends DatasourceWithAsyncBackend<RedshiftQuery, RedshiftDataSourceOptions> {
   constructor(instanceSettings: DataSourceInstanceSettings<RedshiftDataSourceOptions>) {
-    super(instanceSettings, config.featureToggles.redshiftAsyncQueryDataSupport);
+    super(instanceSettings);
     this.variables = new RedshiftVariableSupport(this);
   }
 
