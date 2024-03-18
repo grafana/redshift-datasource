@@ -1,10 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { QueryEditor } from 'QueryEditor';
 import React from 'react';
 import { mockDatasource, mockQuery } from './__mocks__/datasource';
 import * as experimental from '@grafana/experimental';
-import * as runtime from '@grafana/runtime';
-import { config } from '@grafana/runtime';
 
 const ds = mockDatasource;
 const q = { ...mockQuery, rawSQL: '' };
