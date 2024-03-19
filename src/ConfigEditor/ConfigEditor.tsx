@@ -1,5 +1,5 @@
 import { ConfigSelect, ConnectionConfig, InlineInput, Divider } from '@grafana/aws-sdk';
-import { DataSourcePluginOptionsEditorProps, SelectableValue } from '@grafana/data';
+import { DataSourcePluginOptionsEditorProps, SelectableValue, GrafanaTheme2 } from '@grafana/data';
 import { config, getBackendSrv } from '@grafana/runtime';
 import React, { FormEvent, useEffect, useState } from 'react';
 import { selectors } from 'selectors';
@@ -11,7 +11,8 @@ import {
   RedshiftManagedSecret,
 } from '../types';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
-import { Field, InlineField, Input, Switch } from '@grafana/ui';
+import { Field, InlineField, Input, Switch, useStyles2 } from '@grafana/ui';
+import { css } from '@emotion/css';
 import { ConfigSection } from '@grafana/experimental';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
@@ -44,6 +45,9 @@ export function ConfigEditor(props: Props) {
   const { jsonData } = props.options;
   const [saved, setSaved] = useState(!!jsonData.defaultRegion);
   const newFormStylingEnabled = config.featureToggles.awsDatasourcesNewFormStyling;
+
+  const styles = useStyles2(getStyles);
+
   const saveOptions = async () => {
     if (saved) {
       return;
@@ -237,7 +241,7 @@ export function ConfigEditor(props: Props) {
   };
 
   return (
-    <div className="width-30">
+    <div className={styles.formStyles}>
       <ConnectionConfig {...props} onOptionsChange={onOptionsChange} newFormStylingEnabled={newFormStylingEnabled} />
       {newFormStylingEnabled ? (
         <>
@@ -491,3 +495,9 @@ export function ConfigEditor(props: Props) {
     </div>
   );
 }
+
+const getStyles = (theme: GrafanaTheme2) => ({
+  formStyles: css({
+    maxWidth: theme.spacing(50),
+  }),
+});

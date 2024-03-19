@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.14.0
+
+- Remove the redshiftAsyncQuerySupport feature toggle + styling improvements in https://github.com/grafana/redshift-datasource/pull/272
+
 ## 1.13.3
 
 - Upgrade @grafana/async-query-data from 0.1.10 to 0.1.11 https://github.com/grafana/redshift-datasource/pull/269
