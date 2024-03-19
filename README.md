@@ -262,7 +262,7 @@ Imported dashboards can be found in Configuration > Data Sources > select your R
 
 Async Query Data support enables an asynchronous query handling flow. With Async Query Data support enabled, queries will be handled over multiple requests (starting, checking its status, and fetching the results) instead of having a query be started and resolved over a single request. This is useful for queries that can potentially run for a long time and timeout. You'll need to ensure the IAM policy used by Grafana allows the following actions `redshift-data:ListStatements` and `redshift-data:CancelStatement`.
 
-Async query data support is enabled by default in all Athena datasources.
+Async query data support is enabled by default in all Redshift datasources.
 
 ### Async Query Caching
 
