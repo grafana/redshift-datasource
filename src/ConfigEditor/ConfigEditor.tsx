@@ -117,6 +117,12 @@ export function ConfigEditor(props: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arn]);
 
+  // Regions
+  const fetchRegions = async () => {
+    const regions: string[] = await getBackendSrv().get(resourcesURL + '/regions');
+    return regions;
+  };
+
   // Clusters
   const [clusterEndpoint, setClusterEndpoint] = useState('');
   const fetchClusters = async () => {
@@ -242,7 +248,12 @@ export function ConfigEditor(props: Props) {
 
   return (
     <div className={styles.formStyles}>
-      <ConnectionConfig {...props} onOptionsChange={onOptionsChange} newFormStylingEnabled={newFormStylingEnabled} />
+      <ConnectionConfig
+        {...props}
+        onOptionsChange={onOptionsChange}
+        newFormStylingEnabled={newFormStylingEnabled}
+        loadRegions={fetchRegions}
+      />
       {newFormStylingEnabled ? (
         <>
           <Divider />
