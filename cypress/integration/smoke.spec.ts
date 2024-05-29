@@ -55,6 +55,7 @@ e2e.scenario({
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
             e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
+            cy.wait(5000);
             e2eSelectors.ConfigEditor.ManagedSecret.input().click({ force: true });
             e2eSelectors.ConfigEditor.ManagedSecret.input().type(datasource.jsonData.managedSecret.name);
             // wait for it to load
