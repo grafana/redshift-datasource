@@ -58,7 +58,7 @@ e2e.scenario({
             e2eSelectors.ConfigEditor.ManagedSecret.input().click({ force: true });
             e2eSelectors.ConfigEditor.ManagedSecret.input().type(datasource.jsonData.managedSecret.name);
             // wait for it to load
-            e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name);
+            e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name, {timeout: 10000});
             e2eSelectors.ConfigEditor.ManagedSecret.input().type('{enter}');
             // wait for the secret to be retrieved
             e2eSelectors.ConfigEditor.ClusterIDText.testID().should(
