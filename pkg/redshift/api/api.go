@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/grafana/sqlds/v3"
 	"strings"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -21,7 +22,6 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds/v2"
 )
 
 type API struct {
@@ -32,12 +32,12 @@ type API struct {
 	settings                   *models.RedshiftDataSourceSettings
 }
 
-func New(sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
+func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
 
 	httpClientProvider := sdkhttpclient.NewProvider()
 	// TODO: Context needs to be added, see https://github.com/grafana/oss-plugin-partnerships/issues/648
-	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(context.TODO())
+	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(ctx)
 	if err != nil {
 		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
 		return nil, err

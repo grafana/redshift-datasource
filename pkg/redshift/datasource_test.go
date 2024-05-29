@@ -10,11 +10,8 @@ import (
 
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
-	awsDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver"
-	asyncDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver/async"
-	sqlModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/sqlds/v2"
+	"github.com/grafana/sqlds/v3"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -23,15 +20,15 @@ type mockClient struct {
 }
 
 func (m *mockClient) Init(config backend.DataSourceInstanceSettings) {}
-func (m *mockClient) GetDB(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader, driverLoader awsDriver.Loader) (*sql.DB, error) {
+func (m *mockClient) GetDB(ctx context.Context, id int64, options sqlds.Options) (*sql.DB, error) {
 	m.wasCalledWith = options
 	return nil, nil
 }
-func (m *mockClient) GetAsyncDB(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader, driverLoader asyncDriver.Loader) (awsds.AsyncDB, error) {
+func (m *mockClient) GetAsyncDB(ctx context.Context, id int64, options sqlds.Options) (awsds.AsyncDB, error) {
 	m.wasCalledWith = options
 	return nil, nil
 }
-func (m *mockClient) GetAPI(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader) (sqlAPI.AWSAPI, error) {
+func (m *mockClient) GetAPI(ctx context.Context, id int64, options sqlds.Options) (sqlAPI.AWSAPI, error) {
 	m.wasCalledWith = options
 	return nil, errors.New("fake api error")
 }
@@ -48,7 +45,7 @@ func TestConnection(t *testing.T) {
 			JSONData: json.RawMessage{},
 			Updated:  updatedTime,
 		}
-		_, err := ds.Connect(fakeConfig, json.RawMessage(`{}`))
+		_, err := ds.Connect(context.Background(), fakeConfig, json.RawMessage(`{}`))
 
 		assert.Nil(t, err)
 		assert.Equal(t, updatedTime.String(), mc.wasCalledWith["updated"])
@@ -65,7 +62,7 @@ func TestConnection(t *testing.T) {
 			JSONData: json.RawMessage{},
 			Updated:  updatedTime,
 		}
-		_, err := ds.GetAsyncDB(fakeConfig, json.RawMessage(`{}`))
+		_, err := ds.GetAsyncDB(context.Background(), fakeConfig, json.RawMessage(`{}`))
 
 		assert.Nil(t, err)
 		assert.Equal(t, updatedTime.String(), mc.wasCalledWith["updated"])
@@ -78,7 +75,7 @@ func TestDatabases(t *testing.T) {
 		ds := RedshiftDatasource{
 			awsDS: &mc,
 		}
-		_, err := ds.Databases(context.TODO(), sqlds.Options{
+		_, err := ds.Databases(context.Background(), sqlds.Options{
 			"region":   "us-east1",
 			"catalog":  "cat",
 			"database": "db",
