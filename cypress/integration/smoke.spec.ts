@@ -55,11 +55,11 @@ e2e.scenario({
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
             e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
-            cy.wait(2000);
+            cy.wait(5000);
             e2eSelectors.ConfigEditor.ManagedSecret.input().click({ force: true });
             e2eSelectors.ConfigEditor.ManagedSecret.input().type(datasource.jsonData.managedSecret.name);
             // wait for it to load
-            e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name, {timeout: 10000});
+            e2eSelectors.ConfigEditor.ManagedSecret.testID().contains(datasource.jsonData.managedSecret.name);
             e2eSelectors.ConfigEditor.ManagedSecret.input().type('{enter}');
             // wait for the secret to be retrieved
             e2eSelectors.ConfigEditor.ClusterIDText.testID().should(
