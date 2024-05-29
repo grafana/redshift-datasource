@@ -35,8 +35,8 @@ func (s *RedshiftFakeDatasource) GetAsyncDB(ctx context.Context, config backend.
 	return nil, nil
 }
 
-func (s *RedshiftFakeDatasource) Macros() sqlds.Macros {
-	return sqlds.Macros{}
+func (s *RedshiftFakeDatasource) Macros() sqlutil.Macros {
+	return sqlutil.Macros{}
 }
 
 func (s *RedshiftFakeDatasource) Regions(ctx context.Context) ([]string, error) {
