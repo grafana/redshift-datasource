@@ -55,6 +55,8 @@ e2e.scenario({
               .type(datasource.jsonData.defaultRegion)
               .type('{enter}');
             e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
+            // wait for the region to update before selecting the ManagedSecret input (which will send a request that requires the region)
+            cy.wait(5000);
             e2eSelectors.ConfigEditor.ManagedSecret.input().click({ force: true });
             e2eSelectors.ConfigEditor.ManagedSecret.input().type(datasource.jsonData.managedSecret.name);
             // wait for it to load
