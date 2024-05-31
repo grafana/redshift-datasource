@@ -5,7 +5,8 @@ import (
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/sqlds/v2"
+	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
+	"github.com/grafana/sqlds/v3"
 	"github.com/pkg/errors"
 )
 
@@ -13,7 +14,7 @@ func Test_macros(t *testing.T) {
 	tests := []struct {
 		description string
 		macro       string
-		query       *sqlds.Query
+		query       *sqlutil.Query
 		args        []string
 		expected    string
 		expectedErr error
@@ -21,7 +22,7 @@ func Test_macros(t *testing.T) {
 		{
 			"adds time as Unix",
 			"timeEpoch",
-			&sqlds.Query{},
+			&sqlutil.Query{},
 			[]string{"starttime"},
 			`extract(epoch from starttime) as "time"`,
 			nil,
@@ -29,7 +30,7 @@ func Test_macros(t *testing.T) {
 		{
 			"creates time filter",
 			"timeFilter",
-			&sqlds.Query{
+			&sqlutil.Query{
 				TimeRange: backend.TimeRange{
 					From: time.Date(2021, 6, 23, 0, 0, 0, 0, &time.Location{}),
 					To:   time.Date(2021, 6, 23, 1, 0, 0, 0, &time.Location{}),
@@ -42,7 +43,7 @@ func Test_macros(t *testing.T) {
 		{
 			"wrong args for time filter",
 			"timeFilter",
-			&sqlds.Query{},
+			&sqlutil.Query{},
 			[]string{},
 			"",
 			sqlds.ErrorBadArgumentCount,
@@ -50,7 +51,7 @@ func Test_macros(t *testing.T) {
 		{
 			"creates time from filter",
 			"timeFrom",
-			&sqlds.Query{
+			&sqlutil.Query{
 				TimeRange: backend.TimeRange{
 					From: time.Date(2021, 6, 23, 0, 0, 0, 0, &time.Location{}),
 					To:   time.Date(2021, 6, 23, 1, 0, 0, 0, &time.Location{}),
@@ -63,7 +64,7 @@ func Test_macros(t *testing.T) {
 		{
 			"creates time to filter",
 			"timeTo",
-			&sqlds.Query{
+			&sqlutil.Query{
 				TimeRange: backend.TimeRange{
 					From: time.Date(2021, 6, 23, 0, 0, 0, 0, &time.Location{}),
 					To:   time.Date(2021, 6, 23, 1, 0, 0, 0, &time.Location{}),
@@ -76,7 +77,7 @@ func Test_macros(t *testing.T) {
 		{
 			"creates time group",
 			"timeGroup",
-			&sqlds.Query{},
+			&sqlutil.Query{},
 			[]string{"starttime", "'1m'"},
 			`floor(extract(epoch from starttime)/60)*60 AS "time"`,
 			nil,
@@ -84,7 +85,7 @@ func Test_macros(t *testing.T) {
 		{
 			"wrong args for time group",
 			"timeGroup",
-			&sqlds.Query{},
+			&sqlutil.Query{},
 			[]string{},
 			"",
 			sqlds.ErrorBadArgumentCount,
@@ -92,7 +93,7 @@ func Test_macros(t *testing.T) {
 		{
 			"adds a schema",
 			"schema",
-			&sqlds.Query{Schema: "foo"},
+			&sqlutil.Query{Schema: "foo"},
 			[]string{},
 			`foo`,
 			nil,
@@ -100,7 +101,7 @@ func Test_macros(t *testing.T) {
 		{
 			"adds a table",
 			"table",
-			&sqlds.Query{Table: "foo"},
+			&sqlutil.Query{Table: "foo"},
 			[]string{},
 			`foo`,
 			nil,
@@ -108,7 +109,7 @@ func Test_macros(t *testing.T) {
 		{
 			"adds a column",
 			"column",
-			&sqlds.Query{Column: "foo"},
+			&sqlutil.Query{Column: "foo"},
 			[]string{},
 			`foo`,
 			nil,
@@ -116,7 +117,7 @@ func Test_macros(t *testing.T) {
 		{
 			"unix epoch filter",
 			"unixEpochFilter",
-			&sqlds.Query{
+			&sqlutil.Query{
 				TimeRange: backend.TimeRange{
 					From: time.Date(2021, 6, 23, 0, 0, 0, 0, &time.Location{}),
 					To:   time.Date(2021, 6, 23, 1, 0, 0, 0, &time.Location{}),
@@ -129,7 +130,7 @@ func Test_macros(t *testing.T) {
 		{
 			"unix epoch time group",
 			"unixEpochGroup",
-			&sqlds.Query{},
+			&sqlutil.Query{},
 			[]string{"starttime", "1h"},
 			`floor(starttime/3600)*3600 AS "time"`,
 			nil,

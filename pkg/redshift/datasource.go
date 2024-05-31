@@ -4,20 +4,20 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+	awsDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver"
+	"github.com/grafana/grafana-aws-sdk/pkg/sql/driver/async"
+	sqlModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/datasource"
-	awsDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver"
-	asyncDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver/async"
-	sqlModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/data"
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/driver"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds/v2"
+	"github.com/grafana/sqlds/v3"
 )
 
 type RedshiftDatasourceIface interface {
@@ -34,22 +34,33 @@ type RedshiftDatasourceIface interface {
 	Workgroups(ctx context.Context, options sqlds.Options) ([]models.RedshiftWorkgroup, error)
 }
 
-type awsDSClient interface {
-	Init(config backend.DataSourceInstanceSettings)
-	GetDB(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader, driverLoader awsDriver.Loader) (*sql.DB, error)
-	GetAsyncDB(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader, driverLoader asyncDriver.Loader) (awsds.AsyncDB, error)
-	GetAPI(id int64, options sqlds.Options, settingsLoader sqlModels.Loader, apiLoader sqlAPI.Loader) (sqlAPI.AWSAPI, error)
+type Loader struct{}
+
+func (l Loader) LoadAPI(ctx context.Context, cache *awsds.SessionCache, settings sqlModels.Settings) (sqlAPI.AWSAPI, error) {
+	return api.New(ctx, cache, settings)
+}
+
+func (l Loader) LoadDriver(ctx context.Context, awsapi sqlAPI.AWSAPI) (awsDriver.Driver, error) {
+	return driver.New(ctx, awsapi)
+}
+
+func (l Loader) LoadAsyncDriver(ctx context.Context, awsapi sqlAPI.AWSAPI) (async.Driver, error) {
+	return driver.New(ctx, awsapi)
+}
+
+func (l Loader) LoadSettings(ctx context.Context) sqlModels.Settings {
+	return models.New(ctx)
 }
 
 type RedshiftDatasource struct {
-	awsDS awsDSClient
+	awsDS datasource.AWSClient
 }
 
 func New() *RedshiftDatasource {
-	return &RedshiftDatasource{awsDS: datasource.New()}
+	return &RedshiftDatasource{awsDS: datasource.New(Loader{})}
 }
 
-func (s *RedshiftDatasource) Settings(_ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
+func (s *RedshiftDatasource) Settings(ctx context.Context, _ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
 	return sqlds.DriverSettings{
 		FillMode: &data.FillMissing{
 			Mode: data.FillModeNull,
@@ -62,7 +73,7 @@ func (s *RedshiftDatasource) Converters() (sc []sqlutil.Converter) {
 }
 
 // Connect opens a sql.DB connection using datasource settings
-func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (*sql.DB, error) {
+func (s *RedshiftDatasource) Connect(ctx context.Context, config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (*sql.DB, error) {
 	s.awsDS.Init(config)
 	args, err := sqlds.ParseOptions(queryArgs)
 	if err != nil {
@@ -70,10 +81,10 @@ func (s *RedshiftDatasource) Connect(config backend.DataSourceInstanceSettings, 
 	}
 	args["updated"] = config.Updated.String()
 
-	return s.awsDS.GetDB(config.ID, args, models.New, api.New, driver.NewSync)
+	return s.awsDS.GetDB(ctx, config.ID, args)
 }
 
-func (s *RedshiftDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (awsds.AsyncDB, error) {
+func (s *RedshiftDatasource) GetAsyncDB(ctx context.Context, config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (awsds.AsyncDB, error) {
 	s.awsDS.Init(config)
 	args, err := sqlds.ParseOptions(queryArgs)
 	if err != nil {
@@ -81,7 +92,7 @@ func (s *RedshiftDatasource) GetAsyncDB(config backend.DataSourceInstanceSetting
 	}
 	args["updated"] = config.Updated.String()
 
-	return s.awsDS.GetAsyncDB(config.ID, args, models.New, api.New, driver.New)
+	return s.awsDS.GetAsyncDB(ctx, config.ID, args)
 }
 
 func (s *RedshiftDatasource) getApi(ctx context.Context, options sqlds.Options) (*api.API, error) {
@@ -93,7 +104,7 @@ func (s *RedshiftDatasource) getApi(ctx context.Context, options sqlds.Options) 
 	// the updated time makes sure that we don't use a token for a stale version of the datasource
 	args["updated"] = datasource.GetDatasourceLastUpdatedTime(ctx)
 
-	res, err := s.awsDS.GetAPI(id, args, models.New, api.New)
+	res, err := s.awsDS.GetAPI(ctx, id, args)
 	if err != nil {
 		return nil, err
 	}

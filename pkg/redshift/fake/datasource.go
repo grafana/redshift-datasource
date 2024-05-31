@@ -9,7 +9,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds/v2"
+	"github.com/grafana/sqlds/v3"
 )
 
 type RedshiftFakeDatasource struct {
@@ -19,7 +19,7 @@ type RedshiftFakeDatasource struct {
 	RWorkgroups []models.RedshiftWorkgroup
 }
 
-func (s *RedshiftFakeDatasource) Settings(_ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
+func (s *RedshiftFakeDatasource) Settings(_ context.Context, _ backend.DataSourceInstanceSettings) sqlds.DriverSettings {
 	return sqlds.DriverSettings{}
 }
 
@@ -27,16 +27,16 @@ func (s *RedshiftFakeDatasource) Converters() (sc []sqlutil.Converter) {
 	return sc
 }
 
-func (s *RedshiftFakeDatasource) Connect(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (*sql.DB, error) {
+func (s *RedshiftFakeDatasource) Connect(ctx context.Context, config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (*sql.DB, error) {
 	return &sql.DB{}, nil
 }
 
-func (s *RedshiftFakeDatasource) GetAsyncDB(config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (awsds.AsyncDB, error) {
+func (s *RedshiftFakeDatasource) GetAsyncDB(ctx context.Context, config backend.DataSourceInstanceSettings, queryArgs json.RawMessage) (awsds.AsyncDB, error) {
 	return nil, nil
 }
 
-func (s *RedshiftFakeDatasource) Macros() sqlds.Macros {
-	return sqlds.Macros{}
+func (s *RedshiftFakeDatasource) Macros() sqlutil.Macros {
+	return sqlutil.Macros{}
 }
 
 func (s *RedshiftFakeDatasource) Regions(ctx context.Context) ([]string, error) {

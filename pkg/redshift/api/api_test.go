@@ -11,7 +11,7 @@ import (
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	redshiftclientmock "github.com/grafana/redshift-datasource/pkg/redshift/api/mock"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds/v2"
+	"github.com/grafana/sqlds/v3"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -102,7 +102,7 @@ func Test_Execute(t *testing.T) {
 		settings:   &models.RedshiftDataSourceSettings{},
 		DataClient: &redshiftclientmock.MockRedshiftClient{ExecutionResult: &redshiftdataapiservice.ExecuteStatementOutput{Id: aws.String("foo")}},
 	}
-	res, err := c.Execute(context.TODO(), &api.ExecuteQueryInput{Query: "select * from foo"})
+	res, err := c.Execute(context.Background(), &api.ExecuteQueryInput{Query: "select * from foo"})
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -148,7 +148,7 @@ func Test_Status(t *testing.T) {
 					},
 				},
 			}
-			status, err := c.Status(context.TODO(), &api.ExecuteQueryOutput{ID: "foo"})
+			status, err := c.Status(context.Background(), &api.ExecuteQueryOutput{ID: "foo"})
 			if err != nil && tt.err == "" {
 				t.Errorf("unexpected error %v", err)
 			}
@@ -169,7 +169,7 @@ func Test_ListSchemas(t *testing.T) {
 		settings:   &models.RedshiftDataSourceSettings{},
 		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
-	res, err := c.Schemas(context.TODO(), sqlds.Options{})
+	res, err := c.Schemas(context.Background(), sqlds.Options{})
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -193,7 +193,7 @@ func Test_ListTables(t *testing.T) {
 		settings:   &models.RedshiftDataSourceSettings{},
 		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
-	res, err := c.Tables(context.TODO(), sqlds.Options{"schema": "foo"})
+	res, err := c.Tables(context.Background(), sqlds.Options{"schema": "foo"})
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -219,7 +219,7 @@ func Test_ListColumns(t *testing.T) {
 		settings:   &models.RedshiftDataSourceSettings{},
 		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
 	}
-	res, err := c.Columns(context.TODO(), sqlds.Options{"schema": "public", "table": "foo"})
+	res, err := c.Columns(context.Background(), sqlds.Options{"schema": "public", "table": "foo"})
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -229,8 +229,8 @@ func Test_ListColumns(t *testing.T) {
 }
 func Test_ListSecrets(t *testing.T) {
 	expectedSecrets := []models.ManagedSecret{{Name: "foo", ARN: "arn:foo"}}
-	c := &API{SecretsClient: &redshiftclientmock.MockRedshiftClient{Secrets: []string{"foo"}}}
-	secrets, err := c.Secrets(context.TODO())
+	c := &API{SecretsClient: &redshiftclientmock.MockRedshiftSecretsManager{Secrets: []string{"foo"}}}
+	secrets, err := c.Secrets(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}
@@ -241,8 +241,8 @@ func Test_ListSecrets(t *testing.T) {
 
 func Test_GetSecret(t *testing.T) {
 	secretContent := `{"dbClusterIdentifier":"foo","username":"bar"}`
-	c := &API{SecretsClient: &redshiftclientmock.MockRedshiftClient{Secret: secretContent}}
-	secret, err := c.Secret(context.TODO(), sqlds.Options{"secretARN": "arn"})
+	c := &API{SecretsClient: &redshiftclientmock.MockRedshiftSecretsManager{Secret: secretContent}}
+	secret, err := c.Secret(context.Background(), sqlds.Options{"secretARN": "arn"})
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
 	}

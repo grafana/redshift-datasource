@@ -2,6 +2,7 @@ package mock
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/request"
@@ -9,8 +10,26 @@ import (
 	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
 	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
-	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
 )
+
+type MockRedshiftSecretsManager struct {
+	secretsmanageriface.SecretsManagerAPI
+	Secret  string
+	Secrets []string
+}
+
+func (msm *MockRedshiftSecretsManager) GetSecretValueWithContext(ctx aws.Context, input *secretsmanager.GetSecretValueInput, opts ...request.Option) (*secretsmanager.GetSecretValueOutput, error) {
+	return &secretsmanager.GetSecretValueOutput{
+		SecretString: aws.String(msm.Secret),
+	}, nil
+}
+func (msm *MockRedshiftSecretsManager) ListSecretsWithContext(ctx aws.Context, input *secretsmanager.ListSecretsInput, opts ...request.Option) (*secretsmanager.ListSecretsOutput, error) {
+	r := &secretsmanager.ListSecretsOutput{}
+	for _, c := range msm.Secrets {
+		r.SecretList = append(r.SecretList, &secretsmanager.SecretListEntry{ARN: aws.String(fmt.Sprintf("arn:%s", c)), Name: aws.String(c)})
+	}
+	return r, nil
+}
 
 type MockRedshiftClient struct {
 	ExecutionResult         *redshiftdataapiservice.ExecuteStatementOutput
@@ -18,11 +37,9 @@ type MockRedshiftClient struct {
 	ListStatementsOutput    *redshiftdataapiservice.ListStatementsOutput
 	// Schemas > Tables > Columns
 	Resources map[string]map[string][]string
-	Secrets   []string
-	Secret    string
 	Clusters  []string
 
-	secretsmanageriface.SecretsManagerAPI
+	//secretsmanageriface.SecretsManagerAPI
 	redshiftdataapiservice.RedshiftDataAPIService
 	redshiftiface.RedshiftAPI
 }
@@ -35,60 +52,46 @@ type MockRedshiftClientNil struct {
 	redshiftiface.RedshiftAPI
 }
 
-func (m *MockRedshiftClient) ExecuteStatementWithContext(ctx aws.Context, input *redshiftdataapiservice.ExecuteStatementInput, opts ...request.Option) (*redshiftdataapiservice.ExecuteStatementOutput, error) {
-	return m.ExecutionResult, nil
+func (mc *MockRedshiftClient) ExecuteStatementWithContext(ctx aws.Context, input *redshiftdataapiservice.ExecuteStatementInput, opts ...request.Option) (*redshiftdataapiservice.ExecuteStatementOutput, error) {
+	return mc.ExecutionResult, nil
 }
 
-func (m *MockRedshiftClient) DescribeStatementWithContext(_ aws.Context, input *redshiftdataapiservice.DescribeStatementInput, _ ...request.Option) (*redshiftdataapiservice.DescribeStatementOutput, error) {
-	return m.DescribeStatementOutput, nil
+func (mc *MockRedshiftClient) DescribeStatementWithContext(_ aws.Context, input *redshiftdataapiservice.DescribeStatementInput, _ ...request.Option) (*redshiftdataapiservice.DescribeStatementOutput, error) {
+	return mc.DescribeStatementOutput, nil
 }
 
-func (m *MockRedshiftClient) ListStatementsWithContext(_ aws.Context, input *redshiftdataapiservice.ListStatementsInput, _ ...request.Option) (*redshiftdataapiservice.ListStatementsOutput, error) {
-	return m.ListStatementsOutput, nil
+func (mc *MockRedshiftClient) ListStatementsWithContext(_ aws.Context, input *redshiftdataapiservice.ListStatementsInput, _ ...request.Option) (*redshiftdataapiservice.ListStatementsOutput, error) {
+	return mc.ListStatementsOutput, nil
 }
 
-func (m *MockRedshiftClient) ListSchemasWithContext(ctx aws.Context, input *redshiftdataapiservice.ListSchemasInput, opts ...request.Option) (*redshiftdataapiservice.ListSchemasOutput, error) {
+func (mc *MockRedshiftClient) ListSchemasWithContext(ctx aws.Context, input *redshiftdataapiservice.ListSchemasInput, opts ...request.Option) (*redshiftdataapiservice.ListSchemasOutput, error) {
 	res := &redshiftdataapiservice.ListSchemasOutput{}
-	for sc := range m.Resources {
+	for sc := range mc.Resources {
 		res.Schemas = append(res.Schemas, aws.String(sc))
 	}
 	return res, nil
 }
 
-func (m *MockRedshiftClient) ListTablesWithContext(ctx aws.Context, input *redshiftdataapiservice.ListTablesInput, opts ...request.Option) (*redshiftdataapiservice.ListTablesOutput, error) {
+func (mc *MockRedshiftClient) ListTablesWithContext(ctx aws.Context, input *redshiftdataapiservice.ListTablesInput, opts ...request.Option) (*redshiftdataapiservice.ListTablesOutput, error) {
 	res := &redshiftdataapiservice.ListTablesOutput{}
-	for t := range m.Resources[*input.SchemaPattern] {
+	for t := range mc.Resources[*input.SchemaPattern] {
 		res.Tables = append(res.Tables, &redshiftdataapiservice.TableMember{Name: aws.String(t)})
 	}
 	return res, nil
 }
 
-func (m *MockRedshiftClient) DescribeTableWithContext(ctx aws.Context, input *redshiftdataapiservice.DescribeTableInput, opts ...request.Option) (*redshiftdataapiservice.DescribeTableOutput, error) {
+func (mc *MockRedshiftClient) DescribeTableWithContext(ctx aws.Context, input *redshiftdataapiservice.DescribeTableInput, opts ...request.Option) (*redshiftdataapiservice.DescribeTableOutput, error) {
 	res := &redshiftdataapiservice.DescribeTableOutput{}
-	tables := m.Resources[*input.Schema]
+	tables := mc.Resources[*input.Schema]
 	for _, c := range tables[*input.Table] {
 		res.ColumnList = append(res.ColumnList, &redshiftdataapiservice.ColumnMetadata{Name: aws.String(c)})
 	}
 	return res, nil
 }
 
-func (m *MockRedshiftClient) ListSecretsWithContext(ctx aws.Context, input *secretsmanager.ListSecretsInput, opts ...request.Option) (*secretsmanager.ListSecretsOutput, error) {
-	r := &secretsmanager.ListSecretsOutput{}
-	for _, c := range m.Secrets {
-		r.SecretList = append(r.SecretList, &secretsmanager.SecretListEntry{ARN: aws.String(fmt.Sprintf("arn:%s", c)), Name: aws.String(c)})
-	}
-	return r, nil
-}
-
-func (m *MockRedshiftClient) GetSecretValueWithContext(ctx aws.Context, input *secretsmanager.GetSecretValueInput, opts ...request.Option) (*secretsmanager.GetSecretValueOutput, error) {
-	return &secretsmanager.GetSecretValueOutput{
-		SecretString: aws.String(m.Secret),
-	}, nil
-}
-
-func (m *MockRedshiftClient) DescribeClusters(input *redshift.DescribeClustersInput) (*redshift.DescribeClustersOutput, error) {
+func (mc *MockRedshiftClient) DescribeClusters(input *redshift.DescribeClustersInput) (*redshift.DescribeClustersOutput, error) {
 	r := []*redshift.Cluster{}
-	for _, c := range m.Clusters {
+	for _, c := range mc.Clusters {
 		r = append(r, &redshift.Cluster{
 			ClusterIdentifier: aws.String(c),
 			Endpoint: &redshift.Endpoint{

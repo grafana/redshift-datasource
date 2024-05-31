@@ -1,13 +1,14 @@
 package models
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
-	"github.com/grafana/sqlds/v2"
+	"github.com/grafana/sqlds/v3"
 )
 
 type ManagedSecret struct {
@@ -50,7 +51,7 @@ type RedshiftDataSourceSettings struct {
 	ManagedSecret     ManagedSecret
 }
 
-func New() models.Settings {
+func New(_ context.Context) models.Settings {
 	return &RedshiftDataSourceSettings{}
 }
 
