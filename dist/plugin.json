@@ -1,0 +1,51 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "Amazon Redshift",
+  "id": "grafana-redshift-datasource",
+  "metrics": true,
+  "backend": true,
+  "alerting": true,
+  "annotations": true,
+  "executable": "gpx_redshift",
+  "includes": [
+    {
+      "type": "dashboard",
+      "name": "Redshift Monitoring",
+      "path": "dashboards/redshift-monitoring.json"
+    },
+    {
+      "type": "dashboard",
+      "name": "Redshift Privileges",
+      "path": "dashboards/redshift-privileges.json"
+    },
+    {
+      "type": "dashboard",
+      "name": "Redshift Identities and Objects",
+      "path": "dashboards/redshift-identities-and-objects.json"
+    }
+  ],
+  "info": {
+    "description": "Use Amazon Redshift in Grafana",
+    "author": {
+      "name": "Grafana Labs",
+      "url": "https://grafana.com"
+    },
+    "keywords": ["datasource", "redshift", "aws", "cloud provider", "database", "data warehouse", "sql"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      { "name": "Website", "url": "https://github.com/grafana/redshift-datasource" },
+      { "name": "License", "url": "https://github.com/redshift-datasource/blob/master/LICENSE" }
+    ],
+    "screenshots": [],
+    "version": "1.15.0",
+    "updated": "2024-05-31"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=8.0.0",
+    "plugins": []
+  }
+}
