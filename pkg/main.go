@@ -14,25 +14,23 @@ import (
 )
 
 func main() {
-	// Start listening to requests sent from Grafana.
-	s := redshift.New()
-	ds := awsds.NewAsyncAWSDatasource(s)
-	ds.Completable = s
-	ds.CustomRoutes = routes.New(s).Routes()
-
-	// newDatasourceForUpgradedPluginSdk adds context to the NewDatasource function, which is the new signature expected
-	// for an InstanceFactoryFunc in grafana-plugin-sdk-go
-	// TODO: Remove this function and create a NewDatasource method with Context in grafana-aws-sdk, see https://github.com/grafana/oss-plugin-partnerships/issues/648
-	newDatasourceForUpgradedPluginSdk := func(ctx context.Context, settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
-		return ds.NewDatasource(ctx, settings)
-	}
-
 	if err := datasource.Manage(
 		"grafana-redshift-datasource",
-		newDatasourceForUpgradedPluginSdk,
+		MakeDatasourceFactory(),
 		datasource.ManageOpts{},
 	); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)
+	}
+}
+
+func MakeDatasourceFactory() datasource.InstanceFactoryFunc {
+	return func(ctx context.Context, settings backend.DataSourceInstanceSettings) (instancemgmt.Instance, error) {
+		log.DefaultLogger.FromContext(ctx).Debug("building new datasource instance")
+		s := redshift.New()
+		ds := awsds.NewAsyncAWSDatasource(s)
+		ds.Completable = s
+		ds.CustomRoutes = routes.New(s).Routes()
+		return ds.NewDatasource(ctx, settings)
 	}
 }
