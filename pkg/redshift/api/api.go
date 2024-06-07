@@ -4,8 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/grafana/sqlds/v3"
 	"strings"
+
+	"github.com/grafana/sqlds/v3"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
@@ -48,11 +49,12 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 		return nil, err
 	}
 
-	sess, err := sessionCache.GetSession(awsds.SessionConfig{
+	authSettings, _ := awsds.ReadAuthSettingsFromContext(ctx)
+	sess, err := sessionCache.GetSessionWithAuthSettings(awsds.GetSessionConfig{
 		Settings:      redshiftSettings.AWSDatasourceSettings,
 		HTTPClient:    httpClient,
 		UserAgentName: aws.String("Redshift"),
-	})
+	}, *authSettings)
 	if err != nil {
 		return nil, err
 	}
