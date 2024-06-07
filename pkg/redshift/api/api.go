@@ -6,8 +6,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/grafana/sqlds/v3"
-
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/redshift"
 	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
@@ -23,6 +21,7 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
+	"github.com/grafana/sqlds/v3"
 )
 
 type API struct {
