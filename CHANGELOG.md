@@ -1,16 +1,21 @@
 # Changelog
 
+## 1.15.1
+
+- Upgrade grafana-aws-sdk to replace `GetSession` usages with `GetSessionWithAuthSettings` [#284](https://github.com/grafana/redshift-datasource/pull/284)
+
 ## 1.15.0
 
-* Add keywords by @kevinwcyu in https://github.com/grafana/redshift-datasource/pull/273
-* Add missing regions and use the region resource handler in the frontend by @iwysiu in https://github.com/grafana/redshift-datasource/pull/276
-* Plugin.json: update schema reference URL by @leventebalogh in https://github.com/grafana/redshift-datasource/pull/277
-* Fix E2E: Update region before sending the /secrets resource request by @idastambuk in https://github.com/grafana/redshift-datasource/pull/280
-* Update for added context in grafana-aws-sdk by @njvrzm in https://github.com/grafana/redshift-datasource/pull/279
+- Add keywords by @kevinwcyu in https://github.com/grafana/redshift-datasource/pull/273
+- Add missing regions and use the region resource handler in the frontend by @iwysiu in https://github.com/grafana/redshift-datasource/pull/276
+- Plugin.json: update schema reference URL by @leventebalogh in https://github.com/grafana/redshift-datasource/pull/277
+- Fix E2E: Update region before sending the /secrets resource request by @idastambuk in https://github.com/grafana/redshift-datasource/pull/280
+- Update for added context in grafana-aws-sdk by @njvrzm in https://github.com/grafana/redshift-datasource/pull/279
 
 ## New Contributors
-* @leventebalogh made their first contribution in https://github.com/grafana/redshift-datasource/pull/277
-* @njvrzm made their first contribution in https://github.com/grafana/redshift-datasource/pull/279
+
+- @leventebalogh made their first contribution in https://github.com/grafana/redshift-datasource/pull/277
+- @njvrzm made their first contribution in https://github.com/grafana/redshift-datasource/pull/279
 
 ## 1.14.0
 
