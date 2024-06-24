@@ -154,6 +154,8 @@ To add a new Redshift query variable, refer to [Add a query variable](https://gr
 
 Any value queried from a Redshift table can be used as a variable. Be sure to avoid selecting too many values, as this can cause performance issues.
 
+To display a custom display name for a variable, you can use a query such as `SELECT hostname AS text, id AS value FROM MyTable`. In this case the variable value field must be a string type or cast to a string type. 
+
 After creating a variable, you can use it in your Redshift queries by using [Variable syntax](https://grafana.com/docs/grafana/latest/variables/syntax/). For more information about variables, refer to [Templates and variables](https://grafana.com/docs/grafana/latest/variables/).
 
 ### Annotations
