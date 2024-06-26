@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.15.2
+
+- Fix: use ReadAuthSettings to get authSettings in [#288](https://github.com/grafana/redshift-datasource/pull/288)
+
 ## 1.15.1
 
 - Upgrade grafana-aws-sdk to replace `GetSession` usages with `GetSessionWithAuthSettings` [#284](https://github.com/grafana/redshift-datasource/pull/284)
