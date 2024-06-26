@@ -48,7 +48,7 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 		return nil, err
 	}
 
-	authSettings, _ := awsds.ReadAuthSettingsFromContext(ctx)
+	authSettings := awsds.ReadAuthSettings(ctx)
 	sess, err := sessionCache.GetSessionWithAuthSettings(awsds.GetSessionConfig{
 		Settings:      redshiftSettings.AWSDatasourceSettings,
 		HTTPClient:    httpClient,
