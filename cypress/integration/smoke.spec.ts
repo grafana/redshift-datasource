@@ -48,12 +48,15 @@ e2e.scenario({
           expectedAlertMessage: 'Data source is working',
           form: () => {
             e2eSelectors.ConfigEditor.AuthenticationProvider.input().type('Access & secret key').type('{enter}');
-            e2eSelectors.ConfigEditor.AccessKey.input().type(datasource.secureJsonData.accessKey);
-            e2eSelectors.ConfigEditor.SecretKey.input().type(datasource.secureJsonData.secretKey);
-            e2eSelectors.ConfigEditor.DefaultRegion.input()
+            cy.contains('label', selectors.components.ConfigEditor.AccessKey.input).type(
+              datasource.secureJsonData.accessKey
+            );
+            cy.contains('label', selectors.components.ConfigEditor.SecretKey.input).type(
+              datasource.secureJsonData.secretKey
+            );
+            cy.contains('label', selectors.components.ConfigEditor.DefaultRegion.input)
               .click({ force: true })
-              .type(datasource.jsonData.defaultRegion)
-              .type('{enter}');
+              .type(`${datasource.jsonData.defaultRegion}{enter}`);
             e2e().get('label').contains('AWS Secrets Manager').click({ force: true });
             // wait for the region to update before selecting the ManagedSecret input (which will send a request that requires the region)
             cy.wait(5000);
