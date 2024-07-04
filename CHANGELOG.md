@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.16.0
+
+-  Migrate to new form styling in config and query editors in [#287](https://github.com/grafana/redshift-datasource/pull/287) 
+
 ## 1.15.2
 
 - Fix: use ReadAuthSettings to get authSettings in [#288](https://github.com/grafana/redshift-datasource/pull/288)
