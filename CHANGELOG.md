@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.17.0
+
+-  Update grafana/aws-sdk to get new regions 
+
 ## 1.16.0
 
 -  Migrate to new form styling in config and query editors in [#287](https://github.com/grafana/redshift-datasource/pull/287) 
