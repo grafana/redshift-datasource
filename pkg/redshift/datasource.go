@@ -113,15 +113,8 @@ func (s *RedshiftDatasource) getApi(ctx context.Context, options sqlds.Options) 
 }
 
 func (s *RedshiftDatasource) Regions(ctx context.Context) ([]string, error) {
-	api, err := s.getApi(ctx, sqlds.Options{})
-	if err != nil {
-		return nil, err
-	}
-	regions, err := api.Regions(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return regions, nil
+	// This is not used. If regions are out of date, update them in the @grafana/aws-sdk-react package
+	return []string{}, nil
 }
 
 func (s *RedshiftDatasource) Databases(ctx context.Context, options sqlds.Options) ([]string, error) {
