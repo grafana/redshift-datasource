@@ -20,6 +20,7 @@ import (
 	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
+	"github.com/grafana/grafana-plugin-sdk-go/experimental/errorsource"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v3"
 )
@@ -112,7 +113,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 	}
 	output, err := c.DataClient.ExecuteStatementWithContext(ctx, redshiftInput)
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", api.ExecuteError, err)
+		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ExecuteError, err), false)
 	}
 
 	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
@@ -129,11 +130,11 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 		Id: aws.String(output.ID),
 	})
 	if err != nil {
-		return nil, fmt.Errorf("%w: %v", api.StatusError, err)
+		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.StatusError, err), false)
 	}
 
 	if statusResp.Error != nil && *statusResp.Error != "" {
-		return nil, fmt.Errorf("%w: %v", api.ExecuteError, *statusResp.Error)
+		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ExecuteError, *statusResp.Error), false)
 	}
 
 	var finished bool
@@ -165,7 +166,7 @@ func (c *API) Stop(output *api.ExecuteQueryOutput) error {
 	})
 	// ignore finished query error
 	if err != nil && !strings.Contains(err.Error(), "Could not cancel a query that is already in FINISHED state") {
-		return fmt.Errorf("%w: %v", err, api.StopError)
+		return errorsource.DownstreamError(fmt.Errorf("%w: %v", err, api.StopError), false)
 	}
 	return nil
 }
