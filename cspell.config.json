@@ -91,6 +91,7 @@
     "instancemgmt",
     "opentelemetry",
     "httptrace",
-    "otelhttptrace"
+    "otelhttptrace",
+    "errorsource"
   ]
 }

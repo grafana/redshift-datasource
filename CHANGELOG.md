@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.18.0
+
+-  Add errorsource in [#292](https://github.com/grafana/redshift-datasource/pull/292) 
+
 ## 1.17.0
 
 -  Update grafana/aws-sdk to get new regions 
