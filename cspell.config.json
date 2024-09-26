@@ -92,6 +92,7 @@
     "opentelemetry",
     "httptrace",
     "otelhttptrace",
-    "errorsource"
+    "errorsource",
+    "gomod"
   ]
 }
