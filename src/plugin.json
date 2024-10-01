@@ -31,7 +31,7 @@
       "name": "Grafana Labs",
       "url": "https://grafana.com"
     },
-    "keywords": ["datasource", "redshift", "aws", "cloud provider", "database", "data warehouse", "sql"],
+    "keywords": ["datasource", "redshift", "aws", "amazon", "cloud provider", "database", "data warehouse", "sql"],
     "logos": {
       "small": "img/logo.svg",
       "large": "img/logo.svg"
