@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
+
 	awsDriver "github.com/grafana/grafana-aws-sdk/pkg/sql/driver"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/driver/async"
 	sqlModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
@@ -17,7 +18,7 @@ import (
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/driver"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds/v3"
+	"github.com/grafana/sqlds/v4"
 )
 
 type RedshiftDatasourceIface interface {
