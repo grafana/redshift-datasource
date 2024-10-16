@@ -93,6 +93,7 @@
     "httptrace",
     "otelhttptrace",
     "errorsource",
-    "gomod"
+    "gomod",
+    "subresource"
   ]
 }

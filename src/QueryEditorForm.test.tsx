@@ -116,7 +116,7 @@ describe('QueryEditorForm', () => {
 
   it('should include the Format As input', async () => {
     render(<QueryEditorForm {...props} />);
-    openFormatCollapse();
+    await openFormatCollapse();
     await waitFor(() => screen.getByText('Format data frames as'));
   });
 
@@ -130,7 +130,7 @@ describe('QueryEditorForm', () => {
         onChange={onChange}
       />
     );
-    openFormatCollapse();
+    await openFormatCollapse();
     await waitFor(() => screen.getByText('Format data frames as'));
     const selectEl = screen.queryByLabelText('Fill with');
     expect(selectEl).not.toBeInTheDocument();
@@ -139,7 +139,7 @@ describe('QueryEditorForm', () => {
   it('should allow to change the fill mode', async () => {
     const onChange = jest.fn();
     render(<QueryEditorForm {...props} queries={[]} onChange={onChange} />);
-    openFormatCollapse();
+    await openFormatCollapse();
     const selectEl = screen.getByLabelText('Fill with');
     expect(selectEl).toBeInTheDocument();
 
@@ -152,7 +152,7 @@ describe('QueryEditorForm', () => {
   });
 });
 
-function openFormatCollapse() {
+async function openFormatCollapse() {
   const collapseTitle = screen.getByTestId('collapse-title');
-  userEvent.click(collapseTitle);
+  return userEvent.click(collapseTitle);
 }

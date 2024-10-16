@@ -33,14 +33,14 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
   };
 
   const getSchemas = useCallback(async () => {
-    const schemas: string[] = await datasource.postResource('schemas').catch(() => []);
+    const schemas: string[] = await datasource.postResource<string[]>('schemas').catch(() => []);
     return schemas.map((schema) => ({ name: schema, completion: schema }));
   }, [datasource]);
 
   const getTables = useCallback(
     async (schema?: string) => {
       const tables: string[] = await datasource
-        .postResource('tables', {
+        .postResource<string[]>('tables', {
           // if schema is provided in the raw sql use that. if not, use schema defined in the query builder.
           schema: interpolate(schema) ?? queryRef.current.schema,
         })
@@ -53,7 +53,7 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
   const getColumns = useCallback(
     async (tableName?: string, schema?: string) => {
       const columns: string[] = await datasource
-        .postResource('columns', {
+        .postResource<string[]>('columns', {
           // if schema and table have been provided in the raw sql use that. if not, use schema/table defined in the query builder.
           schema: interpolate(schema) ?? queryRef.current.schema,
           table: interpolate(tableName) ?? queryRef.current.table,
