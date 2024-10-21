@@ -199,7 +199,7 @@ export function ConfigEditor(props: Props) {
 
   const onChangeClusterID = (e: SelectableValue<string> | null) => {
     const value = e?.value ?? '';
-    const url = e?.description + '/' + props.options.jsonData.database ?? '';
+    const url = e?.description + '/' + props.options.jsonData.database;
     props.onOptionsChange({
       ...props.options,
       url,
@@ -213,7 +213,7 @@ export function ConfigEditor(props: Props) {
 
   const onChangeWorkgroupName = (e: SelectableValue<string> | null) => {
     const value = e?.value ?? '';
-    const url = e?.description + '/' + props.options.jsonData.database ?? '';
+    const url = e?.description + '/' + props.options.jsonData.database;
     props.onOptionsChange({
       ...props.options,
       url,
