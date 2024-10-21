@@ -94,6 +94,7 @@
     "otelhttptrace",
     "errorsource",
     "gomod",
-    "subresource"
+    "subresource",
+    "nilness"
   ]
 }
