@@ -1,16 +1,24 @@
 # Changelog
 
+## 1.19.0
+
+- Chore: update dependencies [#300](https://github.com/grafana/redshift-datasource/pull/300)
+- Chore: bump dependencies [#299](https://github.com/grafana/redshift-datasource/pull/299)
+- Chore: Update plugin.json keywords [#298](https://github.com/grafana/redshift-datasource/pull/298)
+- Add dependabot for grafana/plugin-sdk-go [#296](https://github.com/grafana/redshift-datasource/pull/296)
+- Fix: don't check slice nilness before checking length [#294](https://github.com/grafana/redshift-datasource/pull/294)
+
 ## 1.18.0
 
--  Add errorsource in [#292](https://github.com/grafana/redshift-datasource/pull/292) 
+- Add errorsource in [#292](https://github.com/grafana/redshift-datasource/pull/292)
 
 ## 1.17.0
 
--  Update grafana/aws-sdk to get new regions 
+- Update grafana/aws-sdk to get new regions
 
 ## 1.16.0
 
--  Migrate to new form styling in config and query editors in [#287](https://github.com/grafana/redshift-datasource/pull/287) 
+- Migrate to new form styling in config and query editors in [#287](https://github.com/grafana/redshift-datasource/pull/287)
 
 ## 1.15.2
 
