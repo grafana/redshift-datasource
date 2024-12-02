@@ -7,13 +7,12 @@ import (
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend/gtime"
 	"github.com/grafana/grafana-plugin-sdk-go/data/sqlutil"
-	"github.com/grafana/sqlds/v4"
 	"github.com/pkg/errors"
 )
 
 func macroTimeEpoch(query *sqlutil.Query, args []string) (string, error) {
 	if len(args) != 1 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "expected 1 argument, received %d", len(args))
+		return "", errors.WithMessagef(sqlutil.ErrorBadArgumentCount, "expected 1 argument, received %d", len(args))
 	}
 
 	return fmt.Sprintf("extract(epoch from %s) as \"time\"", args[0]), nil
@@ -21,7 +20,7 @@ func macroTimeEpoch(query *sqlutil.Query, args []string) (string, error) {
 
 func macroTimeFilter(query *sqlutil.Query, args []string) (string, error) {
 	if len(args) != 1 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "expected 1 argument, received %d", len(args))
+		return "", errors.WithMessagef(sqlutil.ErrorBadArgumentCount, "expected 1 argument, received %d", len(args))
 	}
 
 	var (
@@ -44,7 +43,7 @@ func macroTimeTo(query *sqlutil.Query, args []string) (string, error) {
 
 func macroTimeGroup(query *sqlutil.Query, args []string) (string, error) {
 	if len(args) != 2 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro $__timeGroup needs time column and interval")
+		return "", errors.WithMessagef(sqlutil.ErrorBadArgumentCount, "macro $__timeGroup needs time column and interval")
 	}
 
 	interval, err := gtime.ParseInterval(strings.Trim(args[1], `'`))
@@ -69,7 +68,7 @@ func macroColumn(query *sqlutil.Query, args []string) (string, error) {
 
 func macroUnixEpochFilter(query *sqlutil.Query, args []string) (string, error) {
 	if len(args) != 1 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "expected 1 argument, received %d", len(args))
+		return "", errors.WithMessagef(sqlutil.ErrorBadArgumentCount, "expected 1 argument, received %d", len(args))
 	}
 
 	var (
@@ -83,7 +82,7 @@ func macroUnixEpochFilter(query *sqlutil.Query, args []string) (string, error) {
 
 func macroUnixEpochGroup(query *sqlutil.Query, args []string) (string, error) {
 	if len(args) != 2 {
-		return "", errors.WithMessagef(sqlds.ErrorBadArgumentCount, "macro $__unixEpochGroup needs time column and interval")
+		return "", errors.WithMessagef(sqlutil.ErrorBadArgumentCount, "macro $__unixEpochGroup needs time column and interval")
 	}
 
 	interval, err := gtime.ParseInterval(strings.Trim(args[1], `'`))
