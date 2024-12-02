@@ -23,7 +23,7 @@ type RedshiftSecret struct {
 
 type RedshiftEndpoint struct {
 	Address string `json:"address"`
-	Port    int64  `json:"port"`
+	Port    int32  `json:"port"`
 }
 
 type RedshiftCluster struct {

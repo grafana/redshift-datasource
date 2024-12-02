@@ -5,14 +5,16 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"github.com/google/go-cmp/cmp"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
-	redshiftclientmock "github.com/grafana/redshift-datasource/pkg/redshift/api/mock"
+	"github.com/grafana/redshift-datasource/pkg/redshift/api/mock"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v4"
-	"github.com/stretchr/testify/assert"
 )
 
 func Test_apiInput(t *testing.T) {
@@ -100,7 +102,7 @@ func Test_apiInput(t *testing.T) {
 func Test_Execute(t *testing.T) {
 	c := &API{
 		settings:   &models.RedshiftDataSourceSettings{},
-		DataClient: &redshiftclientmock.MockRedshiftClient{ExecutionResult: &redshiftdataapiservice.ExecuteStatementOutput{Id: aws.String("foo")}},
+		DataClient: &mock.MockRedshiftClient{ExecutionResult: &redshiftdata.ExecuteStatementOutput{Id: aws.String("foo")}},
 	}
 	res, err := c.Execute(context.Background(), &api.ExecuteQueryInput{Query: "select * from foo"})
 	if err != nil {
@@ -115,24 +117,24 @@ func Test_Execute(t *testing.T) {
 func Test_Status(t *testing.T) {
 	tests := []struct {
 		description string
-		status      string
+		status      types.StatusString
 		err         string
 		finished    bool
 	}{
 		{
 			description: "success",
-			status:      redshiftdataapiservice.StatusStringFinished,
+			status:      types.StatusStringFinished,
 			finished:    true,
 		},
 		{
 			description: "error",
-			status:      redshiftdataapiservice.StatusStringFailed,
+			status:      types.StatusStringFailed,
 			err:         "boom",
 			finished:    true,
 		},
 		{
 			description: "pending",
-			status:      redshiftdataapiservice.StatusStringStarted,
+			status:      types.StatusStringStarted,
 			finished:    false,
 		},
 	}
@@ -140,10 +142,10 @@ func Test_Status(t *testing.T) {
 		t.Run(tt.description, func(t *testing.T) {
 			c := &API{
 				settings: &models.RedshiftDataSourceSettings{},
-				DataClient: &redshiftclientmock.MockRedshiftClient{
-					DescribeStatementOutput: &redshiftdataapiservice.DescribeStatementOutput{
+				DataClient: &mock.MockRedshiftClient{
+					DescribeStatementOutput: &redshiftdata.DescribeStatementOutput{
 						Id:     aws.String("foo"),
-						Status: aws.String(tt.status),
+						Status: tt.status,
 						Error:  aws.String(tt.err),
 					},
 				},
@@ -167,7 +169,7 @@ func Test_ListSchemas(t *testing.T) {
 	expectedResult := []string{"bar", "foo"}
 	c := &API{
 		settings:   &models.RedshiftDataSourceSettings{},
-		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		DataClient: &mock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Schemas(context.Background(), sqlds.Options{})
 	if err != nil {
@@ -191,7 +193,7 @@ func Test_ListTables(t *testing.T) {
 	expectedResult := []string{"foofoo"}
 	c := &API{
 		settings:   &models.RedshiftDataSourceSettings{},
-		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		DataClient: &mock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Tables(context.Background(), sqlds.Options{"schema": "foo"})
 	if err != nil {
@@ -217,7 +219,7 @@ func Test_ListColumns(t *testing.T) {
 	expectedResult := []string{"col1", "col2"}
 	c := &API{
 		settings:   &models.RedshiftDataSourceSettings{},
-		DataClient: &redshiftclientmock.MockRedshiftClient{Resources: resources},
+		DataClient: &mock.MockRedshiftClient{Resources: resources},
 	}
 	res, err := c.Columns(context.Background(), sqlds.Options{"schema": "public", "table": "foo"})
 	if err != nil {
@@ -229,7 +231,7 @@ func Test_ListColumns(t *testing.T) {
 }
 func Test_ListSecrets(t *testing.T) {
 	expectedSecrets := []models.ManagedSecret{{Name: "foo", ARN: "arn:foo"}}
-	c := &API{SecretsClient: &redshiftclientmock.MockRedshiftSecretsManager{Secrets: []string{"foo"}}}
+	c := &API{SecretsClient: &mock.MockRedshiftSecretsManager{Secrets: []string{"foo"}}}
 	secrets, err := c.Secrets(context.Background())
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
@@ -241,7 +243,7 @@ func Test_ListSecrets(t *testing.T) {
 
 func Test_GetSecret(t *testing.T) {
 	secretContent := `{"dbClusterIdentifier":"foo","username":"bar"}`
-	c := &API{SecretsClient: &redshiftclientmock.MockRedshiftSecretsManager{Secret: secretContent}}
+	c := &API{SecretsClient: &mock.MockRedshiftSecretsManager{Secret: secretContent}}
 	secret, err := c.Secret(context.Background(), sqlds.Options{"secretARN": "arn"})
 	if err != nil {
 		t.Fatalf("unexpected error %v", err)
@@ -253,9 +255,9 @@ func Test_GetSecret(t *testing.T) {
 }
 
 func Test_GetClusters(t *testing.T) {
-	c := &API{ManagementClient: &redshiftclientmock.MockRedshiftClient{Clusters: []string{"foo", "bar"}}}
-	errC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientError{}}
-	nilC := &API{ManagementClient: &redshiftclientmock.MockRedshiftClientNil{}}
+	c := &API{ManagementClient: &mock.MockRedshiftClient{Clusters: []string{"foo", "bar"}}}
+	errC := &API{ManagementClient: &mock.MockRedshiftClientError{}}
+	nilC := &API{ManagementClient: &mock.MockRedshiftClientNil{}}
 	expectedCluster1 := &models.RedshiftCluster{
 		ClusterIdentifier: "foo",
 		Endpoint: models.RedshiftEndpoint{
@@ -309,9 +311,9 @@ func Test_GetClusters(t *testing.T) {
 }
 
 func Test_GetWorkgroups(t *testing.T) {
-	c := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClient{Workgroups: []string{"foo", "bar"}}}
-	errC := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClientError{}}
-	nilC := &API{ServerlessManagementClient: &redshiftclientmock.MockRedshiftServerlessClientNil{}}
+	c := &API{ServerlessManagementClient: &mock.MockRedshiftServerlessClient{Workgroups: []string{"foo", "bar"}}}
+	errC := &API{ServerlessManagementClient: &mock.MockRedshiftServerlessClientError{}}
+	nilC := &API{ServerlessManagementClient: &mock.MockRedshiftServerlessClientNil{}}
 	expectedWorkgroup1 := &models.RedshiftWorkgroup{
 		WorkgroupName: "foo",
 		Endpoint: models.RedshiftEndpoint{
