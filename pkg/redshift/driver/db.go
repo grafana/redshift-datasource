@@ -5,7 +5,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
+	redshiftdataV2types "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -26,7 +26,7 @@ func newDB(api *api.API) *db {
 	}
 }
 
-func (d *db) StartQuery(ctx context.Context, query string, args ...interface{}) (string, error) {
+func (d *db) StartQuery(ctx context.Context, query string, _ ...interface{}) (string, error) {
 	output, err := d.api.Execute(ctx, &sqlAPI.ExecuteQueryInput{Query: query})
 	if err != nil {
 		return "", err
@@ -44,28 +44,28 @@ func (d *db) QueryStatus(ctx context.Context, queryID string) (awsds.QueryStatus
 		return awsds.QueryUnknown, err
 	}
 	var returnStatus awsds.QueryStatus
-	switch status.State {
-	case redshiftdataapiservice.StatementStatusStringSubmitted,
-		redshiftdataapiservice.StatementStatusStringPicked:
+	switch redshiftdataV2types.StatusString(status.State) {
+	case redshiftdataV2types.StatusStringSubmitted,
+		redshiftdataV2types.StatusStringPicked:
 		returnStatus = awsds.QuerySubmitted
-	case redshiftdataapiservice.StatementStatusStringStarted:
+	case redshiftdataV2types.StatusStringStarted:
 		returnStatus = awsds.QueryRunning
-	case redshiftdataapiservice.StatementStatusStringFinished:
+	case redshiftdataV2types.StatusStringFinished:
 		returnStatus = awsds.QueryFinished
-	case redshiftdataapiservice.StatementStatusStringAborted:
+	case redshiftdataV2types.StatusStringAborted:
 		returnStatus = awsds.QueryCanceled
-	case redshiftdataapiservice.StatementStatusStringFailed:
+	case redshiftdataV2types.StatusStringFailed:
 		returnStatus = awsds.QueryFailed
 	}
 	backend.Logger.Debug("QueryStatus", "state", status.State, "queryID", queryID)
 	return returnStatus, nil
 }
 
-func (d *db) CancelQuery(ctx context.Context, queryID string) error {
+func (d *db) CancelQuery(_ context.Context, queryID string) error {
 	return d.api.Stop(&sqlAPI.ExecuteQueryOutput{ID: queryID})
 }
 
-func (d *db) GetRows(ctx context.Context, queryID string) (driver.Rows, error) {
+func (d *db) GetRows(_ context.Context, queryID string) (driver.Rows, error) {
 	return newRows(d.api.DataClient, queryID)
 }
 
@@ -81,7 +81,7 @@ func (d *db) Begin() (driver.Tx, error) {
 	return nil, fmt.Errorf("redshift driver doesn't support begin statements")
 }
 
-func (d *db) Prepare(query string) (driver.Stmt, error) {
+func (d *db) Prepare(_ string) (driver.Stmt, error) {
 	return nil, fmt.Errorf("redshift driver doesn't support prepared statements")
 }
 
