@@ -61,11 +61,16 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 	}
 
 	provider := &SessionCredentialsProvider{sess}
+	region := redshiftSettings.Region
+	if region == "" {
+		region = redshiftSettings.DefaultRegion
+	}
+
 	return &API{
-		DataClient:                 redshiftdataV2.New(redshiftdataV2.Options{Credentials: provider}),
-		SecretsClient:              secretsmanagerV2.New(secretsmanagerV2.Options{Credentials: provider}),
-		ManagementClient:           redshiftV2.New(redshiftV2.Options{Credentials: provider}),
-		ServerlessManagementClient: redshiftserverlessV2.New(redshiftserverlessV2.Options{Credentials: provider}),
+		DataClient:                 redshiftdataV2.New(redshiftdataV2.Options{Credentials: provider, Region: region}),
+		SecretsClient:              secretsmanagerV2.New(secretsmanagerV2.Options{Credentials: provider, Region: region}),
+		ManagementClient:           redshiftV2.New(redshiftV2.Options{Credentials: provider, Region: region}),
+		ServerlessManagementClient: redshiftserverlessV2.New(redshiftserverlessV2.Options{Credentials: provider, Region: region}),
 		settings:                   redshiftSettings,
 	}, nil
 }
@@ -129,7 +134,13 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		WithEvent:         awsV2.Bool(c.settings.WithEvent),
 		WorkgroupName:     commonInput.WorkgroupName,
 	}
-	output, err := c.DataClient.ExecuteStatement(ctx, redshiftInput)
+	output, err := c.DataClient.ExecuteStatement(ctx, redshiftInput, func(options *redshiftdataV2.Options) {
+		if c.settings.Region != "" {
+			options.Region = c.settings.Region
+		} else {
+			options.Region = c.settings.DefaultRegion
+		}
+	})
 	if err != nil {
 		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ExecuteError, err), false)
 	}
