@@ -5,7 +5,6 @@ go 1.23
 toolchain go1.23.2
 
 require (
-	github.com/aws/aws-sdk-go v1.55.5
 	github.com/aws/aws-sdk-go-v2 v1.32.6
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.52.1
 	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.31.3
@@ -23,6 +22,7 @@ require (
 require (
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/apache/arrow-go/v18 v18.0.1-0.20241212180703-82be143d7c30 // indirect
+	github.com/aws/aws-sdk-go v1.55.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.24 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.24 // indirect
 	github.com/aws/smithy-go v1.22.1 // indirect
