@@ -4,8 +4,6 @@ import (
 	"context"
 	"database/sql/driver"
 	"fmt"
-	redshiftdataV2 "github.com/aws/aws-sdk-go-v2/service/redshiftdata"
-	redshiftdataV2types "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"io"
 	"reflect"
 	"strconv"
@@ -13,18 +11,20 @@ import (
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
+	redshiftdatatypes "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
 type Rows struct {
-	service redshiftdataV2.GetStatementResultAPIClient
+	service redshiftdata.GetStatementResultAPIClient
 	queryID string
 
 	done   bool
-	result *redshiftdataV2.GetStatementResultOutput
+	result *redshiftdata.GetStatementResultOutput
 }
 
-func newRows(service redshiftdataV2.GetStatementResultAPIClient, queryId string) (*Rows, error) {
+func newRows(service redshiftdata.GetStatementResultAPIClient, queryId string) (*Rows, error) {
 	r := Rows{
 		service: service,
 		queryID: queryId,
@@ -178,7 +178,7 @@ func (r *Rows) Close() error {
 func (r *Rows) fetchNextPage(token *string) error {
 	var err error
 
-	r.result, err = r.service.GetStatementResult(context.TODO(), &redshiftdataV2.GetStatementResultInput{
+	r.result, err = r.service.GetStatementResult(context.TODO(), &redshiftdata.GetStatementResultInput{
 		Id:        aws.String(r.queryID),
 		NextToken: token,
 	})
@@ -193,11 +193,11 @@ func (r *Rows) fetchNextPage(token *string) error {
 // convertRow converts values in a redshift data api row into its corresponding type in Go. Mapping is based on:
 // https://docs.aws.amazon.com/redshift/latest/dg/c_Supported_data_types.html
 // https://docs.aws.amazon.com/redshift/latest/mgmt/jdbc20-data-type-mapping.html
-func convertRow(columns []redshiftdataV2types.ColumnMetadata, data []redshiftdataV2types.Field, ret []driver.Value) error {
+func convertRow(columns []redshiftdatatypes.ColumnMetadata, data []redshiftdatatypes.Field, ret []driver.Value) error {
 	for i, curr := range data {
 		// FIXME: I think this is the correct translation of the existing behavior but I'm not
 		// sure it's actually the correct behavior
-		if isNull, ok := curr.(*redshiftdataV2types.FieldMemberIsNull); ok {
+		if isNull, ok := curr.(*redshiftdatatypes.FieldMemberIsNull); ok {
 			if isNull.Value {
 				ret[i] = nil
 			}
@@ -326,36 +326,36 @@ func convertRow(columns []redshiftdataV2types.ColumnMetadata, data []redshiftdat
 	return nil
 }
 
-func AsInt(field redshiftdataV2types.Field) (int64, bool) {
+func AsInt(field redshiftdatatypes.Field) (int64, bool) {
 	var value int64
-	v, ok := field.(*redshiftdataV2types.FieldMemberLongValue)
+	v, ok := field.(*redshiftdatatypes.FieldMemberLongValue)
 	if ok {
 		value = v.Value
 	}
 	return value, ok
 }
 
-func AsFloat(field redshiftdataV2types.Field) (float64, bool) {
+func AsFloat(field redshiftdatatypes.Field) (float64, bool) {
 	var value float64
-	v, ok := field.(*redshiftdataV2types.FieldMemberDoubleValue)
+	v, ok := field.(*redshiftdatatypes.FieldMemberDoubleValue)
 	if ok {
 		value = v.Value
 	}
 	return value, ok
 }
 
-func AsString(field redshiftdataV2types.Field) (string, bool) {
+func AsString(field redshiftdatatypes.Field) (string, bool) {
 	var value string
-	v, ok := field.(*redshiftdataV2types.FieldMemberStringValue)
+	v, ok := field.(*redshiftdatatypes.FieldMemberStringValue)
 	if ok {
 		value = v.Value
 	}
 	return value, ok
 
 }
-func AsBool(field redshiftdataV2types.Field) (bool, bool) {
+func AsBool(field redshiftdatatypes.Field) (bool, bool) {
 	var value bool
-	v, ok := field.(*redshiftdataV2types.FieldMemberBooleanValue)
+	v, ok := field.(*redshiftdatatypes.FieldMemberBooleanValue)
 	if ok {
 		value = v.Value
 	}
