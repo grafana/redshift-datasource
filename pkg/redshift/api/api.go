@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
 	"strings"
 
@@ -50,17 +49,15 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 		return nil, err
 	}
 
-	authSettings := awsds.ReadAuthSettings(ctx)
-	sess, err := sessionCache.GetSessionWithAuthSettings(awsds.GetSessionConfig{
+	provider, err := sessionCache.CredentialsProviderV2(ctx, awsds.GetSessionConfig{
 		Settings:      redshiftSettings.AWSDatasourceSettings,
 		HTTPClient:    httpClient,
 		UserAgentName: aws.String("Redshift"),
-	}, *authSettings)
+	})
 	if err != nil {
 		return nil, err
 	}
 
-	provider := &SessionCredentialsProvider{sess}
 	region := redshiftSettings.Region
 	if region == "" {
 		region = redshiftSettings.DefaultRegion
@@ -73,22 +70,6 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 		ServerlessManagementClient: redshiftserverless.New(redshiftserverless.Options{Credentials: provider, Region: region}),
 		settings:                   redshiftSettings,
 	}, nil
-}
-
-type SessionCredentialsProvider struct {
-	session *session.Session
-}
-
-func (scp *SessionCredentialsProvider) Retrieve(_ context.Context) (aws.Credentials, error) {
-	creds := aws.Credentials{}
-	v1creds, err := scp.session.Config.Credentials.Get()
-	if err != nil {
-		return creds, err
-	}
-	creds.AccessKeyID = v1creds.AccessKeyID
-	creds.SecretAccessKey = v1creds.SecretAccessKey
-	creds.SessionToken = v1creds.SessionToken
-	return creds, nil
 }
 
 type apiInput struct {
