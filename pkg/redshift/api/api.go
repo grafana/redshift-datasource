@@ -30,7 +30,7 @@ type API struct {
 	DataClient                 types.RedshiftDataClient
 	SecretsClient              types.RedshiftSecretsClient
 	ManagementClient           types.RedshiftManagementClient
-	ServerlessManagementClient types.ServlessAPIClient
+	ServerlessManagementClient types.ServerlessAPIClient
 	settings                   *models.RedshiftDataSourceSettings
 }
 
