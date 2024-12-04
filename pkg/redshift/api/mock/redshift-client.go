@@ -2,10 +2,10 @@ package mock
 
 import (
 	"fmt"
-	redshift2 "github.com/aws/aws-sdk-go-v2/service/redshift"
-	redshiftV2types "github.com/aws/aws-sdk-go-v2/service/redshift/types"
-	redshiftV2data "github.com/aws/aws-sdk-go-v2/service/redshiftdata"
-	redshiftdataV2types "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
+	"github.com/aws/aws-sdk-go-v2/service/redshift"
+	redshifttypes "github.com/aws/aws-sdk-go-v2/service/redshift/types"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
+	redshiftdatatypes "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
 	"golang.org/x/net/context"
 
@@ -33,17 +33,17 @@ func (msm *MockRedshiftSecretsManager) ListSecrets(_ context.Context, _ *secrets
 }
 
 type MockRedshiftClient struct {
-	ExecutionResult         *redshiftV2data.ExecuteStatementOutput
-	DescribeStatementOutput *redshiftV2data.DescribeStatementOutput
-	ListStatementsOutput    *redshiftV2data.ListStatementsOutput
+	ExecutionResult         *redshiftdata.ExecuteStatementOutput
+	DescribeStatementOutput *redshiftdata.DescribeStatementOutput
+	ListStatementsOutput    *redshiftdata.ListStatementsOutput
 	// Schemas > Tables > Columns
 	Resources map[string]map[string][]string
 	Clusters  []string
 
-	redshiftV2data.ListDatabasesAPIClient
-	redshiftV2data.GetStatementResultAPIClient
+	redshiftdata.ListDatabasesAPIClient
+	redshiftdata.GetStatementResultAPIClient
 	types.CancelStatementAPIClient
-	redshiftV2data.DescribeTableAPIClient
+	redshiftdata.DescribeTableAPIClient
 }
 
 type MockRedshiftClientError struct {
@@ -52,64 +52,64 @@ type MockRedshiftClientError struct {
 type MockRedshiftClientNil struct {
 }
 
-func (mc *MockRedshiftClient) ExecuteStatement(_ context.Context, _ *redshiftV2data.ExecuteStatementInput, _ ...func(*redshiftV2data.Options)) (*redshiftV2data.ExecuteStatementOutput, error) {
+func (mc *MockRedshiftClient) ExecuteStatement(_ context.Context, _ *redshiftdata.ExecuteStatementInput, _ ...func(*redshiftdata.Options)) (*redshiftdata.ExecuteStatementOutput, error) {
 	return mc.ExecutionResult, nil
 }
 
-func (mc *MockRedshiftClient) DescribeStatement(_ context.Context, _ *redshiftV2data.DescribeStatementInput, _ ...func(*redshiftV2data.Options)) (*redshiftV2data.DescribeStatementOutput, error) {
+func (mc *MockRedshiftClient) DescribeStatement(_ context.Context, _ *redshiftdata.DescribeStatementInput, _ ...func(*redshiftdata.Options)) (*redshiftdata.DescribeStatementOutput, error) {
 	return mc.DescribeStatementOutput, nil
 }
 
-func (mc *MockRedshiftClient) ListStatements(_ context.Context, _ *redshiftV2data.ListStatementsInput, _ ...func(*redshiftV2data.Options)) (*redshiftV2data.ListStatementsOutput, error) {
+func (mc *MockRedshiftClient) ListStatements(_ context.Context, _ *redshiftdata.ListStatementsInput, _ ...func(*redshiftdata.Options)) (*redshiftdata.ListStatementsOutput, error) {
 	return mc.ListStatementsOutput, nil
 }
 
-func (mc *MockRedshiftClient) ListSchemas(_ context.Context, _ *redshiftV2data.ListSchemasInput, _ ...func(*redshiftV2data.Options)) (*redshiftV2data.ListSchemasOutput, error) {
-	res := &redshiftV2data.ListSchemasOutput{}
+func (mc *MockRedshiftClient) ListSchemas(_ context.Context, _ *redshiftdata.ListSchemasInput, _ ...func(*redshiftdata.Options)) (*redshiftdata.ListSchemasOutput, error) {
+	res := &redshiftdata.ListSchemasOutput{}
 	for sc := range mc.Resources {
 		res.Schemas = append(res.Schemas, sc)
 	}
 	return res, nil
 }
 
-func (mc *MockRedshiftClient) ListTables(_ context.Context, input *redshiftV2data.ListTablesInput, _ ...func(*redshiftV2data.Options)) (*redshiftV2data.ListTablesOutput, error) {
-	res := &redshiftV2data.ListTablesOutput{}
+func (mc *MockRedshiftClient) ListTables(_ context.Context, input *redshiftdata.ListTablesInput, _ ...func(*redshiftdata.Options)) (*redshiftdata.ListTablesOutput, error) {
+	res := &redshiftdata.ListTablesOutput{}
 	for t := range mc.Resources[*input.SchemaPattern] {
-		res.Tables = append(res.Tables, redshiftdataV2types.TableMember{Name: aws.String(t)})
+		res.Tables = append(res.Tables, redshiftdatatypes.TableMember{Name: aws.String(t)})
 	}
 	return res, nil
 }
 
-func (mc *MockRedshiftClient) DescribeTable(_ context.Context, input *redshiftV2data.DescribeTableInput, _ ...func(*redshiftV2data.Options)) (*redshiftV2data.DescribeTableOutput, error) {
-	res := &redshiftV2data.DescribeTableOutput{}
+func (mc *MockRedshiftClient) DescribeTable(_ context.Context, input *redshiftdata.DescribeTableInput, _ ...func(*redshiftdata.Options)) (*redshiftdata.DescribeTableOutput, error) {
+	res := &redshiftdata.DescribeTableOutput{}
 	tables := mc.Resources[*input.Schema]
 	for _, c := range tables[*input.Table] {
-		res.ColumnList = append(res.ColumnList, redshiftdataV2types.ColumnMetadata{Name: aws.String(c)})
+		res.ColumnList = append(res.ColumnList, redshiftdatatypes.ColumnMetadata{Name: aws.String(c)})
 	}
 	return res, nil
 }
 
-func (mc *MockRedshiftClient) DescribeClusters(_ context.Context, _ *redshift2.DescribeClustersInput, _ ...func(*redshift2.Options)) (*redshift2.DescribeClustersOutput, error) {
-	r := []redshiftV2types.Cluster{}
+func (mc *MockRedshiftClient) DescribeClusters(_ context.Context, _ *redshift.DescribeClustersInput, _ ...func(*redshift.Options)) (*redshift.DescribeClustersOutput, error) {
+	r := []redshifttypes.Cluster{}
 	for _, c := range mc.Clusters {
-		r = append(r, redshiftV2types.Cluster{
+		r = append(r, redshifttypes.Cluster{
 			ClusterIdentifier: aws.String(c),
-			Endpoint: &redshiftV2types.Endpoint{
+			Endpoint: &redshifttypes.Endpoint{
 				Address: aws.String(c),
 				Port:    aws.Int32(123),
 			},
 			DBName: aws.String(c),
 		})
 	}
-	res := redshift2.DescribeClustersOutput{
+	res := redshift.DescribeClustersOutput{
 		Clusters: r,
 	}
 	return &res, nil
 }
 
-func (m *MockRedshiftClientError) DescribeClusters(_ context.Context, _ *redshift2.DescribeClustersInput, _ ...func(*redshift2.Options)) (*redshift2.DescribeClustersOutput, error) {
+func (m *MockRedshiftClientError) DescribeClusters(_ context.Context, _ *redshift.DescribeClustersInput, _ ...func(*redshift.Options)) (*redshift.DescribeClustersOutput, error) {
 	return nil, fmt.Errorf("Boom")
 }
-func (m *MockRedshiftClientNil) DescribeClusters(_ context.Context, _ *redshift2.DescribeClustersInput, _ ...func(*redshift2.Options)) (*redshift2.DescribeClustersOutput, error) {
+func (m *MockRedshiftClientNil) DescribeClusters(_ context.Context, _ *redshift.DescribeClustersInput, _ ...func(*redshift.Options)) (*redshift.DescribeClustersOutput, error) {
 	return nil, nil
 }

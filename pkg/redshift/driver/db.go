@@ -5,7 +5,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
-	redshiftdataV2types "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
+	redshiftdatatypes "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	sqlAPI "github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -44,17 +44,17 @@ func (d *db) QueryStatus(ctx context.Context, queryID string) (awsds.QueryStatus
 		return awsds.QueryUnknown, err
 	}
 	var returnStatus awsds.QueryStatus
-	switch redshiftdataV2types.StatusString(status.State) {
-	case redshiftdataV2types.StatusStringSubmitted,
-		redshiftdataV2types.StatusStringPicked:
+	switch redshiftdatatypes.StatusString(status.State) {
+	case redshiftdatatypes.StatusStringSubmitted,
+		redshiftdatatypes.StatusStringPicked:
 		returnStatus = awsds.QuerySubmitted
-	case redshiftdataV2types.StatusStringStarted:
+	case redshiftdatatypes.StatusStringStarted:
 		returnStatus = awsds.QueryRunning
-	case redshiftdataV2types.StatusStringFinished:
+	case redshiftdatatypes.StatusStringFinished:
 		returnStatus = awsds.QueryFinished
-	case redshiftdataV2types.StatusStringAborted:
+	case redshiftdatatypes.StatusStringAborted:
 		returnStatus = awsds.QueryCanceled
-	case redshiftdataV2types.StatusStringFailed:
+	case redshiftdatatypes.StatusStringFailed:
 		returnStatus = awsds.QueryFailed
 	}
 	backend.Logger.Debug("QueryStatus", "state", status.State, "queryID", queryID)
