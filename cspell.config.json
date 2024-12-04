@@ -96,6 +96,11 @@
     "gomod",
     "subresource",
     "nilness",
-    "tibdex"
+    "tibdex",
+    "redshiftdata",
+    "redshiftdatatypes",
+    "redshifttypes",
+    "redshiftserverlesstypes",
+    "secretsmanagertypes"
   ]
 }
