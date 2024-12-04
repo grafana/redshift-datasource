@@ -40,6 +40,6 @@ type RedshiftSecretsClient interface {
 	GetSecretValue(context.Context, *secretsmanager.GetSecretValueInput, ...func(*secretsmanager.Options)) (*secretsmanager.GetSecretValueOutput, error)
 }
 
-type ServlessAPIClient interface {
+type ServerlessAPIClient interface {
 	redshiftserverless.ListWorkgroupsAPIClient
 }
