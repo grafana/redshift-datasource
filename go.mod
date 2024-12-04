@@ -5,23 +5,25 @@ go 1.23
 toolchain go1.23.2
 
 require (
-	github.com/aws/aws-sdk-go v1.55.5
-	github.com/aws/aws-sdk-go-v2 v1.32.5
+	github.com/aws/aws-sdk-go-v2 v1.32.6
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.52.1
 	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.31.3
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.24.3
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.34.6
 	github.com/google/go-cmp v0.6.0
-	github.com/grafana/grafana-aws-sdk v0.31.4
+	// FIXME: remove this once the target branch is merged
+	github.com/grafana/grafana-aws-sdk v0.31.5-0.20241204160506-3ab586136a3b
 	github.com/grafana/grafana-plugin-sdk-go v0.259.4
 	github.com/grafana/sqlds/v4 v4.1.4
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
+	golang.org/x/net v0.30.0
 )
 
 require (
 	github.com/BurntSushi/toml v1.4.0 // indirect
 	github.com/apache/arrow/go/v15 v15.0.2 // indirect
+	github.com/aws/aws-sdk-go v1.55.5 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.3.24 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.6.24 // indirect
 	github.com/aws/smithy-go v1.22.1 // indirect
@@ -108,7 +110,6 @@ require (
 	golang.org/x/crypto v0.28.0 // indirect
 	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa // indirect
 	golang.org/x/mod v0.20.0 // indirect
-	golang.org/x/net v0.30.0 // indirect
 	golang.org/x/sync v0.9.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
 	golang.org/x/term v0.25.0 // indirect
