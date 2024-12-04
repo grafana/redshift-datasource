@@ -97,11 +97,11 @@
     "gomod",
     "subresource",
     "nilness",
-    "tibdex",
     "dylib",
-    "jscoverage",
     "eslintcache",
     "gofmt",
+    "jscoverage",
+    "lefthook",
     "pids",
     "lefthook",
     "seccomp",
@@ -110,6 +110,13 @@
     "saletime",
     "catname", 
     "jackspeak",
-    "zizmor"
+    "zizmor",
+    "lefthook",
+    "redshiftdata",
+    "redshiftdatatypes",
+    "redshiftserverlesstypes",
+    "redshifttypes",
+    "secretsmanagertypes",
+    "tibdex"
   ]
 }
