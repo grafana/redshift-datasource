@@ -95,6 +95,11 @@
     "errorsource",
     "gomod",
     "subresource",
+    "redshiftdata",
+    "redshiftdatatypes",
+    "redshifttypes",
+    "redshiftserverlesstypes",
+    "secretsmanagertypes",
     "nilness"
   ]
 }
