@@ -1,15 +1,12 @@
 # Changelog
 
- ## 1.19.1
+## 1.19.1
 
-- Dependabot: Update dependencies in [#302](https://github.com/grafana/redshift-datasource/pull/302), [#303](https://github.com/grafana/redshift-datasource/pull/303),
-[#313](https://github.com/grafana/redshift-datasource/pull/313),
-[#308](https://github.com/grafana/redshift-datasource/pull/308),
-[#323](https://github.com/grafana/redshift-datasource/pull/323),
-[#322](https://github.com/grafana/redshift-datasource/pull/322):
+- Dependabot: Update dependencies in [#302](https://github.com/grafana/redshift-datasource/pull/302), [#303](https://github.com/grafana/redshift-datasource/pull/303), [#313](https://github.com/grafana/redshift-datasource/pull/313),
+  [#308](https://github.com/grafana/redshift-datasource/pull/308), [#323](https://github.com/grafana/redshift-datasource/pull/323), [#322](https://github.com/grafana/redshift-datasource/pull/322):
   - path-to-regexp from 1.8.0 to 1.9.0 in the npm_and_yarn group
   - micromatch from 4.0.5 to 4.0.8 in the npm_and_yarn group
-  - actions/checkout from 2 to 4 
+  - actions/checkout from 2 to 4
   - actions/setup-node from 3 to 4
   - tibdex/github-app-token from 1.8.0 to 2.1.0
   - github.com/aws/aws-sdk-go from 1.51.31 to 1.55.5
