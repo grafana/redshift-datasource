@@ -7,12 +7,12 @@
       "url": "https://github.com/orgs/grafana/projects/97"
     }
   },
-    {
-      "type": "label",
-      "name": "type/docs",
-      "action": "addToProject",
-      "addToProject": {
-        "url": "https://github.com/orgs/grafana/projects/69"
-      }
+  {
+    "type": "label",
+    "name": "type/docs",
+    "action": "addToProject",
+    "addToProject": {
+      "url": "https://github.com/orgs/grafana/projects/69"
     }
+  }
 ]

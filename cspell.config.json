@@ -95,6 +95,11 @@
     "errorsource",
     "gomod",
     "subresource",
-    "nilness"
+    "nilness",
+    "dylib",
+    "jscoverage",
+    "eslintcache",
+    "gofmt",
+    "pids"
   ]
 }
