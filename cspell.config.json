@@ -95,6 +95,7 @@
     "errorsource",
     "gomod",
     "subresource",
-    "nilness"
+    "nilness",
+    "tibdex"
   ]
 }
