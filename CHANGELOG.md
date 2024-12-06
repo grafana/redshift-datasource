@@ -1,5 +1,46 @@
 # Changelog
 
+ ## 1.19.1
+
+- Chore: Update dependencies:
+  - path-to-regexp from 1.8.0 to 1.9.0 in the npm_and_yarn group in [#307](https://github.com/grafana/redshift-datasource/pull/307)
+  - micromatch from 4.0.5 to 4.0.8 in the npm_and_yarn group in [#309](https://github.com/grafana/redshift-datasource/pull/309)
+  - actions/checkout from 2 to 4 in [#302](https://github.com/grafana/redshift-datasource/pull/302) 
+  - actions/setup-node from 3 to 4 in [#302](https://github.com/grafana/redshift-datasource/pull/302)
+  - tibdex/github-app-token from 1.8.0 to 2.1.0 in [#302](https://github.com/grafana/redshift-datasource/pull/302)
+  - github.com/aws/aws-sdk-go from 1.51.31 to 1.55.5 in [#303](https://github.com/grafana/redshift-datasource/pull/303)
+  - github.com/grafana/grafana-plugin-sdk-go from 0.254.0 to 0.256.0 in [#303](https://github.com/grafana/redshift-datasource/pull/303)
+  - github.com/grafana/grafana-aws-sdk from 0.31.3 to 0.31.4 in [#313](https://github.com/grafana/redshift-datasource/pull/313)
+  - github.com/grafana/grafana-plugin-sdk-go from 0.256.0 to 0.258.0 in [#313](https://github.com/grafana/redshift-datasource/pull/313)
+  - github.com/grafana/sqlds/v4 from 4.1.2 to 4.1.3 in [#313](https://github.com/grafana/redshift-datasource/pull/313)
+  - braces from 3.0.2 to 3.0.3 in the npm_and_yarn group in [#308](https://github.com/grafana/redshift-datasource/pull/308)
+  - github.com/grafana/grafana-plugin-sdk-go from 0.258.0 to 0.259.4 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - github.com/grafana/sqlds/v4 from 4.1.3 to 4.1.4 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - github.com/stretchr/testify from 1.9.0 to 1.10.0(#321) in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @emotion/css 11.13.4 11.13.5 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @grafana/async-query-data from 0.2.0 to 0.3.0 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @grafana/data from 11.2.2 to 11.3.1 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @grafana/experimental from 2.1.2 to 2.1.4 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @grafana/runtime from 11.2.2 to 11.3.1 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - tslib from 2.8.0 to 2.8.1 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @babel/core from 7.25.8 to 7.26.0 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @grafana/eslint-config from 7.0.0 to 8.0.0 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @swc/core from 1.7.36 to 1.9.3 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @swc/helpers from 0.5.13 to 0.5.15 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @swc/jest from 0.2.36 to 0.2.37 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @testing-library/jest-dom from 6.6.0 to 6.6.3 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @types/jest from 29.5.13 to 29.5.14 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @types/lodash from 4.17.10 to 4.17.13 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - @types/node from 22.7.5 to 22.10.1 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - cspell from 8.15.2 to 8.16.1 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - cypress from 7.7.0 to 13.16.0 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - prettier from 3.3.3 to 3.4.1 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - sass from 1.79.5 to 1.81.0 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - sass-loader from 16.0.2 to 16.0.3 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - typescript from 5.6.3 to 5.7.2 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - webpack from 5.95.0 to 5.96.1 in [#323](https://github.com/grafana/redshift-datasource/pull/323)
+  - cross-spawn from 7.0.3 to 7.0.6 in the npm_and_yarn group in [#322](https://github.com/grafana/redshift-datasource/pull/322)
+
 ## 1.19.0
 
 - Chore: update dependencies [#300](https://github.com/grafana/redshift-datasource/pull/300)
