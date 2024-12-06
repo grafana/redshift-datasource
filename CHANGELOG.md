@@ -1,5 +1,44 @@
 # Changelog
 
+## 1.19.1
+
+- Dependabot: Update dependencies in [#302](https://github.com/grafana/redshift-datasource/pull/302), [#303](https://github.com/grafana/redshift-datasource/pull/303), [#313](https://github.com/grafana/redshift-datasource/pull/313),
+  [#308](https://github.com/grafana/redshift-datasource/pull/308), [#323](https://github.com/grafana/redshift-datasource/pull/323), [#322](https://github.com/grafana/redshift-datasource/pull/322):
+  - path-to-regexp from 1.8.0 to 1.9.0 in the npm_and_yarn group
+  - micromatch from 4.0.5 to 4.0.8 in the npm_and_yarn group
+  - actions/checkout from 2 to 4
+  - actions/setup-node from 3 to 4
+  - tibdex/github-app-token from 1.8.0 to 2.1.0
+  - github.com/aws/aws-sdk-go from 1.51.31 to 1.55.5
+  - github.com/grafana/grafana-plugin-sdk-go from 0.254.0 to 0.259.4
+  - github.com/grafana/grafana-aws-sdk from 0.31.3 to 0.31.4
+  - github.com/grafana/sqlds/v4 from 4.1.2 to 4.1.4
+  - braces from 3.0.2 to 3.0.3 in the npm_and_yarn group
+  - github.com/stretchr/testify from 1.9.0 to 1.10.0(#321)
+  - @emotion/css 11.13.4 11.13.5
+  - @grafana/async-query-data from 0.2.0 to 0.3.0
+  - @grafana/data from 11.2.2 to 11.3.1
+  - @grafana/experimental from 2.1.2 to 2.1.4
+  - @grafana/runtime from 11.2.2 to 11.3.1
+  - tslib from 2.8.0 to 2.8.1
+  - @babel/core from 7.25.8 to 7.26.0
+  - @grafana/eslint-config from 7.0.0 to 8.0.0
+  - @swc/core from 1.7.36 to 1.9.3
+  - @swc/helpers from 0.5.13 to 0.5.15
+  - @swc/jest from 0.2.36 to 0.2.37
+  - @testing-library/jest-dom from 6.6.0 to 6.6.3
+  - @types/jest from 29.5.13 to 29.5.14
+  - @types/lodash from 4.17.10 to 4.17.13
+  - @types/node from 22.7.5 to 22.10.1
+  - cspell from 8.15.2 to 8.16.1
+  - cypress from 7.7.0 to 13.16.0
+  - prettier from 3.3.3 to 3.4.1
+  - sass from 1.79.5 to 1.81.0
+  - sass-loader from 16.0.2 to 16.0.3
+  - typescript from 5.6.3 to 5.7.2
+  - webpack from 5.95.0 to 5.96.1
+  - cross-spawn from 7.0.3 to 7.0.6 in the npm_and_yarn group
+
 ## 1.19.0
 
 - Chore: update dependencies [#300](https://github.com/grafana/redshift-datasource/pull/300)
