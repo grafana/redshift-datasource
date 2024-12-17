@@ -101,6 +101,7 @@
     "jscoverage",
     "eslintcache",
     "gofmt",
-    "pids"
+    "pids",
+    "lefthook"
   ]
 }
