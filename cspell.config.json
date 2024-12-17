@@ -96,6 +96,12 @@
     "gomod",
     "subresource",
     "nilness",
-    "tibdex"
+    "tibdex",
+    "dylib",
+    "jscoverage",
+    "eslintcache",
+    "gofmt",
+    "pids",
+    "lefthook"
   ]
 }

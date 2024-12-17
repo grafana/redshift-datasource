@@ -55,6 +55,7 @@ Checkout the guide available at https://grafana.com/docs/grafana/latest/develope
 Setting up go workspace can be helpful when making changes across modules like `grafana-aws-sdk` and `sqlds` and wanting to see those changes reflected in the Redshift data source.
 
 From https://go.dev/blog/get-familiar-with-workspaces:
+
 > Workspaces in Go 1.18 let you work on multiple modules simultaneously without having to edit go.mod files for each module. Each module within a workspace is treated as a main module when resolving dependencies.
 >
 > Previously, to add a feature to one module and use it in another module, you needed to either publish the changes to the first module, or edit the go.mod file of the dependent module with a replace directive for your local, unpublished module changes. In order to publish without errors, you had to remove the replace directive from the dependent module’s go.mod file after you published the local changes to the first module.
