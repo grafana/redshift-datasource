@@ -1,6 +1,8 @@
 import { ConfigSelect, ConnectionConfig, Divider } from '@grafana/aws-sdk';
 import { DataSourcePluginOptionsEditorProps, SelectableValue, GrafanaTheme2 } from '@grafana/data';
-import { getBackendSrv } from '@grafana/runtime';
+import { config, getBackendSrv } from '@grafana/runtime';
+import { Field, Input, SecureSocksProxySettings, Switch, useStyles2 } from '@grafana/ui';
+import { gte } from 'semver';
 import React, { FormEvent, useEffect, useState } from 'react';
 import { selectors } from 'selectors';
 
@@ -11,7 +13,6 @@ import {
   RedshiftManagedSecret,
 } from '../types';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
-import { Field, Input, Switch, useStyles2 } from '@grafana/ui';
 import { css } from '@emotion/css';
 import { ConfigSection } from '@grafana/experimental';
 
@@ -242,6 +243,9 @@ export function ConfigEditor(props: Props) {
   return (
     <div className={styles.formStyles}>
       <ConnectionConfig {...props} onOptionsChange={onOptionsChange} />
+      {config.secureSocksDSProxyEnabled && gte(config.buildInfo.version, '10.0.0') && (
+        <SecureSocksProxySettings options={props.options} onOptionsChange={onOptionsChange} />
+      )}
       <Divider />
       <ConfigSection title="Redshift Details">
         <AuthTypeSwitch key="managedSecret" useManagedSecret={useManagedSecret} onChangeAuthType={onChangeAuthType} />

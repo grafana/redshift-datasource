@@ -60,6 +60,7 @@ export interface RedshiftDataSourceOptions extends AwsAuthDataSourceJsonData {
     name: string;
     arn: string;
   };
+  enableSecureSocksProxy?: boolean;
 }
 
 /**
