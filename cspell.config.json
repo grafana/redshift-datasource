@@ -96,12 +96,17 @@
     "gomod",
     "subresource",
     "nilness",
-    "tibdex",
     "dylib",
-    "jscoverage",
     "eslintcache",
     "gofmt",
+    "jscoverage",
+    "lefthook",
     "pids",
-    "lefthook"
+    "redshiftdata",
+    "redshiftdatatypes",
+    "redshiftserverlesstypes",
+    "redshifttypes",
+    "secretsmanagertypes",
+    "tibdex"
   ]
 }
