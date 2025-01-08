@@ -197,9 +197,9 @@ func (r *Rows) fetchNextPage(token *string) error {
 // https://docs.aws.amazon.com/redshift/latest/mgmt/jdbc20-data-type-mapping.html
 func convertRow(columns []redshiftdatatypes.ColumnMetadata, data []redshiftdatatypes.Field, ret []driver.Value) error {
 	for i, curr := range data {
-		// FIXME: I think this is the correct translation of the existing behavior but I'm not
-		// sure it's actually the correct behavior
-		if isNull, ok := curr.(*redshiftdatatypes.FieldMemberIsNull); ok {
+		// FIXME: I think this is the correct translation of the previous aws-sdk-v1 behavior
+		// but I'm not sure it's actually the correct behavior
+		if isNull, ok := curr.(*redshiftdatatypes.FieldMemberIsNull); ok && isNull.Value {
 			if isNull.Value {
 				ret[i] = nil
 			}
