@@ -19,15 +19,17 @@ import (
 type Rows struct {
 	service redshiftdata.GetStatementResultAPIClient
 	queryID string
+	context context.Context
 
 	done   bool
 	result *redshiftdata.GetStatementResultOutput
 }
 
-func newRows(service redshiftdata.GetStatementResultAPIClient, queryId string) (*Rows, error) {
+func newRows(ctx context.Context, service redshiftdata.GetStatementResultAPIClient, queryId string) (*Rows, error) {
 	r := Rows{
 		service: service,
 		queryID: queryId,
+		context: ctx,
 	}
 
 	if err := r.fetchNextPage(nil); err != nil {
@@ -178,7 +180,7 @@ func (r *Rows) Close() error {
 func (r *Rows) fetchNextPage(token *string) error {
 	var err error
 
-	r.result, err = r.service.GetStatementResult(context.TODO(), &redshiftdata.GetStatementResultInput{
+	r.result, err = r.service.GetStatementResult(r.context, &redshiftdata.GetStatementResultInput{
 		Id:        aws.String(r.queryID),
 		NextToken: token,
 	})
