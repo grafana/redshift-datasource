@@ -65,8 +65,8 @@ func (d *db) CancelQuery(_ context.Context, queryID string) error {
 	return d.api.Stop(&sqlAPI.ExecuteQueryOutput{ID: queryID})
 }
 
-func (d *db) GetRows(_ context.Context, queryID string) (driver.Rows, error) {
-	return newRows(d.api.DataClient, queryID)
+func (d *db) GetRows(ctx context.Context, queryID string) (driver.Rows, error) {
+	return newRows(ctx, d.api.DataClient, queryID)
 }
 
 func (d *db) Ping(ctx context.Context) error {

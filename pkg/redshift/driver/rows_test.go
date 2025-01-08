@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"context"
 	"database/sql/driver"
 	"fmt"
 	"io"
@@ -17,7 +18,7 @@ import (
 func TestOnePageSuccess(t *testing.T) {
 	redshiftServiceMock := &mock.RedshiftService{}
 	redshiftServiceMock.CalledTimesCountDown = 1
-	rows, rowErr := newRows(redshiftServiceMock, mock.SinglePageResponseQueryId)
+	rows, rowErr := newRows(context.Background(), redshiftServiceMock, mock.SinglePageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
 	for {
@@ -39,7 +40,7 @@ func TestOnePageSuccess(t *testing.T) {
 func TestMultiPageSuccess(t *testing.T) {
 	redshiftServiceMock := &mock.RedshiftService{}
 	redshiftServiceMock.CalledTimesCountDown = 5
-	rows, rowErr := newRows(redshiftServiceMock, mock.MultiPageResponseQueryId)
+	rows, rowErr := newRows(context.Background(), redshiftServiceMock, mock.MultiPageResponseQueryId)
 	require.NoError(t, rowErr)
 	cnt := 0
 	for {
