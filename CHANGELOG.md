@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.20.0
+
+- Add PDC support in [#333](https://github.com/grafana/redshift-datasource/pull/333)
+- Bump node dependencies with 29 updates, ignore react and react-dom major updates in dependabot in [#336](https://github.com/grafana/redshift-datasource/pull/336)
+- Bump the all-go-dependencies group across 1 directory with 3 updates in [#335](https://github.com/grafana/redshift-datasource/pull/335)
+- Add pre-commit hook in [#327](https://github.com/grafana/redshift-datasource/pull/327)
+
 ## 1.19.1
 
 - Dependabot: Update dependencies in [#302](https://github.com/grafana/redshift-datasource/pull/302), [#303](https://github.com/grafana/redshift-datasource/pull/303), [#313](https://github.com/grafana/redshift-datasource/pull/313),
