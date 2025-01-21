@@ -9,8 +9,6 @@ __debug_bin
 # Test binary, built with `go test -c`
 *.test
 
-provisioning
-
 # Logs
 logs
 *.log
@@ -48,9 +46,12 @@ e2e-results/
 
 # End to End tests
 provisioning/
-cypress/report.json
-cypress/screenshots/actual
-cypress/videos/
+!provisioning/datasources/aws-redshift-e2e.yaml
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
 
 # OS
 *.DS_Store
