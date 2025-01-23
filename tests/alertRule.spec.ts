@@ -1,5 +1,11 @@
 import { test, expect } from '@grafana/plugin-e2e';
 
+test.use({
+  featureToggles: {
+    alertingQueryAndExpressionsStepMode: false,
+  },
+});
+
 test('should successfully create an alert rule', async ({
   alertRuleEditPage,
   page,
