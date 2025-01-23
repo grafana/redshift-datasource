@@ -8,6 +8,7 @@ test('should return data when a valid query is successfully run', async ({ page,
   // The following section will verify that autocompletion is behaving as expected.
   // Throughout the composition of the SQL query, the autocompletion engine will provide appropriate suggestions.
   // In this test the first few suggestions are accepted by hitting enter which will create a basic query.
+  await page.waitForFunction(() => window.monaco);
   const editor = panelEditPage.getByGrafanaSelector(selectors.components.CodeEditor.container);
   await editor.click();
   await page.keyboard.press('s');

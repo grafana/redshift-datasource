@@ -10,6 +10,7 @@ test('should successfully provision a data source with a managed secret', async 
   gotoDataSourceConfigPage,
   page,
   readProvisionedDataSource,
+  selectors,
 }) => {
   const ds = await readProvisionedDataSource({
     fileName: 'aws-redshift-e2e.yaml',
@@ -17,8 +18,11 @@ test('should successfully provision a data source with a managed secret', async 
   });
   const configPage = await gotoDataSourceConfigPage(ds.uid);
   await page.getByLabel('AWS Secrets Manager', { exact: true }).click();
-  await page.getByLabel('Managed Secret').click();
-  await page.getByRole('option', { name: 'redshiftqueryeditor-cloud-datasources-redshift-cloud-datasources' }).click();
+  await page.getByLabel('Managed Secret').fill('redshiftqueryeditor-cloud-datasources-redshift-cloud-datasources');
+  await expect(configPage.getByGrafanaSelector(selectors.components.Select.option)).toContainText([
+    'redshiftqueryeditor-cloud-datasources-redshift-cloud-datasources',
+  ]);
+  await page.keyboard.press('Enter');
   await expect(page.getByLabel('Cluster Identifier')).toHaveValue('redshift-cluster-grafana');
   await expect(configPage.saveAndTest()).toBeOK();
 });
