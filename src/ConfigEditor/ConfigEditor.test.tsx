@@ -60,7 +60,7 @@ describe('ConfigEditor', () => {
   it('should display Provisioned using Secrets Manager', () => {
     render(<ConfigEditor {...props} />);
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
-    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
+    expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterID.testID)).toBeNull();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeVisible();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
     expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeVisible();
@@ -73,8 +73,8 @@ describe('ConfigEditor', () => {
     screen.getByText('Temporary credentials').click();
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).toBeVisible();
-    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
-    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
+    expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeNull();
+    expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeNull();
     expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).not.toBeVisible();
     expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).toBeVisible();
     expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).not.toBeDisabled();
@@ -97,7 +97,7 @@ describe('ConfigEditor', () => {
       />
     );
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).toBeVisible();
-    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
+    expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterID.testID)).toBeNull();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
     expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).toBeVisible();
@@ -123,8 +123,8 @@ describe('ConfigEditor', () => {
     screen.getByText('Temporary credentials').click();
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).toBeVisible();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
-    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).not.toBeVisible();
-    expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeDisabled();
+    expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeNull();
+    expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeNull();
     expect(screen.getByText(selectors.components.ConfigEditor.ManagedSecret.input)).not.toBeVisible();
     expect(screen.getByText(selectors.components.ConfigEditor.DatabaseUser.input)).not.toBeVisible();
     expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
