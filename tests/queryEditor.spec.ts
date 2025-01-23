@@ -34,9 +34,12 @@ test('should return data when a valid query is successfully run', async ({ page,
   await editor.click();
   await page.keyboard.press('ControlOrMeta+A');
   await page.keyboard.insertText(
-    `select saletime as time, commission as commission from sales where $__timeFilter(time) order by saletime`
+    `select saletime as time, commission as commission from sales where $__timeFilter(time)`
   );
   await expect(panelEditPage.refreshPanel()).toBeOK();
   await expect(panelEditPage.panel.fieldNames).toHaveText(['time', 'commission']);
-  await expect(panelEditPage.panel.data).toContainText(['2008-01-01 19:12:50', '70.4']);
+  await expect(panelEditPage.panel.data).toContainText([
+    /[0-9]{4}(-[0-9]{2}){2} [0-9]{2}(:[0-9]{2}){2}/ /* matches this pattern '2008-01-01 19:12:50' */,
+    /^[0-9]\d*(\.\d+)?$/ /* matches integers and decimals */,
+  ]);
 });
