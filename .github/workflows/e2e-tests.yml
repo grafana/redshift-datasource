@@ -21,6 +21,8 @@ jobs:
       - name: Resolve Grafana E2E versions
         id: resolve-versions
         uses: grafana/plugin-actions/e2e-version@main
+        with:
+          version-resolver-type: version-support-policy
 
   playwright-tests:
     needs: resolve-versions
