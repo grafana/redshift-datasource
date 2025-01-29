@@ -40,7 +40,7 @@ test('should return data when a valid query is successfully run', async ({ page,
   await expect(panelEditPage.refreshPanel()).toBeOK();
   await expect(panelEditPage.panel.fieldNames).toHaveText(['time', 'commission']);
   await expect(panelEditPage.panel.data).toContainText([
-    /[0-9]{4}(-[0-9]{2}){2} [0-9]{2}(:[0-9]{2}){2}/ /* matches this pattern '2008-01-01 19:12:50' */,
-    /^[0-9]\d*(\.\d+)?$/ /* matches integers and decimals */,
+    /\d{4}(-\d{2}){2} \d{2}(:\d{2}){2}/ /* matches this pattern '2008-01-01 19:12:50' */,
+    /^\d*(\.\d+)?$/ /* matches integers and decimals */,
   ]);
 });
