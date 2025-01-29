@@ -5,21 +5,21 @@ test('should successfully create a variable', async ({ variableEditPage, page, s
   await page.waitForFunction(() => window.monaco);
   const editor = page.getByTestId(selectors.components.CodeEditor.container);
   await editor.click();
-  await page.keyboard.insertText('SELECT catname FROM public.category');
+  await page.keyboard.insertText('SELECT catname FROM public.category ORDER BY catname');
   const queryDataRequest = variableEditPage.waitForQueryDataRequest();
   await variableEditPage.runQuery();
   await queryDataRequest;
   await expect(variableEditPage).toDisplayPreviews([
-    'MLB',
-    'NFL',
-    'Musicals',
-    'Opera',
     'Classical',
-    'NHL',
-    'NBA',
+    'Jazz',
+    'MLB',
     'MLS',
+    'Musicals',
+    'NBA',
+    'NFL',
+    'NHL',
+    'Opera',
     'Plays',
     'Pop',
-    'Jazz',
   ]);
 });
