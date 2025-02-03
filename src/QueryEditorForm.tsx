@@ -7,7 +7,7 @@ import SQLEditor from './SQLEditor';
 
 import { DataSource } from './datasource';
 import { FormatOptions, RedshiftDataSourceOptions, RedshiftQuery, SelectableFormatOptions } from './types';
-import { EditorField, EditorFieldGroup, EditorRow, EditorRows } from '@grafana/experimental';
+import { EditorField, EditorFieldGroup, EditorRow, EditorRows } from '@grafana/plugin-ui';
 import { css } from '@emotion/css';
 
 type Props = QueryEditorProps<DataSource, RedshiftQuery, RedshiftDataSourceOptions>;

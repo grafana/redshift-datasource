@@ -14,7 +14,7 @@ import {
 } from '../types';
 import { AuthTypeSwitch } from './AuthTypeSwitch';
 import { css } from '@emotion/css';
-import { ConfigSection } from '@grafana/experimental';
+import { ConfigSection } from '@grafana/plugin-ui';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 

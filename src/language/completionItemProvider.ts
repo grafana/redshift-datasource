@@ -5,7 +5,7 @@ import {
   TableDefinition,
   TableIdentifier,
   SchemaDefinition,
-} from '@grafana/experimental';
+} from '@grafana/plugin-ui';
 import { MACROS } from './macros';
 
 interface CompletionProviderGetterArgs {

@@ -1,4 +1,4 @@
-import { SQLMonarchLanguage, grafanaStandardSQLLanguage, grafanaStandardSQLLanguageConf } from '@grafana/experimental';
+import { SQLMonarchLanguage, grafanaStandardSQLLanguage, grafanaStandardSQLLanguageConf } from '@grafana/plugin-ui';
 
 // Language based on standard SQL, but edited according to https://docs.aws.amazon.com/redshift/latest/dg/c_SQL_commands.html
 
