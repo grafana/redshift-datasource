@@ -70,6 +70,12 @@ From https://go.dev/blog/get-familiar-with-workspaces:
 
 If you build Grafana locally, you can for example symlink `redshift-datasource` to your clone of `github.com/grafana/grafana`'s `data/plugins` directory, e.g. `cd <path to your Grafana repo>/github.com/grafana/grafana/data/plugins && ln -s <path to your workspaces>/redshift_workspace/redshift-datasource redshift-datasource`
 
+## E2E Tests
+
+1. `yarn playwright install --with-deps`
+1. `yarn server`
+1. `yarn e2e`
+
 ## Build a release for the Redshift data source plugin
 
 You need to have commit rights to the GitHub repository to publish a release.

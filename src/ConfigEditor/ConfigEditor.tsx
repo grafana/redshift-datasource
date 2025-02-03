@@ -270,39 +270,42 @@ export function ConfigEditor(props: Props) {
             }
           />
         </Field>
-        <Field
-          label={selectors.components.ConfigEditor.ClusterID.input}
-          data-testid={selectors.components.ConfigEditor.ClusterID.testID}
-          hidden={props.options.jsonData.useServerless || useManagedSecret}
-          htmlFor="clusterId"
-        >
-          <ConfigSelect
-            {...props}
-            id="clusterId"
-            label={selectors.components.ConfigEditor.ClusterID.input}
-            allowCustomValue={true}
-            value={props.options.jsonData.clusterIdentifier ?? ''}
-            onChange={onChangeClusterID}
-            fetch={fetchClusters}
-            saveOptions={saveOptions}
-          />
-        </Field>
 
-        <Field
-          hidden={props.options.jsonData.useServerless || !useManagedSecret}
-          label={selectors.components.ConfigEditor.ClusterIDText.input}
-          disabled={true}
-          htmlFor="clusterIdText"
-        >
-          <Input
-            {...props}
-            id="clusterIdText"
-            value={props.options.jsonData.clusterIdentifier ?? ''}
-            onChange={() => {}}
+        {useManagedSecret ? (
+          <Field
+            hidden={props.options.jsonData.useServerless}
             label={selectors.components.ConfigEditor.ClusterIDText.input}
-            data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
-          />
-        </Field>
+            disabled={true}
+            htmlFor="clusterIdText"
+          >
+            <Input
+              {...props}
+              id="clusterIdText"
+              value={props.options.jsonData.clusterIdentifier ?? ''}
+              onChange={() => {}}
+              label={selectors.components.ConfigEditor.ClusterIDText.input}
+              data-testid={selectors.components.ConfigEditor.ClusterIDText.testID}
+            />
+          </Field>
+        ) : (
+          <Field
+            label={selectors.components.ConfigEditor.ClusterID.input}
+            data-testid={selectors.components.ConfigEditor.ClusterID.testID}
+            hidden={props.options.jsonData.useServerless}
+            htmlFor="clusterId"
+          >
+            <ConfigSelect
+              {...props}
+              id="clusterId"
+              label={selectors.components.ConfigEditor.ClusterID.input}
+              allowCustomValue={true}
+              value={props.options.jsonData.clusterIdentifier ?? ''}
+              onChange={onChangeClusterID}
+              fetch={fetchClusters}
+              saveOptions={saveOptions}
+            />
+          </Field>
+        )}
 
         <Field
           hidden={!props.options.jsonData.useServerless}

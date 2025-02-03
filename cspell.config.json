@@ -3,7 +3,7 @@
     ".github/**",
     "node_modules/**",
     "dist/**",
-    "cypress/**",
+    "playwright*/**",
     "provisioning/**",
     "src/dashboards/**",
     "yarn.lock",
@@ -102,6 +102,11 @@
     "eslintcache",
     "gofmt",
     "pids",
-    "lefthook"
+    "lefthook",
+    "seccomp",
+    "dataproxy",
+    "redshiftqueryeditor",
+    "saletime",
+    "catname"
   ]
 }
