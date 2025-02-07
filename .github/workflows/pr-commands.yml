@@ -1,7 +1,11 @@
-name: Run commands when issues or PRs are labeled
+name: PR automation
 on:
-  issues:
-    types: [labeled]
+  pull_request_target:
+    types:
+      - labeled
+      - opened
+concurrency:
+  group: pr-commands-${{ github.event.number }}
 jobs:
   main:
     runs-on: ubuntu-latest
@@ -24,4 +28,4 @@ jobs:
         uses: ./actions/commands
         with:
           token: ${{ steps.generate_token.outputs.token }}
-          configPath: issue_and_pr_commands
+          configPath: pr-commands
