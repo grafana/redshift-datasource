@@ -1,4 +1,4 @@
-import { SQLEditor as SQLCodeEditor } from '@grafana/experimental';
+import { SQLEditor as SQLCodeEditor } from '@grafana/plugin-ui';
 import { getTemplateSrv } from '@grafana/runtime';
 import { DataSource } from 'datasource';
 import { getRedshiftCompletionProvider } from 'language/completionItemProvider';

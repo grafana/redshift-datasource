@@ -6,13 +6,13 @@ import React from 'react';
 import { select } from 'react-select-event';
 import { FillValueOptions } from '@grafana/aws-sdk';
 import { FormatOptions } from 'types';
-import * as experimental from '@grafana/experimental';
+import * as experimental from '@grafana/plugin-ui';
 
 import { mockDatasource, mockQuery } from './__mocks__/datasource';
 import { QueryEditorForm } from './QueryEditorForm';
 
-jest.mock('@grafana/experimental', () => ({
-  ...jest.requireActual<typeof experimental>('@grafana/experimental'),
+jest.mock('@grafana/plugin-ui', () => ({
+  ...jest.requireActual<typeof experimental>('@grafana/plugin-ui'),
   SQLEditor: function SQLEditor() {
     return <></>;
   },

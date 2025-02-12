@@ -5,6 +5,7 @@ import { select } from 'react-select-event';
 import { mockDatasourceOptions } from '../__mocks__/datasource';
 import { selectors } from '../selectors';
 import { ConfigEditor } from './ConfigEditor';
+import userEvent from '@testing-library/user-event';
 
 const clusterIdentifier = 'cluster';
 const workgroupName = 'workgroup';
@@ -68,9 +69,9 @@ describe('ConfigEditor', () => {
     expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
   });
 
-  it('should display Provisioned using Temporary credentials', () => {
+  it('should display Provisioned using Temporary credentials', async () => {
     render(<ConfigEditor {...props} />);
-    screen.getByText('Temporary credentials').click();
+    await userEvent.click(screen.getByText('Temporary credentials'));
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).toBeVisible();
     expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeNull();
@@ -105,7 +106,7 @@ describe('ConfigEditor', () => {
     expect(screen.getByText(selectors.components.ConfigEditor.Database.input)).not.toBeDisabled();
   });
 
-  it('should display Serverless using Temporary credentials', () => {
+  it('should display Serverless using Temporary credentials', async () => {
     render(
       <ConfigEditor
         {...{
@@ -120,7 +121,7 @@ describe('ConfigEditor', () => {
         }}
       />
     );
-    screen.getByText('Temporary credentials').click();
+    await userEvent.click(screen.getByText('Temporary credentials'));
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).toBeVisible();
     expect(screen.getByTestId(selectors.components.ConfigEditor.ClusterID.testID)).not.toBeVisible();
     expect(screen.queryByTestId(selectors.components.ConfigEditor.ClusterIDText.testID)).toBeNull();
