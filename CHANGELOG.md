@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.0.0
+
+- (Breaking change:) Migrate UI components to grafana/plugin-ui in [#353](https://github.com/grafana/redshift-datasource/pull/353)
+- Update github.com/grafana/grafana-plugin-sdk-go to v0.265.0 in [#357](https://github.com/grafana/redshift-datasource/pull/357)
+- Chore: add label to external contributions in [#354](https://github.com/grafana/redshift-datasource/pull/354)
+- Migrate E2E tests to Playwright in [#346](https://github.com/grafana/redshift-datasource/pull/346)
+- Bump the all-node-dependencies group across 1 directory with 22 updates in [#344](https://github.com/grafana/redshift-datasource/pull/344)
+- Bump the all-go-dependencies group across 1 directory with 4 updates in [#343](https://github.com/grafana/redshift-datasource/pull/343)
+
 ## 1.20.0
 
 - Add PDC support in [#333](https://github.com/grafana/redshift-datasource/pull/333)
