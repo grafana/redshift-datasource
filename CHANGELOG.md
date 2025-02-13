@@ -3,6 +3,7 @@
 ## 2.0.0
 
 - (Breaking change:) Migrate UI components to grafana/plugin-ui in [#353](https://github.com/grafana/redshift-datasource/pull/353)
+- Bump the all-node-dependencies group across 1 directory with 7 updates in [#359](https://github.com/grafana/redshift-datasource/pull/359)
 - Update github.com/grafana/grafana-plugin-sdk-go to v0.265.0 in [#357](https://github.com/grafana/redshift-datasource/pull/357)
 - Chore: add label to external contributions in [#354](https://github.com/grafana/redshift-datasource/pull/354)
 - Migrate E2E tests to Playwright in [#346](https://github.com/grafana/redshift-datasource/pull/346)
