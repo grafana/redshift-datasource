@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.0.1
+
+- Update plugin-ui with fix for Monaco language features
+
 ## 2.0.0
 
 - (Breaking change:) Migrate UI components to grafana/plugin-ui in [#353](https://github.com/grafana/redshift-datasource/pull/353)
