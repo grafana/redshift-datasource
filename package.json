@@ -94,7 +94,8 @@
   },
   "resolutions": {
     "debug": "4.3.7",
-    "underscore": "1.13.7"
+    "underscore": "1.13.7",
+    "string-width": "4.2.3"
   },
   "engines": {
     "node": ">=20"
