@@ -95,7 +95,7 @@
   "resolutions": {
     "debug": "4.3.7",
     "underscore": "1.13.7",
-    "string-width": "4.2.3"
+    "jackspeak": "2.1.1"
   },
   "engines": {
     "node": ">=20"
