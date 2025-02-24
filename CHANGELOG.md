@@ -2,7 +2,9 @@
 
 ## 2.0.1
 
-- Update plugin-ui with fix for Monaco language features
+- Update plugin-ui with fix for Monaco language features in [#365](https://github.com/grafana/redshift-datasource/pull/365)
+- Bump github.com/grafana/grafana-plugin-sdk-go from 0.265.0 to 0.266.0 in the all-go-dependencies group in [#362](https://github.com/grafana/redshift-datasource/pull/362)
+- Bump the all-node-dependencies group with 8 updates in [#361](https://github.com/grafana/redshift-datasource/pull/361)
 
 ## 2.0.0
 
