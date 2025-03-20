@@ -1,5 +1,12 @@
 # Changelog
 
+## 2.1.0
+
+- Enable dataproxy.row_limit configuration option from Grafana in [#375](https://github.com/grafana/redshift-datasource/pull/375)
+- Bump golang.org/x/net from 0.34.0 to 0.36.0 in the go_modules group in [#372](https://github.com/grafana/redshift-datasource/pull/372)
+- Bump the all-go-dependencies group with 2 updates in [#364](https://github.com/grafana/redshift-datasource/pull/364)
+- Bump the all-node-dependencies group across 1 directory with 4 updates in [#366](https://github.com/grafana/redshift-datasource/pull/366)
+
 ## 2.0.1
 
 - Update plugin-ui with fix for Monaco language features in [#365](https://github.com/grafana/redshift-datasource/pull/365)
