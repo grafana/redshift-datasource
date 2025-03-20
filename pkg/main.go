@@ -31,6 +31,7 @@ func MakeDatasourceFactory() datasource.InstanceFactoryFunc {
 		ds := awsds.NewAsyncAWSDatasource(s)
 		ds.Completable = s
 		ds.CustomRoutes = routes.New(s).Routes()
+		ds.EnableRowLimit = true
 		return ds.NewDatasource(ctx, settings)
 	}
 }
