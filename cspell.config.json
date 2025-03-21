@@ -117,6 +117,7 @@
     "redshiftserverlesstypes",
     "redshifttypes",
     "secretsmanagertypes",
+    "awsauth",
     "tibdex"
   ]
 }

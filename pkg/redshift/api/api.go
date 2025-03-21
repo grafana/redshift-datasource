@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/grafana/grafana-aws-sdk/pkg/awsauth"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
 	"strings"
 
@@ -49,25 +50,29 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 		return nil, err
 	}
 
-	provider, err := sessionCache.CredentialsProviderV2(ctx, awsds.GetSessionConfig{
-		Settings:      redshiftSettings.AWSDatasourceSettings,
-		HTTPClient:    httpClient,
-		UserAgentName: aws.String("Redshift"),
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	region := redshiftSettings.Region
-	if region == "" {
+	if region == "" || region == "efault" {
 		region = redshiftSettings.DefaultRegion
 	}
 
+	awsCfg, err := awsauth.NewConfigProvider().GetConfig(ctx, awsauth.Settings{
+		LegacyAuthType:     redshiftSettings.AuthType,
+		AccessKey:          redshiftSettings.AccessKey,
+		SecretKey:          redshiftSettings.SecretKey,
+		Region:             region,
+		CredentialsProfile: redshiftSettings.Profile,
+		AssumeRoleARN:      redshiftSettings.AssumeRoleARN,
+		Endpoint:           redshiftSettings.Endpoint,
+		ExternalID:         redshiftSettings.ExternalID,
+		UserAgent:          "Redshift",
+		HTTPClient:         httpClient,
+	})
+
 	return &API{
-		DataClient:                 redshiftdata.New(redshiftdata.Options{Credentials: provider, Region: region}),
-		SecretsClient:              secretsmanager.New(secretsmanager.Options{Credentials: provider, Region: region}),
-		ManagementClient:           redshift.New(redshift.Options{Credentials: provider, Region: region}),
-		ServerlessManagementClient: redshiftserverless.New(redshiftserverless.Options{Credentials: provider, Region: region}),
+		DataClient:                 redshiftdata.NewFromConfig(awsCfg),
+		SecretsClient:              secretsmanager.NewFromConfig(awsCfg),
+		ManagementClient:           redshift.NewFromConfig(awsCfg),
+		ServerlessManagementClient: redshiftserverless.NewFromConfig(awsCfg),
 		settings:                   redshiftSettings,
 	}, nil
 }
