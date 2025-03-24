@@ -724,9 +724,9 @@
     debug "^4.3.1"
     minimatch "^3.1.2"
 
-"@eslint/config-helpers@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@eslint/config-helpers/-/config-helpers-0.1.0.tgz#62f1b7821e9d9ced1b3f512c7ea731825765d1cc"
+"@eslint/config-helpers@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@eslint/config-helpers/-/config-helpers-0.2.0.tgz#12dc8d65c31c4b6c3ebf0758db6601eb7692ce59"
 
 "@eslint/core@^0.12.0":
   version "0.12.0"
@@ -734,9 +734,9 @@
   dependencies:
     "@types/json-schema" "^7.0.15"
 
-"@eslint/eslintrc@^3.3.0":
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-3.3.0.tgz#96a558f45842989cca7ea1ecd785ad5491193846"
+"@eslint/eslintrc@^3.3.1":
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-3.3.1.tgz#e55f7f1dd400600dd066dbba349c4c0bac916964"
   dependencies:
     ajv "^6.12.4"
     debug "^4.3.2"
@@ -748,9 +748,9 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@eslint/js@9.22.0":
-  version "9.22.0"
-  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.22.0.tgz#4ff53649ded7cbce90b444b494c234137fa1aa3d"
+"@eslint/js@9.23.0":
+  version "9.23.0"
+  resolved "https://registry.yarnpkg.com/@eslint/js/-/js-9.23.0.tgz#c09ded4f3dc63b40b933bcaeb853fceddb64da30"
 
 "@eslint/object-schema@^2.1.6":
   version "2.1.6"
@@ -889,9 +889,9 @@
     tslib "2.8.1"
     typescript "5.7.3"
 
-"@grafana/e2e-selectors@^11.6.0-226761":
-  version "11.6.0-231151"
-  resolved "https://registry.yarnpkg.com/@grafana/e2e-selectors/-/e2e-selectors-11.6.0-231151.tgz#bb404981b45732e0dff135fa6af0b759622a11d6"
+"@grafana/e2e-selectors@^11.6.0-229231":
+  version "11.6.0-232605"
+  resolved "https://registry.yarnpkg.com/@grafana/e2e-selectors/-/e2e-selectors-11.6.0-232605.tgz#3b52712aba36bf02927cc67c67d1a7c485a6e3a9"
   dependencies:
     "@grafana/tsconfig" "^2.0.0"
     semver "^7.7.0"
@@ -917,11 +917,11 @@
     ua-parser-js "^1.0.32"
     web-vitals "^4.0.1"
 
-"@grafana/plugin-e2e@^1.19.0":
-  version "1.19.0"
-  resolved "https://registry.yarnpkg.com/@grafana/plugin-e2e/-/plugin-e2e-1.19.0.tgz#cc467ef400fbe6dbd5dcb05f0a63664d98349399"
+"@grafana/plugin-e2e@^1.19.1":
+  version "1.19.1"
+  resolved "https://registry.yarnpkg.com/@grafana/plugin-e2e/-/plugin-e2e-1.19.1.tgz#58fbc43f957b2307365f0ec8491b38205dba4dd5"
   dependencies:
-    "@grafana/e2e-selectors" "^11.6.0-226761"
+    "@grafana/e2e-selectors" "^11.6.0-229231"
     semver "^7.5.4"
     uuid "^11.0.2"
     yaml "^2.3.4"
@@ -1546,11 +1546,15 @@
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.1.1.tgz#1ec17e2edbec25c8306d424ecfbf13c7de1aaa31"
 
-"@playwright/test@1.50.1":
-  version "1.50.1"
-  resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.50.1.tgz#027d00ca77ec79688764eb765cfe9a688807bf0b"
+"@pkgr/core@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@pkgr/core/-/core-0.2.0.tgz#8dff61038cb5884789d8b323d9869e5363b976f7"
+
+"@playwright/test@1.51.1":
+  version "1.51.1"
+  resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.51.1.tgz#75357d513221a7be0baad75f01e966baf9c41a2e"
   dependencies:
-    playwright "1.50.1"
+    playwright "1.51.1"
 
 "@popperjs/core@2.11.8", "@popperjs/core@^2.11.5":
   version "2.11.8"
@@ -1828,63 +1832,63 @@
     eslint-visitor-keys "^4.2.0"
     espree "^10.3.0"
 
-"@swc/core-darwin-arm64@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.11.10.tgz#d1c9000839d4483983f203f9088fe4bf173616b7"
+"@swc/core-darwin-arm64@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-darwin-arm64/-/core-darwin-arm64-1.11.13.tgz#ebd30fa0cda7ad28fc471cd756402ff17801cfb4"
 
-"@swc/core-darwin-x64@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-darwin-x64/-/core-darwin-x64-1.11.10.tgz#ff6d96e86b92835621a8600d370221661b36d384"
+"@swc/core-darwin-x64@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-darwin-x64/-/core-darwin-x64-1.11.13.tgz#9cad870d48ebff805e8946ddcbe3d8312182f70b"
 
-"@swc/core-linux-arm-gnueabihf@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm-gnueabihf/-/core-linux-arm-gnueabihf-1.11.10.tgz#272b7a61b4cfd7b55858f45c18f515be00250c34"
+"@swc/core-linux-arm-gnueabihf@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm-gnueabihf/-/core-linux-arm-gnueabihf-1.11.13.tgz#51839e5a850bfa300e2c838fee8379e4dba1de78"
 
-"@swc/core-linux-arm64-gnu@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm64-gnu/-/core-linux-arm64-gnu-1.11.10.tgz#eb640594f7445bf219a50b30f70b28a38c802289"
+"@swc/core-linux-arm64-gnu@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm64-gnu/-/core-linux-arm64-gnu-1.11.13.tgz#4145f1e504bdfa92604aee883d777bc8c4fba5d7"
 
-"@swc/core-linux-arm64-musl@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm64-musl/-/core-linux-arm64-musl-1.11.10.tgz#6541a5dade06f06a5edd8fc49a00efcfdea492f2"
+"@swc/core-linux-arm64-musl@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-arm64-musl/-/core-linux-arm64-musl-1.11.13.tgz#b1813ae2e99e386ca16fff5af6601ac45ef57c5b"
 
-"@swc/core-linux-x64-gnu@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-linux-x64-gnu/-/core-linux-x64-gnu-1.11.10.tgz#c96479183a2055f7f35b4acd5863e996085dd481"
+"@swc/core-linux-x64-gnu@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-x64-gnu/-/core-linux-x64-gnu-1.11.13.tgz#13b89a0194c4033c01400e9c65d9c21c56a4a6cd"
 
-"@swc/core-linux-x64-musl@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-linux-x64-musl/-/core-linux-x64-musl-1.11.10.tgz#01d25fc3e5da63af7765041a74175ad93eb4873a"
+"@swc/core-linux-x64-musl@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-linux-x64-musl/-/core-linux-x64-musl-1.11.13.tgz#0d0e5aa889dd4da69723e2287c3c1714d9bfd8aa"
 
-"@swc/core-win32-arm64-msvc@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-win32-arm64-msvc/-/core-win32-arm64-msvc-1.11.10.tgz#f4971229837c2360ce4e074d11b1ce25b8491b9a"
+"@swc/core-win32-arm64-msvc@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-win32-arm64-msvc/-/core-win32-arm64-msvc-1.11.13.tgz#ad7281f9467e3de09f52615afe2276a8ef738a9d"
 
-"@swc/core-win32-ia32-msvc@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-win32-ia32-msvc/-/core-win32-ia32-msvc-1.11.10.tgz#ea912ff454548f71ec7c87af7525a0f8d6b6a5be"
+"@swc/core-win32-ia32-msvc@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-win32-ia32-msvc/-/core-win32-ia32-msvc-1.11.13.tgz#046f6dbddb5b69a29bbaa98de104090a46088b74"
 
-"@swc/core-win32-x64-msvc@1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.11.10.tgz#55f5d75783c9f580aa378c603fb3181aaa37bf5e"
+"@swc/core-win32-x64-msvc@1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core-win32-x64-msvc/-/core-win32-x64-msvc-1.11.13.tgz#0412620d8594a7d3e482d3e79d9e89d80f9a14c0"
 
-"@swc/core@^1.11.10":
-  version "1.11.10"
-  resolved "https://registry.yarnpkg.com/@swc/core/-/core-1.11.10.tgz#86db933284d4d74f13424f2e27dc42246719c5f3"
+"@swc/core@^1.11.13":
+  version "1.11.13"
+  resolved "https://registry.yarnpkg.com/@swc/core/-/core-1.11.13.tgz#54ca047c7139d35e358a16a5afcbf8aec0d6e8b6"
   dependencies:
     "@swc/counter" "^0.1.3"
     "@swc/types" "^0.1.19"
   optionalDependencies:
-    "@swc/core-darwin-arm64" "1.11.10"
-    "@swc/core-darwin-x64" "1.11.10"
-    "@swc/core-linux-arm-gnueabihf" "1.11.10"
-    "@swc/core-linux-arm64-gnu" "1.11.10"
-    "@swc/core-linux-arm64-musl" "1.11.10"
-    "@swc/core-linux-x64-gnu" "1.11.10"
-    "@swc/core-linux-x64-musl" "1.11.10"
-    "@swc/core-win32-arm64-msvc" "1.11.10"
-    "@swc/core-win32-ia32-msvc" "1.11.10"
-    "@swc/core-win32-x64-msvc" "1.11.10"
+    "@swc/core-darwin-arm64" "1.11.13"
+    "@swc/core-darwin-x64" "1.11.13"
+    "@swc/core-linux-arm-gnueabihf" "1.11.13"
+    "@swc/core-linux-arm64-gnu" "1.11.13"
+    "@swc/core-linux-arm64-musl" "1.11.13"
+    "@swc/core-linux-x64-gnu" "1.11.13"
+    "@swc/core-linux-x64-musl" "1.11.13"
+    "@swc/core-win32-arm64-msvc" "1.11.13"
+    "@swc/core-win32-ia32-msvc" "1.11.13"
+    "@swc/core-win32-x64-msvc" "1.11.13"
 
 "@swc/counter@^0.1.3":
   version "0.1.3"
@@ -2117,9 +2121,9 @@
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-5.1.2.tgz#07508b45797cb81ec3f273011b054cd0755eddca"
 
-"@types/node@*", "@types/node@>=13.7.0", "@types/node@^22.13.10":
-  version "22.13.10"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.13.10.tgz#df9ea358c5ed991266becc3109dc2dc9125d77e4"
+"@types/node@*", "@types/node@>=13.7.0", "@types/node@^22.13.12":
+  version "22.13.12"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.13.12.tgz#ee0e492300f157f60913aa20471b636effa3884b"
   dependencies:
     undici-types "~6.20.0"
 
@@ -2195,28 +2199,28 @@
   dependencies:
     "@types/yargs-parser" "*"
 
-"@typescript-eslint/eslint-plugin@^8.26.1":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.26.1.tgz#3e48eb847924161843b092c87a9b65176b53782f"
+"@typescript-eslint/eslint-plugin@^8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/eslint-plugin/-/eslint-plugin-8.27.0.tgz#fbef10802365832ee1d1bd5d2117dcec82727a72"
   dependencies:
     "@eslint-community/regexpp" "^4.10.0"
-    "@typescript-eslint/scope-manager" "8.26.1"
-    "@typescript-eslint/type-utils" "8.26.1"
-    "@typescript-eslint/utils" "8.26.1"
-    "@typescript-eslint/visitor-keys" "8.26.1"
+    "@typescript-eslint/scope-manager" "8.27.0"
+    "@typescript-eslint/type-utils" "8.27.0"
+    "@typescript-eslint/utils" "8.27.0"
+    "@typescript-eslint/visitor-keys" "8.27.0"
     graphemer "^1.4.0"
     ignore "^5.3.1"
     natural-compare "^1.4.0"
     ts-api-utils "^2.0.1"
 
-"@typescript-eslint/parser@^8.26.1":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.26.1.tgz#0e2f915a497519fc43f52cf2ecbfa607ff56f72e"
+"@typescript-eslint/parser@^8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/parser/-/parser-8.27.0.tgz#3f6beaa83934467eda34ae82ef04090014df8227"
   dependencies:
-    "@typescript-eslint/scope-manager" "8.26.1"
-    "@typescript-eslint/types" "8.26.1"
-    "@typescript-eslint/typescript-estree" "8.26.1"
-    "@typescript-eslint/visitor-keys" "8.26.1"
+    "@typescript-eslint/scope-manager" "8.27.0"
+    "@typescript-eslint/types" "8.27.0"
+    "@typescript-eslint/typescript-estree" "8.27.0"
+    "@typescript-eslint/visitor-keys" "8.27.0"
     debug "^4.3.4"
 
 "@typescript-eslint/scope-manager@7.18.0":
@@ -2226,19 +2230,19 @@
     "@typescript-eslint/types" "7.18.0"
     "@typescript-eslint/visitor-keys" "7.18.0"
 
-"@typescript-eslint/scope-manager@8.26.1":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-8.26.1.tgz#5e6ad0ac258ccf79462e91c3f43a3f1f7f31a6cc"
+"@typescript-eslint/scope-manager@8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/scope-manager/-/scope-manager-8.27.0.tgz#b51042927067d677fbfc471605cf40d1ffaee482"
   dependencies:
-    "@typescript-eslint/types" "8.26.1"
-    "@typescript-eslint/visitor-keys" "8.26.1"
+    "@typescript-eslint/types" "8.27.0"
+    "@typescript-eslint/visitor-keys" "8.27.0"
 
-"@typescript-eslint/type-utils@8.26.1":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/type-utils/-/type-utils-8.26.1.tgz#462f0bae09de72ac6e8e1af2ebe588c23224d7f8"
+"@typescript-eslint/type-utils@8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/type-utils/-/type-utils-8.27.0.tgz#af3c4eefcb64455ee50aae2d7069918467af085c"
   dependencies:
-    "@typescript-eslint/typescript-estree" "8.26.1"
-    "@typescript-eslint/utils" "8.26.1"
+    "@typescript-eslint/typescript-estree" "8.27.0"
+    "@typescript-eslint/utils" "8.27.0"
     debug "^4.3.4"
     ts-api-utils "^2.0.1"
 
@@ -2246,9 +2250,9 @@
   version "7.18.0"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-7.18.0.tgz#b90a57ccdea71797ffffa0321e744f379ec838c9"
 
-"@typescript-eslint/types@8.26.1":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-8.26.1.tgz#d5978721670cff263348d5062773389231a64132"
+"@typescript-eslint/types@8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/types/-/types-8.27.0.tgz#3dd01ced4c81e798d1106fda0904f8d5c91051aa"
 
 "@typescript-eslint/typescript-estree@7.18.0":
   version "7.18.0"
@@ -2263,12 +2267,12 @@
     semver "^7.6.0"
     ts-api-utils "^1.3.0"
 
-"@typescript-eslint/typescript-estree@8.26.1":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-8.26.1.tgz#eb0e4ce31753683d83be53441a409fd5f0b34afd"
+"@typescript-eslint/typescript-estree@8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/typescript-estree/-/typescript-estree-8.27.0.tgz#4e02a1056454a84418cc9bce7c00b1c08b03567a"
   dependencies:
-    "@typescript-eslint/types" "8.26.1"
-    "@typescript-eslint/visitor-keys" "8.26.1"
+    "@typescript-eslint/types" "8.27.0"
+    "@typescript-eslint/visitor-keys" "8.27.0"
     debug "^4.3.4"
     fast-glob "^3.3.2"
     is-glob "^4.0.3"
@@ -2276,14 +2280,14 @@
     semver "^7.6.0"
     ts-api-utils "^2.0.1"
 
-"@typescript-eslint/utils@8.26.1", "@typescript-eslint/utils@^8.23.0":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-8.26.1.tgz#54cc58469955f25577f659753b71a0e117a0539f"
+"@typescript-eslint/utils@8.27.0", "@typescript-eslint/utils@^8.23.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-8.27.0.tgz#d9c2a4891c6a85b952a9d5f9656c379ab111cf6d"
   dependencies:
     "@eslint-community/eslint-utils" "^4.4.0"
-    "@typescript-eslint/scope-manager" "8.26.1"
-    "@typescript-eslint/types" "8.26.1"
-    "@typescript-eslint/typescript-estree" "8.26.1"
+    "@typescript-eslint/scope-manager" "8.27.0"
+    "@typescript-eslint/types" "8.27.0"
+    "@typescript-eslint/typescript-estree" "8.27.0"
 
 "@typescript-eslint/utils@^7.0.0":
   version "7.18.0"
@@ -2301,11 +2305,11 @@
     "@typescript-eslint/types" "7.18.0"
     eslint-visitor-keys "^3.4.3"
 
-"@typescript-eslint/visitor-keys@8.26.1":
-  version "8.26.1"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-8.26.1.tgz#c5267fcc82795cf10280363023837deacad2647c"
+"@typescript-eslint/visitor-keys@8.27.0":
+  version "8.27.0"
+  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-8.27.0.tgz#4a13e9d7ad7e311a07ea1b178b4c9f848ce11334"
   dependencies:
-    "@typescript-eslint/types" "8.26.1"
+    "@typescript-eslint/types" "8.27.0"
     eslint-visitor-keys "^4.2.0"
 
 "@webassemblyjs/ast@1.14.1", "@webassemblyjs/ast@^1.14.1":
@@ -3877,9 +3881,9 @@ eslint-plugin-deprecation@^3.0.0:
     ts-api-utils "^1.3.0"
     tslib "^2.3.1"
 
-eslint-plugin-jsdoc@^50.6.7:
-  version "50.6.7"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-50.6.7.tgz#e59e73f261b204bde6e6f5b1ae357c252eb2250e"
+eslint-plugin-jsdoc@^50.6.9:
+  version "50.6.9"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-50.6.9.tgz#b4afc06110958b9c525456b6c4348bf14e21c298"
   dependencies:
     "@es-joy/jsdoccomment" "~0.49.0"
     are-docs-informative "^0.0.2"
@@ -3893,12 +3897,12 @@ eslint-plugin-jsdoc@^50.6.7:
     spdx-expression-parse "^4.0.0"
     synckit "^0.9.1"
 
-eslint-plugin-prettier@^5.2.3:
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-5.2.3.tgz#c4af01691a6fa9905207f0fbba0d7bea0902cce5"
+eslint-plugin-prettier@^5.2.4:
+  version "5.2.4"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-5.2.4.tgz#6daa54a11da8c48971475d7c0e239d0b6c6dbc60"
   dependencies:
     prettier-linter-helpers "^1.0.0"
-    synckit "^0.9.1"
+    synckit "^0.10.2"
 
 eslint-plugin-react-hooks@^5.2.0:
   version "5.2.0"
@@ -3959,17 +3963,17 @@ eslint-webpack-plugin@^5.0.0:
     normalize-path "^3.0.0"
     schema-utils "^4.3.0"
 
-eslint@^9.22.0:
-  version "9.22.0"
-  resolved "https://registry.yarnpkg.com/eslint/-/eslint-9.22.0.tgz#0760043809fbf836f582140345233984d613c552"
+eslint@^9.23.0:
+  version "9.23.0"
+  resolved "https://registry.yarnpkg.com/eslint/-/eslint-9.23.0.tgz#b88f3ab6dc83bcb927fdb54407c69ffe5f2441a6"
   dependencies:
     "@eslint-community/eslint-utils" "^4.2.0"
     "@eslint-community/regexpp" "^4.12.1"
     "@eslint/config-array" "^0.19.2"
-    "@eslint/config-helpers" "^0.1.0"
+    "@eslint/config-helpers" "^0.2.0"
     "@eslint/core" "^0.12.0"
-    "@eslint/eslintrc" "^3.3.0"
-    "@eslint/js" "9.22.0"
+    "@eslint/eslintrc" "^3.3.1"
+    "@eslint/js" "9.23.0"
     "@eslint/plugin-kit" "^0.2.7"
     "@humanfs/node" "^0.16.6"
     "@humanwhocodes/module-importer" "^1.0.1"
@@ -5482,60 +5486,60 @@ kleur@^3.0.3:
   version "3.0.3"
   resolved "https://registry.yarnpkg.com/kleur/-/kleur-3.0.3.tgz#a79c9ecc86ee1ce3fa6206d1216c501f147fc07e"
 
-lefthook-darwin-arm64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-darwin-arm64/-/lefthook-darwin-arm64-1.11.3.tgz#adb4c44d4f82a07f97e09deca36fb706d51514d5"
+lefthook-darwin-arm64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-darwin-arm64/-/lefthook-darwin-arm64-1.11.4.tgz#9d4c091c0473ec2e8715cd18a38fe27c51976a28"
 
-lefthook-darwin-x64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-darwin-x64/-/lefthook-darwin-x64-1.11.3.tgz#b77c231371f6f60ddaf097d500a4aae5c374eb80"
+lefthook-darwin-x64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-darwin-x64/-/lefthook-darwin-x64-1.11.4.tgz#339d2f1cbee599db7253974c780ce11f989ed4b6"
 
-lefthook-freebsd-arm64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-freebsd-arm64/-/lefthook-freebsd-arm64-1.11.3.tgz#27665ae8ab91c40a137d2f5a68ba84594988c120"
+lefthook-freebsd-arm64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-freebsd-arm64/-/lefthook-freebsd-arm64-1.11.4.tgz#3a6eff7782454f22c041197884ecc7e7c3beb4a2"
 
-lefthook-freebsd-x64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-freebsd-x64/-/lefthook-freebsd-x64-1.11.3.tgz#30f5f398af759212dd68b8b5307229d04ce5c26c"
+lefthook-freebsd-x64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-freebsd-x64/-/lefthook-freebsd-x64-1.11.4.tgz#831404fbc64b1bd052eabe826df6e0196b010cb5"
 
-lefthook-linux-arm64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-linux-arm64/-/lefthook-linux-arm64-1.11.3.tgz#ac338808e1c560935704473707e7540171170618"
+lefthook-linux-arm64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-linux-arm64/-/lefthook-linux-arm64-1.11.4.tgz#41a05dbbfa65a12196a1412895125d93ceddd5b3"
 
-lefthook-linux-x64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-linux-x64/-/lefthook-linux-x64-1.11.3.tgz#eea29dc603f34822c57f47bd9777bfa0e1ffa223"
+lefthook-linux-x64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-linux-x64/-/lefthook-linux-x64-1.11.4.tgz#a256aeab437a74739764615c14fda97dbd260c33"
 
-lefthook-openbsd-arm64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-openbsd-arm64/-/lefthook-openbsd-arm64-1.11.3.tgz#b6eae9109a1a7520392317d635810e43cabe1b89"
+lefthook-openbsd-arm64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-openbsd-arm64/-/lefthook-openbsd-arm64-1.11.4.tgz#f7f8d3dba1915641308edf85e18bedaaa2d9739f"
 
-lefthook-openbsd-x64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-openbsd-x64/-/lefthook-openbsd-x64-1.11.3.tgz#4b681975fe17ad9615b92310ca094c4d292aa5ec"
+lefthook-openbsd-x64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-openbsd-x64/-/lefthook-openbsd-x64-1.11.4.tgz#f5213605ab8a6f2c003c3c6d3c21435f4b9a1dcf"
 
-lefthook-windows-arm64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-windows-arm64/-/lefthook-windows-arm64-1.11.3.tgz#0cf029605d0c2983bf287269b8347aed460561c5"
+lefthook-windows-arm64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-windows-arm64/-/lefthook-windows-arm64-1.11.4.tgz#fa424b9775225b931155afa47c77d0f3c9eac5df"
 
-lefthook-windows-x64@1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook-windows-x64/-/lefthook-windows-x64-1.11.3.tgz#6baac87f6fb36885dea0c360452049dd8d6dad44"
+lefthook-windows-x64@1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook-windows-x64/-/lefthook-windows-x64-1.11.4.tgz#a0bec518dc118fd8b3e47693131eacd1ddf54244"
 
-lefthook@^1.11.3:
-  version "1.11.3"
-  resolved "https://registry.yarnpkg.com/lefthook/-/lefthook-1.11.3.tgz#d4c23eade3f9d6c32900c356555ca6380c601513"
+lefthook@^1.11.4:
+  version "1.11.4"
+  resolved "https://registry.yarnpkg.com/lefthook/-/lefthook-1.11.4.tgz#0c7f039afea3e990be318eb895d6bc90914ba14e"
   optionalDependencies:
-    lefthook-darwin-arm64 "1.11.3"
-    lefthook-darwin-x64 "1.11.3"
-    lefthook-freebsd-arm64 "1.11.3"
-    lefthook-freebsd-x64 "1.11.3"
-    lefthook-linux-arm64 "1.11.3"
-    lefthook-linux-x64 "1.11.3"
-    lefthook-openbsd-arm64 "1.11.3"
-    lefthook-openbsd-x64 "1.11.3"
-    lefthook-windows-arm64 "1.11.3"
-    lefthook-windows-x64 "1.11.3"
+    lefthook-darwin-arm64 "1.11.4"
+    lefthook-darwin-x64 "1.11.4"
+    lefthook-freebsd-arm64 "1.11.4"
+    lefthook-freebsd-x64 "1.11.4"
+    lefthook-linux-arm64 "1.11.4"
+    lefthook-linux-x64 "1.11.4"
+    lefthook-openbsd-arm64 "1.11.4"
+    lefthook-openbsd-x64 "1.11.4"
+    lefthook-windows-arm64 "1.11.4"
+    lefthook-windows-x64 "1.11.4"
 
 lerc@^3.0.0:
   version "3.0.0"
@@ -6084,15 +6088,15 @@ pkg-dir@^4.2.0:
   dependencies:
     find-up "^4.0.0"
 
-playwright-core@1.50.1:
-  version "1.50.1"
-  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.50.1.tgz#6a0484f1f1c939168f40f0ab3828c4a1592c4504"
+playwright-core@1.51.1:
+  version "1.51.1"
+  resolved "https://registry.yarnpkg.com/playwright-core/-/playwright-core-1.51.1.tgz#d57f0393e02416f32a47cf82b27533656a8acce1"
 
-playwright@1.50.1:
-  version "1.50.1"
-  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.50.1.tgz#2f93216511d65404f676395bfb97b41aa052b180"
+playwright@1.51.1:
+  version "1.51.1"
+  resolved "https://registry.yarnpkg.com/playwright/-/playwright-1.51.1.tgz#ae1467ee318083968ad28d6990db59f47a55390f"
   dependencies:
-    playwright-core "1.50.1"
+    playwright-core "1.51.1"
   optionalDependencies:
     fsevents "2.3.2"
 
@@ -6606,11 +6610,11 @@ react-router-dom@5.3.3:
     tiny-invariant "^1.0.2"
     tiny-warning "^1.0.0"
 
-react-router-dom@^7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.3.0.tgz#170e569b7536ffd71ff16016cb0f4458d1f23d83"
+react-router-dom@^7.4.0:
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-7.4.0.tgz#cb97968f4233c0bec57c9662442a7c070b4c31e9"
   dependencies:
-    react-router "7.3.0"
+    react-router "7.4.0"
 
 react-router@5.3.3:
   version "5.3.3"
@@ -6633,9 +6637,9 @@ react-router@6.30.0:
   dependencies:
     "@remix-run/router" "1.23.0"
 
-react-router@7.3.0:
-  version "7.3.0"
-  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.3.0.tgz#14fb630f088d919386e97f91199a2bc4abcdd85d"
+react-router@7.4.0:
+  version "7.4.0"
+  resolved "https://registry.yarnpkg.com/react-router/-/react-router-7.4.0.tgz#9787041425bc4bf52e6d472b6ccfd78a43ace133"
   dependencies:
     "@types/cookie" "^0.6.0"
     cookie "^1.0.1"
@@ -6925,9 +6929,9 @@ sass-loader@16.0.5:
   dependencies:
     neo-async "^2.6.2"
 
-sass@1.85.1:
-  version "1.85.1"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.85.1.tgz#18ab0bb48110ae99163778f06445b406148ca0d5"
+sass@1.86.0:
+  version "1.86.0"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.86.0.tgz#f49464fb6237a903a93f4e8760ef6e37a5030114"
   dependencies:
     chokidar "^4.0.0"
     immutable "^5.0.2"
@@ -7432,6 +7436,13 @@ symbol-tree@^3.2.4:
   version "3.2.4"
   resolved "https://registry.yarnpkg.com/symbol-tree/-/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
 
+synckit@^0.10.2:
+  version "0.10.3"
+  resolved "https://registry.yarnpkg.com/synckit/-/synckit-0.10.3.tgz#940aea2c7b6d141a4f74dbdebc81e0958c331a4b"
+  dependencies:
+    "@pkgr/core" "^0.2.0"
+    tslib "^2.8.1"
+
 synckit@^0.9.1:
   version "0.9.2"
   resolved "https://registry.yarnpkg.com/synckit/-/synckit-0.9.2.tgz#a3a935eca7922d48b9e7d6c61822ee6c3ae4ec62"
@@ -7595,7 +7606,7 @@ tsconfig-paths@^4.2.0:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
-tslib@2, tslib@2.8.1, tslib@^2.1.0, tslib@^2.3.1, tslib@^2.6.2, tslib@^2.7.0, tslib@^2.8.0:
+tslib@2, tslib@2.8.1, tslib@^2.1.0, tslib@^2.3.1, tslib@^2.6.2, tslib@^2.7.0, tslib@^2.8.0, tslib@^2.8.1:
   version "2.8.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
 
