@@ -2,12 +2,14 @@ module github.com/grafana/redshift-datasource
 
 go 1.23.5
 
+toolchain go1.24.1
+
 require (
 	github.com/aws/aws-sdk-go v1.55.6
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-aws-sdk v0.34.0
 	github.com/grafana/grafana-plugin-sdk-go v0.274.0
-	github.com/grafana/sqlds/v4 v4.2.0
+	github.com/grafana/sqlds/v4 v4.2.1
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.10.0
 )
