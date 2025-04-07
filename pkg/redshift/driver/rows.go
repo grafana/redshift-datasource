@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"context"
 	"database/sql/driver"
 	"fmt"
 	"io"
@@ -9,24 +10,26 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
-	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
+	redshiftdatatypes "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
 type Rows struct {
-	service redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
+	service redshiftdata.GetStatementResultAPIClient
 	queryID string
+	context context.Context
 
 	done   bool
-	result *redshiftdataapiservice.GetStatementResultOutput
+	result *redshiftdata.GetStatementResultOutput
 }
 
-func newRows(service redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI, queryId string) (*Rows, error) {
+func newRows(ctx context.Context, service redshiftdata.GetStatementResultAPIClient, queryId string) (*Rows, error) {
 	r := Rows{
 		service: service,
 		queryID: queryId,
+		context: ctx,
 	}
 
 	if err := r.fetchNextPage(nil); err != nil {
@@ -80,19 +83,13 @@ func (r *Rows) Columns() []string {
 // ColumnTypeNullable returns true if it is known the column may be null,
 // or false if the column is known to be not nullable. If the column nullability is unknown, ok should be false.
 func (r *Rows) ColumnTypeNullable(index int) (nullable, ok bool) {
-	col := *r.result.ColumnMetadata[index]
-
-	if *col.Nullable == 1 {
-		return true, true
-	}
-
-	return false, true
+	return r.result.ColumnMetadata[index].Nullable == 1, true
 }
 
 // ColumnTypeScanType returns the value type that can be used to scan types into.
 // For example, the database column type "bigint" this should return "reflect.TypeOf(int64(0))"
 func (r *Rows) ColumnTypeScanType(index int) reflect.Type {
-	col := *r.result.ColumnMetadata[index]
+	col := r.result.ColumnMetadata[index]
 
 	switch strings.ToUpper(*col.TypeName) {
 	case REDSHIFT_INT, REDSHIFT_INT4,
@@ -183,7 +180,7 @@ func (r *Rows) Close() error {
 func (r *Rows) fetchNextPage(token *string) error {
 	var err error
 
-	r.result, err = r.service.GetStatementResult(&redshiftdataapiservice.GetStatementResultInput{
+	r.result, err = r.service.GetStatementResult(r.context, &redshiftdata.GetStatementResultInput{
 		Id:        aws.String(r.queryID),
 		NextToken: token,
 	})
@@ -198,10 +195,14 @@ func (r *Rows) fetchNextPage(token *string) error {
 // convertRow converts values in a redshift data api row into its corresponding type in Go. Mapping is based on:
 // https://docs.aws.amazon.com/redshift/latest/dg/c_Supported_data_types.html
 // https://docs.aws.amazon.com/redshift/latest/mgmt/jdbc20-data-type-mapping.html
-func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshiftdataapiservice.Field, ret []driver.Value) error {
+func convertRow(columns []redshiftdatatypes.ColumnMetadata, data []redshiftdatatypes.Field, ret []driver.Value) error {
 	for i, curr := range data {
-		if curr.IsNull != nil && *curr.IsNull {
-			ret[i] = nil
+		// FIXME: I think this is the correct translation of the previous aws-sdk-v1 behavior
+		// but I'm not sure it's actually the correct behavior
+		if isNull, ok := curr.(*redshiftdatatypes.FieldMemberIsNull); ok && isNull.Value {
+			if isNull.Value {
+				ret[i] = nil
+			}
 			continue
 		}
 
@@ -212,29 +213,53 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 		typeName := strings.ToUpper(*col.TypeName)
 		switch typeName {
 		case REDSHIFT_INT2:
-			ret[i] = int16(*curr.LongValue)
-		case REDSHIFT_INT, REDSHIFT_INT4:
-			if *col.Name == "time" {
-				ret[i] = time.Unix(*curr.LongValue, 0).UTC()
+			if long, ok := AsInt(curr); ok {
+				ret[i] = int16(long)
 			} else {
-				ret[i] = int32(*curr.LongValue)
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+		case REDSHIFT_INT, REDSHIFT_INT4:
+			if long, ok := AsInt(curr); ok {
+				if *col.Name == "time" {
+					ret[i] = time.Unix(long, 0).UTC()
+				} else {
+					ret[i] = int32(long)
+				}
+			} else {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
 			}
 		case REDSHIFT_INT8:
-			ret[i] = *curr.LongValue
+			if long, ok := AsInt(curr); ok {
+				ret[i] = long
+			} else {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
 		case REDSHIFT_NUMERIC:
-			v, err := strconv.ParseFloat(*curr.StringValue, 64)
+			s, ok := AsString(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+			value, err := strconv.ParseFloat(s, 64)
 			if err != nil {
 				return err
 			}
-			ret[i] = v
+			ret[i] = value
 		case REDSHIFT_FLOAT, REDSHIFT_FLOAT4, REDSHIFT_FLOAT8:
+			value, ok := AsFloat(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
 			if *col.Name == "time" {
-				ret[i] = time.Unix(int64(*curr.DoubleValue), 0).UTC()
+				ret[i] = time.Unix(int64(value), 0).UTC()
 			} else {
-				ret[i] = *curr.DoubleValue
+				ret[i] = value
 			}
 		case REDSHIFT_BOOL:
-			ret[i] = *curr.BooleanValue
+			value, ok := AsBool(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+			ret[i] = value
 
 		case REDSHIFT_CHARACTER,
 			REDSHIFT_VARCHAR,
@@ -248,30 +273,50 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 			REDSHIFT_HLLSKETCH,
 			REDSHIFT_SUPER,
 			REDSHIFT_NAME:
-			ret[i] = *curr.StringValue
+			value, ok := AsString(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+			ret[i] = value
 		// Time formats from
 		// https://docs.aws.amazon.com/redshift/latest/dg/r_Datetime_types.html
 		case REDSHIFT_DATE:
-			t, err := time.Parse("2006-01-02", *curr.StringValue)
+			value, ok := AsString(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+			t, err := time.Parse("2006-01-02", value)
 			if err != nil {
 				return err
 			}
 			ret[i] = t
 		case REDSHIFT_TIMESTAMP:
-			t, err := time.Parse("2006-01-02 15:04:05", *curr.StringValue)
+			value, ok := AsString(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+			t, err := time.Parse("2006-01-02 15:04:05", value)
 			if err != nil {
 				return err
 			}
 			ret[i] = t
 		case REDSHIFT_TIMESTAMP_WITH_TIME_ZONE:
-			t, err := time.Parse("2006-01-02 15:04:05+00", *curr.StringValue)
+			value, ok := AsString(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+			t, err := time.Parse("2006-01-02 15:04:05+00", value)
 			if err != nil {
 				return err
 			}
 			ret[i] = t
 		case REDSHIFT_TIME_WITHOUT_TIME_ZONE,
 			REDSHIFT_TIME_WITH_TIME_ZONE:
-			t, err := time.Parse("15:04:05", *curr.StringValue)
+			value, ok := AsString(curr)
+			if !ok {
+				return fmt.Errorf("column %s with typeName %s could not be converted", *col.Name, *col.TypeName)
+			}
+			t, err := time.Parse("15:04:05", value)
 			if err != nil {
 				return err
 			}
@@ -281,4 +326,41 @@ func convertRow(columns []*redshiftdataapiservice.ColumnMetadata, data []*redshi
 		}
 	}
 	return nil
+}
+
+func AsInt(field redshiftdatatypes.Field) (int64, bool) {
+	var value int64
+	v, ok := field.(*redshiftdatatypes.FieldMemberLongValue)
+	if ok {
+		value = v.Value
+	}
+	return value, ok
+}
+
+func AsFloat(field redshiftdatatypes.Field) (float64, bool) {
+	var value float64
+	v, ok := field.(*redshiftdatatypes.FieldMemberDoubleValue)
+	if ok {
+		value = v.Value
+	}
+	return value, ok
+}
+
+func AsString(field redshiftdatatypes.Field) (string, bool) {
+	var value string
+	v, ok := field.(*redshiftdatatypes.FieldMemberStringValue)
+	if ok {
+		value = v.Value
+	}
+	return value, ok
+
+}
+func AsBool(field redshiftdatatypes.Field) (bool, bool) {
+	var value bool
+	v, ok := field.(*redshiftdatatypes.FieldMemberBooleanValue)
+	if ok {
+		value = v.Value
+	}
+	return value, ok
+
 }
