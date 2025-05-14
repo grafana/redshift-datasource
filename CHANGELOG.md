@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.1.1
+
+- Bump github.com/grafana/grafana-plugin-sdk-go from 0.277.0 to 0.277.1 in the all-go-dependencies group in [#399](https://github.com/grafana/redshift-datasource/pull/399)
+- Bump the all-node-dependencies group across 1 directory with 31 updates in [#398](https://github.com/grafana/redshift-datasource/pull/398)
+- Bump the all-go-dependencies group across 1 directory with 4 updates in [#389](https://github.com/grafana/redshift-datasource/pull/389)
+- Bump golang.org/x/net from 0.36.0 to 0.38.0 in the go_modules group in [#386](https://github.com/grafana/redshift-datasource/pull/386)
+- Add zizmor config and vault tokens in [#395](https://github.com/grafana/redshift-datasource/pull/395)
+- Chore: Cleanup Github workflow files in [#391](https://github.com/grafana/redshift-datasource/pull/391)
+- Bump the all-go-dependencies group across 1 directory with 2 updates in [#381](https://github.com/grafana/redshift-datasource/pull/381)
+- Bump the all-node-dependencies group across 1 directory with 22 updates in [#373](https://github.com/grafana/redshift-datasource/pull/373)
+- Bump github.com/grafana/grafana-plugin-sdk-go from 0.269.1 to 0.274.0 in the all-go-dependencies group across 1 directory in [#376](https://github.com/grafana/redshift-datasource/pull/376)
+- Bump @babel/runtime from 7.26.9 to 7.26.10 in the npm_and_yarn group in [#374](https://github.com/grafana/redshift-datasource/pull/374)
+
 ## 2.1.0
 
 - Enable dataproxy.row_limit configuration option from Grafana in [#375](https://github.com/grafana/redshift-datasource/pull/375)
