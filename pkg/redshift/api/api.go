@@ -34,7 +34,7 @@ type API struct {
 	settings                   *models.RedshiftDataSourceSettings
 }
 
-func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
+func New(ctx context.Context, _ *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
 
 	httpClientProvider := sdkhttpclient.NewProvider()
@@ -67,6 +67,9 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 		UserAgent:          "Redshift",
 		HTTPClient:         httpClient,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &API{
 		DataClient:                 redshiftdata.NewFromConfig(awsCfg),
