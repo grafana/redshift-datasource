@@ -195,7 +195,7 @@ func (s *RedshiftDatasource) Clusters(ctx context.Context, options sqlds.Options
 	if err != nil {
 		return nil, err
 	}
-	return api.Clusters()
+	return api.Clusters(ctx)
 }
 
 func (s *RedshiftDatasource) Workgroups(ctx context.Context, options sqlds.Options) ([]models.RedshiftWorkgroup, error) {
@@ -203,5 +203,5 @@ func (s *RedshiftDatasource) Workgroups(ctx context.Context, options sqlds.Optio
 	if err != nil {
 		return nil, err
 	}
-	return api.Workgroups()
+	return api.Workgroups(ctx)
 }

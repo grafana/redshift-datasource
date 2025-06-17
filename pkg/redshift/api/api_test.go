@@ -298,7 +298,7 @@ func Test_GetClusters(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
-			clusters, err := tt.c.Clusters()
+			clusters, err := tt.c.Clusters(context.Background())
 			if tt.errMsg == "" {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedClusters, clusters)
@@ -352,7 +352,7 @@ func Test_GetWorkgroups(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.desc, func(t *testing.T) {
-			workgroups, err := tt.c.Workgroups()
+			workgroups, err := tt.c.Workgroups(context.Background())
 			if tt.errMsg == "" {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedWorkgroups, workgroups)

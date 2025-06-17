@@ -359,8 +359,8 @@ func (c *API) Secret(ctx context.Context, options sqlds.Options) (*models.Redshi
 	return res, nil
 }
 
-func (c *API) Clusters() ([]models.RedshiftCluster, error) {
-	out, err := c.ManagementClient.DescribeClusters(context.TODO(), &redshift.DescribeClustersInput{})
+func (c *API) Clusters(ctx context.Context) ([]models.RedshiftCluster, error) {
+	out, err := c.ManagementClient.DescribeClusters(ctx, &redshift.DescribeClustersInput{})
 	if err != nil {
 		return nil, err
 	}
@@ -383,8 +383,8 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 	return res, nil
 }
 
-func (c *API) Workgroups() ([]models.RedshiftWorkgroup, error) {
-	out, err := c.ServerlessManagementClient.ListWorkgroups(context.TODO(), &redshiftserverless.ListWorkgroupsInput{})
+func (c *API) Workgroups(ctx context.Context) ([]models.RedshiftWorkgroup, error) {
+	out, err := c.ServerlessManagementClient.ListWorkgroups(ctx, &redshiftserverless.ListWorkgroupsInput{})
 	if err != nil {
 		return nil, err
 	}
