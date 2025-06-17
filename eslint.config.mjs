@@ -26,7 +26,6 @@ export default defineConfig([
   },
   {
     files: ['src/**/*.{ts,tsx,js,jsx}'],
-    
     rules: {
       '@typescript-eslint/no-deprecated': 'warn',
     },
