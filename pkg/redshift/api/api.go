@@ -4,17 +4,18 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/grafana/grafana-aws-sdk/pkg/awsauth"
+	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
 	"strings"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/redshift"
-	"github.com/aws/aws-sdk-go/service/redshift/redshiftiface"
-	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice"
-	"github.com/aws/aws-sdk-go/service/redshiftdataapiservice/redshiftdataapiserviceiface"
-	"github.com/aws/aws-sdk-go/service/redshiftserverless"
-	"github.com/aws/aws-sdk-go/service/redshiftserverless/redshiftserverlessiface"
-	"github.com/aws/aws-sdk-go/service/secretsmanager"
-	"github.com/aws/aws-sdk-go/service/secretsmanager/secretsmanageriface"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/redshift"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
+	redshiftdatatypes "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftserverless"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
+	secretsmanagertypes "github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
+
 	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
@@ -26,14 +27,14 @@ import (
 )
 
 type API struct {
-	DataClient                 redshiftdataapiserviceiface.RedshiftDataAPIServiceAPI
-	SecretsClient              secretsmanageriface.SecretsManagerAPI
-	ManagementClient           redshiftiface.RedshiftAPI
-	ServerlessManagementClient redshiftserverlessiface.RedshiftServerlessAPI
+	DataClient                 types.RedshiftDataClient
+	SecretsClient              types.RedshiftSecretsClient
+	ManagementClient           types.RedshiftManagementClient
+	ServerlessManagementClient types.ServerlessAPIClient
 	settings                   *models.RedshiftDataSourceSettings
 }
 
-func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
+func New(ctx context.Context, _ *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
 
 	httpClientProvider := sdkhttpclient.NewProvider()
@@ -49,21 +50,32 @@ func New(ctx context.Context, sessionCache *awsds.SessionCache, settings awsMode
 		return nil, err
 	}
 
-	authSettings := awsds.ReadAuthSettings(ctx)
-	sess, err := sessionCache.GetSessionWithAuthSettings(awsds.GetSessionConfig{
-		Settings:      redshiftSettings.AWSDatasourceSettings,
-		HTTPClient:    httpClient,
-		UserAgentName: aws.String("Redshift"),
-	}, *authSettings)
+	region := redshiftSettings.Region
+	if region == "" || region == "efault" {
+		region = redshiftSettings.DefaultRegion
+	}
+
+	awsCfg, err := awsauth.NewConfigProvider().GetConfig(ctx, awsauth.Settings{
+		LegacyAuthType:     redshiftSettings.AuthType,
+		AccessKey:          redshiftSettings.AccessKey,
+		SecretKey:          redshiftSettings.SecretKey,
+		Region:             region,
+		CredentialsProfile: redshiftSettings.Profile,
+		AssumeRoleARN:      redshiftSettings.AssumeRoleARN,
+		Endpoint:           redshiftSettings.Endpoint,
+		ExternalID:         redshiftSettings.ExternalID,
+		UserAgent:          "Redshift",
+		HTTPClient:         httpClient,
+	})
 	if err != nil {
 		return nil, err
 	}
 
 	return &API{
-		DataClient:                 redshiftdataapiservice.New(sess),
-		SecretsClient:              secretsmanager.New(sess),
-		ManagementClient:           redshift.New(sess),
-		ServerlessManagementClient: redshiftserverless.New(sess),
+		DataClient:                 redshiftdata.NewFromConfig(awsCfg),
+		SecretsClient:              secretsmanager.NewFromConfig(awsCfg),
+		ManagementClient:           redshift.NewFromConfig(awsCfg),
+		ServerlessManagementClient: redshiftserverless.NewFromConfig(awsCfg),
 		settings:                   redshiftSettings,
 	}, nil
 }
@@ -102,7 +114,7 @@ func (c *API) apiInput() apiInput {
 
 func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.ExecuteQueryOutput, error) {
 	commonInput := c.apiInput()
-	redshiftInput := &redshiftdataapiservice.ExecuteStatementInput{
+	redshiftInput := &redshiftdata.ExecuteStatementInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
@@ -111,7 +123,13 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		WithEvent:         aws.Bool(c.settings.WithEvent),
 		WorkgroupName:     commonInput.WorkgroupName,
 	}
-	output, err := c.DataClient.ExecuteStatementWithContext(ctx, redshiftInput)
+	output, err := c.DataClient.ExecuteStatement(ctx, redshiftInput, func(options *redshiftdata.Options) {
+		if c.settings.Region != "" {
+			options.Region = c.settings.Region
+		} else {
+			options.Region = c.settings.DefaultRegion
+		}
+	})
 	if err != nil {
 		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ExecuteError, err), false)
 	}
@@ -121,12 +139,12 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 
 // GetQueryID always returns not found. To actually check if the query has been called requires calling ListStatements, which can lead to timeouts
 // when there are many statements to page through
-func (c *API) GetQueryID(ctx context.Context, query string, args ...interface{}) (bool, string, error) {
+func (c *API) GetQueryID(_ context.Context, _ string, _ ...interface{}) (bool, string, error) {
 	return false, "", nil
 }
 
-func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.ExecuteQueryStatus, error) {
-	statusResp, err := c.DataClient.DescribeStatementWithContext(ctx, &redshiftdataapiservice.DescribeStatementInput{
+func (c *API) Status(ctx context.Context, output *api.ExecuteQueryOutput) (*api.ExecuteQueryStatus, error) {
+	statusResp, err := c.DataClient.DescribeStatement(ctx, &redshiftdata.DescribeStatementInput{
 		Id: aws.String(output.ID),
 	})
 	if err != nil {
@@ -138,30 +156,26 @@ func (c *API) Status(ctx aws.Context, output *api.ExecuteQueryOutput) (*api.Exec
 	}
 
 	var finished bool
-	state := *statusResp.Status
-	switch state {
-	case redshiftdataapiservice.StatusStringFailed,
-		redshiftdataapiservice.StatusStringAborted:
+	switch statusResp.Status {
+	case redshiftdatatypes.StatusStringFailed,
+		redshiftdatatypes.StatusStringAborted,
+		redshiftdatatypes.StatusStringFinished:
 		finished = true
-	case redshiftdataapiservice.StatusStringFinished:
-		finished = true
-	default:
-		finished = false
 	}
 
 	return &api.ExecuteQueryStatus{
 		ID:       output.ID,
-		State:    state,
+		State:    string(statusResp.Status),
 		Finished: finished,
 	}, nil
 }
 
-func (c *API) CancelQuery(ctx context.Context, options sqlds.Options, queryID string) error {
+func (c *API) CancelQuery(_ context.Context, _ sqlds.Options, queryID string) error {
 	return c.Stop(&api.ExecuteQueryOutput{ID: queryID})
 }
 
 func (c *API) Stop(output *api.ExecuteQueryOutput) error {
-	_, err := c.DataClient.CancelStatement(&redshiftdataapiservice.CancelStatementInput{
+	_, err := c.DataClient.CancelStatement(context.TODO(), &redshiftdata.CancelStatementInput{
 		Id: &output.ID,
 	})
 	// ignore finished query error
@@ -171,14 +185,14 @@ func (c *API) Stop(output *api.ExecuteQueryOutput) error {
 	return nil
 }
 
-func (c *API) Regions(aws.Context) ([]string, error) {
+func (c *API) Regions(context.Context) ([]string, error) {
 	// This is not used. If regions are out of date, update them in the @grafana/aws-sdk-react package
 	return []string{}, nil
 }
 
-func (c *API) Databases(ctx aws.Context, options sqlds.Options) ([]string, error) {
+func (c *API) Databases(ctx context.Context, _ sqlds.Options) ([]string, error) {
 	commonInput := c.apiInput()
-	input := &redshiftdataapiservice.ListDatabasesInput{
+	input := &redshiftdata.ListDatabasesInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
@@ -188,16 +202,12 @@ func (c *API) Databases(ctx aws.Context, options sqlds.Options) ([]string, error
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.DataClient.ListDatabasesWithContext(ctx, input)
+		out, err := c.DataClient.ListDatabases(ctx, input)
 		if err != nil {
 			return nil, err
 		}
 		input.NextToken = out.NextToken
-		for _, sc := range out.Databases {
-			if sc != nil {
-				res = append(res, *sc)
-			}
-		}
+		res = append(res, out.Databases...)
 		if input.NextToken == nil {
 			isFinished = true
 		}
@@ -205,9 +215,9 @@ func (c *API) Databases(ctx aws.Context, options sqlds.Options) ([]string, error
 	return res, nil
 }
 
-func (c *API) Schemas(ctx aws.Context, options sqlds.Options) ([]string, error) {
+func (c *API) Schemas(ctx context.Context, _ sqlds.Options) ([]string, error) {
 	commonInput := c.apiInput()
-	input := &redshiftdataapiservice.ListSchemasInput{
+	input := &redshiftdata.ListSchemasInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
@@ -217,16 +227,12 @@ func (c *API) Schemas(ctx aws.Context, options sqlds.Options) ([]string, error) 
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.DataClient.ListSchemasWithContext(ctx, input)
+		out, err := c.DataClient.ListSchemas(ctx, input)
 		if err != nil {
 			return nil, err
 		}
+		res = append(res, out.Schemas...)
 		input.NextToken = out.NextToken
-		for _, sc := range out.Schemas {
-			if sc != nil {
-				res = append(res, *sc)
-			}
-		}
 		if input.NextToken == nil {
 			isFinished = true
 		}
@@ -234,14 +240,14 @@ func (c *API) Schemas(ctx aws.Context, options sqlds.Options) ([]string, error) 
 	return res, nil
 }
 
-func (c *API) Tables(ctx aws.Context, options sqlds.Options) ([]string, error) {
+func (c *API) Tables(ctx context.Context, options sqlds.Options) ([]string, error) {
 	schema := options["schema"]
 	// We use the "public" schema by default if not specified
 	if schema == "" {
 		schema = "public"
 	}
 	commonInput := c.apiInput()
-	input := &redshiftdataapiservice.ListTablesInput{
+	input := &redshiftdata.ListTablesInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
@@ -252,14 +258,14 @@ func (c *API) Tables(ctx aws.Context, options sqlds.Options) ([]string, error) {
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.DataClient.ListTablesWithContext(ctx, input)
+		out, err := c.DataClient.ListTables(ctx, input)
 		if err != nil {
 			return nil, err
 		}
 		input.NextToken = out.NextToken
-		for _, t := range out.Tables {
-			if t.Name != nil {
-				res = append(res, *t.Name)
+		for _, table := range out.Tables {
+			if table.Name != nil {
+				res = append(res, *table.Name)
 			}
 		}
 		if input.NextToken == nil {
@@ -269,10 +275,10 @@ func (c *API) Tables(ctx aws.Context, options sqlds.Options) ([]string, error) {
 	return res, nil
 }
 
-func (c *API) Columns(ctx aws.Context, options sqlds.Options) ([]string, error) {
+func (c *API) Columns(ctx context.Context, options sqlds.Options) ([]string, error) {
 	schema, table := options["schema"], options["table"]
 	commonInput := c.apiInput()
-	input := &redshiftdataapiservice.DescribeTableInput{
+	input := &redshiftdata.DescribeTableInput{
 		ClusterIdentifier: commonInput.ClusterIdentifier,
 		Database:          commonInput.Database,
 		DbUser:            commonInput.DbUser,
@@ -284,14 +290,14 @@ func (c *API) Columns(ctx aws.Context, options sqlds.Options) ([]string, error) 
 	isFinished := false
 	res := []string{}
 	for !isFinished {
-		out, err := c.DataClient.DescribeTableWithContext(ctx, input)
+		out, err := c.DataClient.DescribeTable(ctx, input)
 		if err != nil {
 			return nil, err
 		}
 		input.NextToken = out.NextToken
-		for _, c := range out.ColumnList {
-			if c.Name != nil {
-				res = append(res, *c.Name)
+		for _, column := range out.ColumnList {
+			if column.Name != nil {
+				res = append(res, *column.Name)
 			}
 		}
 		if input.NextToken == nil {
@@ -301,21 +307,21 @@ func (c *API) Columns(ctx aws.Context, options sqlds.Options) ([]string, error) 
 	return res, nil
 }
 
-func (c *API) Secrets(ctx aws.Context) ([]models.ManagedSecret, error) {
+func (c *API) Secrets(ctx context.Context) ([]models.ManagedSecret, error) {
 	input := &secretsmanager.ListSecretsInput{
-		Filters: []*secretsmanager.Filter{
+		Filters: []secretsmanagertypes.Filter{
 			{
 				// Only secrets with the tag RedshiftQueryOwner can be used
 				// https://docs.aws.amazon.com/redshift/latest/mgmt/query-editor.html#query-cluster-configure
-				Key:    aws.String(secretsmanager.FilterNameStringTypeTagKey),
-				Values: []*string{aws.String("RedshiftQueryOwner")},
+				Key:    secretsmanagertypes.FilterNameStringTypeTagKey,
+				Values: []string{"RedshiftQueryOwner"},
 			},
 		},
 	}
 	isFinished := false
 	redshiftSecrets := []models.ManagedSecret{}
 	for !isFinished {
-		out, err := c.SecretsClient.ListSecretsWithContext(ctx, input)
+		out, err := c.SecretsClient.ListSecrets(ctx, input)
 		if err != nil {
 			return nil, err
 		}
@@ -323,25 +329,25 @@ func (c *API) Secrets(ctx aws.Context) ([]models.ManagedSecret, error) {
 		if input.NextToken == nil {
 			isFinished = true
 		}
-		for _, s := range out.SecretList {
-			if s.ARN == nil || s.Name == nil {
+		for _, secret := range out.SecretList {
+			if secret.ARN == nil || secret.Name == nil {
 				continue
 			}
 			redshiftSecrets = append(redshiftSecrets, models.ManagedSecret{
-				ARN:  *s.ARN,
-				Name: *s.Name,
+				ARN:  *secret.ARN,
+				Name: *secret.Name,
 			})
 		}
 	}
 	return redshiftSecrets, nil
 }
 
-func (c *API) Secret(ctx aws.Context, options sqlds.Options) (*models.RedshiftSecret, error) {
+func (c *API) Secret(ctx context.Context, options sqlds.Options) (*models.RedshiftSecret, error) {
 	arn := options["secretARN"]
 	input := &secretsmanager.GetSecretValueInput{
 		SecretId: aws.String(arn),
 	}
-	out, err := c.SecretsClient.GetSecretValueWithContext(ctx, input)
+	out, err := c.SecretsClient.GetSecretValue(ctx, input)
 	if err != nil {
 		return nil, err
 	}
@@ -356,8 +362,8 @@ func (c *API) Secret(ctx aws.Context, options sqlds.Options) (*models.RedshiftSe
 	return res, nil
 }
 
-func (c *API) Clusters() ([]models.RedshiftCluster, error) {
-	out, err := c.ManagementClient.DescribeClusters(&redshift.DescribeClustersInput{})
+func (c *API) Clusters(ctx context.Context) ([]models.RedshiftCluster, error) {
+	out, err := c.ManagementClient.DescribeClusters(ctx, &redshift.DescribeClustersInput{})
 	if err != nil {
 		return nil, err
 	}
@@ -366,7 +372,7 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 	}
 	res := []models.RedshiftCluster{}
 	for _, r := range out.Clusters {
-		if r != nil && r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil {
+		if r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil {
 			res = append(res, models.RedshiftCluster{
 				ClusterIdentifier: *r.ClusterIdentifier,
 				Endpoint: models.RedshiftEndpoint{
@@ -380,8 +386,8 @@ func (c *API) Clusters() ([]models.RedshiftCluster, error) {
 	return res, nil
 }
 
-func (c *API) Workgroups() ([]models.RedshiftWorkgroup, error) {
-	out, err := c.ServerlessManagementClient.ListWorkgroups(&redshiftserverless.ListWorkgroupsInput{})
+func (c *API) Workgroups(ctx context.Context) ([]models.RedshiftWorkgroup, error) {
+	out, err := c.ServerlessManagementClient.ListWorkgroups(ctx, &redshiftserverless.ListWorkgroupsInput{})
 	if err != nil {
 		return nil, err
 	}
@@ -390,7 +396,7 @@ func (c *API) Workgroups() ([]models.RedshiftWorkgroup, error) {
 	}
 	res := []models.RedshiftWorkgroup{}
 	for _, r := range out.Workgroups {
-		if r != nil && r.WorkgroupName != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil {
+		if r.WorkgroupName != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil {
 			res = append(res, models.RedshiftWorkgroup{
 				WorkgroupName: *r.WorkgroupName,
 				Endpoint: models.RedshiftEndpoint{
