@@ -33,8 +33,8 @@ github.com/aws/aws-sdk-go-v2/service/redshift v1.54.3 h1:LNOKEsPjtoBrV2WYUb2zPLO
 github.com/aws/aws-sdk-go-v2/service/redshift v1.54.3/go.mod h1:TC8pNvjiikrjpX2MEzX/cEJ4/T4XIoSY4BskVvHj8bk=
 github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.33.1 h1:0LKMr7NqH0c8UNfDOrSZLfB+YgCCfyBCc1rV+xMXKLQ=
 github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.33.1/go.mod h1:pe1ZJmqbvJOw0SYKoeR/JIypaIlftRUqkDxt4gLXiA8=
-github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.24.3 h1:kK6hgb+NPtKbVt6ipCyWDSny6mJty3IxnArQAeUQHRw=
-github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.24.3/go.mod h1:rM2oYKRheMpuxjJ7fkIqoegIVdG4GkdOqRx1PSx9xYs=
+github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.27.2 h1:MSJQFSAZRhm8rWJ799PfjeBsXAvZfcblNT9fZ1rZF0M=
+github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.27.2/go.mod h1:gpRsJN3qxZbsj1NhAoCNX02zJ4RZUB5v/7o4QrnGTcA=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.34.6 h1:1KDMKvOKNrpD667ORbZ/+4OgvUoaok1gg/MLzrHF9fw=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.34.6/go.mod h1:DmtyfCfONhOyVAJ6ZMTrDSFIeyCBlEO93Qkfhxwbxu0=
 github.com/aws/aws-sdk-go-v2/service/sso v1.25.3 h1:1Gw+9ajCV1jogloEv1RRnvfRFia2cL6c9cuKV2Ps+G8=
