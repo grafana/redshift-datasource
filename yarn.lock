@@ -878,9 +878,10 @@
     semver "^7.6.3"
     tslib "^2.8.0"
 
-"@grafana/async-query-data@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@grafana/async-query-data/-/async-query-data-0.4.1.tgz#d0f70f1a964ae0def14cf5f8106a70450cb59e93"
+"@grafana/async-query-data@0.4.2":
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/@grafana/async-query-data/-/async-query-data-0.4.2.tgz#0eecf7401597e113b6df5ad63821cfeb08d04b5a"
+  integrity sha512-cNcOnH4+yshXA+Igjig/v/MQhpWoNo1vGb/Xthgu+ihIsZ2P6rVM/tCuM7/LquE3qFnXRSc35HXenjr0JRfBvQ==
   dependencies:
     semver "^7.6.3"
     tslib "^2.8.0"
