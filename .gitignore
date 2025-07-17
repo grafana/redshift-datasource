@@ -52,6 +52,7 @@ provisioning/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+.env*
 
 # OS
 *.DS_Store
