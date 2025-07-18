@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/grafana/grafana-aws-sdk/pkg/awsauth"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
-	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/redshift"
@@ -16,7 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	secretsmanagertypes "github.com/aws/aws-sdk-go-v2/service/secretsmanager/types"
 
-	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -34,7 +34,7 @@ type API struct {
 	settings                   *models.RedshiftDataSourceSettings
 }
 
-func New(ctx context.Context, _ *awsds.SessionCache, settings awsModels.Settings) (api.AWSAPI, error) {
+func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
 
 	httpClientProvider := sdkhttpclient.NewProvider()
@@ -131,7 +131,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		}
 	})
 	if err != nil {
-		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ExecuteError, err), false)
+		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ErrorExecute, err), false)
 	}
 
 	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
@@ -148,11 +148,11 @@ func (c *API) Status(ctx context.Context, output *api.ExecuteQueryOutput) (*api.
 		Id: aws.String(output.ID),
 	})
 	if err != nil {
-		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.StatusError, err), false)
+		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ErrorStatus, err), false)
 	}
 
 	if statusResp.Error != nil && *statusResp.Error != "" {
-		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ExecuteError, *statusResp.Error), false)
+		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ErrorExecute, *statusResp.Error), false)
 	}
 
 	var finished bool
@@ -180,7 +180,7 @@ func (c *API) Stop(output *api.ExecuteQueryOutput) error {
 	})
 	// ignore finished query error
 	if err != nil && !strings.Contains(err.Error(), "Could not cancel a query that is already in FINISHED state") {
-		return errorsource.DownstreamError(fmt.Errorf("%w: %v", err, api.StopError), false)
+		return errorsource.DownstreamError(fmt.Errorf("%w: %v", err, api.ErrorStop), false)
 	}
 	return nil
 }
