@@ -1,5 +1,4 @@
 version: 2
-enable-beta-ecosystems: true
 updates:
   - package-ecosystem: 'gomod'
     directory: '/'
@@ -9,10 +8,16 @@ updates:
       semver-major-days: 30
       semver-minor-days: 14
       semver-patch-days: 7
+      exclude:
+        - 'github.com/grafana/*'
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
       interval: 'daily'
+    cooldown:
+      default-days: 7
+      exclude:
+        - 'grafana/*'
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
@@ -21,6 +26,8 @@ updates:
       semver-major-days: 30
       semver-minor-days: 14
       semver-patch-days: 7
+      exclude:
+        - '@grafana/*'
     groups:
       grafana-dependencies:
         patterns:
