@@ -37,8 +37,8 @@ type RedshiftDatasourceIface interface {
 
 type Loader struct{}
 
-func (l Loader) LoadAPI(ctx context.Context, cache *awsds.SessionCache, settings sqlModels.Settings) (sqlAPI.AWSAPI, error) {
-	return api.New(ctx, cache, settings)
+func (l Loader) LoadAPI(ctx context.Context, settings sqlModels.Settings) (sqlAPI.AWSAPI, error) {
+	return api.New(ctx, settings)
 }
 
 func (l Loader) LoadDriver(ctx context.Context, awsapi sqlAPI.AWSAPI) (awsDriver.Driver, error) {
