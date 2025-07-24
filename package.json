@@ -10,7 +10,6 @@
     "lint:fix": "yarn run lint --fix",
     "server": "docker compose up --build",
     "spellcheck": "cspell -c cspell.config.json \"**/*.{ts,tsx,js,go,md,mdx,yml,yaml,json,scss,css}\"",
-    "start": "yarn watch",
     "test": "jest --watch --onlyChanged",
     "test:ci": "jest --passWithNoTests --maxWorkers 4",
     "test:coverage": "jest --coverage",
