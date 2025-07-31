@@ -108,7 +108,7 @@
     "dataproxy",
     "redshiftqueryeditor",
     "saletime",
-    "catname", 
+    "catname",
     "jackspeak",
     "zizmor",
     "lefthook",
@@ -118,6 +118,7 @@
     "redshifttypes",
     "secretsmanagertypes",
     "awsauth",
-    "tibdex"
+    "tibdex",
+    "automerged"
   ]
 }
