@@ -3,7 +3,7 @@ module github.com/grafana/redshift-datasource
 go 1.24.4
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.36.5
+	github.com/aws/aws-sdk-go-v2 v1.36.6
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.54.6
 	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.33.3
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.27.4
