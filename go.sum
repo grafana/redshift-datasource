@@ -27,8 +27,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.4 h1:CXV68E2
 github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.12.4/go.mod h1:/xFi9KtvBXP97ppCz1TAEvU1Uf66qvid89rbem3wCzQ=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.17 h1:t0E6FzREdtCsiLIoLCWsYliNsRBgyGD/MCK571qk4MI=
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.12.17/go.mod h1:ygpklyoaypuyDvOM5ujWGrYWpAK3h7ugnmKCU/76Ys4=
-github.com/aws/aws-sdk-go-v2/service/redshift v1.54.6 h1:5u13KKciWFrXs3pkiG45cZfjAxCxHHCbhTm/Dg3GRas=
-github.com/aws/aws-sdk-go-v2/service/redshift v1.54.6/go.mod h1:CFY4v8m7Nd96aVuFyNU+ujY+1Uim7JrJnAd0jkLf2Zg=
+github.com/aws/aws-sdk-go-v2/service/redshift v1.54.7 h1:hpaye6DQfYc8yseJm6ppYQVt0BL1viYY5liuKYvuffk=
+github.com/aws/aws-sdk-go-v2/service/redshift v1.54.7/go.mod h1:hJskgFEUic2UbbwAaIO/P63Ik2PP2gIgWWGgPkdOsHo=
 github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.33.4 h1:EpVhzHq/6wX13bW5dItlcHnMNaA0OLSeMFFyyAgqQ+M=
 github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.33.4/go.mod h1:awX0pgt4uACOWF/wtjAXNrpBdZskDr+P4DYGrQmbj3g=
 github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.27.5 h1:g7f591GF3JrJ3rE7daW9RUTgRoAua30F0P1OvHW8zSg=
