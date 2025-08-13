@@ -4,9 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strings"
+
 	"github.com/grafana/grafana-aws-sdk/pkg/awsauth"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
-	"strings"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/redshift"
@@ -40,6 +41,10 @@ func New(ctx context.Context, _ *awsds.SessionCache, settings awsModels.Settings
 	httpClientProvider := sdkhttpclient.NewProvider()
 	// TODO: Context needs to be added, see https://github.com/grafana/oss-plugin-partnerships/issues/648
 	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(ctx)
+
+	cfg := backend.GrafanaConfigFromContext(ctx)
+	httpClientOptions.Middlewares = append(httpClientOptions.Middlewares, sdkhttpclient.ResponseLimitMiddleware(cfg.ResponseLimit()))
+
 	if err != nil {
 		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
 		return nil, err
