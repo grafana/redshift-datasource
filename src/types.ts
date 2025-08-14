@@ -41,7 +41,7 @@ export const defaultKey = '__default';
 
 export const defaultQuery: Partial<RedshiftQuery> = {
   rawSQL: '',
-  format: FormatOptions.TimeSeries,
+  format: FormatOptions.Table,
   fillMode: { mode: FillValueOptions.Previous },
 };
 
