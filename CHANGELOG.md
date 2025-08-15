@@ -1,5 +1,27 @@
 # Changelog
 
+## 2.3.0
+
+- Add ResponseLimitMiddleware to the datasource in [#559](https://github.com/grafana/redshift-datasourcce/pull/559)
+- Bump github.com/aws/aws-sdk-go-v2 from 1.37.1 to 1.37.2 in [#565](https://github.com/grafana/redshift-datasourcce/pull/565)
+- Bump github.com/aws/aws-sdk-go-v2/service/secretsmanager from 1.36.0 to 1.36.1 in [#564](https://github.com/grafana/redshift-datasourcce/pull/564)
+- Bump github.com/aws/aws-sdk-go-v2/service/redshiftserverless from 1.27.5 to 1.28.1 in [#562](https://github.com/grafana/redshift-datasourcce/pull/562)
+- Bump github.com/aws/aws-sdk-go-v2/service/redshift from 1.54.7 to 1.55.1 in [#561](https://github.com/grafana/redshift-datasourcce/pull/561)
+- Bump github.com/aws/aws-sdk-go-v2/service/redshiftdata from 1.33.4 to 1.34.1 in [#560](https://github.com/grafana/redshift-datasourcce/pull/560)
+- Bump github.com/aws/aws-sdk-go-v2/service/secretsmanager from 1.35.8 to 1.36.0 in [#555](https://github.com/grafana/redshift-datasourcce/pull/555)
+- Bump github.com/aws/aws-sdk-go-v2 from 1.36.6 to 1.37.0 in [#554](https://github.com/grafana/redshift-datasourcce/pull/554)
+- Bump @typescript-eslint/eslint-plugin from 8.37.0 to 8.38.0 in [#551](https://github.com/grafana/redshift-datasourcce/pull/551)
+- Bump @grafana/plugin-e2e from 2.1.7 to 2.1.8 in [#550](https://github.com/grafana/redshift-datasourcce/pull/550)
+- Bump @typescript-eslint/parser from 8.37.0 to 8.38.0 in [#549](https://github.com/grafana/redshift-datasourcce/pull/549)
+- Bump jest-environment-jsdom from 30.0.4 to 30.0.5 in [#548](https://github.com/grafana/redshift-datasourcce/pull/548)
+- Bump @playwright/test from 1.54.1 to 1.54.2 in [#547](https://github.com/grafana/redshift-datasourcce/pull/547)
+- Bump github.com/aws/aws-sdk-go-v2/service/redshift from 1.54.6 to 1.54.7 in [#546](https://github.com/grafana/redshift-datasourcce/pull/546)
+- Bump eslint-plugin-prettier from 5.5.1 to 5.5.3 in [#545](https://github.com/grafana/redshift-datasourcce/pull/545)
+- Bump jest from 30.0.4 to 30.0.5 in [#544](https://github.com/grafana/redshift-datasourcce/pull/544)
+- Bump github.com/grafana/sqlds/v4 from 4.2.6 to 4.2.7 in [#542](https://github.com/grafana/redshift-datasourcce/pull/542)
+- Bump github.com/grafana/grafana-aws-sdk from 1.0.5 to 1.1.0 in [#543](https://github.com/grafana/redshift-datasourcce/pull/543)
+- Bump github.com/aws/aws-sdk-go-v2/service/redshiftserverless from 1.27.4 to 1.27.5 in [#541](https://github.com/grafana/redshift-datasourcce/pull/541)
+
 ## 2.2.0
 
 - Set the default format to table in [#527](https://github.com/grafana/redshift-datasource/pull/527)
