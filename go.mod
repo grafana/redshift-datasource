@@ -3,11 +3,11 @@ module github.com/grafana/redshift-datasource
 go 1.24.4
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.37.1
+	github.com/aws/aws-sdk-go-v2 v1.37.2
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.55.1
 	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.34.1
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.28.1
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.36.0
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.36.1
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-aws-sdk v1.1.0
 	github.com/grafana/grafana-plugin-sdk-go v0.278.0
