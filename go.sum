@@ -29,8 +29,8 @@ github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.2 h1:oxmDEO14N
 github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.2/go.mod h1:4hH+8QCrk1uRWDPsVfsNDUup3taAjO8Dnx63au7smAU=
 github.com/aws/aws-sdk-go-v2/service/redshift v1.55.1 h1:g2AXKrTkVjnWpYXBXJ00lU6NaU849/jIIRxLVo10HGM=
 github.com/aws/aws-sdk-go-v2/service/redshift v1.55.1/go.mod h1:GGQqtUubSmvzcr23P48Qkkv2auTeatL67pL9SO6/b14=
-github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.34.1 h1:4+OFVGzIg6JcwbR8FKtYdC6AuSg1jV11Hk3RIv6y2oY=
-github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.34.1/go.mod h1:heOxElSAAGnh+jfAH0hK9ilW856kSFYBlYRJS5QKbm0=
+github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.35.0 h1:2uGuWyvd7uCOEcEMN+SWkJsXlXOPrzfBtElITMnVAp4=
+github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.35.0/go.mod h1:6Xy8SN1liN5+zoTMZ1C2UpeUdJURWSqr9u8wkOtSpdE=
 github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.29.0 h1:U6WGIeSwoC0xrSi710RscXbEzLjEXpVWzVV4SsrZyRA=
 github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.29.0/go.mod h1:HcZb7L9GmTq1C7RKGBb14VRSTPjnnP9aFJ0xL3KQPco=
 github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.36.1 h1:fnOIjzwTVrtVnkRef3Qs+uTr3qYKwXuFom5pqdZERNQ=
