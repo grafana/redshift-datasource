@@ -1,5 +1,15 @@
 # Changelog
 
+## 2.3.1
+
+- Bump @eslint/js from 9.31.0 to 9.32.0 by @dependabot[bot] in https://github.com/grafana/redshift-datasource/pull/553
+- Bump @grafana/plugin-ui from 0.10.7 to 0.10.9 by @dependabot[bot] in https://github.com/grafana/redshift-datasource/pull/552
+- Bump @types/node from 22.16.5 to 22.17.0 by @dependabot[bot] in https://github.com/grafana/redshift-datasource/pull/566
+- Bump eslint-plugin-prettier from 5.5.3 to 5.5.4 by @dependabot[bot] in https://github.com/grafana/redshift-datasource/pull/567
+- Bump eslint from 9.31.0 to 9.32.0 by @dependabot[bot] in https://github.com/grafana/redshift-datasource/pull/568
+- Bump github.com/aws/aws-sdk-go-v2/service/redshiftserverless from 1.28.1 to 1.29.0 by @dependabot[bot] in https://github.com/grafana/redshift-datasource/pull/572
+- Update grafana-aws-sdk and fix default region check in [#576](https://github.com/grafana/redshift-datasource/pull/576)
+
 ## 2.3.0
 
 - Add ResponseLimitMiddleware to the datasource in [#559](https://github.com/grafana/redshift-datasourcce/pull/559)
