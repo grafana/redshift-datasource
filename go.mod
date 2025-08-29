@@ -3,11 +3,11 @@ module github.com/grafana/redshift-datasource
 go 1.24.4
 
 require (
-	github.com/aws/aws-sdk-go-v2 v1.38.0
+	github.com/aws/aws-sdk-go-v2 v1.38.1
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.57.0
 	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.36.1
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.30.0
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.38.0
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.38.2
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-aws-sdk v1.1.1
 	github.com/grafana/grafana-plugin-sdk-go v0.278.0
@@ -23,8 +23,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/config v1.30.3 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.18.3 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.18.3 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.3 // indirect
-	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.3 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/configsources v1.4.4 // indirect
+	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.7.4 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/ini v1.8.3 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/accept-encoding v1.13.0 // indirect
 	github.com/aws/aws-sdk-go-v2/service/internal/presigned-url v1.13.2 // indirect
