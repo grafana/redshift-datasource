@@ -13,7 +13,7 @@ require (
 	github.com/grafana/grafana-plugin-sdk-go v0.279.0
 	github.com/grafana/sqlds/v4 v4.2.7
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.11.0
+	github.com/stretchr/testify v1.11.1
 	golang.org/x/net v0.43.0
 )
 
