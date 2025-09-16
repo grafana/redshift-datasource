@@ -7,7 +7,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.58.1
 	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.37.3
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.31.2
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.39.2
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.39.3
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-aws-sdk v1.2.0
 	github.com/grafana/grafana-plugin-sdk-go v0.279.0
