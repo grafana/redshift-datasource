@@ -40,6 +40,10 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	httpClientProvider := sdkhttpclient.NewProvider()
 	// TODO: Context needs to be added, see https://github.com/grafana/oss-plugin-partnerships/issues/648
 	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(ctx)
+
+	cfg := backend.GrafanaConfigFromContext(ctx)
+	httpClientOptions.Middlewares = append(httpClientOptions.Middlewares, sdkhttpclient.ResponseLimitMiddleware(cfg.ResponseLimit()))
+
 	if err != nil {
 		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
 		return nil, err
@@ -51,7 +55,7 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	}
 
 	region := redshiftSettings.Region
-	if region == "" || region == "efault" {
+	if region == "" || region == "default" {
 		region = redshiftSettings.DefaultRegion
 	}
 
