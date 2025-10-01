@@ -121,6 +121,7 @@
     "awsauth",
     "tibdex",
     "automerged",
-    "npmPreapprovedPackages"
+    "npmPreapprovedPackages",
+    "wojtekmaj"
   ]
 }
