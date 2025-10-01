@@ -1,6 +1,7 @@
 {
   "ignorePaths": [
     ".github/**",
+    ".yarn/**",
     "node_modules/**",
     "dist/**",
     "playwright*/**",
@@ -119,6 +120,7 @@
     "secretsmanagertypes",
     "awsauth",
     "tibdex",
-    "automerged"
+    "automerged",
+    "npmPreapprovedPackages"
   ]
 }
