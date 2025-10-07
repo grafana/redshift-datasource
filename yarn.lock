@@ -1409,16 +1409,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/async-query-data@npm:0.4.1":
-  version: 0.4.1
-  resolution: "@grafana/async-query-data@npm:0.4.1"
-  dependencies:
-    semver: "npm:^7.6.3"
-    tslib: "npm:^2.8.0"
-  checksum: 10c0/c1df4032cd81150c6cbc92e2ccda42b46abe7a361c156402ebeb2b3857aaa736398112400ad8e99b32f55fc406380b695b240383d59f01e0654a63dd09a38cda
-  languageName: node
-  linkType: hard
-
 "@grafana/async-query-data@npm:0.4.2":
   version: 0.4.2
   resolution: "@grafana/async-query-data@npm:0.4.2"
@@ -1429,13 +1419,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/aws-sdk@npm:0.7.1":
-  version: 0.7.1
-  resolution: "@grafana/aws-sdk@npm:0.7.1"
+"@grafana/aws-sdk@npm:0.7.2":
+  version: 0.7.2
+  resolution: "@grafana/aws-sdk@npm:0.7.2"
   dependencies:
-    "@grafana/async-query-data": "npm:0.4.1"
+    "@grafana/async-query-data": "npm:0.4.2"
     "@grafana/plugin-ui": "npm:^0.10.1"
-  checksum: 10c0/961d503a78876643de1e3856edce26329bc7a958e3cff9565c84ae469727e5c277e66a1ba24ee624eb9d7802538fca90e6aef59bf8615e44266452eecb2a0d1a
+  checksum: 10c0/47d77b2809c2a9cd2d2c5f0a3c40ef6bb05ec5fa0b666b96d01a90b477529cc1496c0524c0c6c1c3a63508ffede23a42472b99e2286914a3e98f9065780c0183
   languageName: node
   linkType: hard
 
@@ -3534,12 +3524,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^22.18.6":
-  version: 22.18.6
-  resolution: "@types/node@npm:22.18.6"
+"@types/node@npm:^22.18.7":
+  version: 22.18.7
+  resolution: "@types/node@npm:22.18.7"
   dependencies:
     undici-types: "npm:~6.21.0"
-  checksum: 10c0/7ba190da2e64e56c59270661af8cd682c830a1375b6f965ab153be90baabfdaa867aa1d63f87b42de80956996d46dfe1cf93ecefe982d9a16e485b6756949f9a
+  checksum: 10c0/b07204aa5ffc4ba74512d945eb97200ced52e0dcec3ccce4e09aeebba84fd0dcac9ff9b45140998b74520a9e648020fe0efecb7df4c93ab256bcbd869f444a74
   languageName: node
   linkType: hard
 
@@ -5977,10 +5967,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dotenv@npm:^17.2.2":
-  version: 17.2.2
-  resolution: "dotenv@npm:17.2.2"
-  checksum: 10c0/be66513504590aff6eccb14167625aed9bd42ce80547f4fe5d195860211971a7060949b57108dfaeaf90658f79e40edccd3f233f0a978bff507b5b1565ae162b
+"dotenv@npm:^17.2.3":
+  version: 17.2.3
+  resolution: "dotenv@npm:17.2.3"
+  checksum: 10c0/c884403209f713214a1b64d4d1defa4934c2aa5b0002f5a670ae298a51e3c3ad3ba79dfee2f8df49f01ae74290fcd9acdb1ab1d09c7bfb42b539036108bb2ba0
   languageName: node
   linkType: hard
 
@@ -7256,7 +7246,7 @@ __metadata:
     "@eslint/eslintrc": "npm:^3.3.1"
     "@eslint/js": "npm:^9.33.0"
     "@grafana/async-query-data": "npm:0.4.2"
-    "@grafana/aws-sdk": "npm:0.7.1"
+    "@grafana/aws-sdk": "npm:0.7.2"
     "@grafana/data": "npm:^12.0.1"
     "@grafana/eslint-config": "npm:^8.1.0"
     "@grafana/plugin-e2e": "npm:^2.1.14"
@@ -7275,14 +7265,14 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.0"
     "@types/jest": "npm:^30.0.0"
     "@types/lodash": "npm:^4.17.20"
-    "@types/node": "npm:^22.18.6"
+    "@types/node": "npm:^22.18.7"
     "@types/semver": "npm:^7.7.1"
     "@typescript-eslint/eslint-plugin": "npm:^8.38.0"
     "@typescript-eslint/parser": "npm:^8.43.0"
     copy-webpack-plugin: "npm:^13.0.1"
     cspell: "npm:9.1.5"
     css-loader: "npm:^7.1.2"
-    dotenv: "npm:^17.2.2"
+    dotenv: "npm:^17.2.3"
     eslint: "npm:^9.35.0"
     eslint-config-prettier: "npm:^10.1.8"
     eslint-plugin-deprecation: "npm:^3.0.0"
@@ -7297,7 +7287,7 @@ __metadata:
     imports-loader: "npm:^5.0.0"
     jest: "npm:^30.1.3"
     jest-environment-jsdom: "npm:^30.1.2"
-    lefthook: "npm:^1.12.4"
+    lefthook: "npm:^1.13.5"
     prettier: "npm:^3.6.2"
     react: "npm:18.3.1"
     react-dom: "npm:18.3.1"
@@ -8878,90 +8868,90 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lefthook-darwin-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-darwin-arm64@npm:1.13.4"
+"lefthook-darwin-arm64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-darwin-arm64@npm:1.13.5"
   conditions: os=darwin & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-darwin-x64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-darwin-x64@npm:1.13.4"
+"lefthook-darwin-x64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-darwin-x64@npm:1.13.5"
   conditions: os=darwin & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-freebsd-arm64@npm:1.13.4"
+"lefthook-freebsd-arm64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-freebsd-arm64@npm:1.13.5"
   conditions: os=freebsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-freebsd-x64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-freebsd-x64@npm:1.13.4"
+"lefthook-freebsd-x64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-freebsd-x64@npm:1.13.5"
   conditions: os=freebsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-linux-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-linux-arm64@npm:1.13.4"
+"lefthook-linux-arm64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-linux-arm64@npm:1.13.5"
   conditions: os=linux & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-linux-x64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-linux-x64@npm:1.13.4"
+"lefthook-linux-x64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-linux-x64@npm:1.13.5"
   conditions: os=linux & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-openbsd-arm64@npm:1.13.4"
+"lefthook-openbsd-arm64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-openbsd-arm64@npm:1.13.5"
   conditions: os=openbsd & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-openbsd-x64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-openbsd-x64@npm:1.13.4"
+"lefthook-openbsd-x64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-openbsd-x64@npm:1.13.5"
   conditions: os=openbsd & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook-windows-arm64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-windows-arm64@npm:1.13.4"
+"lefthook-windows-arm64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-windows-arm64@npm:1.13.5"
   conditions: os=win32 & cpu=arm64
   languageName: node
   linkType: hard
 
-"lefthook-windows-x64@npm:1.13.4":
-  version: 1.13.4
-  resolution: "lefthook-windows-x64@npm:1.13.4"
+"lefthook-windows-x64@npm:1.13.5":
+  version: 1.13.5
+  resolution: "lefthook-windows-x64@npm:1.13.5"
   conditions: os=win32 & cpu=x64
   languageName: node
   linkType: hard
 
-"lefthook@npm:^1.12.4":
-  version: 1.13.4
-  resolution: "lefthook@npm:1.13.4"
+"lefthook@npm:^1.13.5":
+  version: 1.13.5
+  resolution: "lefthook@npm:1.13.5"
   dependencies:
-    lefthook-darwin-arm64: "npm:1.13.4"
-    lefthook-darwin-x64: "npm:1.13.4"
-    lefthook-freebsd-arm64: "npm:1.13.4"
-    lefthook-freebsd-x64: "npm:1.13.4"
-    lefthook-linux-arm64: "npm:1.13.4"
-    lefthook-linux-x64: "npm:1.13.4"
-    lefthook-openbsd-arm64: "npm:1.13.4"
-    lefthook-openbsd-x64: "npm:1.13.4"
-    lefthook-windows-arm64: "npm:1.13.4"
-    lefthook-windows-x64: "npm:1.13.4"
+    lefthook-darwin-arm64: "npm:1.13.5"
+    lefthook-darwin-x64: "npm:1.13.5"
+    lefthook-freebsd-arm64: "npm:1.13.5"
+    lefthook-freebsd-x64: "npm:1.13.5"
+    lefthook-linux-arm64: "npm:1.13.5"
+    lefthook-linux-x64: "npm:1.13.5"
+    lefthook-openbsd-arm64: "npm:1.13.5"
+    lefthook-openbsd-x64: "npm:1.13.5"
+    lefthook-windows-arm64: "npm:1.13.5"
+    lefthook-windows-x64: "npm:1.13.5"
   dependenciesMeta:
     lefthook-darwin-arm64:
       optional: true
@@ -8985,7 +8975,7 @@ __metadata:
       optional: true
   bin:
     lefthook: bin/index.js
-  checksum: 10c0/fd1f235b510e6963739c7881cfc2e6029d0e57e15026b27d09a73fc3a34e2c1a855c69c70c17dfdd8bbbe6827d952f3b9df67a09369da767f3fbad85f2298ddc
+  checksum: 10c0/f8d35a84ae1840392c2087997d1d7d1504b822bb831bede98549739f4bd4caf670d561cdf2de793ea22bfd0a38e3940ed56991d19dfe7e98e4194a54fe47d9d5
   languageName: node
   linkType: hard
 
