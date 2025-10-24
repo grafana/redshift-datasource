@@ -1467,7 +1467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/e2e-selectors@npm:12.2.1":
+"@grafana/e2e-selectors@npm:12.2.1, @grafana/e2e-selectors@npm:^12.2.0-255920":
   version: 12.2.1
   resolution: "@grafana/e2e-selectors@npm:12.2.1"
   dependencies:
@@ -1475,17 +1475,6 @@ __metadata:
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.2"
   checksum: 10c0/1204d5378d325d80615c8281f0da70bda8fe682898a296f9a4c8901f5950df7b28372ad6c00dfdd0be219cd9bc1f3c08e888a81e8cb9d6574a69f9d4c934886a
-  languageName: node
-  linkType: hard
-
-"@grafana/e2e-selectors@npm:^12.2.0-255920":
-  version: 12.2.0
-  resolution: "@grafana/e2e-selectors@npm:12.2.0"
-  dependencies:
-    semver: "npm:^7.7.0"
-    tslib: "npm:2.8.1"
-    typescript: "npm:5.9.2"
-  checksum: 10c0/ab94a4dbb2299f439bc798e198b86291091958bfe858d3cdfbf7fbde9c3d5a03265e320158c12dd950a8fed07deb635d2f3636bdc00c14d1d802efd91010593d
   languageName: node
   linkType: hard
 
@@ -1980,15 +1969,6 @@ __metadata:
     "@types/node": "npm:*"
     jest-mock: "npm:30.2.0"
   checksum: 10c0/56a9f1b82ee2623c13eece7d58188be35bd6e5c3c4ee3fbaedb1c4d7242c1b57d020f1a26ab127fa9496fdc11306c7ad1c4a2b7eba1fc726a27ae0873e907e47
-  languageName: node
-  linkType: hard
-
-"@jest/expect-utils@npm:30.1.2":
-  version: 30.1.2
-  resolution: "@jest/expect-utils@npm:30.1.2"
-  dependencies:
-    "@jest/get-type": "npm:30.1.0"
-  checksum: 10c0/5b6c4d400ad0bd22960bd77750baf55b24bf1ebdc2cec328afe275967db76bf94f797ca4c9817cdb86bc7820b9219d3f493705f3fa94fe7720960e47805a8e1b
   languageName: node
   linkType: hard
 
@@ -2655,14 +2635,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@playwright/test@npm:1.54.2":
-  version: 1.54.2
-  resolution: "@playwright/test@npm:1.54.2"
+"@playwright/test@npm:1.56.1":
+  version: 1.56.1
+  resolution: "@playwright/test@npm:1.56.1"
   dependencies:
-    playwright: "npm:1.54.2"
+    playwright: "npm:1.56.1"
   bin:
     playwright: cli.js
-  checksum: 10c0/a032d9714a91d6dc40405575ca65ec52f95b0ca95974cd0140e2c12b6c39fbe5311239b2d581b289acaa1e227dd871cf5c43a537f32457f6329723e4add6e6f1
+  checksum: 10c0/2b5b0e1f2e6a18f6e5ce6897c7440ca78f64e0b004834e9808e93ad2b78b96366b562ae4366602669cf8ad793a43d85481b58541e74be71e905e732d833dd691
   languageName: node
   linkType: hard
 
@@ -6662,7 +6642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect@npm:30.2.0":
+"expect@npm:30.2.0, expect@npm:^30.0.0":
   version: 30.2.0
   resolution: "expect@npm:30.2.0"
   dependencies:
@@ -6673,20 +6653,6 @@ __metadata:
     jest-mock: "npm:30.2.0"
     jest-util: "npm:30.2.0"
   checksum: 10c0/fe440b3a036e2de1a3ede84bc6a699925328056e74324fbd2fdd9ce7b7358d03e515ac8db559c33828bcb0b7887b493dbaaece565e67d88748685850da5d9209
-  languageName: node
-  linkType: hard
-
-"expect@npm:^30.0.0":
-  version: 30.1.2
-  resolution: "expect@npm:30.1.2"
-  dependencies:
-    "@jest/expect-utils": "npm:30.1.2"
-    "@jest/get-type": "npm:30.1.0"
-    jest-matcher-utils: "npm:30.1.2"
-    jest-message-util: "npm:30.1.0"
-    jest-mock: "npm:30.0.5"
-    jest-util: "npm:30.0.5"
-  checksum: 10c0/467c1b69549e75a1a09f3feec335e0dc968cd71370361b5d83248351cf77e705e8ddf38a4885e32a50237502ced7fcc9106462f59f33c4796462e95938b8ca19
   languageName: node
   linkType: hard
 
@@ -7327,7 +7293,7 @@ __metadata:
     "@grafana/schema": "npm:^12.2.1"
     "@grafana/tsconfig": "npm:^2.0.1"
     "@grafana/ui": "npm:^12.2.1"
-    "@playwright/test": "npm:1.54.2"
+    "@playwright/test": "npm:1.56.1"
     "@stylistic/eslint-plugin-ts": "npm:^4.4.1"
     "@swc/core": "npm:^1.13.20"
     "@swc/helpers": "npm:^0.5.17"
@@ -8362,18 +8328,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:30.1.2":
-  version: 30.1.2
-  resolution: "jest-diff@npm:30.1.2"
-  dependencies:
-    "@jest/diff-sequences": "npm:30.0.1"
-    "@jest/get-type": "npm:30.1.0"
-    chalk: "npm:^4.1.2"
-    pretty-format: "npm:30.0.5"
-  checksum: 10c0/5baba5c54d044faf77540d2b97f947ce2a735c529bdca23ccd25669085ba3912eef2a8f66f4d765e8e416b1e10b95cb1dded0ebc1633efdbef37706b4e767ecb
-  languageName: node
-  linkType: hard
-
 "jest-diff@npm:30.2.0":
   version: 30.2.0
   resolution: "jest-diff@npm:30.2.0"
@@ -8470,18 +8424,6 @@ __metadata:
     "@jest/get-type": "npm:30.1.0"
     pretty-format: "npm:30.2.0"
   checksum: 10c0/68e2822aabe302983b65a08b19719a2444259af8a23ff20a6e2b6ce7759f55730f51c7cf16c65cb6be930c80a6cc70a4820239c84e8f333c9670a8e3a4a21801
-  languageName: node
-  linkType: hard
-
-"jest-matcher-utils@npm:30.1.2":
-  version: 30.1.2
-  resolution: "jest-matcher-utils@npm:30.1.2"
-  dependencies:
-    "@jest/get-type": "npm:30.1.0"
-    chalk: "npm:^4.1.2"
-    jest-diff: "npm:30.1.2"
-    pretty-format: "npm:30.0.5"
-  checksum: 10c0/c4f81fc7d72f94b18dff807adf787d6fd081c3e150148fbbcb1559c353b27890989bcf7e10b15d763625565175bf30019e93a014078ff291646a88a9acdfc9a4
   languageName: node
   linkType: hard
 
@@ -10121,27 +10063,27 @@ __metadata:
   languageName: node
   linkType: hard
 
-"playwright-core@npm:1.54.2":
-  version: 1.54.2
-  resolution: "playwright-core@npm:1.54.2"
+"playwright-core@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright-core@npm:1.56.1"
   bin:
     playwright-core: cli.js
-  checksum: 10c0/44850e20bf35237c8c3dedf1096c655f8af939dde53c5469f72cae3dd744966858a302419b909a73d7a2093323123e7ebcc0fdd55151b4193afb7812c1fd2c88
+  checksum: 10c0/ffd40142b99c68678b387445d5b42f1fee4ab0b65d983058c37f342e5629f9cdbdac0506ea80a0dfd41a8f9f13345bad54e9a8c35826ef66dc765f4eb3db8da7
   languageName: node
   linkType: hard
 
-"playwright@npm:1.54.2":
-  version: 1.54.2
-  resolution: "playwright@npm:1.54.2"
+"playwright@npm:1.56.1":
+  version: 1.56.1
+  resolution: "playwright@npm:1.56.1"
   dependencies:
     fsevents: "npm:2.3.2"
-    playwright-core: "npm:1.54.2"
+    playwright-core: "npm:1.56.1"
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     playwright: cli.js
-  checksum: 10c0/6f642fa70179eee5d5bf8a90df2a6147c9638ff926f4f3ad0a0517396b8a3fe00ccebf13377e032a75b3f0b2610ec1562293e0cfc3bde234181c7a50af8af80a
+  checksum: 10c0/8e9965aede86df0f4722063385748498977b219630a40a10d1b82b8bd8d4d4e9b6b65ecbfa024331a30800163161aca292fb6dd7446c531a1ad25f4155625ab4
   languageName: node
   linkType: hard
 
@@ -10266,7 +10208,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:30.0.5, pretty-format@npm:^30.0.0":
+"pretty-format@npm:30.0.5":
   version: 30.0.5
   resolution: "pretty-format@npm:30.0.5"
   dependencies:
@@ -10277,7 +10219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:30.2.0":
+"pretty-format@npm:30.2.0, pretty-format@npm:^30.0.0":
   version: 30.2.0
   resolution: "pretty-format@npm:30.2.0"
   dependencies:
