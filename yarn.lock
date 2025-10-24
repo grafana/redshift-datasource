@@ -1467,7 +1467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/e2e-selectors@npm:12.2.1":
+"@grafana/e2e-selectors@npm:12.2.1, @grafana/e2e-selectors@npm:^12.2.0-255920":
   version: 12.2.1
   resolution: "@grafana/e2e-selectors@npm:12.2.1"
   dependencies:
@@ -1475,17 +1475,6 @@ __metadata:
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.2"
   checksum: 10c0/1204d5378d325d80615c8281f0da70bda8fe682898a296f9a4c8901f5950df7b28372ad6c00dfdd0be219cd9bc1f3c08e888a81e8cb9d6574a69f9d4c934886a
-  languageName: node
-  linkType: hard
-
-"@grafana/e2e-selectors@npm:^12.2.0-255920":
-  version: 12.2.0
-  resolution: "@grafana/e2e-selectors@npm:12.2.0"
-  dependencies:
-    semver: "npm:^7.7.0"
-    tslib: "npm:2.8.1"
-    typescript: "npm:5.9.2"
-  checksum: 10c0/ab94a4dbb2299f439bc798e198b86291091958bfe858d3cdfbf7fbde9c3d5a03265e320158c12dd950a8fed07deb635d2f3636bdc00c14d1d802efd91010593d
   languageName: node
   linkType: hard
 
@@ -1980,15 +1969,6 @@ __metadata:
     "@types/node": "npm:*"
     jest-mock: "npm:30.2.0"
   checksum: 10c0/56a9f1b82ee2623c13eece7d58188be35bd6e5c3c4ee3fbaedb1c4d7242c1b57d020f1a26ab127fa9496fdc11306c7ad1c4a2b7eba1fc726a27ae0873e907e47
-  languageName: node
-  linkType: hard
-
-"@jest/expect-utils@npm:30.1.2":
-  version: 30.1.2
-  resolution: "@jest/expect-utils@npm:30.1.2"
-  dependencies:
-    "@jest/get-type": "npm:30.1.0"
-  checksum: 10c0/5b6c4d400ad0bd22960bd77750baf55b24bf1ebdc2cec328afe275967db76bf94f797ca4c9817cdb86bc7820b9219d3f493705f3fa94fe7720960e47805a8e1b
   languageName: node
   linkType: hard
 
@@ -6662,7 +6642,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect@npm:30.2.0":
+"expect@npm:30.2.0, expect@npm:^30.0.0":
   version: 30.2.0
   resolution: "expect@npm:30.2.0"
   dependencies:
@@ -6673,20 +6653,6 @@ __metadata:
     jest-mock: "npm:30.2.0"
     jest-util: "npm:30.2.0"
   checksum: 10c0/fe440b3a036e2de1a3ede84bc6a699925328056e74324fbd2fdd9ce7b7358d03e515ac8db559c33828bcb0b7887b493dbaaece565e67d88748685850da5d9209
-  languageName: node
-  linkType: hard
-
-"expect@npm:^30.0.0":
-  version: 30.1.2
-  resolution: "expect@npm:30.1.2"
-  dependencies:
-    "@jest/expect-utils": "npm:30.1.2"
-    "@jest/get-type": "npm:30.1.0"
-    jest-matcher-utils: "npm:30.1.2"
-    jest-message-util: "npm:30.1.0"
-    jest-mock: "npm:30.0.5"
-    jest-util: "npm:30.0.5"
-  checksum: 10c0/467c1b69549e75a1a09f3feec335e0dc968cd71370361b5d83248351cf77e705e8ddf38a4885e32a50237502ced7fcc9106462f59f33c4796462e95938b8ca19
   languageName: node
   linkType: hard
 
@@ -8362,18 +8328,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:30.1.2":
-  version: 30.1.2
-  resolution: "jest-diff@npm:30.1.2"
-  dependencies:
-    "@jest/diff-sequences": "npm:30.0.1"
-    "@jest/get-type": "npm:30.1.0"
-    chalk: "npm:^4.1.2"
-    pretty-format: "npm:30.0.5"
-  checksum: 10c0/5baba5c54d044faf77540d2b97f947ce2a735c529bdca23ccd25669085ba3912eef2a8f66f4d765e8e416b1e10b95cb1dded0ebc1633efdbef37706b4e767ecb
-  languageName: node
-  linkType: hard
-
 "jest-diff@npm:30.2.0":
   version: 30.2.0
   resolution: "jest-diff@npm:30.2.0"
@@ -8470,18 +8424,6 @@ __metadata:
     "@jest/get-type": "npm:30.1.0"
     pretty-format: "npm:30.2.0"
   checksum: 10c0/68e2822aabe302983b65a08b19719a2444259af8a23ff20a6e2b6ce7759f55730f51c7cf16c65cb6be930c80a6cc70a4820239c84e8f333c9670a8e3a4a21801
-  languageName: node
-  linkType: hard
-
-"jest-matcher-utils@npm:30.1.2":
-  version: 30.1.2
-  resolution: "jest-matcher-utils@npm:30.1.2"
-  dependencies:
-    "@jest/get-type": "npm:30.1.0"
-    chalk: "npm:^4.1.2"
-    jest-diff: "npm:30.1.2"
-    pretty-format: "npm:30.0.5"
-  checksum: 10c0/c4f81fc7d72f94b18dff807adf787d6fd081c3e150148fbbcb1559c353b27890989bcf7e10b15d763625565175bf30019e93a014078ff291646a88a9acdfc9a4
   languageName: node
   linkType: hard
 
@@ -10266,7 +10208,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:30.0.5, pretty-format@npm:^30.0.0":
+"pretty-format@npm:30.0.5":
   version: 30.0.5
   resolution: "pretty-format@npm:30.0.5"
   dependencies:
@@ -10277,7 +10219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:30.2.0":
+"pretty-format@npm:30.2.0, pretty-format@npm:^30.0.0":
   version: 30.2.0
   resolution: "pretty-format@npm:30.2.0"
   dependencies:
@@ -11567,11 +11509,11 @@ __metadata:
   linkType: hard
 
 "semver@npm:^7.3.5, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.0, semver@npm:^7.6.3, semver@npm:^7.7.0, semver@npm:^7.7.2":
-  version: 7.7.2
-  resolution: "semver@npm:7.7.2"
+  version: 7.7.3
+  resolution: "semver@npm:7.7.3"
   bin:
     semver: bin/semver.js
-  checksum: 10c0/aca305edfbf2383c22571cb7714f48cadc7ac95371b4b52362fb8eeffdfbc0de0669368b82b2b15978f8848f01d7114da65697e56cd8c37b0dab8c58e543f9ea
+  checksum: 10c0/4afe5c986567db82f44c8c6faef8fe9df2a9b1d98098fc1721f57c696c4c21cebd572f297fc21002f81889492345b8470473bc6f4aff5fb032a6ea59ea2bc45e
   languageName: node
   linkType: hard
 
