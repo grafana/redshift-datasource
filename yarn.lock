@@ -1419,13 +1419,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/aws-sdk@npm:0.7.2":
-  version: 0.7.2
-  resolution: "@grafana/aws-sdk@npm:0.7.2"
+"@grafana/aws-sdk@npm:0.8.2":
+  version: 0.8.2
+  resolution: "@grafana/aws-sdk@npm:0.8.2"
   dependencies:
     "@grafana/async-query-data": "npm:0.4.2"
-    "@grafana/plugin-ui": "npm:^0.10.1"
-  checksum: 10c0/47d77b2809c2a9cd2d2c5f0a3c40ef6bb05ec5fa0b666b96d01a90b477529cc1496c0524c0c6c1c3a63508ffede23a42472b99e2286914a3e98f9065780c0183
+    "@grafana/plugin-ui": "npm:^0.11.0"
+  checksum: 10c0/080d7aa446f2a49c915795654ecb31b0eed6b07ce73eb110057af269691c5573e29ceecc37f19b935866f8374d1331e4e96a2a57cc793c10b34cad66fd8b42b9
   languageName: node
   linkType: hard
 
@@ -1467,7 +1467,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/e2e-selectors@npm:12.2.1":
+"@grafana/e2e-selectors@npm:12.2.1, @grafana/e2e-selectors@npm:^12.2.0-255920":
   version: 12.2.1
   resolution: "@grafana/e2e-selectors@npm:12.2.1"
   dependencies:
@@ -1475,17 +1475,6 @@ __metadata:
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.2"
   checksum: 10c0/1204d5378d325d80615c8281f0da70bda8fe682898a296f9a4c8901f5950df7b28372ad6c00dfdd0be219cd9bc1f3c08e888a81e8cb9d6574a69f9d4c934886a
-  languageName: node
-  linkType: hard
-
-"@grafana/e2e-selectors@npm:^12.2.0-255920":
-  version: 12.2.0
-  resolution: "@grafana/e2e-selectors@npm:12.2.0"
-  dependencies:
-    semver: "npm:^7.7.0"
-    tslib: "npm:2.8.1"
-    typescript: "npm:5.9.2"
-  checksum: 10c0/ab94a4dbb2299f439bc798e198b86291091958bfe858d3cdfbf7fbde9c3d5a03265e320158c12dd950a8fed07deb635d2f3636bdc00c14d1d802efd91010593d
   languageName: node
   linkType: hard
 
@@ -1559,7 +1548,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/plugin-ui@npm:^0.10.1, @grafana/plugin-ui@npm:^0.10.10":
+"@grafana/plugin-ui@npm:^0.10.10":
   version: 0.10.10
   resolution: "@grafana/plugin-ui@npm:0.10.10"
   dependencies:
@@ -1584,6 +1573,34 @@ __metadata:
     react-dom: ^18.2.0
     rxjs: ^7.8.1
   checksum: 10c0/f26176d537441fff6e8cae37e5b68fae75a07450dfe49804aa2bdb67867b7bfa6559e4eb39a43895644f7fb24aacfe7783c49ed7732bee92819d9bc1d90488b0
+  languageName: node
+  linkType: hard
+
+"@grafana/plugin-ui@npm:^0.11.0":
+  version: 0.11.1
+  resolution: "@grafana/plugin-ui@npm:0.11.1"
+  dependencies:
+    "@emotion/css": "npm:^11.11.2"
+    "@hello-pangea/dnd": "npm:^17.0.0"
+    "@react-awesome-query-builder/ui": "npm:^6.6.4"
+    "@types/prismjs": "npm:^1.26.4"
+    lodash: "npm:^4.17.21"
+    prismjs: "npm:^1.30.0"
+    react-calendar: "npm:^4.8.0"
+    react-popper-tooltip: "npm:^4.4.2"
+    react-use: "npm:^17.3.1"
+    react-virtualized-auto-sizer: "npm:^1.0.6"
+    sql-formatter-plus: "npm:^1.3.6"
+    uuid: "npm:^11.0.0"
+  peerDependencies:
+    "@grafana/data": ">=10.4.0"
+    "@grafana/e2e-selectors": ">=10.4.0"
+    "@grafana/runtime": ">=10.4.0"
+    "@grafana/ui": ">=10.4.0"
+    react: ^18.2.0
+    react-dom: ^18.2.0
+    rxjs: ^7.8.1
+  checksum: 10c0/59ced7b9f20e2c0af5e9a307bbc79759d8e17c30ea9c2ecc72ba23da2c4891b5049f258fd25b158811233293863dab446a21f14d7cfee03f6d31ee09a02b4cf7
   languageName: node
   linkType: hard
 
@@ -1980,15 +1997,6 @@ __metadata:
     "@types/node": "npm:*"
     jest-mock: "npm:30.2.0"
   checksum: 10c0/56a9f1b82ee2623c13eece7d58188be35bd6e5c3c4ee3fbaedb1c4d7242c1b57d020f1a26ab127fa9496fdc11306c7ad1c4a2b7eba1fc726a27ae0873e907e47
-  languageName: node
-  linkType: hard
-
-"@jest/expect-utils@npm:30.1.2":
-  version: 30.1.2
-  resolution: "@jest/expect-utils@npm:30.1.2"
-  dependencies:
-    "@jest/get-type": "npm:30.1.0"
-  checksum: 10c0/5b6c4d400ad0bd22960bd77750baf55b24bf1ebdc2cec328afe275967db76bf94f797ca4c9817cdb86bc7820b9219d3f493705f3fa94fe7720960e47805a8e1b
   languageName: node
   linkType: hard
 
@@ -6662,7 +6670,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expect@npm:30.2.0":
+"expect@npm:30.2.0, expect@npm:^30.0.0":
   version: 30.2.0
   resolution: "expect@npm:30.2.0"
   dependencies:
@@ -6673,20 +6681,6 @@ __metadata:
     jest-mock: "npm:30.2.0"
     jest-util: "npm:30.2.0"
   checksum: 10c0/fe440b3a036e2de1a3ede84bc6a699925328056e74324fbd2fdd9ce7b7358d03e515ac8db559c33828bcb0b7887b493dbaaece565e67d88748685850da5d9209
-  languageName: node
-  linkType: hard
-
-"expect@npm:^30.0.0":
-  version: 30.1.2
-  resolution: "expect@npm:30.1.2"
-  dependencies:
-    "@jest/expect-utils": "npm:30.1.2"
-    "@jest/get-type": "npm:30.1.0"
-    jest-matcher-utils: "npm:30.1.2"
-    jest-message-util: "npm:30.1.0"
-    jest-mock: "npm:30.0.5"
-    jest-util: "npm:30.0.5"
-  checksum: 10c0/467c1b69549e75a1a09f3feec335e0dc968cd71370361b5d83248351cf77e705e8ddf38a4885e32a50237502ced7fcc9106462f59f33c4796462e95938b8ca19
   languageName: node
   linkType: hard
 
@@ -7318,7 +7312,7 @@ __metadata:
     "@eslint/eslintrc": "npm:^3.3.1"
     "@eslint/js": "npm:^9.33.0"
     "@grafana/async-query-data": "npm:0.4.2"
-    "@grafana/aws-sdk": "npm:0.7.2"
+    "@grafana/aws-sdk": "npm:0.8.2"
     "@grafana/data": "npm:^12.2.1"
     "@grafana/eslint-config": "npm:^8.1.0"
     "@grafana/plugin-e2e": "npm:^2.2.3"
@@ -8362,18 +8356,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:30.1.2":
-  version: 30.1.2
-  resolution: "jest-diff@npm:30.1.2"
-  dependencies:
-    "@jest/diff-sequences": "npm:30.0.1"
-    "@jest/get-type": "npm:30.1.0"
-    chalk: "npm:^4.1.2"
-    pretty-format: "npm:30.0.5"
-  checksum: 10c0/5baba5c54d044faf77540d2b97f947ce2a735c529bdca23ccd25669085ba3912eef2a8f66f4d765e8e416b1e10b95cb1dded0ebc1633efdbef37706b4e767ecb
-  languageName: node
-  linkType: hard
-
 "jest-diff@npm:30.2.0":
   version: 30.2.0
   resolution: "jest-diff@npm:30.2.0"
@@ -8470,18 +8452,6 @@ __metadata:
     "@jest/get-type": "npm:30.1.0"
     pretty-format: "npm:30.2.0"
   checksum: 10c0/68e2822aabe302983b65a08b19719a2444259af8a23ff20a6e2b6ce7759f55730f51c7cf16c65cb6be930c80a6cc70a4820239c84e8f333c9670a8e3a4a21801
-  languageName: node
-  linkType: hard
-
-"jest-matcher-utils@npm:30.1.2":
-  version: 30.1.2
-  resolution: "jest-matcher-utils@npm:30.1.2"
-  dependencies:
-    "@jest/get-type": "npm:30.1.0"
-    chalk: "npm:^4.1.2"
-    jest-diff: "npm:30.1.2"
-    pretty-format: "npm:30.0.5"
-  checksum: 10c0/c4f81fc7d72f94b18dff807adf787d6fd081c3e150148fbbcb1559c353b27890989bcf7e10b15d763625565175bf30019e93a014078ff291646a88a9acdfc9a4
   languageName: node
   linkType: hard
 
@@ -10266,7 +10236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:30.0.5, pretty-format@npm:^30.0.0":
+"pretty-format@npm:30.0.5":
   version: 30.0.5
   resolution: "pretty-format@npm:30.0.5"
   dependencies:
@@ -10277,7 +10247,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:30.2.0":
+"pretty-format@npm:30.2.0, pretty-format@npm:^30.0.0":
   version: 30.2.0
   resolution: "pretty-format@npm:30.2.0"
   dependencies:
