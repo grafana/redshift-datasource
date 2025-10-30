@@ -4,10 +4,10 @@ go 1.24.6
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.39.3
-	github.com/aws/aws-sdk-go-v2/service/redshift v1.59.1
+	github.com/aws/aws-sdk-go-v2/service/redshift v1.59.2
 	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.37.7
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.31.10
-	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.39.7
+	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.39.8
 	github.com/google/go-cmp v0.7.0
 	github.com/grafana/grafana-aws-sdk v1.3.1
 	github.com/grafana/grafana-plugin-sdk-go v0.281.0
