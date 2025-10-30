@@ -55,7 +55,7 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	}
 
 	region := redshiftSettings.Region
-	if region == "" || region == "efault" {
+	if region == "" || region == "default" {
 		region = redshiftSettings.DefaultRegion
 	}
 
