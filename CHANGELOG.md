@@ -2,6 +2,8 @@
 
 ## 2.3.2
 
+- Bump github.com/grafana/grafana-plugin-sdk-go from 0.282.0 to 0.283.0 in [#706](https://github.com/grafana/redshift-datasource/pull/706)
+- Bump the aws-sdk-go-v2 group with 3 updates in [#705](https://github.com/grafana/redshift-datasource/pull/705)
 - Bump github.com/grafana/grafana-plugin-sdk-go from 0.281.0 to 0.282.0 in [#701](https://github.com/grafana/redshift-datasource/pull/701)
 - Bump the aws-sdk-go-v2 group with 4 updates in [#700](https://github.com/grafana/redshift-datasource/pull/700)
 - Bump the aws-sdk-go-v2 group with 5 updates in [#698](https://github.com/grafana/redshift-datasource/pull/698)
