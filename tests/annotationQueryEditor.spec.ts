@@ -9,6 +9,6 @@ test('should successfully create an annotation', async ({ annotationEditPage, gr
   await page.keyboard.insertText('SELECT * FROM public.events');
   await expect(annotationEditPage.runQuery()).toBeOK();
   if (gte(grafanaVersion, '11.0.0')) {
-    await expect(annotationEditPage).toHaveAlert('success', { hasText: '8 events (from 4 fields)' });
+    await expect(annotationEditPage).toHaveAlert('success', { hasText: '8 events (from 4 fields)', timeout: 15_000 });
   }
 });

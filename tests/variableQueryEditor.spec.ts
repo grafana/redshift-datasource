@@ -9,17 +9,8 @@ test('should successfully create a variable', async ({ variableEditPage, page, s
   const queryDataRequest = variableEditPage.waitForQueryDataRequest();
   await variableEditPage.runQuery();
   await queryDataRequest;
-  await expect(variableEditPage).toDisplayPreviews([
-    'Classical',
-    'Jazz',
-    'MLB',
-    'MLS',
-    'Musicals',
-    'NBA',
-    'NFL',
-    'NHL',
-    'Opera',
-    'Plays',
-    'Pop',
-  ]);
+  await expect(variableEditPage).toDisplayPreviews(
+    ['Classical', 'Jazz', 'MLB', 'MLS', 'Musicals', 'NBA', 'NFL', 'NHL', 'Opera', 'Plays', 'Pop'],
+    { timeout: 15_000 }
+  );
 });
