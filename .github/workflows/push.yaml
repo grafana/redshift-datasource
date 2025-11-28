@@ -11,7 +11,7 @@ permissions: {}
 jobs:
   ci:
     name: CI
-    uses: grafana/plugin-ci-workflows/.github/workflows/ci.yml@ci-cd-workflows/v3
+    uses: grafana/plugin-ci-workflows/.github/workflows/ci.yml@ci-cd-workflows/v4.3.0
     permissions:
       contents: read
       id-token: write
@@ -21,3 +21,4 @@ jobs:
       playwright-secrets: |
         ACCESS_KEY=e2e:accessKey
         SECRET_KEY=e2e:secretKey
+      run-plugin-validator: true
