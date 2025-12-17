@@ -1,13 +1,14 @@
 package mock
 
 import (
+	"context"
 	"fmt"
+
 	"github.com/aws/aws-sdk-go-v2/service/redshift"
 	redshifttypes "github.com/aws/aws-sdk-go-v2/service/redshift/types"
 	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
 	redshiftdatatypes "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
-	"golang.org/x/net/context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
