@@ -5,6 +5,11 @@
   "platformAutomerge": true,
   "packageRules": [
     {
+      "description": "Enforce global minimum release age to override base config",
+      "matchPackageNames": ["*"],
+      "minimumReleaseAge": "7 days"
+    },
+    {
       "description": "Disable minimum release age for Grafana owned npm packages (@grafana/*)",
       "matchDatasources": ["npm"],
       "matchPackageNames": ["@grafana/*"],
