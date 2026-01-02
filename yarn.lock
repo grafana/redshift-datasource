@@ -1429,13 +1429,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/aws-sdk@npm:0.8.2":
-  version: 0.8.2
-  resolution: "@grafana/aws-sdk@npm:0.8.2"
+"@grafana/aws-sdk@npm:0.8.3":
+  version: 0.8.3
+  resolution: "@grafana/aws-sdk@npm:0.8.3"
   dependencies:
     "@grafana/async-query-data": "npm:0.4.2"
     "@grafana/plugin-ui": "npm:^0.11.0"
-  checksum: 10c0/080d7aa446f2a49c915795654ecb31b0eed6b07ce73eb110057af269691c5573e29ceecc37f19b935866f8374d1331e4e96a2a57cc793c10b34cad66fd8b42b9
+  checksum: 10c0/6791ca41c849d944601a3dd857ab05bc1da48aed3de80dc987589ffbbf662e8e595d6e118dba0da3fb16f49aab15d2691aebd1eece3e4f03957e818033e29093
   languageName: node
   linkType: hard
 
@@ -7363,7 +7363,7 @@ __metadata:
     "@eslint/eslintrc": "npm:^3.3.1"
     "@eslint/js": "npm:^9.37.0"
     "@grafana/async-query-data": "npm:0.4.2"
-    "@grafana/aws-sdk": "npm:0.8.2"
+    "@grafana/aws-sdk": "npm:0.8.3"
     "@grafana/data": "npm:12.3.0"
     "@grafana/eslint-config": "npm:^8.1.0"
     "@grafana/plugin-e2e": "npm:^3.1.0"
