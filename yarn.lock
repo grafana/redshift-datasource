@@ -3211,7 +3211,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@swc/core@npm:^1.15.1":
+"@swc/core@npm:^1.15.7":
   version: 1.15.7
   resolution: "@swc/core@npm:1.15.7"
   dependencies:
@@ -7374,7 +7374,7 @@ __metadata:
     "@grafana/ui": "npm:12.3.0"
     "@playwright/test": "npm:1.57.0"
     "@stylistic/eslint-plugin-ts": "npm:^4.4.1"
-    "@swc/core": "npm:^1.15.1"
+    "@swc/core": "npm:^1.15.7"
     "@swc/helpers": "npm:^0.5.17"
     "@swc/jest": "npm:^0.2.39"
     "@testing-library/jest-dom": "npm:6.9.1"
