@@ -18,7 +18,7 @@ import (
 	"github.com/grafana/redshift-datasource/pkg/redshift/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/driver"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds/v4"
+	"github.com/grafana/sqlds/v5"
 )
 
 type RedshiftDatasourceIface interface {
