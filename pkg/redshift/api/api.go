@@ -21,7 +21,6 @@ import (
 	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
-	"github.com/grafana/grafana-plugin-sdk-go/experimental/errorsource"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v5"
 )
@@ -184,7 +183,7 @@ func (c *API) Stop(output *api.ExecuteQueryOutput) error {
 	})
 	// ignore finished query error
 	if err != nil && !strings.Contains(err.Error(), "Could not cancel a query that is already in FINISHED state") {
-		return errorsource.DownstreamError(fmt.Errorf("%w: %v", err, api.ErrorStop), false)
+		return backend.DownstreamError(fmt.Errorf("%w: %v", err, api.ErrorStop))
 	}
 	return nil
 }
