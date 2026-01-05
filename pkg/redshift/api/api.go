@@ -135,7 +135,7 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		}
 	})
 	if err != nil {
-		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ErrorExecute, err), false)
+		return nil, backend.DownstreamError(fmt.Errorf("%w: %v", api.ErrorExecute, err))
 	}
 
 	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
@@ -152,11 +152,11 @@ func (c *API) Status(ctx context.Context, output *api.ExecuteQueryOutput) (*api.
 		Id: aws.String(output.ID),
 	})
 	if err != nil {
-		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ErrorStatus, err), false)
+		return nil, backend.DownstreamError(fmt.Errorf("%w: %v", api.ErrorStatus, err))
 	}
 
 	if statusResp.Error != nil && *statusResp.Error != "" {
-		return nil, errorsource.DownstreamError(fmt.Errorf("%w: %v", api.ErrorExecute, *statusResp.Error), false)
+		return nil, backend.DownstreamError(fmt.Errorf("%w: %v", api.ErrorExecute, *statusResp.Error))
 	}
 
 	var finished bool
