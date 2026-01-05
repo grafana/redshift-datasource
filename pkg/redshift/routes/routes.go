@@ -5,7 +5,7 @@ import (
 
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/routes"
 	"github.com/grafana/redshift-datasource/pkg/redshift"
-	"github.com/grafana/sqlds/v4"
+	"github.com/grafana/sqlds/v5"
 )
 
 type RedshiftResourceHandler struct {

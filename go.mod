@@ -9,9 +9,9 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.33.0
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.41.0
 	github.com/google/go-cmp v0.7.0
-	github.com/grafana/grafana-aws-sdk v1.4.1
+	github.com/grafana/grafana-aws-sdk v1.4.2
 	github.com/grafana/grafana-plugin-sdk-go v0.283.0
-	github.com/grafana/sqlds/v4 v4.2.7
+	github.com/grafana/sqlds/v5 v5.0.3
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.11.1
 )
@@ -49,7 +49,6 @@ require (
 	github.com/grafana/dataplane/sdata v0.0.9 // indirect
 	github.com/grafana/otel-profiling-go v0.5.1 // indirect
 	github.com/grafana/pyroscope-go/godeltaprof v0.1.9 // indirect
-	github.com/grafana/sqlds/v5 v5.0.3 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.1.0 // indirect
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.3 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.27.2 // indirect

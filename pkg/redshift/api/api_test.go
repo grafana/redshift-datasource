@@ -14,7 +14,7 @@ import (
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/mock"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
-	"github.com/grafana/sqlds/v4"
+	"github.com/grafana/sqlds/v5"
 )
 
 func Test_apiInput(t *testing.T) {
