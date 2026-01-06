@@ -20,17 +20,20 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
     queryRef.current = query;
   }, [query]);
 
-  const interpolate = (value: string | undefined) => {
-    if (!value) {
+  const interpolate = useCallback(
+    (value: string | undefined) => {
+      if (!value) {
+        return value;
+      }
+
+      value = value.replace(SCHEMA_MACRO, query.schema ?? '');
+      value = value.replace(TABLE_MACRO, query.table ?? '');
+      value = getTemplateSrv().replace(value);
+
       return value;
-    }
-
-    value = value.replace(SCHEMA_MACRO, queryRef.current.schema ?? '');
-    value = value.replace(TABLE_MACRO, queryRef.current.table ?? '');
-    value = getTemplateSrv().replace(value);
-
-    return value;
-  };
+    },
+    [query.schema, query.table]
+  );
 
   const getSchemas = useCallback(async () => {
     const schemas: string[] = await datasource.postResource<string[]>('schemas').catch(() => []);
@@ -42,12 +45,12 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
       const tables: string[] = await datasource
         .postResource<string[]>('tables', {
           // if schema is provided in the raw sql use that. if not, use schema defined in the query builder.
-          schema: interpolate(schema) ?? queryRef.current.schema,
+          schema: interpolate(schema) ?? query.schema,
         })
         .catch(() => []);
       return tables.map((table) => ({ name: table, completion: table }));
     },
-    [datasource]
+    [datasource, interpolate, query.schema]
   );
 
   const getColumns = useCallback(
@@ -55,13 +58,13 @@ export default function SQLEditor({ query, datasource, onRunQuery, onChange }: R
       const columns: string[] = await datasource
         .postResource<string[]>('columns', {
           // if schema and table have been provided in the raw sql use that. if not, use schema/table defined in the query builder.
-          schema: interpolate(schema) ?? queryRef.current.schema,
-          table: interpolate(tableName) ?? queryRef.current.table,
+          schema: interpolate(schema) ?? query.schema,
+          table: interpolate(tableName) ?? query.table,
         })
         .catch(() => []);
       return columns.map((column) => ({ name: column, completion: column }));
     },
-    [datasource]
+    [datasource, interpolate, query.schema, query.table]
   );
 
   const completionProvider = useMemo(
