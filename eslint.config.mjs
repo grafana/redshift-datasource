@@ -14,7 +14,7 @@ const compat = new FlatCompat({
 
 export default defineConfig([
   {
-    ignores: ['**/node_modules', '**/dist'],
+    ignores: ['**/node_modules', '**/dist', 'test-results', 'playwright-report'],
   },
   {
     extends: compat.extends('./.config/.eslintrc'),
