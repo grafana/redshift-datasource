@@ -4,9 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"strings"
 
 	"github.com/grafana/grafana-aws-sdk/pkg/awsauth"
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/redshift-datasource/pkg/redshift/api/types"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -20,6 +22,7 @@ import (
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/api"
 	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
+	"github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v5"
@@ -42,6 +45,24 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 
 	cfg := backend.GrafanaConfigFromContext(ctx)
 	httpClientOptions.Middlewares = append(httpClientOptions.Middlewares, sdkhttpclient.ResponseLimitMiddleware(cfg.ResponseLimit()))
+
+	proxySettings := awsauth.PerDatasourceProxySettings{
+		ProxyType:     awsauth.GetProxyTypeFromString(redshiftSettings.ProxyType),
+		ProxyUrl:      redshiftSettings.ProxyUrl,
+		ProxyUsername: redshiftSettings.ProxyUsername,
+		ProxyPassword: redshiftSettings.ProxyPassword,
+	}
+
+	grafanaAuthSettings, _ := awsds.ReadAuthSettingsFromContext(ctx)
+	if grafanaAuthSettings.PerDatasourceHTTPProxyEnabled && proxySettings.ProxyType != awsauth.ProxyTypeEnv {
+		proxyURL, parseErr := awsauth.GetProxyUrl(proxySettings)
+		if parseErr != nil {
+			return nil, backend.DownstreamError(fmt.Errorf("failed to get proxy URL: %w", parseErr))
+		}
+		httpClientOptions.ConfigureTransport = func(opts httpclient.Options, transport *http.Transport) {
+			transport.Proxy = http.ProxyURL(proxyURL)
+		}
+	}
 
 	if err != nil {
 		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
