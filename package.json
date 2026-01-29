@@ -95,5 +95,8 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "yarn@4.12.0"
+  "packageManager": "yarn@4.12.0",
+  "resolutions": {
+    "@grafana/aws-sdk": "portal:/Users/isabellasiu/code/grafana-aws-sdk-react"
+  }
 }
