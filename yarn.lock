@@ -1436,15 +1436,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/aws-sdk@npm:0.9.0":
-  version: 0.9.0
-  resolution: "@grafana/aws-sdk@npm:0.9.0"
+"@grafana/aws-sdk@portal:/Users/isabellasiu/code/grafana-aws-sdk-react::locator=grafana-redshift-datasource%40workspace%3A.":
+  version: 0.0.0-use.local
+  resolution: "@grafana/aws-sdk@portal:/Users/isabellasiu/code/grafana-aws-sdk-react::locator=grafana-redshift-datasource%40workspace%3A."
   dependencies:
     "@grafana/async-query-data": "npm:0.4.2"
     "@grafana/plugin-ui": "npm:^0.12.0"
-  checksum: 10c0/4f8e39070a017527357b49f64e587c4ee416b0fb7a2c2dbae9750d23cabff753cdd4aa8dcf651e3563230b8fdc6436f3f911c4c1399f1d0f5712d18e1386d0d9
   languageName: node
-  linkType: hard
+  linkType: soft
 
 "@grafana/data@npm:12.3.2":
   version: 12.3.2

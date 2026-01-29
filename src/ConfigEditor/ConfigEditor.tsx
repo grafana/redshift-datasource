@@ -242,7 +242,7 @@ export function ConfigEditor(props: Props) {
 
   return (
     <div className={styles.formStyles}>
-      <ConnectionConfig {...props} onOptionsChange={onOptionsChange} />
+      <ConnectionConfig {...props} showHttpProxySettings={true} onOptionsChange={onOptionsChange} />
       {config.secureSocksDSProxyEnabled && gte(config.buildInfo.version, '10.0.0') && (
         <SecureSocksProxySettings options={props.options} onOptionsChange={onOptionsChange} />
       )}
