@@ -18,7 +18,7 @@ jobs:
       id-token: write
     with:
       plugin-version-suffix: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.sha || '' }}
-      golangci-lint-version: '2.1.6'
+      golangci-lint-version: '2.5.0'
       run-playwright-with-skip-grafana-react-19-preview-image: true
       playwright-secrets: |
         ACCESS_KEY=e2e:accessKey
