@@ -5,6 +5,7 @@
     "node_modules/**",
     "dist/**",
     "playwright*/**",
+    "test-results/**",
     "provisioning/**",
     "src/dashboards/**",
     "yarn.lock",
@@ -120,6 +121,7 @@
     "secretsmanagertypes",
     "awsauth",
     "tibdex",
+    "automerge",
     "automerged",
     "npmPreapprovedPackages",
     "wojtekmaj"
