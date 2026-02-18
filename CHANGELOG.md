@@ -2,6 +2,7 @@
 
 ## 2.3.3
 
+- chore: bump e2e & playwright to fix CI failures in [#778](https://github.com/grafana/redshift-datasource/pull/778)
 - chore: support React 19 readiness in [#775](https://github.com/grafana/redshift-datasource/pull/775)
 - fix(deps): update dependency @grafana/plugin-ui to ^0.13.0 in [#773](https://github.com/grafana/redshift-datasource/pull/773)
 - chore(deps): update dependency @grafana/aws-sdk to v0.9.0 in [#771](https://github.com/grafana/redshift-datasource/pull/771)
