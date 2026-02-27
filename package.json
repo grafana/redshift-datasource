@@ -20,6 +20,7 @@
   "author": "Grafana Labs",
   "license": "Apache-2.0",
   "dependencies": {
+    "@axe-core/playwright": "^4.11.1",
     "@emotion/css": "11.13.5",
     "@grafana/async-query-data": "0.4.2",
     "@grafana/data": "12.4.0",
@@ -40,7 +41,7 @@
     "@eslint/js": "^9.38.0",
     "@grafana/aws-sdk": "0.10.1",
     "@grafana/eslint-config": "^9.0.0",
-    "@grafana/plugin-e2e": "3.3.2",
+    "@grafana/plugin-e2e": "3.4.0",
     "@grafana/tsconfig": "^2.0.1",
     "@playwright/test": "1.58.2",
     "@stylistic/eslint-plugin-ts": "^4.4.1",
