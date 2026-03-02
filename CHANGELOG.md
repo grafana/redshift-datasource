@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.3.4
+
+- fix(deps): update go patch updates in [#770](https://github.com/grafana/redshift-datasource/pull/770)
+- fix(deps): update module github.com/grafana/grafana-plugin-sdk-go to v0.290.0 in [#753](https://github.com/grafana/redshift-datasource/pull/753)
+- chore: bump e2e & playwright to fix CI failures in [#778](https://github.com/grafana/redshift-datasource/pull/778)
+
 ## 2.3.3
 
 - chore: bump e2e & playwright to fix CI failures in [#778](https://github.com/grafana/redshift-datasource/pull/778)
