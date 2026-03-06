@@ -1508,14 +1508,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/e2e-selectors@npm:12.4.0-21983999378":
-  version: 12.4.0-21983999378
-  resolution: "@grafana/e2e-selectors@npm:12.4.0-21983999378"
+"@grafana/e2e-selectors@npm:13.0.0-22358195095":
+  version: 13.0.0-22358195095
+  resolution: "@grafana/e2e-selectors@npm:13.0.0-22358195095"
   dependencies:
     semver: "npm:^7.7.0"
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.2"
-  checksum: 10c0/aace6e99dc0b594d617879053c081aaeac64a97294f48e950b8795510b592474ca87a0d5b341dc15cb5c8267d2d5595662f155196e6e36186301007add3ae53b
+  checksum: 10c0/4fbbba8e94f282e7cc986c688336e66fc838f055a3c4908f048cb4e984d89763101f8d9161474fdf58371ff5a08286307d36b30261ee602b38d716ac24d7b445
   languageName: node
   linkType: hard
 
@@ -1575,11 +1575,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/plugin-e2e@npm:3.4.0":
-  version: 3.4.0
-  resolution: "@grafana/plugin-e2e@npm:3.4.0"
+"@grafana/plugin-e2e@npm:3.4.2":
+  version: 3.4.2
+  resolution: "@grafana/plugin-e2e@npm:3.4.2"
   dependencies:
-    "@grafana/e2e-selectors": "npm:12.4.0-21983999378"
+    "@grafana/e2e-selectors": "npm:13.0.0-22358195095"
     semver: "npm:^7.5.4"
     uuid: "npm:^13.0.0"
     yaml: "npm:^2.3.4"
@@ -1587,7 +1587,7 @@ __metadata:
     "@axe-core/playwright": ^4.11.1
     "@playwright/test": ^1.52.0
     axe-core: ^4.11.1
-  checksum: 10c0/91e310f358bbf9b641902b19e84849b57f22587af268f28efb97c661d7255a7d11c8f1cbd52eeabdb4b7105ef1a212ee50df084a5ef645594a35b245b3f2d4e9
+  checksum: 10c0/7297b7864df83e1140ab418231f774f148b95a0b36e33dbeeeffe63122b9c84a0f2599ca019ec54ea61c487e8268531a634f10e94c552166d959224fd436b620
   languageName: node
   linkType: hard
 
@@ -2393,14 +2393,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@openfeature/core@npm:^1.9.0":
-  version: 1.9.1
-  resolution: "@openfeature/core@npm:1.9.1"
-  checksum: 10c0/983c651484621e6e5a3b4bf83fce5398a1adc2ace6162ff5a13a8eaf6d285b7c6b15f5c0a477ece9010ca88b28799985d810047ea0c18324d7a51ac4d04e18d6
-  languageName: node
-  linkType: hard
-
-"@openfeature/core@npm:^1.9.2":
+"@openfeature/core@npm:^1.9.0, @openfeature/core@npm:^1.9.2":
   version: 1.9.2
   resolution: "@openfeature/core@npm:1.9.2"
   checksum: 10c0/a0600c16f9c9e8721964643d2b0ccf5501767eee34908eec1a2a4d8fdb47c5f8224bdc254067a18d069bf7d57d9bdbc7b9cdf50cb1cb8d253778c43c11ed760b
@@ -7483,7 +7476,7 @@ __metadata:
     "@grafana/aws-sdk": "npm:0.10.1"
     "@grafana/data": "npm:12.4.0"
     "@grafana/eslint-config": "npm:^9.0.0"
-    "@grafana/plugin-e2e": "npm:3.4.0"
+    "@grafana/plugin-e2e": "npm:3.4.2"
     "@grafana/plugin-ui": "npm:^0.13.0"
     "@grafana/runtime": "npm:12.4.0"
     "@grafana/schema": "npm:12.4.0"
@@ -9292,14 +9285,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lodash@npm:^4.1.1, lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:^4.17.4":
-  version: 4.17.21
-  resolution: "lodash@npm:4.17.21"
-  checksum: 10c0/d8cbea072bb08655bb4c989da418994b073a608dffa608b09ac04b43a791b12aeae7cd7ad919aa4c925f33b48490b5cfe6c1f71d827956071dae2e7bb3a6b74c
-  languageName: node
-  linkType: hard
-
-"lodash@npm:^4.17.23":
+"lodash@npm:^4.1.1, lodash@npm:^4.17.15, lodash@npm:^4.17.21, lodash@npm:^4.17.23, lodash@npm:^4.17.4":
   version: 4.17.23
   resolution: "lodash@npm:4.17.23"
   checksum: 10c0/1264a90469f5bb95d4739c43eb6277d15b6d9e186df4ac68c3620443160fc669e2f14c11e7d8b2ccf078b81d06147c01a8ccced9aab9f9f63d50dcf8cace6bf6
@@ -13454,14 +13440,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.25.0 || ^4.0.0":
-  version: 4.2.1
-  resolution: "zod@npm:4.2.1"
-  checksum: 10c0/ecb5219bddf76a42d092a843fb98ad4cb78f1e1077082772b03ef032ee5cbc80790a4051836b962d26fb4af854323bc784d628bd1b8d9898149eba7af21c5560
-  languageName: node
-  linkType: hard
-
-"zod@npm:^4.3.0":
+"zod@npm:^3.25.0 || ^4.0.0, zod@npm:^4.3.0":
   version: 4.3.6
   resolution: "zod@npm:4.3.6"
   checksum: 10c0/860d25a81ab41d33aa25f8d0d07b091a04acb426e605f396227a796e9e800c44723ed96d0f53a512b57be3d1520f45bf69c0cb3b378a232a00787a2609625307
