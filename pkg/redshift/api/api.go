@@ -37,7 +37,6 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	redshiftSettings := settings.(*models.RedshiftDataSourceSettings)
 
 	httpClientProvider := sdkhttpclient.NewProvider()
-	// TODO: Context needs to be added, see https://github.com/grafana/oss-plugin-partnerships/issues/648
 	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(ctx)
 
 	cfg := backend.GrafanaConfigFromContext(ctx)
@@ -62,6 +61,7 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 		LegacyAuthType:     redshiftSettings.AuthType,
 		AccessKey:          redshiftSettings.AccessKey,
 		SecretKey:          redshiftSettings.SecretKey,
+		SessionToken:       redshiftSettings.SessionToken,
 		Region:             region,
 		CredentialsProfile: redshiftSettings.Profile,
 		AssumeRoleARN:      redshiftSettings.AssumeRoleARN,
