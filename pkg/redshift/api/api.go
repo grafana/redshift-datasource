@@ -62,6 +62,7 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 		LegacyAuthType:     redshiftSettings.AuthType,
 		AccessKey:          redshiftSettings.AccessKey,
 		SecretKey:          redshiftSettings.SecretKey,
+		SessionToken:       redshiftSettings.SessionToken,
 		Region:             region,
 		CredentialsProfile: redshiftSettings.Profile,
 		AssumeRoleARN:      redshiftSettings.AssumeRoleARN,
