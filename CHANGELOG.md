@@ -1,5 +1,18 @@
 # Changelog
 
+## 2.4.0
+
+- feat: add sessionToken handling to support Grafana Assume Role in [#795](https://github.com/grafana/redshift-datasource/pull/795)
+- fix(deps): update backend dependencies in [#791](https://github.com/grafana/redshift-datasource/pull/791)
+- chore(deps): pin grafana/grafana-enterprise docker tag to 582fc54 in [#789](https://github.com/grafana/redshift-datasource/pull/789)
+- chore(deps): update dependency @grafana/plugin-e2e to v3.4.3 in [#794](https://github.com/grafana/redshift-datasource/pull/794)
+- chore(deps): update actions/checkout digest to de0fac2 in [#786](https://github.com/grafana/redshift-datasource/pull/786)
+- chore(deps): pin dependencies in [#672](https://github.com/grafana/redshift-datasource/pull/672)
+- chore(deps): update actions/stale digest to b5d41d4 in [#787](https://github.com/grafana/redshift-datasource/pull/787)
+- chore(deps): update grafana/plugin-ci-workflows/ci-cd-workflows action to v6.1.1 in [#788](https://github.com/grafana/redshift-datasource/pull/788)
+- chore(deps): update dependency @grafana/plugin-e2e to v3.4.2 in [#783](https://github.com/grafana/redshift-datasource/pull/783)
+- chore: update renovate config to use data-sources base preset in [#785](https://github.com/grafana/redshift-datasource/pull/785)
+
 ## 2.3.4
 
 - fix(deps): update go patch updates in [#770](https://github.com/grafana/redshift-datasource/pull/770)
