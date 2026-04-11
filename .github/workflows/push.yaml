@@ -21,4 +21,3 @@ jobs:
       playwright-secrets: |
         ACCESS_KEY=e2e:accessKey
         SECRET_KEY=e2e:secretKey
-      run-playwright-with-skip-grafana-react-19-preview-image: true
