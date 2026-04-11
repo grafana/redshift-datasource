@@ -38,6 +38,7 @@ export default defineConfig<PluginOptions>({
     baseURL: 'http://localhost:3000',
     featureToggles: {
       dashboardNewLayouts: false,
+      multiPropsVariables: false,
     },
     openFeature: {
       flags: {
