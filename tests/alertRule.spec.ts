@@ -15,11 +15,11 @@ test('should successfully create an alert rule', async ({
   const ds = await readProvisionedDataSource({ fileName: 'aws-redshift-e2e.yaml', name: 'AWS Redshift E2E' });
   const queryA = alertRuleEditPage.getAlertRuleQueryRow('A');
 
-  if ((await queryA.getByGrafanaSelector(selectors.components.DataSourcePicker.inputV2).count()) > 0) {
+  try {
     await queryA.datasource.set(ds.name);
     await page.waitForFunction(() => window.monaco);
     await queryA.getByGrafanaSelector(selectors.components.CodeEditor.container).click();
-  } else {
+  } catch {
     // TODO: Remove this fallback once @grafana/plugin-e2e picks up the Grafana 13 query-row selectors.
     const queryEditorRow = alertRuleEditPage.getByGrafanaSelector('data-testid Query editor row').filter({
       has: alertRuleEditPage.getByGrafanaSelector('data-testid Query editor row title A'),
