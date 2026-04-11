@@ -36,9 +36,19 @@ export default defineConfig<PluginOptions>({
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:3000',
+    featureToggles: {
+      dashboardNewLayouts: false,
+      multiPropsVariables: false,
+    },
+    openFeature: {
+      flags: {
+        splashScreen: false,
+      },
+    },
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'on',
+    video: 'on',
   },
 
   /* Configure projects for major browsers */

@@ -1531,14 +1531,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/e2e-selectors@npm:13.0.0-22898798261":
-  version: 13.0.0-22898798261
-  resolution: "@grafana/e2e-selectors@npm:13.0.0-22898798261"
+"@grafana/e2e-selectors@npm:13.0.0-23624974663":
+  version: 13.0.0-23624974663
+  resolution: "@grafana/e2e-selectors@npm:13.0.0-23624974663"
   dependencies:
     semver: "npm:^7.7.0"
     tslib: "npm:2.8.1"
     typescript: "npm:5.9.2"
-  checksum: 10c0/d437e29cb25e4974088ab9108d0489dd3c9fb599d03b46a480814bcdb36ee62bae6b5cad865137665ae8d1d0a23eb74b9e8cee34f386a5738e68eaddeb53bd36
+  checksum: 10c0/714095fbf1932c49a923027e0d6d5e6d89f7dd06070e512716f58a7a2241eeac10b24ef9427b5ff5a21b2e4df43240ed2532676197e5daa75e7828b044e7bc54
   languageName: node
   linkType: hard
 
@@ -1598,11 +1598,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@grafana/plugin-e2e@npm:3.4.5":
-  version: 3.4.5
-  resolution: "@grafana/plugin-e2e@npm:3.4.5"
+"@grafana/plugin-e2e@npm:3.4.12":
+  version: 3.4.12
+  resolution: "@grafana/plugin-e2e@npm:3.4.12"
   dependencies:
-    "@grafana/e2e-selectors": "npm:13.0.0-22898798261"
+    "@grafana/e2e-selectors": "npm:13.0.0-23624974663"
     semver: "npm:^7.5.4"
     uuid: "npm:^13.0.0"
     yaml: "npm:^2.3.4"
@@ -1612,7 +1612,7 @@ __metadata:
   peerDependenciesMeta:
     "@axe-core/playwright":
       optional: true
-  checksum: 10c0/f125153cd7ff222e24c418bff805263872d2c0012a24ecf83f00f7b9e0a3369b2283e04a3d234d03c43aec779ce7e6aed9de418ebb9769233589937e02c8760a
+  checksum: 10c0/b87340d2cb04bcbcaf7676d61f8f990fd26ba1d8f53cfb922e89a4751ede29bbe61021d770d3a9ebdf4500fe404fe6512ddea03be4d1c08ee15d22e9e5a376e7
   languageName: node
   linkType: hard
 
@@ -7508,7 +7508,7 @@ __metadata:
     "@grafana/aws-sdk": "npm:0.10.2"
     "@grafana/data": "npm:12.4.1"
     "@grafana/eslint-config": "npm:9.0.0"
-    "@grafana/plugin-e2e": "npm:3.4.5"
+    "@grafana/plugin-e2e": "npm:3.4.12"
     "@grafana/plugin-ui": "npm:^0.13.0"
     "@grafana/runtime": "npm:12.4.1"
     "@grafana/schema": "npm:12.4.1"
