@@ -41,7 +41,7 @@ type Workgroup = {
 type InputResourceType = 'dbUser' | 'database';
 
 export function ConfigEditor(props: Props) {
-  const baseURL = `/api/datasources/${props.options.id}`;
+  const baseURL = `/api/datasources/uid/${props.options.uid}`;
   const resourcesURL = `${baseURL}/resources`;
   const { jsonData } = props.options;
   const [saved, setSaved] = useState(!!jsonData.defaultRegion);
