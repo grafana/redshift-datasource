@@ -5,7 +5,7 @@ go 1.25.7
 require (
 	github.com/aws/aws-sdk-go-v2 v1.41.5
 	github.com/aws/aws-sdk-go-v2/service/redshift v1.62.5
-	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.38.8
+	github.com/aws/aws-sdk-go-v2/service/redshiftdata v1.39.0
 	github.com/aws/aws-sdk-go-v2/service/redshiftserverless v1.34.4
 	github.com/aws/aws-sdk-go-v2/service/secretsmanager v1.41.5
 	github.com/google/go-cmp v0.7.0
