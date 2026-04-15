@@ -12,6 +12,7 @@
 - chore(deps): update grafana/plugin-ci-workflows/ci-cd-workflows action to v6.1.1 in [#788](https://github.com/grafana/redshift-datasource/pull/788)
 - chore(deps): update dependency @grafana/plugin-e2e to v3.4.2 in [#783](https://github.com/grafana/redshift-datasource/pull/783)
 - Update renovate config to use data-sources base preset in [#785](https://github.com/grafana/redshift-datasource/pull/785)
+- chore(deps): update grafana/shared-workflows/ action to in [#817](https://github.com/grafana/redshift-datasource/pull/817)
 - fix(deps): update module github.com/aws/aws-sdk-go-v2/service/redshiftdata to v1.39.0 in [#815](https://github.com/grafana/redshift-datasource/pull/815)
 - chore(deps): lock file maintenance in [#816](https://github.com/grafana/redshift-datasource/pull/816)
 - chore(deps): update dependency webpack-cli to v7 in [#814](https://github.com/grafana/redshift-datasource/pull/814)
