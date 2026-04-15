@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.4.0
+## 2.5.0
 
 - Add sessionToken handling to support Grafana Assume Role in [#795](https://github.com/grafana/redshift-datasource/pull/795)
 - fix(deps): update backend dependencies in [#791](https://github.com/grafana/redshift-datasource/pull/791)
@@ -12,6 +12,25 @@
 - chore(deps): update grafana/plugin-ci-workflows/ci-cd-workflows action to v6.1.1 in [#788](https://github.com/grafana/redshift-datasource/pull/788)
 - chore(deps): update dependency @grafana/plugin-e2e to v3.4.2 in [#783](https://github.com/grafana/redshift-datasource/pull/783)
 - Update renovate config to use data-sources base preset in [#785](https://github.com/grafana/redshift-datasource/pull/785)
+- chore(deps): update grafana/shared-workflows/ action to in [#817](https://github.com/grafana/redshift-datasource/pull/817)
+- fix(deps): update module github.com/aws/aws-sdk-go-v2/service/redshiftdata to v1.39.0 in [#815](https://github.com/grafana/redshift-datasource/pull/815)
+- chore(deps): lock file maintenance in [#816](https://github.com/grafana/redshift-datasource/pull/816)
+- chore(deps): update dependency webpack-cli to v7 in [#814](https://github.com/grafana/redshift-datasource/pull/814)
+- chore(deps): update dependency cspell to v10 in [#812](https://github.com/grafana/redshift-datasource/pull/812)
+- chore(deps): update dependency copy-webpack-plugin to v14 in [#808](https://github.com/grafana/redshift-datasource/pull/808)
+- chore(deps): update grafana/grafana-enterprise:latest docker digest to 8b65309 in [#802](https://github.com/grafana/redshift-datasource/pull/802)
+- fix(deps): update frontend dependencies in [#804](https://github.com/grafana/redshift-datasource/pull/804)
+- fix(deps): update backend dependencies in [#803](https://github.com/grafana/redshift-datasource/pull/803)
+- chore(deps): update grafana/shared-workflows/ action to in [#811](https://github.com/grafana/redshift-datasource/pull/811)
+- chore(deps): update module google.golang.org/grpc to v1.79.3 [security] in [#807](https://github.com/grafana/redshift-datasource/pull/807)
+- chore(deps): lock file maintenance in [#793](https://github.com/grafana/redshift-datasource/pull/793)
+- chore(deps): update actions/create-github-app-token digest to fee1f7d in [#801](https://github.com/grafana/redshift-datasource/pull/801)
+- chore(deps): update module go.opentelemetry.io/otel/sdk to v1.43.0 [security] in [#810](https://github.com/grafana/redshift-datasource/pull/810)
+- Update codeowners in [#809](https://github.com/grafana/redshift-datasource/pull/809)
+
+## 2.4.0
+
+- Publishing version 2.4.0 failed. Use version 2.5.0 instead.
 
 ## 2.3.4
 
