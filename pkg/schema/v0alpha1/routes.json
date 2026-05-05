@@ -1,0 +1,27 @@
+{
+  "paths": {
+    "/resources/secrets": {
+      "get": {
+        "summary": "List AWS Secrets Manager secrets eligible for Redshift access"
+      }
+    },
+    "/resources/secret": {
+      "post": {
+        "summary": "Get details of a single secret",
+        "requestBody": {
+          "content": { "application/json": { "schema": { "type": "object" } } }
+        }
+      }
+    },
+    "/resources/clusters": {
+      "get": {
+        "summary": "List Redshift provisioned clusters in the configured region"
+      }
+    },
+    "/resources/workgroups": {
+      "get": {
+        "summary": "List Redshift Serverless workgroups in the configured region"
+      }
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "kind": "QueryTypeDefinitionList",
+  "apiVersion": "datasource.grafana.app/v0alpha1",
+  "items": [
+    {
+      "metadata": {
+        "name": "sql"
+      },
+      "spec": {
+        "discriminators": [
+          { "field": "queryType", "value": "sql" }
+        ],
+        "schema": {
+          "$schema": "https://json-schema.org/draft-04/schema",
+          "type": "object",
+          "additionalProperties": true,
+          "description": "Run a SQL query against the configured Redshift cluster or workgroup",
+          "properties": {
+            "rawSQL": {
+              "type": "string",
+              "description": "The raw SQL statement to execute"
+            },
+            "format": {
+              "type": "integer",
+              "description": "Result format: 0=table, 1=time series, 2=logs",
+              "enum": [0, 1, 2]
+            },
+            "refId": {
+              "type": "string",
+              "description": "Optional reference identifier for this query"
+            }
+          },
+          "required": ["rawSQL"]
+        }
+      }
+    }
+  ]
+}

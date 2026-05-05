@@ -1,0 +1,22 @@
+{
+  "examples": [
+    {
+      "name": "Simple SELECT",
+      "queryType": "sql",
+      "description": "Run a basic SELECT against a known table",
+      "saveModel": {
+        "rawSQL": "SELECT 1",
+        "format": 0
+      }
+    },
+    {
+      "name": "Recent rows",
+      "queryType": "sql",
+      "description": "Time-series query with a time column",
+      "saveModel": {
+        "rawSQL": "SELECT created_at AS time, value FROM measurements ORDER BY time DESC LIMIT 100",
+        "format": 1
+      }
+    }
+  ]
+}
