@@ -9,16 +9,42 @@ import (
 	"github.com/grafana/grafana-plugin-sdk-go/backend/datasource"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/instancemgmt"
 	"github.com/grafana/grafana-plugin-sdk-go/backend/log"
+	"github.com/grafana/grafana-plugin-sdk-go/experimental/mcp"
+	"github.com/grafana/grafana-plugin-sdk-go/experimental/mcp/fromschema"
 	"github.com/grafana/redshift-datasource/pkg/redshift"
 	"github.com/grafana/redshift-datasource/pkg/redshift/routes"
 )
 
+const dsID = "grafana-redshift-datasource"
+
 func main() {
-	if err := datasource.Manage(
-		"grafana-redshift-datasource",
-		MakeDatasourceFactory(),
-		datasource.ManageOpts{},
-	); err != nil {
+	schema, err := loadSchema()
+	if err != nil {
+		log.DefaultLogger.Error("schema load failed", "err", err)
+		os.Exit(1)
+	}
+
+	mcpServer := mcp.NewServer(mcp.ServerOpts{
+		Name:    dsID,
+		Version: "2.5.0",
+	})
+
+	factory := MakeDatasourceFactory()
+	im := datasource.NewInstanceManager(factory)
+	mgr := datasource.NewAutomanagementHandler(im)
+
+	mcpServer.BindQueryDataHandler(mgr)
+	mcpServer.BindCallResourceHandler(mgr)
+	mcpServer.BindCheckHealthHandler(mgr)
+
+	fromschema.RegisterQueryTools(mcpServer, schema)
+	fromschema.RegisterRouteTools(mcpServer, schema)
+	fromschema.RegisterQueryExamples(mcpServer, schema)
+	fromschema.RegisterHealthCheckTool(mcpServer)
+
+	if err := datasource.Manage(dsID, factory, datasource.ManageOpts{
+		MCPServer: mcpServer,
+	}); err != nil {
 		log.DefaultLogger.Error(err.Error())
 		os.Exit(1)
 	}
