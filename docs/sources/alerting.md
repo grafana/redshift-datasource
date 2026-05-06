@@ -50,6 +50,7 @@ Alert queries must meet the following requirements:
 - The query must return at least one numeric column. Grafana evaluates numeric values against the alert condition.
 - Use the `$__timeFilter` macro to restrict results to the evaluation time window.
 - Keep queries efficient. Alert rules are evaluated at regular intervals, and slow queries can delay alert evaluation.
+- Do not use template variables in alert queries. Grafana alerting does not support template variable interpolation. Use hard-coded values instead.
 
 ### Example alert query
 
@@ -84,6 +85,21 @@ GROUP BY
 ORDER BY
   1 ASC
 ```
+
+### Example alert on application data
+
+To alert when the number of failed transactions exceeds a threshold:
+
+```sql
+SELECT
+  count(*) AS failed_transactions
+FROM
+  public.transactions
+WHERE
+  $__timeFilter(created_at) AND status = 'failed'
+```
+
+Set a threshold condition to fire when `failed_transactions` exceeds your acceptable limit.
 
 ## Considerations
 
