@@ -42,7 +42,7 @@ To add an annotation query to a dashboard:
 
 ## Column conventions
 
-Your annotation query must return specific columns for Grafana to render annotations correctly. The query uses the same SQL editor and macros available in the standard query editor.
+Your annotation query must return specific columns for Grafana to render annotations correctly. The annotation query editor provides the same SQL editor, resource selectors, and macro support as the standard [query editor](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/query-editor/).
 
 | Column    | Required | Description                                                                                              |
 | --------- | -------- | -------------------------------------------------------------------------------------------------------- |
@@ -90,6 +90,10 @@ WHERE
 ```
 
 Region annotations display as shaded areas on graphs, useful for marking maintenance windows, incidents, or other events with a duration.
+
+{{< admonition type="note" >}}
+Annotation queries run asynchronously through the Redshift Data API, just like regular queries. Complex annotation queries or queries that return large result sets can affect dashboard load times.
+{{< /admonition >}}
 
 ## Use template variables in annotations
 
