@@ -169,7 +169,7 @@ For async query support, your IAM policy must include the `redshift-data:ListSta
 
 ## Verify the connection
 
-Click **Save & test** to verify that the data source is configured correctly. Grafana attempts to connect to your Redshift environment by running a test query. A success message confirms the connection is working.
+Click **Save & test** to verify that the data source is configured correctly. Grafana runs a `SELECT 1` query against your Redshift environment to confirm the connection is working. A success message indicates the authentication, network connectivity, and database access are all configured correctly.
 
 ## Provision the data source
 

@@ -78,6 +78,20 @@ These errors occur when Grafana can't reach your Redshift environment.
 1. If your Redshift cluster is in a private VPC, ensure the Grafana server has network access through VPC peering, a VPN, or AWS PrivateLink.
 1. For Grafana Cloud accessing private resources, configure [Private data source connect](https://grafana.com/docs/grafana-cloud/connect-externally-hosted/private-data-source-connect/).
 
+### Private data source connect issues
+
+**Symptoms:**
+
+- Connection fails when using PDC with a private Redshift cluster.
+- The **Private data source connect** section doesn't appear in the configuration page.
+
+**Solutions:**
+
+1. Verify that PDC is enabled for your Grafana Cloud instance. PDC is a Grafana Cloud-only feature.
+1. Ensure the PDC agent is running and connected to the selected network. The agent status shows in the **Private data source connect network** drop-down.
+1. Verify that the PDC agent has network access to the Redshift Data API endpoints (`redshift-data.<region>.amazonaws.com` on port 443).
+1. Refer to [Private data source connect](https://grafana.com/docs/grafana-cloud/connect-externally-hosted/private-data-source-connect/) for setup and troubleshooting instructions.
+
 ### Custom endpoint issues
 
 **Symptoms:**
@@ -183,6 +197,27 @@ These errors are specific to the asynchronous query execution model.
 
 1. Add `redshift-data:ListStatements` and `redshift-data:CancelStatement` to your IAM policy. These are required for async query support.
 1. Verify that the IAM policy resource scope includes your Redshift cluster or workgroup.
+
+### Query enters "Failed" or "Aborted" state
+
+**Symptoms:**
+
+- Query returns an error after running for some time.
+- Error message references a failed or aborted statement.
+
+**Solutions:**
+
+1. Check the Redshift query history in the AWS console for detailed error messages. Navigate to **Amazon Redshift** > **Query monitoring** to view statement details.
+1. Verify the SQL is valid by running it directly in a Redshift SQL client.
+1. Check for Redshift resource limits such as WLM (Workload Management) queue capacity or concurrent query limits.
+1. For aborted queries, check if another process or user canceled the statement.
+
+## Unsupported SQL features
+
+The Redshift data source uses the [Amazon Redshift Data API](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api.html) to execute queries. The following SQL features are not supported:
+
+- **Transactions:** The `BEGIN`, `COMMIT`, and `ROLLBACK` statements are not supported. Each query runs as an independent statement.
+- **Prepared statements:** Parameterized queries using `PREPARE` and `EXECUTE` are not supported. Use standard SQL with Grafana macros and template variables instead.
 
 ## Template variable errors
 
