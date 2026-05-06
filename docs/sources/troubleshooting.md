@@ -22,7 +22,74 @@ review_date: 2026-05-06
 
 # Troubleshoot Amazon Redshift data source issues
 
-This page provides solutions to common issues you might encounter when configuring or using the Amazon Redshift data source. For configuration instructions, refer to [Configure the Amazon Redshift data source](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/configure/).
+This document provides solutions to common issues you might encounter when installing, configuring, or using the Amazon Redshift data source. Sections are organized in the order you're likely to encounter issues -- from installation through querying and alerting.
+
+For configuration instructions, refer to [Configure the Amazon Redshift data source](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/configure/).
+
+## Plugin installation errors
+
+These errors occur when installing or updating the Redshift data source plugin.
+
+### Plugin archive won't open or appears corrupt
+
+**Symptoms:**
+
+- The downloaded `.zip` file won't extract.
+- The archive appears invalid or corrupt.
+
+**Solutions:**
+
+1. Verify that you downloaded the correct archive for your operating system and architecture. The plugin is distributed as platform-specific archives (for example, `grafana-redshift-datasource-<version>.linux_amd64.zip`). A Linux archive won't work on Windows or macOS.
+1. Download the plugin directly from the [Grafana plugin catalog](https://grafana.com/grafana/plugins/grafana-redshift-datasource/) to ensure you have the correct file.
+1. For self-managed Grafana, use the Grafana CLI to install the plugin instead of downloading manually:
+
+   ```bash
+   grafana cli plugins install grafana-redshift-datasource
+   ```
+
+### "Unsupported auth type" error
+
+**Symptoms:**
+
+- **Save & test** fails with `unsupported auth type default` or similar errors.
+- Authentication options that should be available don't appear in the configuration UI.
+
+**Solutions:**
+
+1. Update the plugin to the latest version. Older plugin versions may not support all authentication methods (such as **AWS SDK Default**).
+1. For self-managed Grafana, update using the CLI:
+
+   ```bash
+   grafana cli plugins update grafana-redshift-datasource
+   ```
+
+1. Restart Grafana after updating the plugin.
+
+### "Save & test" fails with a 500 error
+
+**Symptoms:**
+
+- **Save & test** returns a 500 Internal Server Error.
+- The plugin was recently installed or the Grafana instance was recently upgraded.
+
+**Solutions:**
+
+1. Update the plugin to the latest version. Older versions may be missing required features (such as the **External ID** field for Assume Role) and fail silently.
+1. Verify plugin compatibility with your Grafana version. The Redshift data source requires **Grafana 10.4.0 or later**.
+1. Check the Grafana server logs for detailed error messages:
+
+   ```bash
+   grep "redshift" /var/log/grafana/grafana.log
+   ```
+
+1. If the error persists after updating, remove and reinstall the plugin:
+
+   ```bash
+   grafana cli plugins remove grafana-redshift-datasource
+   grafana cli plugins install grafana-redshift-datasource
+   ```
+
+1. Restart Grafana after reinstalling.
 
 ## Authentication errors
 
@@ -144,69 +211,6 @@ These errors occur when Grafana can't reach your Redshift environment.
 1. If your Redshift cluster is in a private VPC, ensure the Grafana server has network access through VPC peering, a VPN, or AWS PrivateLink.
 1. For Grafana Cloud accessing private resources, configure [Private data source connect](https://grafana.com/docs/grafana-cloud/connect-externally-hosted/private-data-source-connect/).
 
-### Troubleshoot PDC connections with Redshift
-
-These issues are specific to [Private data source connect (PDC)](https://grafana.com/docs/grafana-cloud/connect-externally-hosted/private-data-source-connect/) deployments where Grafana Cloud connects to a Redshift cluster in a private VPC. The PDC agent requires outbound access on both **port 443** (HTTPS to the Redshift Data API) and **port 22** (SSH to Grafana Cloud endpoints).
-
-#### "Host unreachable" through PDC
-
-**Symptoms:**
-
-- **Save & test** fails with `socks connect tcp ... host unreachable`.
-- The PDC agent appears connected in the UI, but queries fail.
-
-**Solutions:**
-
-1. Verify that the PDC agent host can reach the Redshift Data API endpoint. Run the following from the agent host:
-
-   ```bash
-   curl -v https://redshift-data.<region>.amazonaws.com
-   ```
-
-1. Check that firewall and security group rules allow **outbound** traffic on port 443 to `redshift-data.<region>.amazonaws.com`.
-1. Verify that firewall rules also allow **outbound** traffic on port 22 to Grafana Cloud endpoints. PDC uses this port for the tunnel connection.
-1. If the agent is in a private subnet, ensure a NAT gateway or VPC endpoint is configured for outbound internet access.
-
-#### PDC agent connected but data source fails
-
-**Symptoms:**
-
-- The **Private data source connect network** drop-down shows the agent as connected (for example, "1 agent connected").
-- **Save & test** still fails with connection errors.
-
-**Solutions:**
-
-1. Check that the firewall allows egress on **both** port 22 and port 443. A common misconfiguration is blocking port 22 while allowing 443, which lets the agent register but prevents data from flowing.
-1. Verify that the agent is deployed with the correct manifest for your Grafana Cloud stack.
-1. Review the agent logs for connection errors or certificate issues.
-
-#### PDC certificate or credential errors
-
-**Symptoms:**
-
-- Agent logs show `failed to generate new certificate: key signing request failed: invalid credentials`.
-- The agent fails to start or repeatedly restarts.
-
-**Solutions:**
-
-1. Verify that the agent was deployed using the correct installation method. If using a Docker-based deployment, try switching to the shell-based (binary) installation to rule out container-specific credential issues.
-1. Re-download the agent manifest from **Grafana Cloud** > **Private data source connect** to get fresh credentials.
-1. Ensure the agent host clock is synchronized (NTP). Certificate validation fails if the system clock is significantly out of sync.
-
-#### Intermittent PDC connection drops
-
-**Symptoms:**
-
-- Queries fail randomly with `db query error — failed to connect to server`.
-- Some panels load while others time out on the same dashboard.
-- Errors resolve temporarily after refreshing.
-
-**Solutions:**
-
-1. If running the PDC agent in Docker, try switching to the binary version. Docker-based deployments can experience intermittent connectivity issues due to container networking.
-1. Verify that the agent host has stable network connectivity and sufficient resources (CPU, memory).
-1. Check for network-level connection limits or timeouts on firewalls or proxies between the agent and Grafana Cloud.
-
 ### Custom endpoint issues
 
 **Symptoms:**
@@ -276,6 +280,69 @@ In FedRAMP or other restricted AWS environments, additional constraints may appl
 1. Confirm that the AWS region you're using is enabled in your account. Opt-in regions (such as `me-central-1`) require explicit enablement and may fail STS requests if not activated.
 1. For Grafana Cloud in restricted environments, contact [Grafana Support](https://grafana.com/support/) for guidance on network configuration.
 
+### Troubleshoot PDC connections with Redshift
+
+These issues are specific to [Private data source connect (PDC)](https://grafana.com/docs/grafana-cloud/connect-externally-hosted/private-data-source-connect/) deployments where Grafana Cloud connects to a Redshift cluster in a private VPC. The PDC agent requires outbound access on both **port 443** (HTTPS to the Redshift Data API) and **port 22** (SSH to Grafana Cloud endpoints).
+
+#### "Host unreachable" through PDC
+
+**Symptoms:**
+
+- **Save & test** fails with `socks connect tcp ... host unreachable`.
+- The PDC agent appears connected in the UI, but queries fail.
+
+**Solutions:**
+
+1. Verify that the PDC agent host can reach the Redshift Data API endpoint. Run the following from the agent host:
+
+   ```bash
+   curl -v https://redshift-data.<region>.amazonaws.com
+   ```
+
+1. Check that firewall and security group rules allow **outbound** traffic on port 443 to `redshift-data.<region>.amazonaws.com`.
+1. Verify that firewall rules also allow **outbound** traffic on port 22 to Grafana Cloud endpoints. PDC uses this port for the tunnel connection.
+1. If the agent is in a private subnet, ensure a NAT gateway or VPC endpoint is configured for outbound internet access.
+
+#### PDC agent connected but data source fails
+
+**Symptoms:**
+
+- The **Private data source connect network** drop-down shows the agent as connected (for example, "1 agent connected").
+- **Save & test** still fails with connection errors.
+
+**Solutions:**
+
+1. Check that the firewall allows egress on **both** port 22 and port 443. A common misconfiguration is blocking port 22 while allowing 443, which lets the agent register but prevents data from flowing.
+1. Verify that the agent is deployed with the correct manifest for your Grafana Cloud stack.
+1. Review the agent logs for connection errors or certificate issues.
+
+#### PDC certificate or credential errors
+
+**Symptoms:**
+
+- Agent logs show `failed to generate new certificate: key signing request failed: invalid credentials`.
+- The agent fails to start or repeatedly restarts.
+
+**Solutions:**
+
+1. Verify that the agent was deployed using the correct installation method. If using a Docker-based deployment, try switching to the shell-based (binary) installation to rule out container-specific credential issues.
+1. Re-download the agent manifest from **Grafana Cloud** > **Private data source connect** to get fresh credentials.
+1. Ensure the agent host clock is synchronized (NTP). Certificate validation fails if the system clock is significantly out of sync.
+
+#### Intermittent PDC connection drops
+
+**Symptoms:**
+
+- Queries fail randomly with `db query error — failed to connect to server`.
+- Some panels load while others time out on the same dashboard.
+- Errors resolve temporarily after refreshing.
+
+**Solutions:**
+
+1. If running the PDC agent in Docker, try switching to the binary version. Docker-based deployments can experience intermittent connectivity issues due to container networking.
+1. Verify that the agent host has stable network connectivity and sufficient resources (CPU, memory).
+1. Check for network-level connection limits or timeouts on firewalls or proxies between the agent and Grafana Cloud.
+
 ## Secrets Manager errors
 
 These errors relate to the AWS Secrets Manager authentication method.
@@ -326,6 +393,18 @@ These errors occur when running queries against Redshift.
 | Wrong schema, table, or column | Verify the resource selectors or SQL references match actual objects in your Redshift database.       |
 | Permissions issue              | Verify that the database user has `SELECT` permissions on the referenced tables.                     |
 | Macro expansion issue          | Use the [Query Inspector](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/query-editor/#inspect-the-query) to check the fully rendered SQL query. |
+
+### Syntax errors
+
+**Symptoms:**
+
+- Query fails immediately with a syntax error.
+
+**Solutions:**
+
+1. Use the [Query Inspector](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/query-editor/#inspect-the-query) to view the fully interpolated SQL and check for macro expansion issues.
+1. Copy the rendered query and run it directly in a Redshift SQL client to isolate the problem.
+1. Verify that macro syntax is correct (for example, `$__timeFilter(column)` requires exactly one argument).
 
 ### Query performance and timeouts
 
@@ -387,23 +466,11 @@ Grafana enforces timeouts at several layers. A query fails when it exceeds any o
 1. Check whether a network proxy (for example, Zscaler) is throttling or dropping concurrent connections.
 1. Review your Redshift WLM (Workload Management) configuration for concurrent query limits that may cause queuing or rejections.
 
-### Syntax errors
-
-**Symptoms:**
-
-- Query fails immediately with a syntax error.
-
-**Solutions:**
-
-1. Use the [Query Inspector](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/query-editor/#inspect-the-query) to view the fully interpolated SQL and check for macro expansion issues.
-1. Copy the rendered query and run it directly in a Redshift SQL client to isolate the problem.
-1. Verify that macro syntax is correct (for example, `$__timeFilter(column)` requires exactly one argument).
-
-## Async query errors
+### Async query errors
 
 These errors are specific to the asynchronous query execution model.
 
-### "ListStatements" or "CancelStatement" errors
+#### "ListStatements" or "CancelStatement" errors
 
 **Symptoms:**
 
@@ -415,7 +482,7 @@ These errors are specific to the asynchronous query execution model.
 1. Add `redshift-data:ListStatements` and `redshift-data:CancelStatement` to your IAM policy. These are required for async query support.
 1. Verify that the IAM policy resource scope includes your Redshift cluster or workgroup.
 
-### Query enters "Failed" or "Aborted" state
+#### Query enters "Failed" or "Aborted" state
 
 **Symptoms:**
 
@@ -428,13 +495,6 @@ These errors are specific to the asynchronous query execution model.
 1. Verify the SQL is valid by running it directly in a Redshift SQL client.
 1. Check for Redshift resource limits such as WLM (Workload Management) queue capacity or concurrent query limits.
 1. For aborted queries, check if another process or user canceled the statement.
-
-## Unsupported SQL features
-
-The Redshift data source uses the [Amazon Redshift Data API](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api.html) to execute queries. The following SQL features are not supported:
-
-- **Transactions:** The `BEGIN`, `COMMIT`, and `ROLLBACK` statements are not supported. Each query runs as an independent statement.
-- **Prepared statements:** Parameterized queries using `PREPARE` and `EXECUTE` are not supported. Use standard SQL with Grafana macros and template variables instead.
 
 ## Template variable errors
 
@@ -457,70 +517,12 @@ These errors occur when using template variables with the data source.
 1. Add `LIMIT` clauses to variable queries to reduce result set sizes.
 1. Narrow the scope of variable queries to specific schemas or tables.
 
-## Plugin installation errors
+## Unsupported SQL features
 
-These errors occur when installing or updating the Redshift data source plugin.
+The Redshift data source uses the [Amazon Redshift Data API](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api.html) to execute queries. The following SQL features are not supported:
 
-### Plugin archive won't open or appears corrupt
-
-**Symptoms:**
-
-- The downloaded `.zip` file won't extract.
-- The archive appears invalid or corrupt.
-
-**Solutions:**
-
-1. Verify that you downloaded the correct archive for your operating system and architecture. The plugin is distributed as platform-specific archives (for example, `grafana-redshift-datasource-<version>.linux_amd64.zip`). A Linux archive won't work on Windows or macOS.
-1. Download the plugin directly from the [Grafana plugin catalog](https://grafana.com/grafana/plugins/grafana-redshift-datasource/) to ensure you have the correct file.
-1. For self-managed Grafana, use the Grafana CLI to install the plugin instead of downloading manually:
-
-   ```bash
-   grafana cli plugins install grafana-redshift-datasource
-   ```
-
-### "Unsupported auth type" error
-
-**Symptoms:**
-
-- **Save & test** fails with `unsupported auth type default` or similar errors.
-- Authentication options that should be available don't appear in the configuration UI.
-
-**Solutions:**
-
-1. Update the plugin to the latest version. Older plugin versions may not support all authentication methods (such as **AWS SDK Default**).
-1. For self-managed Grafana, update using the CLI:
-
-   ```bash
-   grafana cli plugins update grafana-redshift-datasource
-   ```
-
-1. Restart Grafana after updating the plugin.
-
-### "Save & test" fails with a 500 error
-
-**Symptoms:**
-
-- **Save & test** returns a 500 Internal Server Error.
-- The plugin was recently installed or the Grafana instance was recently upgraded.
-
-**Solutions:**
-
-1. Update the plugin to the latest version. Older versions may be missing required features (such as the **External ID** field for Assume Role) and fail silently.
-1. Verify plugin compatibility with your Grafana version. The Redshift data source requires **Grafana 10.4.0 or later**.
-1. Check the Grafana server logs for detailed error messages:
-
-   ```bash
-   grep "redshift" /var/log/grafana/grafana.log
-   ```
-
-1. If the error persists after updating, remove and reinstall the plugin:
-
-   ```bash
-   grafana cli plugins remove grafana-redshift-datasource
-   grafana cli plugins install grafana-redshift-datasource
-   ```
-
-1. Restart Grafana after reinstalling.
+- **Transactions:** The `BEGIN`, `COMMIT`, and `ROLLBACK` statements are not supported. Each query runs as an independent statement.
+- **Prepared statements:** Parameterized queries using `PREPARE` and `EXECUTE` are not supported. Use standard SQL with Grafana macros and template variables instead.
 
 ## Debug logs
 

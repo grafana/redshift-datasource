@@ -26,7 +26,7 @@ review_date: 2026-05-06
 
 # Configure the Amazon Redshift data source
 
-This page explains how to configure the Amazon Redshift data source in Grafana, including authentication methods, connection settings, provisioning, and Terraform configuration.
+This document explains how to configure the Amazon Redshift data source in Grafana, including authentication methods, connection settings, provisioning, and Terraform configuration.
 
 ## Before you begin
 
