@@ -73,6 +73,7 @@ The connection section configures how Grafana authenticates with AWS. For detail
 | **Credentials Profile Name**  | The name of the credentials profile to use from the `~/.aws/credentials` file. Leave blank for the default profile.         |
 | **Assume Role ARN**           | The ARN of an IAM role to assume. Use this for cross-account access.                                                        |
 | **External ID**               | An external ID to use when assuming a role in another account, if the role requires one.                                    |
+| **Session Token**             | A temporary session token for AWS authentication. Required when using temporary AWS credentials from STS.                   |
 | **Endpoint**                  | A custom endpoint URL for the AWS service. Leave blank to use the default endpoint.                                         |
 | **Default Region**            | The AWS region where your Redshift cluster or workgroup is deployed.                                                        |
 
@@ -102,6 +103,18 @@ When using AWS Secrets Manager with Redshift Serverless, the workgroup name isn'
 | **Database User**                       | The database user for authentication. Automatically set when using AWS Secrets Manager. Hidden for Serverless with temporary credentials.       |
 | **Database**                            | The name of the database to connect to within the cluster or workgroup.                                                                        |
 | **Send events to Amazon EventBridge**   | Toggle to send Redshift Data API events to Amazon EventBridge for monitoring purposes.                                                         |
+
+## Private data source connect (Grafana Cloud only)
+
+If you use Grafana Cloud and your Redshift cluster is in a private VPC that isn't directly accessible, you can use [Private data source connect (PDC)](https://grafana.com/docs/grafana-cloud/connect-externally-hosted/private-data-source-connect/) to securely connect Grafana Cloud to your data source without opening your network to inbound traffic.
+
+When PDC is enabled for your Grafana Cloud instance, a **Private data source connect** section appears below the Redshift Details configuration. Select the **Private data source connect network** where your Redshift cluster is available. Click **Manage private data source connect networks** to configure networks.
+
+{{< admonition type="note" >}}
+Private data source connect is available exclusively in Grafana Cloud. For self-managed Grafana instances, use VPC peering, a VPN, or AWS PrivateLink to connect to private Redshift clusters.
+{{< /admonition >}}
+
+For setup instructions, refer to [Private data source connect](https://grafana.com/docs/grafana-cloud/connect-externally-hosted/private-data-source-connect/).
 
 ## IAM policies
 
@@ -216,6 +229,15 @@ datasources:
       secretKey: <YOUR_SECRET_KEY>
 ```
 
+To use temporary AWS credentials from STS, add a `sessionToken` to `secureJsonData`:
+
+```yaml
+    secureJsonData:
+      accessKey: <YOUR_ACCESS_KEY>
+      secretKey: <YOUR_SECRET_KEY>
+      sessionToken: <YOUR_SESSION_TOKEN>
+```
+
 ### Assume role
 
 ```yaml
@@ -249,6 +271,23 @@ datasources:
       database: mydb
 ```
 
+### Private data source connect
+
+```yaml
+apiVersion: 1
+
+datasources:
+  - name: Redshift
+    type: grafana-redshift-datasource
+    jsonData:
+      authType: default
+      defaultRegion: us-east-2
+      clusterIdentifier: my-redshift-cluster
+      database: mydb
+      dbUser: admin
+      enableSecureSocksProxy: true
+```
+
 ## Configure with Terraform
 
 You can use the [Grafana Terraform provider](https://registry.terraform.io/providers/grafana/grafana/latest/docs) to provision the Redshift data source as code. The following examples demonstrate common configurations using the `grafana_data_source` resource.
@@ -273,6 +312,16 @@ resource "grafana_data_source" "redshift" {
     secretKey = var.aws_secret_key
   })
 }
+```
+
+To use temporary AWS credentials from STS, add `sessionToken` to `secure_json_data_encoded`:
+
+```hcl
+  secure_json_data_encoded = jsonencode({
+    accessKey    = var.aws_access_key
+    secretKey    = var.aws_secret_key
+    sessionToken = var.aws_session_token
+  })
 ```
 
 ### Assume role with Terraform
