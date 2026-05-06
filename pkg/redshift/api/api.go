@@ -39,9 +39,6 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	httpClientProvider := sdkhttpclient.NewProvider()
 	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(ctx)
 
-	cfg := backend.GrafanaConfigFromContext(ctx)
-	httpClientOptions.Middlewares = append(httpClientOptions.Middlewares, sdkhttpclient.ResponseLimitMiddleware(cfg.ResponseLimit()))
-
 	if err != nil {
 		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
 		return nil, err

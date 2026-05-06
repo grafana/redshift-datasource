@@ -10,6 +10,7 @@ services:
         grafana_version: ${GRAFANA_VERSION:-latest}
     ports:
       - 3000:3000/tcp
+      - 7402:7402/tcp
     volumes:
       - ./dist:/var/lib/grafana/plugins/grafana-redshift-datasource
       - ./provisioning:/etc/grafana/provisioning

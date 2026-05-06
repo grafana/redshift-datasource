@@ -27,6 +27,7 @@ func main() {
 	mcpServer := mcp.NewServer(mcp.ServerOpts{
 		Name:    dsID,
 		Version: "2.5.0",
+		Addr:    ":7402",
 	})
 
 	factory := MakeDatasourceFactory()
