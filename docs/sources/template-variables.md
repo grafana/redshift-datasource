@@ -39,7 +39,7 @@ For an introduction to variables in Grafana, refer to [Templates and variables](
 
 ## Create a query variable
 
-Query variables populate their options by running a SQL query against your Redshift data source. Any value returned from a Redshift table can be used as a variable.
+Query variables populate their options by running a SQL query against your Redshift data source. Any value returned from a Redshift table can be used as a variable. The variable query editor provides the same SQL editor, resource selectors, and macro support as the regular query editor.
 
 To create a query variable:
 
@@ -69,6 +69,12 @@ Return distinct values from a column:
 
 ```sql
 SELECT DISTINCT region FROM sales_data;
+```
+
+Return event categories from the Redshift sample database:
+
+```sql
+SELECT catname FROM public.category ORDER BY catname;
 ```
 
 ### Custom display names
@@ -104,6 +110,24 @@ SELECT * FROM sales WHERE region IN (${region});
 ```
 
 Grafana automatically formats the selected values as a comma-separated list.
+
+### Combine variables with macros
+
+You can use template variables alongside Grafana macros in the same query:
+
+```sql
+SELECT
+  $__timeGroup(saletime, '1h'),
+  sum(pricepaid) AS total_sales
+FROM
+  ${schema}.sales
+WHERE
+  $__timeFilter(saletime) AND catname IN (${category})
+GROUP BY
+  1
+ORDER BY
+  1 ASC;
+```
 
 ## Create cascading variables
 
