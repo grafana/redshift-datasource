@@ -28,6 +28,7 @@ The Amazon Redshift query editor lets you write SQL queries to retrieve and visu
 
 - [Configure the Amazon Redshift data source](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/configure/).
 - Verify that your IAM identity has the required permissions to query the target database.
+- Familiarize yourself with [Amazon Redshift SQL](https://docs.aws.amazon.com/redshift/latest/dg/c_redshift-sql.html) syntax and supported functions.
 
 ## Resource selectors
 
@@ -35,7 +36,7 @@ The query editor includes three drop-down selectors at the top of the editor tha
 
 | Selector     | Macro        | Description                                                      |
 | ------------ | ------------ | ---------------------------------------------------------------- |
-| **Schema**   | `$__schema`  | Selects a database schema. Defaults to `public` if not set.      |
+| **Schema**   | `$__schema`  | Selects a database schema. If not set, Redshift uses the default `search_path` (typically `public`). |
 | **Table**    | `$__table`   | Selects a table from the chosen schema.                          |
 | **Column**   | `$__column`  | Selects a column from the chosen table.                          |
 
@@ -72,7 +73,7 @@ To use the **Time Series** format, your query must meet the following requiremen
 
 When the format is set to **Time Series**, the **Fill value** option controls how missing data points are rendered. This affects whether lines in graphs appear connected or disconnected. Choose a fill mode based on how you want gaps in data to display:
 
-- **Previous** -- Fills missing values with the last known value.
+- **Previous** (default) -- Fills missing values with the last known value.
 - **Null** -- Leaves gaps in the data.
 - **Value** -- Fills missing values with a specific number you define.
 
@@ -113,21 +114,22 @@ SELECT * FROM $__schema.$__table LIMIT 100;
 
 ### Time-series query
 
-This query calculates an average metric grouped by time and is suited for time-series visualizations:
+This query calculates total sales commission grouped by time and is suited for time-series visualizations:
 
 ```sql
 SELECT
-  avg(execution_time) AS average_execution_time,
-  $__timeGroup(start_time, 'hour'),
-  query_type
+  $__timeGroup(saletime, '1h'),
+  sum(commission) AS total_commission,
+  eventname
 FROM
-  account_usage.query_history
+  public.sales
+  JOIN public.event USING (eventid)
 WHERE
-  $__timeFilter(start_time)
+  $__timeFilter(saletime)
 GROUP BY
-  query_type, start_time
+  1, eventname
 ORDER BY
-  start_time ASC;
+  1 ASC;
 ```
 
 ### Use case: monitor query performance
