@@ -173,7 +173,7 @@ Click **Save & test** to verify that the data source is configured correctly. Gr
 
 ## Provision the data source
 
-You can define and configure the Redshift data source using YAML files as part of Grafana's provisioning system. For more information about provisioning, refer to [Provision Grafana](https://grafana.com/docs/grafana/<GRAFANA_VERSION>/administration/provisioning/#data-sources).
+You can define and configure the Redshift data source using YAML files as part of the Grafana provisioning system. For more information about provisioning, refer to [Provision Grafana](https://grafana.com/docs/grafana/<GRAFANA_VERSION>/administration/provisioning/#data-sources).
 
 The following examples show common provisioning configurations.
 

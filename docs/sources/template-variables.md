@@ -39,7 +39,7 @@ For an introduction to variables in Grafana, refer to [Templates and variables](
 
 ## Create a query variable
 
-Query variables populate their options by running a SQL query against your Redshift data source. Any value returned from a Redshift table can be used as a variable. The variable query editor provides the same SQL editor, resource selectors, and macro support as the regular query editor.
+Query variables populate their options by running an SQL query against your Redshift data source. Any value returned from a Redshift table can be used as a variable. The variable query editor provides the same SQL editor, resource selectors, and macro support as the regular query editor.
 
 To create a query variable:
 
@@ -47,7 +47,7 @@ To create a query variable:
 1. Click **Add variable**.
 1. Select **Query** as the variable type.
 1. Select the Amazon Redshift data source.
-1. Enter a SQL query in the query editor.
+1. Enter an SQL query in the query editor.
 1. Click **Run query** to preview the variable options.
 1. Click **Apply**.
 

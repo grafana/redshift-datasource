@@ -38,7 +38,7 @@ To create an alert rule using a Redshift query:
 1. Click **New alert rule**.
 1. Enter a name for the alert rule.
 1. Select the Amazon Redshift data source.
-1. Write a SQL query that returns numeric data.
+1. Write an SQL query that returns numeric data.
 1. Define the alert condition using expressions (for example, reduce the query result to a single value and set a threshold).
 1. Configure labels, notifications, and other alert settings.
 1. Click **Save rule and exit**.

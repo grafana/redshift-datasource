@@ -37,7 +37,7 @@ To add an annotation query to a dashboard:
 1. Select **Annotations** in the left menu.
 1. Click **Add annotation query**.
 1. Select the Amazon Redshift data source.
-1. Enter a SQL query that returns the required columns.
+1. Enter an SQL query that returns the required columns.
 1. Click **Apply**.
 
 ## Column conventions

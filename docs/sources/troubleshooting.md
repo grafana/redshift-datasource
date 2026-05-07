@@ -341,7 +341,7 @@ These issues are specific to [Private data source connect (PDC)](https://grafana
 
 1. If running the PDC agent in Docker, try switching to the binary version. Docker-based deployments can experience intermittent connectivity issues due to container networking.
 1. Verify that the agent host has stable network connectivity and sufficient resources (CPU, memory).
-1. Check for network-level connection limits or timeouts on firewalls or proxies between the agent and Grafana Cloud.
+1. Check for network-level connection limits or timeouts on firewall rules or proxies between the agent and Grafana Cloud.
 
 ## Secrets Manager errors
 
@@ -436,7 +436,7 @@ Grafana enforces timeouts at several layers. A query fails when it exceeds any o
    - Add appropriate sort keys and distribution keys in Redshift.
    - Break complex queries into smaller, focused queries.
 1. Use [recording rules](https://grafana.com/docs/grafana/<GRAFANA_VERSION>/administration/recorded-queries/) to pre-aggregate expensive queries and serve results from a faster cache.
-1. If queries consistently fail at exactly 60 seconds, check whether any intermediate network proxies (for example, Zscaler or corporate firewalls) impose their own timeout limits.
+1. If queries consistently fail at exactly 60 seconds, check whether any intermediate network proxies (for example, Zscaler or corporate firewall rules) impose their own timeout limits.
 
 #### "Context deadline exceeded" on alert queries
 
