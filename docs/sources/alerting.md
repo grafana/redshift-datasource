@@ -43,7 +43,7 @@ To create an alert rule using a Redshift query:
 1. Configure labels, notifications, and other alert settings.
 1. Click **Save rule and exit**.
 
-## Query requirements for alerting
+## Alert query requirements
 
 Alert queries must meet the following requirements:
 

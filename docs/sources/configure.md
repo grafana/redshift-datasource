@@ -210,7 +210,7 @@ datasources:
       dbUser: admin
 ```
 
-### Access and secret key
+### Access & secret key
 
 ```yaml
 apiVersion: 1
@@ -292,7 +292,7 @@ datasources:
 
 You can use the [Grafana Terraform provider](https://registry.terraform.io/providers/grafana/grafana/latest/docs) to provision the Redshift data source as code. The following examples demonstrate common configurations using the `grafana_data_source` resource.
 
-### Access and secret key with Terraform
+### Access & secret key with Terraform
 
 ```hcl
 resource "grafana_data_source" "redshift" {

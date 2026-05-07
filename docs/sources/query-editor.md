@@ -84,7 +84,7 @@ The query editor supports Grafana macros that simplify time-series queries. Macr
 | Macro                              | Description                                                                       | Output example                                                     |
 | ---------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
 | `$__timeEpoch(column)`             | Converts a timestamp column to a Unix epoch and renames it to `time`.             | `extract(epoch from dateColumn) as "time"`                         |
-| `$__timeFilter(column)`            | Filters results to the dashboard's selected time range.                           | `time BETWEEN '2017-07-18T11:15:52Z' AND '2017-07-18T11:15:52Z'`  |
+| `$__timeFilter(column)`            | Filters results to the dashboard's selected time range.                           | `time BETWEEN '2017-07-18T11:15:52Z' AND '2017-07-18T12:15:52Z'`  |
 | `$__timeFrom()`                    | Returns the start of the current time range.                                      | `'2017-07-18T11:15:52Z'`                                          |
 | `$__timeTo()`                      | Returns the end of the current time range.                                        | `'2017-07-18T11:15:52Z'`                                          |
 | `$__timeGroup(column, 'interval')` | Groups timestamps into fixed intervals so there's one data point per interval.    | `floor(extract(epoch from time)/60)*60 AS "time"`                  |
