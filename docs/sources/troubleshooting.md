@@ -22,7 +22,7 @@ review_date: 2026-05-06
 
 # Troubleshoot Amazon Redshift data source issues
 
-This document provides solutions to common issues you might encounter when installing, configuring, or using the Amazon Redshift data source. Sections are organized in the order you're likely to encounter issues -- from installation through querying and alerting.
+This document provides solutions to common issues you might encounter when installing, configuring, or using the Amazon Redshift data source. Sections are organized in the order you're likely to encounter issues, from installation through querying and alerting.
 
 For configuration instructions, refer to [Configure the Amazon Redshift data source](https://grafana.com/docs/plugins/grafana-redshift-datasource/latest/configure/).
 
