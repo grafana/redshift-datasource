@@ -288,7 +288,7 @@ datasources:
       enableSecureSocksProxy: true
 ```
 
-## Configure with Terraform
+## Provision with Terraform
 
 You can use the [Grafana Terraform provider](https://registry.terraform.io/providers/grafana/grafana/latest/docs) to provision the Redshift data source as code. The following examples demonstrate common configurations using the `grafana_data_source` resource.
 
