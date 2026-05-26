@@ -126,6 +126,7 @@
     "automerged",
     "npmPreapprovedPackages",
     "wojtekmaj",
-    "openfeature"
+    "openfeature",
+    "yarnrc"
   ]
 }
