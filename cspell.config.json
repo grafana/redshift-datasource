@@ -102,6 +102,8 @@
     "nilness",
     "dylib",
     "eslintcache",
+    "govulncheck",
+    "vulncheck",
     "gofmt",
     "jscoverage",
     "lefthook",

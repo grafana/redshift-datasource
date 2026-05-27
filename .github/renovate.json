@@ -45,6 +45,16 @@
         "rxjs"
       ],
       "enabled": false
+    },
+    {
+      "description": "Require human review for production npm dependency minor updates",
+      "matchDepTypes": [
+        "dependencies"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "automerge": false
     }
   ]
 }
