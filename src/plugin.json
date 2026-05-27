@@ -38,7 +38,7 @@
     },
     "links": [
       { "name": "Website", "url": "https://github.com/grafana/redshift-datasource" },
-      { "name": "License", "url": "https://github.com/redshift-datasource/blob/master/LICENSE" }
+      { "name": "License", "url": "https://github.com/grafana/redshift-datasource/blob/master/LICENSE" }
     ],
     "screenshots": [],
     "version": "%VERSION%",
