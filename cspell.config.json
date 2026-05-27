@@ -1,5 +1,6 @@
 {
   "ignorePaths": [
+    ".config/Dockerfile",
     ".github/**",
     ".yarn/**",
     "node_modules/**",
@@ -125,6 +126,7 @@
     "automerged",
     "npmPreapprovedPackages",
     "wojtekmaj",
-    "openfeature"
+    "openfeature",
+    "yarnrc"
   ]
 }

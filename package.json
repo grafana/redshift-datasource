@@ -15,7 +15,8 @@
     "test:coverage": "jest --coverage",
     "test:coverage:changes": "jest --coverage --changedSince=origin/main",
     "typecheck": "tsc --noEmit",
-    "sign": "npx --yes @grafana/sign-plugin@latest"
+    "levitate:is-compatible": "levitate is-compatible --path src/module.ts --target @grafana/data,@grafana/ui,@grafana/runtime",
+    "sign": "sign-plugin"
   },
   "author": "Grafana Labs",
   "license": "Apache-2.0",
@@ -42,7 +43,9 @@
     "@eslint/js": "9.39.4",
     "@grafana/aws-sdk": "0.10.2",
     "@grafana/eslint-config": "9.0.0",
+    "@grafana/levitate": "0.17.2",
     "@grafana/plugin-e2e": "3.4.12",
+    "@grafana/sign-plugin": "3.2.2",
     "@grafana/tsconfig": "2.0.1",
     "@openfeature/core": "1.9.2",
     "@openfeature/web-sdk": "1.7.3",
@@ -101,5 +104,5 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "yarn@4.13.0"
+  "packageManager": "yarn@4.14.0"
 }
