@@ -1,0 +1,1446 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 209,
+      "options": {
+        "content": "# Amazon Redshift Privileges\n\nThis dashboard shows privileges defined in Amazon Redshift.\n\nAccess control to database objects are defined by combination of identity, object and privilege. \n\n- Identity: User, Role, Group\n- Object: Database, Schema, Table/View, Column, Function, Procedure, Language, Datashare, ML Model\n- Privilege: CREATE, SELECT, ALTER, DROP, DELETE, INSERT, ... (depends on the object)\n\nVisit **Amazon Redshift Identities and Objects** dashboard to show identities and database objects in Amazon Redshift. \n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 192,
+      "panels": [
+        {
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 8
+          },
+          "id": 265,
+          "options": {
+            "content": "## Roles assigned to User\n\nThis panel shows roles assigned to a user, including roles inherited from other roles. \n\n- To administrate roles, use [GRANT ROLE](https://docs.aws.amazon.com/redshift/latest/dg/r_GRANT.html), [REVOKE ROLE](https://docs.aws.amazon.com/redshift/latest/dg/r_REVOKE.html).\n- `level` is a number of layers for ancestor roles counted from a user. `level` 0 is for the user itself. `level` 1 is a parent role assigned to the user directly and level 2 is a grandparent role attached to the parent role.\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.4.7",
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Assigned roles including inherited roles. [SVV_USER_GRANTS](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_USER_GRANTS.html), [SVV_ROLE_GRANTS](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_ROLE_GRANTS.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 13
+          },
+          "id": 242,
+          "maxPerRow": 4,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "repeat": "users",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "-- This queries 5 layers of Role for given user. \n-- Searching parent roles for more than 6 layer is disabled for performance reason. You can add more levels if you need to retrive parents over level 6 but keep in mind that this may impact query performance. \n-- Note: The query can be rewritten by recursive CTE but recursive CTE does not work with system table due to restriction of leader node function. \nselect \ncase when level=0 then role_name else repeat(chr(160), level*4) ||  role_name end as role, \nlevel\nfrom (\n\nWITH\ntarget_roles (role_id, role_name) as (\nselect role_id, role_name\nfrom svv_user_grants \nwhere user_name in (${users:singlequote})\n),\n\nancestors1 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 1 as level, role_id::varchar as levelpath\nfrom svv_role_grants\nwhere role_id in (select role_id from target_roles)\n\nunion all\n\n-- get records without parents (top node)\nselect role_id as role_id, role_name as role_name, null as granted_role_id, null as granted_role_name, 1 as level, role_id::varchar as levelpath\nfrom target_roles\nwhere role_id not in (select role_id from svv_role_grants)\n),\n\nancestors2 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 2 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors1 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors1)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 2 as level, levelpath || '@' || granted_role_id\nfrom ancestors1\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors3 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 3 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors2 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors2)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 3 as level, levelpath || '@' || granted_role_id\nfrom ancestors2\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors4 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 4 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors1 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors3)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 4 as level, levelpath || '@' || granted_role_id\nfrom ancestors3\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors5 (role_id, role_name, granted_role_id, granted_role_name, level, levelpath) as (\n-- get records matches with parents\nselect t1.role_id, t1.role_name, t1.granted_role_id, t1.granted_role_name, 5 as level, t2.levelpath || '@' || t1.role_id as levelpath\nfrom svv_role_grants t1\nleft join ancestors1 t2\non t1.role_id = t2.granted_role_id\nwhere t1.role_id in (select granted_role_id from ancestors4)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 5 as level, levelpath || '@' || granted_role_id\nfrom ancestors4\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n)\n\nselect * from ancestors1\nunion all\nselect * from ancestors2\nunion all\nselect * from ancestors3\nunion all\nselect * from ancestors4\nunion all\nselect * from ancestors5\n\nunion all\n\nselect null as role_id, ${users:singlequote} as role_name, null as granted_role_id, null as granted_role_name, 0 as level, '' as levelpath\n\n)\norder by levelpath\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Roles for $users",
+          "type": "table"
+        },
+        {
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 40
+          },
+          "id": 264,
+          "options": {
+            "content": "## Groups assigned to User\n\nThis panel shows groups assigned to a user.\n\n- To administrate users in group, use [ALTER GROUP](https://docs.aws.amazon.com/ja_jp/redshift/latest/dg/r_ALTER_GROUP.html).\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.4.7",
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Groups assigned to a user. [pg_group](https://docs.aws.amazon.com/redshift/latest/dg/r_Groups.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 6,
+            "x": 0,
+            "y": 44
+          },
+          "id": 241,
+          "maxPerRow": 4,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "repeat": "users",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "SELECT\n  t1.groname as group\nFROM pg_group t1, pg_user t2\nWHERE t2.usesysid = ANY(t1.grolist) \nAND t2.usename in (${users:singlequote})\nORDER BY 1\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Groups for $users",
+          "type": "table"
+        }
+      ],
+      "title": "Role and Group assigned to User",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 267,
+      "panels": [
+        {
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 9
+          },
+          "id": 286,
+          "options": {
+            "content": "## User Privileges\n\nThis panel shows privileges configured on users. \n\n- To administrat user privileges, use [ALTER USER](https://docs.aws.amazon.com/redshift/latest/dg/r_ALTER_USER.html).\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.4.7",
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of database user. num_group_assigned, num_roles_granted are the number of groups/roles assigned to each users. [pg_user](https://docs.aws.amazon.com/redshift/latest/dg/r_Users.html), [SVL_USER_INFO](https://docs.aws.amazon.com/redshift/latest/dg/r_SVL_USER_INFO.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "usename"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "Inspect Privileges",
+                        "url": "d/dFIl1Aj7z/amazon-redshift-privileges?orgId=1&${ds:queryparam}&var-users=${__data.fields.usename}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 13,
+            "w": 24,
+            "x": 0,
+            "y": 13
+          },
+          "id": 172,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "frameIndex": 0,
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  t1.usename, \n  decode(t1.usecreatedb, true, 'true', false, 'false') as usecreatedb,\n  decode(t1.usesuper, true, 'true', false, 'false') as usesuper,\n  decode(t1.usecatupd, true, 'true', false, 'false') as usecatupd,\n  nvl(t2.num_groups_assigned, 0) as num_groups_assigned,\n  nvl(t3.num_roles_granted, 0) as num_roles_granted\nfrom pg_user t1\n\n-- # of assigned groups\nleft join (\n  select pg_user.usesysid, count(*) as num_groups_assigned\n  from pg_user, pg_group\n  where pg_user.usesysid = ANY(pg_group.grolist)\n  group by pg_user.usesysid\n  ) t2\non t1.usesysid = t2.usesysid\n\n-- # of assigned roles\nleft join (\n  select pg_user.usesysid, count(*) as num_roles_granted\n  from pg_user\n  where pg_user.usesysid in (select user_id from svv_user_grants)\n  group by pg_user.usesysid\n  ) t3\non t1.usesysid = t3.usesysid\n\nwhere t1.usename in (${users:singlequote})\n;",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  usename, \n  decode(usecreatedb, true, 'true', false, 'false') as usecreatedb,\n  decode(usesuper, true, 'true', false, 'false') as usesuper,\n  decode(usecatupd, true, 'true', false, 'false') as usecatupd,\n  useconnlimit,\n  syslogaccess,\n  sessiontimeout,\n  external_id\nfrom SVL_USER_INFO\nwhere usename not like 'f346c9b8%'  -- ignore internal user\nand usename in (${users:singlequote})\n;",
+              "refId": "B"
+            }
+          ],
+          "title": "User",
+          "transformations": [
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "desc": false,
+                    "field": "usename"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "external_id": 7,
+                  "num_groups_assigned": 8,
+                  "num_roles_granted": 9,
+                  "sessiontimeout": 6,
+                  "syslogaccess": 4,
+                  "usecatupd": 3,
+                  "useconnlimit": 5,
+                  "usecreatedb": 1,
+                  "usename": 0,
+                  "usesuper": 2
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "type": "table"
+        }
+      ],
+      "title": "User Privileges",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 204,
+      "panels": [
+        {
+          "description": "",
+          "gridPos": {
+            "h": 4,
+            "w": 24,
+            "x": 0,
+            "y": 10
+          },
+          "id": 287,
+          "options": {
+            "content": "## Object Privileges\n\nThis section shows privileges granted on database objects. Database objects with no privileges configured does not appear in the panels below. \n\n- To to administrate, use\n[GRANT](https://docs.aws.amazon.com/redshift/latest/dg/r_GRANT.html), \n[REVOKE](https://docs.aws.amazon.com/redshift/latest/dg/r_REVOKE.html).\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.4.7",
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_DATABASE_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_DATABASE_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 13,
+            "w": 24,
+            "x": 0,
+            "y": 14
+          },
+          "id": 205,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n  t1.database_name,\n  t1.identity_type, \n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as usage,\n  case when t3.privilege_type is null then null else 'GRANTED' end as create,\n  case when t4.privilege_type is null then null else 'GRANTED' end as temp\nfrom SVV_DATABASE_PRIVILEGES t1\n\nleft join SVV_DATABASE_PRIVILEGES t2\non t1.database_name = t2.database_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'USAGE'\n\nleft join SVV_DATABASE_PRIVILEGES t3\non t1.database_name = t3.database_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'CREATE'\n\nleft join SVV_DATABASE_PRIVILEGES t4\non t1.database_name = t4.database_name\nand t1.identity_type = t4.identity_type\nand t1.identity_name = t4.identity_name\nand t4.privilege_type = 'TEMP'\n\nwhere t1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n\norder by 1, 2, 3\n;\n",
+              "refId": "B"
+            }
+          ],
+          "title": "Database Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_SCHEMA_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_SCHEMA_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 27
+          },
+          "id": 201,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n\tcurrent_database() as database,\n\tt1.namespace_name as schema,\n\tt1.identity_type,\n\tt1.identity_name,\n\tcase when t2.privilege_type is null then null else 'GRANTED' end as usage,\n\tcase when t3.privilege_type is null then null else 'GRANTED' end as create\nfrom SVV_SCHEMA_PRIVILEGES t1\n\nleft join SVV_SCHEMA_PRIVILEGES t2\non t1.namespace_name = t2.namespace_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'USAGE'\n\nleft join SVV_SCHEMA_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'CREATE'\n\nwhere t1.namespace_name not in ('information_schema', 'pg_catalog', 'catalog_history', 'pg_automv', 'pg_toast', 'pg_internal', 'pg_temp_1')\nand (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4\n;\n",
+              "refId": "B"
+            }
+          ],
+          "title": "Schema Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_RELATION_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RELATION_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 11,
+            "w": 24,
+            "x": 0,
+            "y": 39
+          },
+          "id": 214,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n\tcurrent_database() as database,\n\tt1.namespace_name as schema,\n    t2.table_type as relation_type,\n    t1.relation_name as relation_name,\n    t1.identity_type,\n    t1.identity_name,\n    case when t3.privilege_type is null then null else 'GRANTED' end as insert,\n    case when t4.privilege_type is null then null else 'GRANTED' end as select,\n    case when t5.privilege_type is null then null else 'GRANTED' end as update,\n    case when t6.privilege_type is null then null else 'GRANTED' end as delete,\n    case when t7.privilege_type is null then null else 'GRANTED' end as references,\n    case when t8.privilege_type is null then null else 'GRANTED' end as drop\nfrom SVV_RELATION_PRIVILEGES t1\n\n-- add table_type\nleft join SVV_ALL_TABLES t2\non t1.namespace_name = t2.schema_name\nand t1.relation_name = t2.table_name\nand t2.database_name = current_database()\n\nleft join SVV_RELATION_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.relation_name = t3.relation_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'INSERT'\n\nleft join SVV_RELATION_PRIVILEGES t4\non t1.namespace_name = t4.namespace_name\nand t1.relation_name = t4.relation_name\nand t1.identity_type = t4.identity_type\nand t1.identity_name = t4.identity_name\nand t4.privilege_type = 'SELECT'\n\nleft join SVV_RELATION_PRIVILEGES t5\non t1.namespace_name = t5.namespace_name\nand t1.relation_name = t5.relation_name\nand t1.identity_type = t5.identity_type\nand t1.identity_name = t5.identity_name\nand t5.privilege_type = 'UPDATE'\n\nleft join SVV_RELATION_PRIVILEGES t6\non t1.namespace_name = t6.namespace_name\nand t1.relation_name = t6.relation_name\nand t1.identity_type = t6.identity_type\nand t1.identity_name = t6.identity_name\nand t6.privilege_type = 'DELETE'\n\nleft join SVV_RELATION_PRIVILEGES t7\non t1.namespace_name = t7.namespace_name\nand t1.relation_name = t7.relation_name\nand t1.identity_type = t7.identity_type\nand t1.identity_name = t7.identity_name\nand t7.privilege_type = 'REFERENCES'\n\nleft join SVV_RELATION_PRIVILEGES t8\non t1.namespace_name = t8.namespace_name\nand t1.relation_name = t8.relation_name\nand t1.identity_type = t8.identity_type\nand t1.identity_name = t8.identity_name\nand t8.privilege_type = 'DROP'\n\nwhere t1.namespace_name not in ('information_schema', 'pg_catalog')\nand (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4, 5, 6\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Table/View Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_COLUMN_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_COLUMN_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 50
+          },
+          "id": 220,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n  current_database() as database,\n  t1.namespace_name as schema,\n  t1.relation_name as table,\n  t1.column_name as column,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as select,\n  case when t3.privilege_type is null then null else 'GRANTED' end as update\nfrom SVV_COLUMN_PRIVILEGES t1\n\nleft join SVV_COLUMN_PRIVILEGES t2\non t1.namespace_name = t2.namespace_name\nand t1.relation_name = t2.relation_name\nand t1.column_name = t2.column_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'SELECT'\n\nleft join SVV_COLUMN_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.relation_name = t3.relation_name\nand t1.column_name = t3.column_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'UPDATE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4, 5, 6\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Column Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_FUNCTION_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_FUNCTION_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 59
+          },
+          "id": 218,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n  t1.namespace_name as schema_name,\n  t1.function_name,\n  t1.argument_types,\n  t2.function_type,\n  t1.identity_type,\n  t1.identity_name,\n  case when t3.privilege_type is null then null else 'GRANTED' end as execute\nfrom SVV_FUNCTION_PRIVILEGES t1\n\n-- add function_type\nleft join SVV_REDSHIFT_FUNCTIONS t2\non t1.namespace_name = t2.schema_name\nand t1.function_name = t2.function_name\nand t2.database_name = current_database()\n\nleft join SVV_FUNCTION_PRIVILEGES t3\non t1.namespace_name = t3.namespace_name\nand t1.function_name = t3.function_name\nand t1.argument_types = t3.argument_types\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'EXECUTE'\n\nwhere t2.schema_name not in ('pg_catalog', 'information_schema')\nand t2.database_name = current_database()\nand (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\n\norder by 1, 2, 3, 4, 5, 6\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Function/Procedure Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_LANGUAGE_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_LANUGAGE_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 68
+          },
+          "id": 226,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n  t1.language_name,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as usage\nfrom SVV_LANGUAGE_PRIVILEGES t1\n\nleft join SVV_LANGUAGE_PRIVILEGES t2\non t1.language_name = t2.language_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'USAGE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Language Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_ML_MODEL_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_ML_MODEL_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 77
+          },
+          "id": 232,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n  t1.namespace_name,\n  t1.model_name,\n  t1.model_version,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as execute\nfrom SVV_ML_MODEL_PRIVILEGES t1\n\nleft join SVV_ML_MODEL_PRIVILEGES t2\non t1.namespace_name = t2.namespace_name\nand t1.model_name = t2.model_name\nand t1.model_version = t2.model_version\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'EXECUTE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3, 4, 5\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "ML Model Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_DATASHARE_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_DATASHARE_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 86
+          },
+          "id": 228,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select distinct\n  t1.datashare_name,\n  t1.identity_type,\n  t1.identity_name,\n  case when t2.privilege_type is null then null else 'GRANTED' end as alter,\n  case when t3.privilege_type is null then null else 'GRANTED' end as share\nfrom SVV_DATASHARE_PRIVILEGES t1\n\nleft join SVV_DATASHARE_PRIVILEGES t2\non t1.datashare_name = t2.datashare_name\nand t1.identity_type = t2.identity_type\nand t1.identity_name = t2.identity_name\nand t2.privilege_type = 'ALTER'\n\n\nleft join SVV_DATASHARE_PRIVILEGES t3\non t1.datashare_name = t3.datashare_name\nand t1.identity_type = t3.identity_type\nand t1.identity_name = t3.identity_name\nand t3.privilege_type = 'SHARE'\n\nwhere (\n\tt1.identity_type = 'user' and t1.identity_name in (${users:singlequote})\nor t1.identity_type = 'group' and t1.identity_name in (${groups:singlequote})\nor t1.identity_type = 'role' and t1.identity_name in (${roles:singlequote})\nor t1.identity_type = 'public' and t1.identity_name in ('public')\n)\norder by 1, 2, 3\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Datashare Privileges",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_SYSTEM_PRIVILEGES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_SYSTEM_PRIVILEGES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 95
+          },
+          "id": 230,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "SELECT\n  identity_type,\n  identity_name,\n  system_privilege\nFROM svv_system_privileges\nwhere (\n\tidentity_type = 'user' and identity_name in (${users:singlequote})\nor identity_type = 'group' and identity_name in (${groups:singlequote})\nor identity_type = 'role' and identity_name in (${roles:singlequote})\nor identity_type = 'public' and identity_name in ('public')\n)\nORDER BY 1, 2, 3\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "System Privileges",
+          "type": "table"
+        }
+      ],
+      "title": "Object Privileges",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 10
+      },
+      "id": 245,
+      "panels": [
+        {
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 11
+          },
+          "id": 288,
+          "options": {
+            "content": "### Object Privileges (RLS)\n\nThis section shows [Row-level security (RLS)](https://docs.aws.amazon.com/redshift/latest/dg/t_rls.html) privileges granted on database objects. \n\nTo administrate RLS, use:\n- [ALTER TABLE](https://docs.aws.amazon.com/redshift/latest/dg/r_ALTER_TABLE.html)\n- [CREATE RLS POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_RLS_POLICY.html)\n- [ATTACH RLS POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_ATTACH_RLS_POLICY.html)\n- [DETACH RLS POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_DETACH_RLS_POLICY.html)\n- [DROP RLS POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_DROP_RLS_POLICY.html)\n- [GRANT](https://docs.aws.amazon.com/redshift/latest/dg/r_GRANT.html)\n- [REVOKE](https://docs.aws.amazon.com/redshift/latest/dg/r_REVOKE.html)\n",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.4.7",
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Policies attached to relations and user/roles. Policies not attached are not shown in this panel. [SVV_RLS_RELATION](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RLS_RELATION.html), [SVV_RLS_POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RLS_POLICY.html), [SVV_RLS_ATTACHED_POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RLS_ATTACHED_POLICY.html)",
+          "gridPos": {
+            "h": 22,
+            "w": 24,
+            "x": 0,
+            "y": 19
+          },
+          "id": 289,
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "-- nodes\nselect distinct\n  *\nfrom (\n\nselect \n  granteekind || grantee as id,\n  grantee || ' (' || granteekind || ')' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  polname as id,\n  polname || ' (policy)' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (table)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'table'\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (view)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'view'\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || role_name as id, \n  role_name || ' (role)' as title\nfrom svv_role_grants\n\nunion all \n\nselect\n  'role' || granted_role_name as id, \n  granted_role_name || ' (role)' as title\nfrom svv_role_grants t1\n\nunion all\n\nselect\n  'user' || user_name as id, \n  user_name || ' (user)'as title\nfrom svv_user_grants\n)\n;\n",
+              "refId": "nodes"
+            },
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "-- edges\nselect \n  *\nfrom (\n\nselect\n  relschema || relkind || relname as source,\n  polname as target,\n  relschema || relkind || relname || polname as id\nfrom svv_rls_attached_policy\n\nunion all\n\nselect\n  polname as source,\n  granteekind || grantee as target,\n  granteekind || grantee || polname as id\nfrom svv_rls_attached_policy\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || granted_role_name as source,\n  'role' || role_name as target, \n  role_name || granted_role_name as id\nfrom svv_role_grants\n\nunion all\n\nselect \n  'role' || role_name as source, \n  'user' || user_name as target, \n  user_name || role_name as id\nfrom svv_user_grants\n)\n\nwhere source in (\nselect distinct id\nfrom (\n\nselect \n  granteekind || grantee as id,\n  grantee || ' (' || granteekind || ')' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  polname as id,\n  polname || ' (policy)' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (table)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'table'\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (view)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'view'\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || role_name as id, \n  role_name || ' (role)' as title\nfrom svv_role_grants\n\nunion all \n\nselect\n  'role' || granted_role_name as id, \n  granted_role_name || ' (role)' as title\nfrom svv_role_grants t1\n\nunion all\n\nselect\n  'user' || user_name as id, \n  user_name || ' (user)'as title\nfrom svv_user_grants\n))\n\nand target in (\nselect distinct id\nfrom (\n\nselect \n  granteekind || grantee as id,\n  grantee || ' (' || granteekind || ')' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  polname as id,\n  polname || ' (policy)' as title\nfrom svv_rls_attached_policy\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (table)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'table'\n\nunion all\n\nselect \n  relschema || relkind || relname as id,\n  relschema || '.' || relname || ' (view)' as title\nfrom svv_rls_attached_policy\nwhere relkind = 'view'\n\nunion all\n\n-- add role/user hierarchy\nselect\n  'role' || role_name as id, \n  role_name || ' (role)' as title\nfrom svv_role_grants\n\nunion all \n\nselect\n  'role' || granted_role_name as id, \n  granted_role_name || ' (role)' as title\nfrom svv_role_grants t1\n\nunion all\n\nselect\n  'user' || user_name as id, \n  user_name || ' (user)'as title\nfrom svv_user_grants\n)\n)\n;\n",
+              "refId": "edges"
+            }
+          ],
+          "title": "Policy Attachments",
+          "transformations": [],
+          "type": "nodeGraph"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of RLS policies. CREATE/DROP RLS POLICY to manage. [SVV_RLS_POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RLS_POLICY.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 41
+          },
+          "id": 208,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select \n  poldb,\n  polname,\n  polalias,\n  polatts,\n  polqual,\n  decode(polenabled, true, 'true', false, 'false') as polenabled,\n  polmodifiedby,\n  polmodifiedtime\nfrom svv_rls_policy\n;\n",
+              "refId": "B"
+            }
+          ],
+          "title": "Policies",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of RLS policy attachment. ATTACH/DETACH RLS POLICY to manage. [SVV_RLS_ATTACHED_POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RLS_ATTACHED_POLICY.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 47
+          },
+          "id": 291,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "rawSQL": "select \n  granteekind,\n  grantee,\n  polname,\n  relschema,\n  relname,\n  relkind,\n  grantor,\n  decode(is_pol_on, true, 'true', false, 'false') as is_pol_on,\n  decode(is_rls_on, true, 'true', false, 'false') as is_rls_on\nfrom svv_rls_attached_policy\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Policy Attachments",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of RLS-protected relation. Use ALTER TABLE to manage. [SVV_RLS_POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RLS_POLICY.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 55
+          },
+          "id": 206,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select * from svv_rls_relation;\n",
+              "refId": "B"
+            }
+          ],
+          "title": "RLS protected relation",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_RLS_APPLIED_POLICY](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_RLS_APPLIED_POLICY.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "left",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "recordtime"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 179
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 63
+          },
+          "id": 207,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select \n  recordtime::varchar,\n  pid,\n  xid,\n  query::varchar as query_id,\n  username, \n  datname,\n  relschema,\n  relname,\n  polname,\n  poldefault\nfrom svv_rls_applied_policy\norder by recordtime\n;",
+              "refId": "B"
+            }
+          ],
+          "title": "Queries applied RLS Policy",
+          "type": "table"
+        }
+      ],
+      "title": "Object Privileges (RLS)",
+      "type": "row"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "default",
+          "value": "default"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data source",
+        "multi": false,
+        "name": "ds",
+        "options": [],
+        "query": "grafana-redshift-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-redshift-datasource",
+          "uid": "${ds}"
+        },
+        "definition": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "User",
+        "multi": true,
+        "name": "users",
+        "options": [],
+        "query": {
+          "rawSQL": "select usename\nfrom pg_user\norder by 1\n;"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "allValue": "",
+        "current": {},
+        "datasource": {
+          "type": "grafana-redshift-datasource",
+          "uid": "${ds}"
+        },
+        "definition": "",
+        "description": "Groups user is assigned to",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Group",
+        "multi": true,
+        "name": "groups",
+        "options": [],
+        "query": {
+          "rawSQL": "with groups as (\nSELECT t1.groname\nFROM pg_group t1, pg_user t2\nWHERE t2.usesysid = ANY(t1.grolist) \nAND t2.usename in (${users:singlequote})\n)\n\nselect * from groups\n\nunion all\n\nselect 'N/A' where not exists (select * from groups) -- return at least 1 row for grafana template variable\n\nORDER BY 1\n;"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {},
+        "datasource": {
+          "type": "grafana-redshift-datasource",
+          "uid": "${ds}"
+        },
+        "definition": "",
+        "description": "Roles user is directly assigned or inherited",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Role",
+        "multi": true,
+        "name": "roles",
+        "options": [],
+        "query": {
+          "rawSQL": "-- This queries 5 layers of Role for given user. \n-- Searching parent roles for more than 6 layer is disabled for performance reason. You can uncomment queries if you need to retrive parents over level 6 but keep in mind that this may impact query performance. \n-- Note: The query can be rewritten by recursive CTE but recursive CTE does not work with system table due to restriction of leader node function. \n\nWITH roles as (\n\nWITH\ntarget_roles (role_id, role_name) as (\nselect role_id, role_name \nfrom svv_user_grants \nwhere user_name in (${users:singlequote})\n),\n\nancestors1 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 1 as level\nfrom svv_role_grants\nwhere role_id in (select role_id from target_roles)\n\nunion all\n\n-- get records without parents (top node)\nselect role_id as role_id, role_name as role_name, null as granted_role_id, null as granted_role_name, 1 as level\nfrom target_roles\nwhere role_id not in (select role_id from svv_role_grants)\n),\n\nancestors2 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 2 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors1)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 2 as level\nfrom ancestors1\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors3 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 3 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors2)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 3 as level\nfrom ancestors2\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors4 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 4 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors3)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 4 as level\nfrom ancestors3\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors5 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 5 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors4)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 5 as level\nfrom ancestors4\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors6 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 6 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors5)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 6 as level\nfrom ancestors5\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors7 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 7 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors6)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 7 as level\nfrom ancestors6\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors8 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 8 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors7)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 8 as level\nfrom ancestors7\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors9 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 9 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors8)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 9 as level\nfrom ancestors8\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n),\n\nancestors10 (role_id, role_name, granted_role_id, granted_role_name, level) as (\n-- get records matches with parents\nselect role_id, role_name, granted_role_id, granted_role_name, 10 as level\nfrom svv_role_grants\nwhere role_id in (select granted_role_id from ancestors9)\n\nunion all\n\n-- get records without parents (top node)\nselect granted_role_id as role_id, granted_role_name as role_name, null as granted_role_id, null granted_role_name, 10 as level\nfrom ancestors9\nwhere granted_role_id is not null\nand granted_role_id not in (select role_id from svv_role_grants)\n)\n\nselect * from ancestors1\nunion all\nselect * from ancestors2\nunion all\nselect * from ancestors3\nunion all\nselect * from ancestors4\nunion all\nselect * from ancestors5\n--union all\n--select * from ancestors6\n--union all\n--select * from ancestors7\n--union all\n--select * from ancestors8\n--union all\n--select * from ancestors9\n--union all\n--select * from ancestors10\n\n)\n\nselect role_name from roles\nunion all \nselect 'N/A' as role_name where not exists (select role_name from roles)  -- return at least 1 row for grafana template variable\n\norder by role_name\n;"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": []
+  },
+  "timezone": "",
+  "title": "Amazon Redshift Privileges",
+  "uid": "dFIl1Aj7z",
+  "version": 24,
+  "weekStart": ""
+}

@@ -1,0 +1,3270 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": "${ds}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 82,
+      "panels": [],
+      "title": "Usage Notes",
+      "type": "row"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "",
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 84,
+      "options": {
+        "content": "# Read Me\n\nTo get the data about cluster metrics the dashboard requires a connection with superuser privileges. It is recommended to create a dedicated read-only user for that as well as assigning it to a query group restricting concurrency:\n\n```sql\nCREATE USER grafana PASSWORD '(place your password here)' CREATEUSER;\nALTER USER grafana SET readonly TO TRUE;\nALTER USER grafana SET query_group TO 'superuser';\n```\n\nPlease note that despite the 'superuser' query group is specified in the example, it is generally recommended creating a separate query group for this purpose.\n\nPlease keep in mind that the dashboard queries Amazon Redshift directly. As such, it is recommended following common Amazon Redshift best practices, and specifically avoiding too-frequent refreshes.\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "rawSQL": "",
+          "refId": "A"
+        }
+      ],
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "datasource": "${ds}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 2,
+      "panels": [],
+      "title": "General Info",
+      "type": "row"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Amazon Redshift version",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 0,
+        "y": 10
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/.*/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT regexp_substr(version(), ' \\\\S+$')",
+          "refId": "A"
+        }
+      ],
+      "title": "Version",
+      "type": "stat"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Compute node type",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 3,
+        "y": 10
+      },
+      "id": 9,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/.*/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    CASE\n        WHEN capacity = 190633  AND NOT is_nvme    THEN 'dc1.large'\n        WHEN capacity = 380319                     THEN 'dc1.8xlarge'\n        WHEN capacity = 190633  AND is_nvme        THEN 'dc2.large'\n        WHEN capacity = 760956                     THEN 'dc2.8xlarge'\n        WHEN capacity = 726296                     THEN 'dc2.8xlarge'\n        WHEN capacity = 952455                     THEN 'ds2.xlarge' \n        WHEN capacity = 945026                     THEN 'ds2.8xlarge' \n        WHEN capacity = 954367  AND part_count = 1 THEN 'ra3.xlplus'\n        WHEN capacity = 3339176 AND part_count = 1 THEN 'ra3.4xlarge' \n        WHEN capacity = 3339176 AND part_count = 4 THEN 'ra3.16xlarge' \n        ELSE 'unknown' \n    END AS v\nFROM (\n    SELECT\n        capacity,\n        mount LIKE '/dev/nvme%' AS is_nvme,\n        count(1) AS part_count\n    FROM stv_partitions\n    WHERE host = 0 AND owner = 0 \n    GROUP BY 1, 2\n    ORDER BY 1 DESC\n    LIMIT 1\n) AS s\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Node Type",
+      "transformations": [],
+      "type": "stat"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Shows if AQUA is enabled",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "string"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 6,
+        "y": 10
+      },
+      "id": 40,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/.*/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSHOW activate_aqua",
+          "refId": "A"
+        }
+      ],
+      "title": "AQUA",
+      "type": "stat"
+    },
+    {
+      "datasource": "-- Dashboard --",
+      "description": "Workload management mode",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "options": {
+                "100": {
+                  "index": 0,
+                  "text": "auto"
+                }
+              },
+              "type": "value"
+            },
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "index": 1,
+                  "text": "manual"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 9,
+        "y": 10
+      },
+      "id": 5,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/.*/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "panelId": 39,
+          "rawSQL": "",
+          "refId": "A"
+        }
+      ],
+      "title": "WLM Mode",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": ["#"]
+            }
+          }
+        },
+        {
+          "id": "filterByValue",
+          "options": {
+            "filters": [
+              {
+                "config": {
+                  "id": "equal",
+                  "options": {
+                    "value": "100"
+                  }
+                },
+                "fieldName": "#"
+              }
+            ],
+            "match": "any",
+            "type": "include"
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Number of compute nodes",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 10
+      },
+      "id": 21,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/^Count$/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    node::text AS node, \n    (1.0 * used/capacity)::numeric(6, 2) AS utilization,\n    capacity,\n    used\nFROM stv_node_storage_capacity \nORDER BY utilization DESC, node::integer",
+          "refId": "A"
+        }
+      ],
+      "title": "Number of Nodes",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": ["node"]
+            }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": ["count"]
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "-- Dashboard --",
+      "description": "Total compute node storage capacity, including the capacity reserved for internal data. Total used compute node storage, including internal data.",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 1,
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "decmbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "utilization"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percentunit"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 3,
+        "x": 15,
+        "y": 10
+      },
+      "id": 37,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "panelId": 21,
+          "rawSQL": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Storage Capacity",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": ["used", "capacity"]
+            }
+          }
+        },
+        {
+          "id": "reduce",
+          "options": {
+            "includeTimeField": false,
+            "mode": "reduceFields",
+            "reducers": ["sum"]
+          }
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": "-- Dashboard --",
+      "description": "Storage capacity utilization % for each compute nodes",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [],
+          "max": 1,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "#EAB839",
+                "value": 0.7
+              },
+              {
+                "color": "red",
+                "value": 0.9
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "node"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "none"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 10
+      },
+      "id": 8,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/^utilization$/",
+          "values": true
+        },
+        "showUnfilled": true,
+        "text": {}
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "panelId": 21,
+          "rawSQL": "",
+          "refId": "A"
+        }
+      ],
+      "title": "Nodes by Storage Utilization",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "include": {
+              "names": ["utilization", "node"]
+            }
+          }
+        }
+      ],
+      "type": "bargauge"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Workload management queues with their characteristics",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "-1": {
+                  "index": 0,
+                  "text": "auto"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "workmem"
+            },
+            "properties": [
+              {
+                "id": "custom.displayMode",
+                "value": "gradient-gauge"
+              },
+              {
+                "id": "custom.width",
+                "value": 120
+              },
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "timeout"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "custom.width"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "slots"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "concurrency_scaling"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "priority"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 75
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "#"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 14
+      },
+      "id": 39,
+      "options": {
+        "showHeader": true,
+        "sortBy": []
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 1,
+          "hide": false,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    service_class::text AS \"#\",\n    name,\n    num_query_tasks AS slots,\n    query_working_mem AS workmem,\n    max_execution_time AS timeout,\n    trim(concurrency_scaling) AS concurrency_scaling,\n    trim(query_priority) AS priority\nFROM stv_wlm_service_class_config\nWHERE service_class > 4\nORDER BY service_class DESC",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "WLM Queue Configuration",
+      "transformations": [],
+      "type": "table"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Total slice count on all the nodes",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 14
+      },
+      "id": 22,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/.*/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT count(1) FROM stv_slices",
+          "refId": "A"
+        }
+      ],
+      "title": "Number of Slices",
+      "type": "stat"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Number of currently authorized user connections to the cluster",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 3,
+        "x": 12,
+        "y": 18
+      },
+      "id": 43,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "/.*/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.2.3",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "hide": true,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT count(1) FROM pg_stat_activity \nWHERE \n    datname NOT IN ('padb_harvest', 'template0', 'template1') AND \n    usename != 'rdsdb' AND\n    procpid != pg_backend_pid()",
+          "refId": "A"
+        }
+      ],
+      "title": "Open Connections",
+      "type": "stat"
+    },
+    {
+      "datasource": "${ds}",
+      "description": "Change in the number of database connections, not the actual connection number",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 9,
+        "x": 15,
+        "y": 18
+      },
+      "id": 42,
+      "interval": "1s",
+      "maxDataPoints": 100,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "right"
+        },
+        "tooltip": {
+          "mode": "multi"
+        }
+      },
+      "pluginVersion": "8.0.6",
+      "targets": [
+        {
+          "fillMode": {
+            "mode": 0
+          },
+          "format": 0,
+          "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(recordtime, $__interval),\n    sum(opened) AS opened,\n    sum(closed) AS closed\nFROM (\n    SELECT\n        recordtime,\n        CASE WHEN event = 'initiating session' THEN 1 ELSE 0 END AS opened,\n        CASE WHEN event = 'disconnecting session' THEN -1 ELSE 0 END AS closed\n    FROM stl_connection_log\n    WHERE\n        event IN ('initiating session', 'disconnecting session') AND\n        dbname NOT IN ('padb_harvest', 'template0', 'template1') AND username != 'rdsdb' AND\n        $__timeFilter(recordtime)\n) AS d\nGROUP BY 1\nORDER BY 1\n",
+          "refId": "A"
+        }
+      ],
+      "timeFrom": null,
+      "title": "Opened and Closed Connections",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${ds}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 22
+      },
+      "id": 46,
+      "panels": [
+        {
+          "datasource": "${ds}",
+          "description": "Top tables by number of scans",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  other tables"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "rgb(80, 80, 100)",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 22
+          },
+          "id": 122,
+          "interval": "1s",
+          "maxDataPoints": 100,
+          "options": {
+            "legend": {
+              "calcs": ["sum"],
+              "displayMode": "table",
+              "placement": "right"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    \"time\",\n    CASE WHEN rnk <= 5 THEN rnk::text || ': ' || table_name ELSE 'other tables' END AS \"table\",\n    sum(cnt) AS \" \"\nFROM (\n    SELECT\n        \"time\",\n        table_name,\n        cnt,\n        total,\n        dense_rank() OVER (ORDER BY total DESC, table_name) AS rnk\n    FROM (\n        SELECT \n            \"time\",\n            table_name,\n            cnt,\n            sum(cnt) OVER (PARTITION BY table_name) AS total\n        FROM (\n            SELECT\n                $__timeGroup(s.endtime, $__interval),\n                n.nspname || '.' || c.relname AS table_name,\n                count(DISTINCT query) AS cnt\n            FROM stl_scan AS s\n            JOIN pg_class AS c ON c.oid = s.tbl\n            JOIN pg_namespace AS n ON n.oid = c.relnamespace\n            WHERE\n                s.type = 2 AND\n                trim(perm_table_name) != 'Internal Worktable' AND\n                perm_table_name NOT LIKE 'volt_tt_%' AND\n                $__timeFilter(s.endtime)\n            GROUP BY 1, 2\n            ORDER BY 1, 2\n        ) AS table_cnt\n    ) AS table_cnt_total\n) AS table_cnt_total_rnk\nGROUP BY 1, 2\nORDER by 1, 2\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Top Tables by Scans",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${ds}",
+          "description": "Various info and statistics on the database tables. Can be sorted and filtered by any column. By default it is sorted by size in the descendant order.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true,
+                "minWidth": 100
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "rows"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "short"
+                  },
+                  {
+                    "id": "custom.minWidth",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "unsorted_pct"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "custom.minWidth",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "vacuum_sort_benefit_pct"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "percent"
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "continuous-GrYlRd"
+                    }
+                  },
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "custom.minWidth",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "stats_off"
+                },
+                "properties": [
+                  {
+                    "id": "max",
+                    "value": 100
+                  },
+                  {
+                    "id": "custom.displayMode",
+                    "value": "gradient-gauge"
+                  },
+                  {
+                    "id": "color",
+                    "value": {
+                      "mode": "thresholds"
+                    }
+                  },
+                  {
+                    "id": "thresholds",
+                    "value": {
+                      "mode": "absolute",
+                      "steps": [
+                        {
+                          "color": "green",
+                          "value": null
+                        },
+                        {
+                          "color": "#EAB839",
+                          "value": 10
+                        },
+                        {
+                          "color": "red",
+                          "value": 20
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "id": "custom.minWidth",
+                    "value": 70
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "size"
+                },
+                "properties": [
+                  {
+                    "id": "unit",
+                    "value": "decmbytes"
+                  },
+                  {
+                    "id": "custom.minWidth",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "schema"
+                },
+                "properties": [
+                  {
+                    "id": "custom.minWidth",
+                    "value": 80
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "table"
+                },
+                "properties": [
+                  {
+                    "id": "custom.minWidth",
+                    "value": 130
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 22
+          },
+          "id": 114,
+          "options": {
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": true,
+                "displayName": "size"
+              }
+            ]
+          },
+          "pluginVersion": "8.2.3",
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT \n    schema, \n    \"table\", \n    size, \n    tbl_rows AS rows, \n    unsorted AS unsorted_pct, \n    stats_off, \n    vacuum_sort_benefit AS vacuum_sort_benefit_pct\nFROM svv_table_info\nORDER BY size DESC",
+              "refId": "A"
+            }
+          ],
+          "title": "Table Information",
+          "type": "table"
+        }
+      ],
+      "title": "Schema Insights",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${ds}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 23
+      },
+      "id": 45,
+      "panels": [
+        {
+          "datasource": "${ds}",
+          "description": "Query count grouped by processing time. The processing time doesn't include lock wait, and other pre- queuing steps.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "normal"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "1m-10m"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "10s-1m"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "<10s"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "10m-1h"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "1h+"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 23
+          },
+          "id": 50,
+          "interval": "1s",
+          "maxDataPoints": 200,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "pluginVersion": "8.0.6",
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 1,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(end_time, $__interval),\n    sum(CASE WHEN total_time >= 1000000*60*60::bigint THEN 1 ELSE 0 END) AS \"1h+\",\n    sum(CASE WHEN total_time >= 1000000*10*60 AND total_time < 1000000*60*60::bigint THEN 1 ELSE 0 END) AS \"10m-1h\",\n    sum(CASE WHEN total_time >= 1000000*60 AND total_time < 1000000*10*60 THEN 1 ELSE 0 END) AS \"1m-10m\",\n    sum(CASE WHEN total_time >= 1000000*10 AND total_time < 1000000*60 THEN 1 ELSE 0 END) AS \"10s-1m\",\n    sum(CASE WHEN total_time < 1000000*10 THEN 1 ELSE 0 END) AS \"<10s\",\n    1.0 * (\n        sum(CASE WHEN wlm_query IS NULL THEN 1 ELSE 0 END) /\n        nullif(sum(CASE WHEN query IS NOT NULL THEN 1 ELSE 0 END), 0)\n    ) AS result_cache_hit_pct,\n    sum(aborted) AS incomplete_queries\nFROM (\n    SELECT \n        coalesce(service_class_end_time, endtime) AS end_time,\n        datediff(\n            microsecond, \n            coalesce(service_class_start_time, starttime), \n            coalesce(service_class_end_time, endtime)\n        ) AS total_time,\n        swq.query AS wlm_query,\n        sq.query AS query,\n        aborted\n    FROM (\n        SELECT * FROM stl_query\n        WHERE userid != 1 AND $__timeFilter(endtime)\n    ) AS sq\n    FULL JOIN (\n        SELECT * FROM stl_wlm_query\n        WHERE service_class > 4 AND userid != 1 AND $__timeFilter(exec_end_time)\n    ) AS swq ON \n        swq.query = sq.query\n) AS s\nGROUP BY 1\nORDER BY 1\n",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Query Count by Processing Time",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "<10s", "10s-1m", "1m-10m", "10m-1h", "1h+"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${ds}",
+          "description": "Total size of the data blocks read by statements ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "decmbytes"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 23
+          },
+          "id": 53,
+          "interval": "1s",
+          "maxDataPoints": 200,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(starttime, $__interval),\n    sum(blocks_read) AS data_size_read,\n    sum(rows) AS scaned_rows,\n    count(DISTINCT query) AS writing_intermediate_to_disk\nFROM (\n    SELECT\n        starttime,\n\n        CASE WHEN segment = -1 AND step_type = -1 AND step = -1 AND blocks_read > 0 THEN blocks_read\n        ELSE NULL END AS blocks_read,\n\n        CASE WHEN segment > -1 AND step_type = 1 AND step > -1 AND rows > 0 THEN rows\n        ELSE NULL END AS rows,\n\n        CASE WHEN segment = -1 AND step_type = -1 AND step = -1 AND blocks_to_disk > 0 THEN query\n        ELSE NULL END AS query\n    FROM stl_query_metrics\n    WHERE\n        service_class > 4 AND\n        $__timeFilter(starttime)\n) AS s\nGROUP BY 1\nORDER BY 1",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Size of Data Read by Statements",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "data_size_read"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Percentage of queries used result cache instead of execution",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 31
+          },
+          "id": 52,
+          "interval": null,
+          "maxDataPoints": null,
+          "options": {
+            "legend": {
+              "calcs": ["mean"],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "panelId": 50,
+              "rawSQL": "",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Result Cache Hit Percentage",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["result_cache_hit_pct", "time"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Number of rows processed by scan steps",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 31
+          },
+          "id": 55,
+          "interval": null,
+          "maxDataPoints": null,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "panelId": 53,
+              "rawSQL": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Rows Scanned by Statements",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "scaned_rows"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Number of queries stopped by the system, canceled by users, or not accomplished returning results",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "incomplete_queries"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 39
+          },
+          "id": 51,
+          "interval": null,
+          "maxDataPoints": null,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "panelId": 50,
+              "rawSQL": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Incomplete Queries",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "incomplete_queries"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Number of statements using disk to write intermediate results to disk",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "red",
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "writing_intermediate_to_disk"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 39
+          },
+          "id": 54,
+          "interval": null,
+          "maxDataPoints": null,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "panelId": 53,
+              "queryType": "randomWalk",
+              "refId": "A"
+            }
+          ],
+          "title": "Statements Writing Intermediate Results to Disk",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "writing_intermediate_to_disk"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Statement Execution",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${ds}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 48,
+      "panels": [
+        {
+          "datasource": "${ds}",
+          "description": "Time spent waiting in the commit queue",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 24
+          },
+          "id": 67,
+          "interval": "1s",
+          "maxDataPoints": 200,
+          "options": {
+            "legend": {
+              "calcs": ["max"],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(endtime, $__interval),\n    avg(datediff(\n        microsecond, \n        CASE WHEN startqueue < '2010-01-01' THEN startwork ELSE startqueue END, \n        startwork\n    )) AS avg_commit_wait_time,\n    max(datediff(\n        microsecond, \n        CASE WHEN startqueue < '2010-01-01' THEN startwork ELSE startqueue END, \n        startwork\n    )) AS max_commit_wait_time,\n    avg(datediff(microsecond, startwork, endtime)) AS avg_commit_time,\n    max(datediff(microsecond, startwork, endtime)) AS max_commit_time,\n    avg(newblocks) AS avg_new_permanant_blocks,\n    max(newblocks) AS max_new_permanant_blocks,\n    avg(dirtyblocks) AS avg_to_be_written_blocks,\n    max(dirtyblocks) AS max_to_be_written_blocks,\n    avg(queuelen) AS avg_commit_queue_length,\n    max(queuelen) AS max_commit_queue_length\nFROM stl_commit_stats\nWHERE\n    $__timeFilter(endtime)\nGROUP BY 1\nORDER BY 1",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Commit Wait Time",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "max_commit_wait_time", "avg_commit_wait_time"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Time spent on commit operations",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 24
+          },
+          "id": 131,
+          "options": {
+            "legend": {
+              "calcs": ["max"],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "panelId": 67,
+              "rawSQL": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Commit Time",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "avg_commit_time", "max_commit_time"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Number of new permanent blocks at the time of the commits",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 32
+          },
+          "id": 69,
+          "options": {
+            "legend": {
+              "calcs": ["max"],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "panelId": 67,
+              "rawSQL": "",
+              "refId": "A"
+            }
+          ],
+          "title": "New Permanent Blocks",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "avg_new_permanant_blocks", "max_new_permanant_blocks"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Number of blocks that had to be written as part of the commits",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 32
+          },
+          "id": 70,
+          "options": {
+            "legend": {
+              "calcs": ["max"],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "panelId": 67,
+              "rawSQL": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Blocks to be Written",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "avg_to_be_written_blocks", "max_to_be_written_blocks"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "-- Dashboard --",
+          "description": "Number of transactions in the commit queue",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 0,
+            "y": 40
+          },
+          "id": 57,
+          "interval": null,
+          "maxDataPoints": null,
+          "options": {
+            "legend": {
+              "calcs": ["max"],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "panelId": 67,
+              "rawSQL": "",
+              "refId": "A"
+            }
+          ],
+          "title": "Commit Queue Length",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "max_commit_queue_length"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        }
+      ],
+      "title": "Transaction Processing",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "datasource": "${ds}",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 25
+      },
+      "id": 47,
+      "panels": [
+        {
+          "datasource": "${ds}",
+          "description": "Queue wait time percentiles - $service_class",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "p100"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "p75"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "p50"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 0,
+            "y": 25
+          },
+          "id": 63,
+          "interval": "1s",
+          "maxDataPoints": 100,
+          "maxPerRow": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "repeat": "service_class",
+          "repeatDirection": "v",
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(queue_end_time, $__interval),\n    percentile_cont(1)    WITHIN GROUP (ORDER BY total_queue_time) AS p100,\n    percentile_cont(0.75) WITHIN GROUP (ORDER BY total_queue_time) AS p75,\n    percentile_cont(0.50) WITHIN GROUP (ORDER BY total_queue_time) AS p50\nFROM stl_wlm_query\nWHERE\n    service_class = split_part(${service_class:singlequote}, ':', 1) AND\n    $__timeFilter(queue_end_time)\nGROUP BY 1\nORDER BY 1",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Queue Wait Time - $service_class",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "p100", "p75", "p50"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${ds}",
+          "description": "Execution time percentiles - $service_class",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "µs"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "p100"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "p75"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "p50"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 6,
+            "x": 6,
+            "y": 25
+          },
+          "id": 74,
+          "interval": "1s",
+          "maxDataPoints": 100,
+          "maxPerRow": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "repeat": "service_class",
+          "repeatDirection": "v",
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(exec_end_time, $__interval),\n    percentile_cont(1)    WITHIN GROUP (ORDER BY total_exec_time) AS p100,\n    percentile_cont(0.75) WITHIN GROUP (ORDER BY total_exec_time) AS p75,\n    percentile_cont(0.50) WITHIN GROUP (ORDER BY total_exec_time) AS p50\nFROM stl_wlm_query\nWHERE\n    service_class = split_part(${service_class:singlequote}, ':', 1) AND\n    $__timeFilter(exec_end_time)\nGROUP BY 1\nORDER BY 1",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Execution Time - $service_class",
+          "transformations": [
+            {
+              "id": "filterFieldsByName",
+              "options": {
+                "include": {
+                  "names": ["time", "p100", "p75", "p50"]
+                }
+              }
+            }
+          ],
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${ds}",
+          "description": "Number of queries in the queue by priority. This number doesn't include queries which started before and ended after the time window.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  5: Highest"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  4: High"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  3: Normal"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  2: Low"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  1: Lowest"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  0: n/a"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 25
+          },
+          "id": 91,
+          "interval": "1s",
+          "maxDataPoints": 200,
+          "maxPerRow": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT \n    \"time\",\n    CASE query_priority \n        WHEN 'Highest' THEN 5\n        WHEN 'High'    THEN 4\n        WHEN 'Normal'  THEN 3\n        WHEN 'Low'     THEN 2\n        WHEN 'Lowest'  THEN 1\n        ELSE 0\n    END || ': ' || query_priority,\n    cnt + CASE WHEN min_cnt > 0 THEN 0 ELSE -min_cnt END AS \" \"\nFROM (\n    SELECT \n        \"time\",\n        query_priority,\n        cnt,\n        min(cnt) OVER (PARTITION BY query_priority) AS min_cnt\n    FROM (\n        SELECT \n            \"time\",\n            query_priority,\n            sum(cnt) OVER (PARTITION BY query_priority ORDER BY \"time\" ROWS UNBOUNDED PRECEDING) AS cnt\n        FROM (\n            SELECT\n                \"time\",\n                coalesce(started_queuing.query_priority, ended_queuing.query_priority) AS query_priority,\n                coalesce(started_queuing.cnt, 0) - coalesce(ended_queuing.cnt, 0) AS cnt\n            FROM (\n                SELECT\n                    $__timeGroup(queue_start_time, $__interval),\n                    query_priority,\n                    count(1) AS cnt\n                FROM stl_wlm_query\n                WHERE $__timeFilter(queue_start_time)\n                GROUP BY 1, 2\n            ) AS started_queuing\n            FULL JOIN (\n                SELECT\n                    $__timeGroup(queue_end_time, $__interval),\n                    query_priority,\n                    count(1) AS cnt\n                FROM stl_wlm_query\n                WHERE $__timeFilter(queue_end_time)\n                GROUP BY 1, 2\n            ) AS ended_queuing USING (\"time\", query_priority)\n        ) AS cont_queued\n    ) AS min_cont_queued\n) AS adj_cont_queued\nORDER BY 1, 2\n",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Queued Queries by Priority",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${ds}",
+          "description": "Number of queries being executed by priority. This number doesn't include queries which started before and ended after the time window.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "short"
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  5: Highest"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "red",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  4: High"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "orange",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  3: Normal"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "yellow",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  2: Low"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "green",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  1: Lowest"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "blue",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "  0: n/a"
+                },
+                "properties": [
+                  {
+                    "id": "color",
+                    "value": {
+                      "fixedColor": "purple",
+                      "mode": "fixed"
+                    }
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 33
+          },
+          "id": 99,
+          "interval": "1s",
+          "maxDataPoints": 200,
+          "maxPerRow": 4,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT \n    \"time\",\n    CASE query_priority \n        WHEN 'Highest' THEN 5\n        WHEN 'High'    THEN 4\n        WHEN 'Normal'  THEN 3\n        WHEN 'Low'     THEN 2\n        WHEN 'Lowest'  THEN 1\n        ELSE 0\n    END || ': ' || query_priority,\n    cnt + CASE WHEN min_cnt > 0 THEN 0 ELSE -min_cnt END AS \" \"\nFROM (\n    SELECT \n        \"time\",\n        query_priority,\n        cnt,\n        min(cnt) OVER (PARTITION BY query_priority) AS min_cnt\n    FROM (\n        SELECT \n            \"time\",\n            query_priority,\n            sum(cnt) OVER (PARTITION BY query_priority ORDER BY \"time\" ROWS UNBOUNDED PRECEDING) AS cnt\n        FROM (\n            SELECT\n                \"time\",\n                coalesce(started_executing.query_priority, ended_executing.query_priority) AS query_priority,\n                coalesce(started_executing.cnt, 0) - coalesce(ended_executing.cnt, 0) AS cnt\n            FROM (\n                SELECT\n                    $__timeGroup(exec_start_time, $__interval),\n                    query_priority,\n                    count(1) AS cnt\n                FROM stl_wlm_query\n                WHERE $__timeFilter(exec_start_time)\n                GROUP BY 1, 2\n            ) AS started_executing\n            FULL JOIN (\n                SELECT\n                    $__timeGroup(exec_end_time, $__interval),\n                    query_priority,\n                    count(1) AS cnt\n                FROM stl_wlm_query\n                WHERE $__timeFilter(exec_end_time)\n                GROUP BY 1, 2\n            ) AS ended_executing USING (\"time\", query_priority)\n        ) AS cont_executed\n    ) AS min_cont_executed\n) AS adj_cont_executed\nORDER BY 1",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Executing Queries by Priority",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "${ds}",
+          "description": "Percentage of queries executed in Concurrency Scaling clusters per service class",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "drawStyle": "line",
+                "fillOpacity": 100,
+                "gradientMode": "opacity",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "decimals": 0,
+              "mappings": [],
+              "max": 1,
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green",
+                    "value": null
+                  }
+                ]
+              },
+              "unit": "percentunit"
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 12,
+            "x": 12,
+            "y": 41
+          },
+          "id": 106,
+          "interval": "1s",
+          "maxDataPoints": 200,
+          "maxPerRow": 4,
+          "options": {
+            "legend": {
+              "calcs": ["mean"],
+              "displayMode": "list",
+              "placement": "bottom"
+            },
+            "tooltip": {
+              "mode": "multi"
+            }
+          },
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "fillMode": {
+                "mode": 0
+              },
+              "format": 0,
+              "rawSQL": "-- grafana-redshift-default-dashboard\nSELECT\n    $__timeGroup(exec_end_time, $__interval),\n    service_class || ': ' || name,\n    1.0*sum(CASE WHEN concurrency_scaling_status = 1 THEN 1 ELSE 0 END)/count(1) AS \" \"\nFROM stl_wlm_query\nJOIN stl_query USING (query)\nJOIN stv_wlm_service_class_config USING (service_class)\nWHERE\n    service_class > 4 AND\n    $__timeFilter(exec_end_time)\nGROUP BY 1, 2\nORDER BY 1, 2",
+              "refId": "A"
+            }
+          ],
+          "timeFrom": null,
+          "title": "Percentage of Queries in Concurrency Scaling",
+          "type": "timeseries"
+        }
+      ],
+      "title": "Workload Management",
+      "type": "row"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 31,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "default",
+          "value": "default"
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data source",
+        "multi": false,
+        "name": "ds",
+        "options": [],
+        "query": "grafana-redshift-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": true,
+          "text": ["All"],
+          "value": ["$__all"]
+        },
+        "datasource": "${ds}",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": true,
+        "label": null,
+        "multi": true,
+        "name": "service_class",
+        "options": [],
+        "query": {
+          "rawSQL": "SELECT service_class || ': ' || name\nFROM stv_wlm_service_class_config\nWHERE service_class > 4\nORDER BY service_class DESC"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": []
+  },
+  "timezone": "",
+  "title": "Amazon Redshift",
+  "uid": "",
+  "version": 219
+}

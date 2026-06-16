@@ -1,0 +1,2069 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": true,
+      "icon": "dashboard",
+      "includeVars": true,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "",
+      "tooltip": "",
+      "type": "dashboards",
+      "url": ""
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 209,
+      "links": [],
+      "options": {
+        "content": "# Amazon Redshift Identities and Objects\n\nThis dashboard shows identites and database objects in Amazon Redshift. \n\nAccess control to database objects are defined by combination of identity, object and privilege. \n\n- Identity: User, Role, Group\n- Object: Database, Schema, Table/View, Column, Function, Procedure, Language, Datashare, ML Model\n- Privilege: CREATE, SELECT, ALTER, DROP, DELETE, INSERT, ... (depends on the object)\n\nVisit **Amazon Redshift Privileges** dashboard to show privileges in Amazon Redshift. \n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "8.4.7",
+      "type": "text"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 7
+      },
+      "id": 192,
+      "panels": [
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 0,
+            "y": 8
+          },
+          "id": 181,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from pg_user;",
+              "refId": "A"
+            }
+          ],
+          "title": "User",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 8,
+            "y": 8
+          },
+          "id": 189,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from svv_roles;",
+              "refId": "A"
+            }
+          ],
+          "title": "Role",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 8,
+            "x": 16,
+            "y": 8
+          },
+          "id": 188,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from pg_group;",
+              "refId": "A"
+            }
+          ],
+          "title": "Group",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Switch Data source to change current database. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 0,
+            "y": 13
+          },
+          "id": 183,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "/^current_database$/",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select current_database();",
+              "refId": "A"
+            }
+          ],
+          "title": "Current Database",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 4,
+            "y": 13
+          },
+          "id": 187,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from svv_redshift_databases;",
+              "refId": "A"
+            }
+          ],
+          "title": "Database",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or local schemas in current database.",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 8,
+            "y": 13
+          },
+          "id": 186,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from svv_all_schemas\nwhere schema_type = 'local'\nand database_name = current_database()\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Local Schema",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or external schemas in current database",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 12,
+            "y": 13
+          },
+          "id": 215,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from svv_all_schemas\nwhere schema_type = 'external'\nand database_name = current_database()\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Extrenal Schema",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or  local tables in current database. System tables are not included. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 16,
+            "y": 13
+          },
+          "id": 185,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from SVV_ALL_TABLES\nwhere table_type = 'TABLE'\nand schema_name not in ('pg_catalog', 'information_schema')\nand database_name = current_database()\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Local Table",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or external tables in current database. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 20,
+            "y": 13
+          },
+          "id": 216,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from SVV_ALL_TABLES\nwhere table_type = 'EXTERNAL TABLE'\nand schema_name not in ('pg_catalog', 'information_schema')\nand database_name = current_database()\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "External Table",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or views in current database. System views are not included. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 0,
+            "y": 18
+          },
+          "id": 190,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from SVV_ALL_TABLES\nwhere table_type = 'VIEW'\nand schema_name not in ('pg_catalog', 'information_schema')\nand database_name = current_database()\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "View",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or functions in current database. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 4,
+            "y": 18
+          },
+          "id": 221,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from SVV_REDSHIFT_FUNCTIONS\nwhere schema_name not in ('pg_catalog', 'information_schema')\nand function_type in ('REGULAR FUNCTION', 'AGGREGATE FUNCTION', 'AGGREGATED FUNCTION')\nand database_name = current_database()\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Function",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or procedures in current database. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 8,
+            "y": 18
+          },
+          "id": 222,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*) from SVV_REDSHIFT_FUNCTIONS\nwhere schema_name not in ('pg_catalog', 'information_schema')\nand function_type = 'STORED PROCEDURE'\nand database_name = current_database()\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Procedure",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or ML Models in current database. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 12,
+            "y": 18
+          },
+          "id": 239,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*)\nfrom stv_ml_model_info\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "ML Model",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or INBOUND datashares in current cluster. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 16,
+            "y": 18
+          },
+          "id": 240,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*)\nfrom SVV_DATASHARES\nwhere share_type = 'INBOUND'\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Datashare INBOUND",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Number or OUTBOUND datashares in current cluster. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 5,
+            "w": 4,
+            "x": 20,
+            "y": 18
+          },
+          "id": 241,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "center",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select count(*)\nfrom SVV_DATASHARES\nwhere share_type = 'OUTBOUND'\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Datashare OUTBOUND",
+          "type": "stat"
+        }
+      ],
+      "title": "Overview",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 8
+      },
+      "id": 144,
+      "panels": [
+        {
+          "gridPos": {
+            "h": 5,
+            "w": 24,
+            "x": 0,
+            "y": 9
+          },
+          "id": 235,
+          "options": {
+            "content": "# User, Role, Group\n\nLists of all user, role, group in the data source. \n\n- To administrate users, use\n[CREATE USER](https://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_USER.html),\n[ALTER USER](https://docs.aws.amazon.com/redshift/latest/dg/r_ALTER_USER.html),\n[DROP USER](https://docs.aws.amazon.com/redshift/latest/dg/r_DROP_USER.html).\n\n- To administrate roles, use\n[CREATE ROLE](https://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_ROLE.html), \n[ALTER ROLE](https://docs.aws.amazon.com/redshift/latest/dg/r_ALTER_ROLE.html), \n[DROP ROLE](https://docs.aws.amazon.com/redshift/latest/dg/r_DROP_ROLE.html).\n\n- To administrate groups, use\n[CREATE GROUP](https://docs.aws.amazon.com/redshift/latest/dg/r_CREATE_GROUP.html), \n[ALTER GROUP](https://docs.aws.amazon.com/redshift/latest/dg/r_ALTER_GROUP.html), \n[DROP GROUP](https://docs.aws.amazon.com/redshift/latest/dg/r_DROP_GROUP.html).",
+            "mode": "markdown"
+          },
+          "pluginVersion": "8.4.7",
+          "type": "text"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of database users. num_group_assigned, num_roles_granted are the number of groups/roles assigned to each users. [PG_USER_INFO](https://docs.aws.amazon.com/redshift/latest/dg/pg_user_info.html), [SVL_USER_INFO](https://docs.aws.amazon.com/redshift/latest/dg/r_SVL_USER_INFO.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true,
+                "width": 120
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "usename"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": true,
+                        "title": "Inspect Privileges",
+                        "url": "d/dFIl1Aj7z/amazon-redshift-privileges?orgId=1&${ds:queryparam}&var-users=${__data.fields.usename}"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 8,
+            "x": 0,
+            "y": 14
+          },
+          "id": 172,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "frameIndex": 0,
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  t1.usename, \n  decode(t1.usecreatedb, true, 'true', false, 'false') as usecreatedb,\n  decode(t1.usesuper, true, 'true', false, 'false') as usesuper,\n  decode(t1.usecatupd, true, 'true', false, 'false') as usecatupd,\n  nvl(t2.num_groups_assigned, 0) as num_groups_assigned,\n  nvl(t3.num_roles_granted, 0) as num_roles_granted\nfrom PG_USER_INFO t1\n-- # of assigned groups\nleft join (\n  select PG_USER_INFO.usesysid, count(*) as num_groups_assigned\n  from PG_USER_INFO, pg_group\n  where PG_USER_INFO.usesysid = ANY(pg_group.grolist)\n  group by PG_USER_INFO.usesysid\n  ) t2\non t1.usesysid = t2.usesysid\n-- # of assigned roles\nleft join (\n  select PG_USER_INFO.usesysid, count(*) as num_roles_granted\n  from PG_USER_INFO\n  where PG_USER_INFO.usesysid in (select user_id from svv_user_grants)\n  group by PG_USER_INFO.usesysid\n  ) t3\non t1.usesysid = t3.usesysid\n;",
+              "refId": "A"
+            },
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  usename, \n  decode(usecreatedb, true, 'true', false, 'false') as usecreatedb,\n  decode(usesuper, true, 'true', false, 'false') as usesuper,\n  decode(usecatupd, true, 'true', false, 'false') as usecatupd,\n  useconnlimit,\n  syslogaccess,\n  sessiontimeout,\n  external_id\nfrom SVL_USER_INFO\nwhere usename not like 'f346c9b8%'  -- ignore internal user\n;",
+              "refId": "B"
+            }
+          ],
+          "title": "User",
+          "transformations": [
+            {
+              "id": "merge",
+              "options": {}
+            },
+            {
+              "id": "sortBy",
+              "options": {
+                "fields": {},
+                "sort": [
+                  {
+                    "desc": false,
+                    "field": "usename"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {},
+                "indexByName": {
+                  "external_id": 7,
+                  "num_groups_assigned": 8,
+                  "num_roles_granted": 9,
+                  "sessiontimeout": 6,
+                  "syslogaccess": 4,
+                  "usecatupd": 3,
+                  "useconnlimit": 5,
+                  "usecreatedb": 1,
+                  "usename": 0,
+                  "usesuper": 2
+                },
+                "renameByName": {}
+              }
+            }
+          ],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of roles. num_roles_granted, num_users_granted are the number of roles/users assigned to each roles. [SVV_ROLES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_ROLES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "external_id"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 177
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 8,
+            "x": 8,
+            "y": 14
+          },
+          "id": 175,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select \n  t1.role_name, \n  t1.role_owner, \n  nvl(t2.num_roles_granted, 0) as num_roles_granted,\n  nvl(t3.num_users_granted, 0) as num_users_granted,\n  t1.external_id\nfrom svv_roles t1\nleft join (\n  select role_id, count(*) as num_roles_granted\n  from svv_role_grants\n  group by role_id\n  ) t2\non t1.role_id = t2.role_id\nleft join (\n  select role_id, count(*) as num_users_granted\n  from svv_user_grants\n  group by role_id\n  ) t3\non t1.role_id = t3.role_id\norder by role_name\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Role",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of groups. num_user_assigned is the number of users assigned to each groups. [pg_group](https://docs.aws.amazon.com/redshift/latest/dg/r_Groups.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 8,
+            "x": 16,
+            "y": 14
+          },
+          "id": 173,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  t1.groname as group,\n  nvl(t2.num_user_assigned, 0) as num_user_assigned\nfrom pg_group t1\nleft join (\n  select \n\tpg_group.grosysid,\n\tcount(*) as num_user_assigned\n  from pg_group, pg_user\n  where pg_user.usesysid = ANY(pg_group.grolist) \n  group by pg_group.grosysid\n  ) t2\non t1.grosysid = t2.grosysid\norder by groname\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Group",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of role granted to user. [SVV_USER_GRANTS](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_USER_GRANTS.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "user_name"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "title": "",
+                        "url": "d/dFIl1Aj7z/amazon-redshift-user-details?orgId=1&${ds:queryparam}&var-users=${__data.fields.usename}&var-roles=.*&var-groups=.*"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 8,
+            "x": 0,
+            "y": 29
+          },
+          "id": 177,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  trim(role_name) as role_name, \n  user_name, \n  decode(admin_option, true, 'true', false, 'false') as admin_option\nfrom svv_user_grants\norder by role_name, user_name\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Role assigned to User",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of role assigned to role. [SVV_ROLE_GRANTS](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_ROLE_GRANTS.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 8,
+            "x": 8,
+            "y": 29
+          },
+          "id": 176,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select \n  trim(granted_role_name) as granted_role_name,\n  role_name\nfrom svv_role_grants\norder by granted_role_name, role_name\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Role assigned to Role",
+          "transformations": [],
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "List of users in each group. [pg_group](https://docs.aws.amazon.com/redshift/latest/dg/r_Groups.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "links": [],
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "usename"
+                },
+                "properties": [
+                  {
+                    "id": "links",
+                    "value": [
+                      {
+                        "targetBlank": false,
+                        "title": "",
+                        "url": "d/dFIl1Aj7z/amazon-redshift-user-details?orgId=1&${ds:queryparam}&var-users=${__data.fields.usename}&var-roles=.*&var-groups=.*"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 15,
+            "w": 8,
+            "x": 16,
+            "y": 29
+          },
+          "id": 174,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": []
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "SELECT \n\tt1.groname as group,\n\tt2.usename\nFROM pg_group t1, pg_user t2\nWHERE t2.usesysid = ANY(t1.grolist) \nORDER BY 1, 2\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Group assigned to User",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "User not assigned to role, role not assigned to role is not shown in this panel. ",
+          "gridPos": {
+            "h": 23,
+            "w": 12,
+            "x": 0,
+            "y": 44
+          },
+          "id": 223,
+          "pluginVersion": "8.2.5",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  t1.role_id::varchar as id, \n  t1.role_name::varchar || ' (role)' as title\nfrom svv_roles t1\nwhere t1.role_id in (\n  select role_id from svv_role_grants\n  union all\n  select granted_role_id from svv_role_grants\n  )\nunion all\nselect\n  user_id::varchar as id, \n  user_name::varchar || ' (user)'as title\nfrom svv_user_grants\n;",
+              "refId": "nodes"
+            },
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  role_id::varchar as target, \n  granted_role_id::varchar as source,\n  role_id::varchar || '_' ||granted_role_id::varchar as id\nfrom svv_role_grants\nunion all\nselect \n  user_id::varchar as target, \n  role_id::varchar as source, \n  user_id::varchar || '_' || role_id::varchar as id\nfrom svv_user_grants\n;",
+              "refId": "edges"
+            }
+          ],
+          "title": "Role assigned to Role, User",
+          "type": "nodeGraph"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "User not assigned to group, group not assigned with user is not shown in this panel. ",
+          "gridPos": {
+            "h": 23,
+            "w": 12,
+            "x": 12,
+            "y": 44
+          },
+          "id": 224,
+          "pluginVersion": "8.2.5",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  t1.grosysid::int as id,\n  t1.groname::varchar || ' (group)' as title\nfrom pg_group t1\nleft join (\n  select \n\tpg_group.grosysid,\n\tcount(*) as num_user_assigned\n  from pg_group, pg_user\n  where pg_user.usesysid = ANY(pg_group.grolist) \n  group by pg_group.grosysid\n  ) t2\non t1.grosysid = t2.grosysid\nwhere t2.num_user_assigned > 0\n\nunion all\n\nselect\n  usesysid as id, \n  usename::varchar || ' (user)' as title\nfrom pg_user, pg_group\nWHERE pg_user.usesysid = ANY(pg_group.grolist) \n\nunion all \n\n-- add a dummy record to return at least 1 record for this query\n-- Node Graph panel raises 'id field is required for nodes data frame' error if dataframe `nodes` is empty\n-- this dummy record will be excluded by Transform > Filter data by values in Grafana to avoid being rendered\nselect null as id, null as title\n;\n",
+              "refId": "nodes"
+            },
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "SELECT \n  pg_user.usesysid as target,\n\tpg_group.grosysid as source,\n  pg_user.usesysid::varchar || '_' || pg_group.grosysid::varchar as id\nFROM pg_group, pg_user \nWHERE pg_user.usesysid = ANY(pg_group.grolist) \n;",
+              "refId": "edges"
+            }
+          ],
+          "title": "Group assigned to User",
+          "transformations": [
+            {
+              "id": "filterByValue",
+              "options": {
+                "filters": [
+                  {
+                    "config": {
+                      "id": "isNull",
+                      "options": {}
+                    },
+                    "fieldName": "nodes id"
+                  }
+                ],
+                "match": "all",
+                "type": "exclude"
+              }
+            }
+          ],
+          "type": "nodeGraph"
+        }
+      ],
+      "title": "Identities",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 196,
+      "panels": [
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "Switch Data source to change current database. ",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 4,
+            "x": 0,
+            "y": 25
+          },
+          "id": 200,
+          "options": {
+            "colorMode": "value",
+            "graphMode": "area",
+            "justifyMode": "auto",
+            "orientation": "auto",
+            "reduceOptions": {
+              "calcs": ["lastNotNull"],
+              "fields": "/^current_database$/",
+              "values": false
+            },
+            "text": {},
+            "textMode": "auto"
+          },
+          "pluginVersion": "8.4.7",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select current_database();",
+              "refId": "A"
+            }
+          ],
+          "title": "Current Database",
+          "type": "stat"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_REDSHIFT_DATABASES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_REDSHIFT_DATABASES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 20,
+            "x": 4,
+            "y": 25
+          },
+          "id": 198,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  database_name,\n  database_type,\n  database_owner\nfrom SVV_REDSHIFT_DATABASES\norder by 1, 2\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Database",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_ALL_SCHEMAS](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_ALL_SCHEMAS.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 33
+          },
+          "id": 199,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  database_name,\n  schema_name,\n  schema_owner,\n  schema_type,\n  source_database\nfrom SVV_ALL_SCHEMAS\nwhere database_name = current_database()\nand schema_name not in ('pg_catalog', 'information_schema')\norder by 1, 2\n;",
+              "refId": "A"
+            }
+          ],
+          "title": "Schema",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_ALL_TABLES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_ALL_TABLES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 24,
+            "x": 0,
+            "y": 42
+          },
+          "id": 194,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeat": "ds",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n    database_name, \n    schema_name as schema, \n    table_type as relation_type,\n    table_name as relation_name\nfrom SVV_ALL_TABLES\nwhere schema_name not in ('pg_catalog', 'information_schema')\nand database_name = current_database()\norder by 1, 2, 3, 4\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Table/View",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_REDSHIFT_FUNCTIONS](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_REDSHIFT_FUNCTIONS.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 52
+          },
+          "id": 236,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select \n  database_name,\n  schema_name,\n  function_type,\n  function_name,\n  argument_type,\n  result_type\nfrom SVV_REDSHIFT_FUNCTIONS\nwhere schema_name not in ('pg_catalog', 'information_schema')\nand database_name = current_database()\norder by 1, 2, 3, 4, 5, 6\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Function/Procedure",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[STV_ML_MODEL_INFO](https://docs.aws.amazon.com/redshift/latest/dg/r_STV_ML_MODEL_INFO.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 60
+          },
+          "id": 238,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  current_database()::varchar as database_name,\n\tschema_name,\n  model_name,\n  model_state\n  user_name,\n  life_cycle,\n  is_refreshable\nfrom STV_ML_MODEL_INFO\norder by 1, 2, 3\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "ML Model",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "type": "grafana-redshift-datasource",
+            "uid": "${ds}"
+          },
+          "description": "[SVV_DATASHARES](https://docs.aws.amazon.com/redshift/latest/dg/r_SVV_DATASHARES.html)",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "thresholds"
+              },
+              "custom": {
+                "align": "auto",
+                "displayMode": "auto",
+                "filterable": true
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 69
+          },
+          "id": 237,
+          "options": {
+            "footer": {
+              "fields": "",
+              "reducer": ["sum"],
+              "show": false
+            },
+            "showHeader": true
+          },
+          "pluginVersion": "8.4.7",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "type": "grafana-redshift-datasource",
+                "uid": "${ds}"
+              },
+              "hide": false,
+              "rawSQL": "select\n  share_type, \n  share_name, \n  pg_user.usename as share_owner,\n  producer_account, \n  producer_namespace, \n  source_database, \n  consumer_database, \n  decode(is_publicaccessible, true, 'true', false, 'false') as is_publicaccessible, \n  createdate::varchar, \n  managed_by\nfrom SVV_DATASHARES\nleft join pg_user\non pg_user.usesysid = share_owner\norder by 1, 2\n;\n",
+              "refId": "A"
+            }
+          ],
+          "title": "Datashare",
+          "type": "table"
+        }
+      ],
+      "repeat": "ds",
+      "title": "Objects",
+      "type": "row"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "default",
+          "value": "default"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data source",
+        "multi": false,
+        "name": "ds",
+        "options": [],
+        "query": "grafana-redshift-datasource",
+        "queryValue": "",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-5m",
+    "to": "now"
+  },
+  "timepicker": {
+    "hidden": false,
+    "refresh_intervals": []
+  },
+  "timezone": "",
+  "title": "Amazon Redshift Identities and Objects",
+  "uid": "T7C5R2U7k",
+  "version": 69,
+  "weekStart": ""
+}
