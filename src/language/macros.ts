@@ -58,7 +58,15 @@ export const MACROS = [
     text: '$__timeGroup',
     args: [COLUMN, RELATIVE_TIME_STRING],
     type: MacroType.Group,
-    description: `Will be replace by an expression that will group timestamps so that there is only 1 point for every period on the graph. For example, 'floor(extract(epoch from time)/60)*60 AS "time"'`,
+    description: `Will be replaced by an expression that will group timestamps so that there is only 1 point for every period on the graph. For example, 'floor(extract(epoch from time)/60)*60'`,
+  },
+  {
+    id: "$__timeGroupAlias(timeColumn, '1m')",
+    name: "$__timeGroupAlias(timeColumn, '1m')",
+    text: '$__timeGroupAlias',
+    args: [COLUMN, RELATIVE_TIME_STRING],
+    type: MacroType.Group,
+    description: `Will be replaced by an expression that will group timestamps so that there is only 1 point for every period on the graph with an alias. For example, 'floor(extract(epoch from time)/60)*60 AS "time"'`,
   },
   {
     id: "$__unixEpochGroup(timeColumn, '1m')",

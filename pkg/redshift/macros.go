@@ -51,6 +51,19 @@ func macroTimeGroup(query *sqlutil.Query, args []string) (string, error) {
 		return "", fmt.Errorf("error parsing interval %v", args[1])
 	}
 
+	return fmt.Sprintf("floor(extract(epoch from %s)/%v)*%v", args[0], interval.Seconds(), interval.Seconds()), nil
+}
+
+func macroTimeGroupAlias(query *sqlutil.Query, args []string) (string, error) {
+	if len(args) != 2 {
+		return "", errors.WithMessagef(sqlutil.ErrorBadArgumentCount, "macro $__timeGroupAlias needs time column and interval")
+	}
+
+	interval, err := gtime.ParseInterval(strings.Trim(args[1], `'`))
+	if err != nil {
+		return "", fmt.Errorf("error parsing interval %v", args[1])
+	}
+
 	return fmt.Sprintf("floor(extract(epoch from %s)/%v)*%v AS \"time\"", args[0], interval.Seconds(), interval.Seconds()), nil
 }
 
@@ -99,6 +112,7 @@ var macros = map[string]sqlutil.MacroFunc{
 	"timeFrom":        macroTimeFrom,
 	"timeTo":          macroTimeTo,
 	"timeGroup":       macroTimeGroup,
+	"timeGroupAlias":  macroTimeGroupAlias,
 	"schema":          macroSchema,
 	"table":           macroTable,
 	"column":          macroColumn,
