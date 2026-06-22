@@ -36,7 +36,7 @@ The query editor includes three drop-down selectors at the top of the editor tha
 
 | Selector     | Macro        | Description                                                      |
 | ------------ | ------------ | ---------------------------------------------------------------- |
-| **Schema**   | `$__schema`  | Selects a database schema. If not set, Redshift uses the default `search_path` (typically `public`). |
+| **Schema**   | `$__schema`  | Selects a database schema. |
 | **Table**    | `$__table`   | Selects a table from the chosen schema.                          |
 | **Column**   | `$__column`  | Selects a column from the chosen table.                          |
 
