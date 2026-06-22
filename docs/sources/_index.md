@@ -36,7 +36,7 @@ The Redshift data source supports the following features:
 | Alerting    | Yes       |
 | Annotations | Yes       |
 
-Queries run asynchronously through the [Amazon Redshift Data API](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api.html), which means long-running queries don't block or time out.
+Queries run asynchronously through the [Amazon Redshift Data API](https://docs.aws.amazon.com/redshift/latest/mgmt/data-api.html), which reduces the chance of blocking or timing out on long-running queries.
 
 ## Get started
 
@@ -70,7 +70,7 @@ To enable [query caching](https://grafana.com/docs/grafana/<GRAFANA_VERSION>/adm
 - `useCachingService`
 - `awsAsyncQueryCaching`
 
-You also need to [configure query caching](https://grafana.com/docs/grafana/<GRAFANA_VERSION>/administration/data-source-management/#query-caching) for the specific Redshift data source instance.
+You also need to [configure query caching](https://grafana.com/docs/grafana/<GRAFANA_VERSION>/administration/data-source-management/#enable-and-configure-query-caching) for the specific Redshift data source instance.
 
 ## Pre-built dashboards
 
