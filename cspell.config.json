@@ -127,6 +127,10 @@
     "npmPreapprovedPackages",
     "wojtekmaj",
     "openfeature",
-    "yarnrc"
+    "yarnrc",
+    "cprc",
+    "Rspack",
+    "rspack",
+    "anymatch"
   ]
 }
