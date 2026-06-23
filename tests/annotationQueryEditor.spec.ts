@@ -4,7 +4,7 @@ import { gte } from 'semver';
 test('should successfully create an annotation', async ({ annotationEditPage, grafanaVersion, page, selectors }) => {
   await annotationEditPage.datasource.set('AWS Redshift E2E');
   await page.waitForFunction(() => window.monaco);
-  const editor = page.getByTestId(selectors.components.CodeEditor.container);
+  const editor = annotationEditPage.getByGrafanaSelector(selectors.components.CodeEditor.container);
   await editor.click();
   await page.keyboard.insertText('SELECT * FROM public.events');
   await expect(annotationEditPage.runQuery()).toBeOK();
