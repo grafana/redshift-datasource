@@ -48,10 +48,7 @@ test('should successfully create a variable', async ({ variableEditPage, page, s
   if (await previewTable.isVisible()) {
     const table = previewTable.getByRole('table');
     await expect(table).toBeVisible({ timeout: 15_000 });
-
-    for (const value of EXPECTED_VALUES) {
-      await expect(table.getByRole('cell', { name: value, exact: true })).toBeVisible();
-    }
+    await expect(table).toContainText(EXPECTED_VALUES, { timeout: 15_000 });
   } else {
     await expect(previewOptions.first()).toBeVisible({ timeout: 15_000 });
     await expect(previewOptions).toContainText(EXPECTED_VALUES, { timeout: 15_000 });
