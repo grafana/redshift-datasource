@@ -37,14 +37,23 @@ test('should successfully create a variable', async ({ variableEditPage, page, s
   await variableEditPage.runQuery();
   await queryDataRequest;
 
-  const previewOptions = variableEditPage.getByGrafanaSelector(
-    selectors.pages.Dashboard.Settings.Variables.Edit.General.previewOfValuesOption
-  );
   const previewTable = variableEditPage.getByGrafanaSelector(
     selectors.pages.Dashboard.Settings.Variables.Edit.CustomVariable.previewTable
   );
-  const previews = previewOptions.or(previewTable);
+  const previewOptions = variableEditPage.getByGrafanaSelector(
+    selectors.pages.Dashboard.Settings.Variables.Edit.General.previewOfValuesOption
+  );
 
-  await expect(previews.first()).toBeVisible({ timeout: 15_000 });
-  await expect(previews).toContainText(EXPECTED_VALUES, { timeout: 15_000 });
+  // Grafana 13.1+ renders multi-column variable results in a preview table.
+  if (await previewTable.isVisible()) {
+    const table = previewTable.getByRole('table');
+    await expect(table).toBeVisible({ timeout: 15_000 });
+
+    for (const value of EXPECTED_VALUES) {
+      await expect(table.getByRole('cell', { name: value, exact: true })).toBeVisible();
+    }
+  } else {
+    await expect(previewOptions.first()).toBeVisible({ timeout: 15_000 });
+    await expect(previewOptions).toContainText(EXPECTED_VALUES, { timeout: 15_000 });
+  }
 });
