@@ -1,8 +1,9 @@
 import { expect, test } from '@grafana/plugin-e2e';
-import type { Request } from '@playwright/test';
+import type { Locator, Request } from '@playwright/test';
 
 const EXPECTED_VALUES = ['Classical', 'Jazz', 'MLB', 'MLS', 'Musicals', 'NBA', 'NFL', 'NHL', 'Opera', 'Plays', 'Pop'];
 const VARIABLE_QUERY = 'SELECT catname FROM public.category ORDER BY catname';
+const PREVIEW_TABLE_PAGE_SIZE = 8;
 
 function requestIncludesVariableQuery(request: Request) {
   try {
@@ -21,6 +22,25 @@ function requestIncludesVariableQuery(request: Request) {
 
   // Fallback for any request shape changes across Grafana versions.
   return (request.postData() ?? '').includes('catname');
+}
+
+async function assertPreviewTableContainsValues(previewTable: Locator, values: readonly string[]) {
+  const table = previewTable.getByRole('table');
+  await expect(table).toBeVisible({ timeout: 15_000 });
+
+  let currentPage = 1;
+
+  for (let index = 0; index < values.length; index++) {
+    const value = values[index];
+    const pageNumber = Math.floor(index / PREVIEW_TABLE_PAGE_SIZE) + 1;
+
+    if (pageNumber !== currentPage) {
+      await previewTable.getByRole('button', { name: String(pageNumber), exact: true }).click();
+      currentPage = pageNumber;
+    }
+
+    await expect(table).toContainText(value, { timeout: 15_000 });
+  }
 }
 
 test('should successfully create a variable', async ({ variableEditPage, page, selectors }) => {
@@ -44,11 +64,9 @@ test('should successfully create a variable', async ({ variableEditPage, page, s
     selectors.pages.Dashboard.Settings.Variables.Edit.General.previewOfValuesOption
   );
 
-  // Grafana 13.1+ renders multi-column variable results in a preview table.
+  // Grafana 13.1+ renders multi-column variable results in a paginated preview table.
   if (await previewTable.isVisible()) {
-    const table = previewTable.getByRole('table');
-    await expect(table).toBeVisible({ timeout: 15_000 });
-    await expect(table).toContainText(EXPECTED_VALUES, { timeout: 15_000 });
+    await assertPreviewTableContainsValues(previewTable, EXPECTED_VALUES);
   } else {
     await expect(previewOptions.first()).toBeVisible({ timeout: 15_000 });
     await expect(previewOptions).toContainText(EXPECTED_VALUES, { timeout: 15_000 });
