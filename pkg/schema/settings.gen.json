@@ -1,0 +1,107 @@
+{
+  "spec": {
+    "type": "object",
+    "properties": {
+      "jsonData": {
+        "type": "object",
+        "properties": {
+          "assumeRoleARN": {
+            "description": "ARN of the IAM role to assume.",
+            "type": "string"
+          },
+          "authType": {
+            "description": "AWS authentication method used to connect to Redshift.",
+            "type": "string",
+            "default": "default",
+            "enum": [
+              "default",
+              "keys",
+              "credentials",
+              "ec2_iam_role",
+              "grafana_assume_role"
+            ]
+          },
+          "clusterIdentifier": {
+            "description": "Identifier of the provisioned Redshift cluster to connect to.",
+            "type": "string",
+            "x-dsconfig-depends-on": "jsonData.useServerless == false"
+          },
+          "database": {
+            "description": "Name of the Redshift database to query.",
+            "type": "string"
+          },
+          "dbUser": {
+            "description": "Database user used to connect when not using a managed secret.",
+            "type": "string"
+          },
+          "defaultRegion": {
+            "description": "Deprecated. Region used when no per-query region is supplied; use region instead.",
+            "type": "string"
+          },
+          "endpoint": {
+            "description": "Optional custom endpoint that overrides the default Redshift Data API endpoint.",
+            "type": "string"
+          },
+          "externalId": {
+            "description": "External ID used when assuming the IAM role.",
+            "type": "string"
+          },
+          "profile": {
+            "description": "AWS credentials profile name (used with the Credentials file auth provider).",
+            "type": "string"
+          },
+          "proxyType": {
+            "description": "HTTP proxy type used for outbound connections.",
+            "type": "string"
+          },
+          "proxyUrl": {
+            "description": "URL of the HTTP proxy used for outbound connections.",
+            "type": "string"
+          },
+          "proxyUsername": {
+            "description": "Username for the HTTP proxy.",
+            "type": "string"
+          },
+          "region": {
+            "description": "AWS region used for Redshift queries.",
+            "type": "string"
+          },
+          "useManagedSecret": {
+            "description": "Authenticate to the database using an AWS Secrets Manager managed secret.",
+            "type": "boolean",
+            "default": false
+          },
+          "useServerless": {
+            "description": "Connect to a Redshift Serverless workgroup instead of a provisioned cluster.",
+            "type": "boolean",
+            "default": false
+          },
+          "withEvent": {
+            "description": "Emit a CloudWatch event for each query run against Redshift.",
+            "type": "boolean",
+            "default": false
+          },
+          "workgroupName": {
+            "description": "Name of the Redshift Serverless workgroup to connect to.",
+            "type": "string",
+            "x-dsconfig-depends-on": "jsonData.useServerless == true"
+          }
+        }
+      }
+    }
+  },
+  "secureValues": [
+    {
+      "key": "accessKey",
+      "description": "AWS access key ID."
+    },
+    {
+      "key": "secretKey",
+      "description": "AWS secret access key."
+    },
+    {
+      "key": "sessionToken",
+      "description": "AWS temporary session token."
+    }
+  ]
+}
