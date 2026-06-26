@@ -1,0 +1,243 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/dsconfig/refs/heads/main/dsconfig/schema.json",
+  "schemaVersion": "v1",
+  "pluginType": "grafana-redshift-datasource",
+  "pluginName": "Amazon Redshift",
+  "docURL": "https://grafana.com/grafana/plugins/grafana-redshift-datasource/",
+  "fields": [
+    {
+      "id": "jsonData.authType",
+      "key": "authType",
+      "label": "Authentication Provider",
+      "description": "AWS authentication method used to connect to Redshift.",
+      "valueType": "string",
+      "target": "jsonData",
+      "defaultValue": "default",
+      "ui": {
+        "component": "select",
+        "allowCustom": true,
+        "options": [
+          { "label": "AWS SDK Default", "value": "default" },
+          { "label": "Access & secret key", "value": "keys" },
+          { "label": "Credentials file", "value": "credentials" },
+          { "label": "Workspace IAM role", "value": "ec2_iam_role" },
+          { "label": "Grafana Assume Role", "value": "grafana_assume_role" }
+        ]
+      }
+    },
+    {
+      "id": "jsonData.region",
+      "key": "region",
+      "label": "Region",
+      "description": "AWS region used for Redshift queries.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "select", "allowCustom": true }
+    },
+    {
+      "id": "jsonData.defaultRegion",
+      "key": "defaultRegion",
+      "label": "Default Region",
+      "description": "Deprecated. Region used when no per-query region is supplied; use region instead.",
+      "valueType": "string",
+      "target": "jsonData"
+    },
+    {
+      "id": "jsonData.profile",
+      "key": "profile",
+      "label": "Credentials Profile Name",
+      "description": "AWS credentials profile name (used with the Credentials file auth provider).",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input" }
+    },
+    {
+      "id": "jsonData.assumeRoleARN",
+      "key": "assumeRoleARN",
+      "label": "Assume Role ARN",
+      "description": "ARN of the IAM role to assume.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input", "placeholder": "arn:aws:iam:*" }
+    },
+    {
+      "id": "jsonData.externalId",
+      "key": "externalId",
+      "label": "External ID",
+      "description": "External ID used when assuming the IAM role.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input" }
+    },
+    {
+      "id": "jsonData.endpoint",
+      "key": "endpoint",
+      "label": "Endpoint",
+      "description": "Optional custom endpoint that overrides the default Redshift Data API endpoint.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input" }
+    },
+    {
+      "id": "jsonData.proxyType",
+      "key": "proxyType",
+      "label": "Proxy Type",
+      "description": "HTTP proxy type used for outbound connections.",
+      "valueType": "string",
+      "target": "jsonData"
+    },
+    {
+      "id": "jsonData.proxyUrl",
+      "key": "proxyUrl",
+      "label": "Proxy URL",
+      "description": "URL of the HTTP proxy used for outbound connections.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input" }
+    },
+    {
+      "id": "jsonData.proxyUsername",
+      "key": "proxyUsername",
+      "label": "Proxy Username",
+      "description": "Username for the HTTP proxy.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input" }
+    },
+    {
+      "id": "jsonData.useServerless",
+      "key": "useServerless",
+      "label": "Use Serverless",
+      "description": "Connect to a Redshift Serverless workgroup instead of a provisioned cluster.",
+      "valueType": "boolean",
+      "target": "jsonData",
+      "defaultValue": false,
+      "ui": { "component": "switch" }
+    },
+    {
+      "id": "jsonData.useManagedSecret",
+      "key": "useManagedSecret",
+      "label": "Use Managed Secret",
+      "description": "Authenticate to the database using an AWS Secrets Manager managed secret.",
+      "valueType": "boolean",
+      "target": "jsonData",
+      "defaultValue": false,
+      "ui": { "component": "switch" }
+    },
+    {
+      "id": "jsonData.clusterIdentifier",
+      "key": "clusterIdentifier",
+      "label": "Cluster Identifier",
+      "description": "Identifier of the provisioned Redshift cluster to connect to.",
+      "valueType": "string",
+      "target": "jsonData",
+      "dependsOn": "jsonData.useServerless == false",
+      "ui": { "component": "select", "allowCustom": true }
+    },
+    {
+      "id": "jsonData.workgroupName",
+      "key": "workgroupName",
+      "label": "Workgroup",
+      "description": "Name of the Redshift Serverless workgroup to connect to.",
+      "valueType": "string",
+      "target": "jsonData",
+      "dependsOn": "jsonData.useServerless == true",
+      "ui": { "component": "select", "allowCustom": true }
+    },
+    {
+      "id": "jsonData.database",
+      "key": "database",
+      "label": "Database",
+      "description": "Name of the Redshift database to query.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input" }
+    },
+    {
+      "id": "jsonData.dbUser",
+      "key": "dbUser",
+      "label": "Database User",
+      "description": "Database user used to connect when not using a managed secret.",
+      "valueType": "string",
+      "target": "jsonData",
+      "ui": { "component": "input" }
+    },
+    {
+      "id": "jsonData.withEvent",
+      "key": "withEvent",
+      "label": "Send events to Amazon EventBridge",
+      "description": "Emit a CloudWatch event for each query run against Redshift.",
+      "valueType": "boolean",
+      "target": "jsonData",
+      "defaultValue": false,
+      "ui": { "component": "switch" }
+    },
+    {
+      "id": "secureJsonData.accessKey",
+      "key": "accessKey",
+      "label": "Access Key ID",
+      "description": "AWS access key ID.",
+      "valueType": "string",
+      "role": "auth.aws.accessKeyId",
+      "target": "secureJsonData"
+    },
+    {
+      "id": "secureJsonData.secretKey",
+      "key": "secretKey",
+      "label": "Secret Access Key",
+      "description": "AWS secret access key.",
+      "valueType": "string",
+      "role": "auth.aws.secretAccessKey",
+      "target": "secureJsonData"
+    },
+    {
+      "id": "secureJsonData.sessionToken",
+      "key": "sessionToken",
+      "label": "Session Token",
+      "description": "AWS temporary session token.",
+      "role": "auth.aws.sessionToken",
+      "valueType": "string",
+      "target": "secureJsonData"
+    }
+  ],
+  "groups": [
+    {
+      "id": "auth",
+      "title": "Connection Details",
+      "fieldRefs": [
+        "jsonData.authType",
+        "jsonData.region",
+        "jsonData.defaultRegion",
+        "jsonData.profile",
+        "jsonData.assumeRoleARN",
+        "jsonData.externalId",
+        "jsonData.endpoint",
+        "secureJsonData.accessKey",
+        "secureJsonData.secretKey",
+        "secureJsonData.sessionToken"
+      ]
+    },
+    {
+      "id": "proxy",
+      "title": "Proxy",
+      "fieldRefs": [
+        "jsonData.proxyType",
+        "jsonData.proxyUrl",
+        "jsonData.proxyUsername"
+      ]
+    },
+    {
+      "id": "redshift-details",
+      "title": "Redshift Details",
+      "fieldRefs": [
+        "jsonData.useServerless",
+        "jsonData.useManagedSecret",
+        "jsonData.clusterIdentifier",
+        "jsonData.workgroupName",
+        "jsonData.database",
+        "jsonData.dbUser",
+        "jsonData.withEvent"
+      ]
+    }
+  ]
+}
