@@ -4,6 +4,16 @@
   "pluginType": "grafana-redshift-datasource",
   "pluginName": "Amazon Redshift",
   "docURL": "https://grafana.com/grafana/plugins/grafana-redshift-datasource/",
+  "instructions": [
+    {
+      "msg": "AWS authentication (authType) supports: AWS SDK Default (default), Access & secret key (keys), Credentials file (credentials), Workspace IAM role (ec2_iam_role), Grafana Assume Role (grafana_assume_role) — ask which. Optionally an IAM role can be assumed via assumeRoleARN (with externalId). But never ask for credentials themselves (access key, secret key, session token). Those should be entered in the UI.",
+      "tags": ["llm"]
+    },
+    {
+      "msg": "Database authentication supports: temporary credentials via a database user (dbUser), or an AWS Secrets Manager managed secret (useManagedSecret) — ask which. Choose the compute target with useServerless: a provisioned cluster (clusterIdentifier) when false, or a Redshift Serverless workgroup (workgroupName) when true. But never ask for the secret value itself; managed secrets are selected in the UI.",
+      "tags": ["llm"]
+    }
+  ],
   "fields": [
     {
       "id": "jsonData.authType",
@@ -195,7 +205,6 @@
       "key": "sessionToken",
       "label": "Session Token",
       "description": "AWS temporary session token.",
-      "role": "auth.aws.sessionToken",
       "valueType": "string",
       "target": "secureJsonData"
     }
