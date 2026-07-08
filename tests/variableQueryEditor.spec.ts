@@ -11,12 +11,19 @@ test('should successfully create a variable', async ({ variableEditPage, page, s
   await variableEditPage.runQuery();
   await queryDataRequest;
   if (gte(grafanaVersion, '13.0.0')) {
-    await variableEditPage
-      .getByGrafanaSelector(selectors.pages.Dashboard.Settings.Variables.Edit.QueryVariable.previewButton)
-      .click();
+    // In Grafana 13+, multi-property variables show preview values in a table
+    await expect(
+      variableEditPage.getByGrafanaSelector(
+        selectors.pages.Dashboard.Settings.Variables.Edit.CustomVariable.previewTable
+      )
+    ).toContainText(
+      ['Classical', 'Jazz', 'MLB', 'MLS', 'Musicals', 'NBA', 'NFL', 'NHL', 'Opera', 'Plays', 'Pop'],
+      { timeout: 15_000 }
+    );
+  } else {
+    await expect(variableEditPage).toDisplayPreviews(
+      ['Classical', 'Jazz', 'MLB', 'MLS', 'Musicals', 'NBA', 'NFL', 'NHL', 'Opera', 'Plays', 'Pop'],
+      { timeout: 15_000 }
+    );
   }
-  await expect(variableEditPage).toDisplayPreviews(
-    ['Classical', 'Jazz', 'MLB', 'MLS', 'Musicals', 'NBA', 'NFL', 'NHL', 'Opera', 'Plays', 'Pop'],
-    { timeout: 15_000 }
-  );
 });
