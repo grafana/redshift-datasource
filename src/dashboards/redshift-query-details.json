@@ -1,0 +1,1433 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": true,
+      "keepTime": true,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Back to Queries",
+      "type": "link",
+      "url": "/d/redshift-monitoring/redshift-monitoring"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "panels": [],
+      "title": "Query Summary",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "uid": "${ds}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "elapsed_time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "\u00b5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "queue_time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "\u00b5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "execution_time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "\u00b5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "compile_time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "\u00b5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "planning_time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "\u00b5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "lock_wait_time"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "\u00b5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "returned_bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 190
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 190
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 1
+      },
+      "id": 10,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "format": 1,
+          "rawSQL": "SELECT * FROM sys_query_history\nWHERE query_id = $query_id AND $__timeFilter(start_time)",
+          "refId": "A"
+        }
+      ],
+      "title": "Query History",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "user_id",
+                "query_id"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "uid": "${ds}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            }
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_rows_in"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_rows_out"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_bytes_in"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_bytes_out"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_blocks_read"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              },
+              {
+                "id": "description",
+                "value": "1 block = 1 MB"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_blocks_write"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              },
+              {
+                "id": "description",
+                "value": "1 block = 1 MB"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max_data_skewness"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "max_time_skewness"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_spilled_local"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              },
+              {
+                "id": "description",
+                "value": "1 block = 1 MB"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "total_spilled_remote"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              },
+              {
+                "id": "description",
+                "value": "1 block = 1 MB"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 24,
+        "x": 0,
+        "y": 5
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "format": 1,
+          "rawSQL": "SELECT sum(input_rows) as total_rows_in, sum(output_rows) as total_rows_out,\n  sum(input_bytes) as total_bytes_in, sum(output_bytes) as total_bytes_out,\n  sum(blocks_read) as total_blocks_read, sum(blocks_write) as total_blocks_write,\n  max(data_skewness) as max_data_skewness, max(time_skewness) as max_time_skewness,\n  sum(spilled_block_local_disk) as total_spilled_local, sum(spilled_block_remote_disk) as total_spilled_remote\nFROM sys_query_detail WHERE query_id = $query_id AND $__timeFilter(start_time)",
+          "refId": "A"
+        }
+      ],
+      "title": "Query Detail Metrics",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "uid": "${ds}"
+      },
+      "description": "Query lifecycle: elapsed > compile/planning/lock_wait/queue/execution > child_query > stream.\nEach stream shows the dominant step names and the duration of the longest segment (parallel segments are not stacked).\nRefer to Query Details table for all segments and steps.",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "value"
+            },
+            "properties": []
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "self"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 14,
+      "options": {
+        "colorScheme": "byValue",
+        "selectedView": "flamegraph"
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "format": 1,
+          "rawSQL": "WITH qh AS (\n  SELECT elapsed_time, compile_time, planning_time, lock_wait_time, queue_time, execution_time,\n    elapsed_time - compile_time - planning_time - lock_wait_time - queue_time - execution_time AS other_time\n  FROM sys_query_history WHERE query_id = $query_id\n),\nsteps AS (\n  SELECT child_query_sequence AS cqs, stream_id, segment_id, step_id,\n    trim(step_name) AS step_name, duration\n  FROM sys_query_detail\n  WHERE query_id = $query_id AND step_id >= 0\n),\nstream_info AS (\n  SELECT cqs, stream_id,\n    listagg(DISTINCT step_name, ', ') WITHIN GROUP (ORDER BY step_name) AS all_steps\n  FROM steps GROUP BY 1, 2\n),\ntop_seg AS (\n  SELECT cqs, stream_id, max(seg_dur) AS duration\n  FROM (SELECT cqs, stream_id, segment_id, max(duration) AS seg_dur FROM steps GROUP BY 1,2,3)\n  GROUP BY 1, 2\n),\ncqs_dur AS (\n  SELECT cqs, sum(duration) AS duration FROM top_seg GROUP BY 1\n),\nexec_dur AS (\n  SELECT sum(duration) AS duration FROM cqs_dur\n),\nall_rows AS (\n  SELECT 0 AS lvl, 'elapsed' AS label, qh.elapsed_time AS value, GREATEST(0, qh.other_time) AS self, 0 s1, 0 s2, 0 s3 FROM qh\n  UNION ALL SELECT 1, 'compile', qh.compile_time, qh.compile_time, 2, 0, 0 FROM qh\n  UNION ALL SELECT 1, 'planning', qh.planning_time, qh.planning_time, 1, 0, 0 FROM qh\n  UNION ALL SELECT 1, 'lock_wait', qh.lock_wait_time, qh.lock_wait_time, 3, 0, 0 FROM qh\n  UNION ALL SELECT 1, 'queue', qh.queue_time, qh.queue_time, 4, 0, 0 FROM qh\n  UNION ALL SELECT 1, 'execution', qh.execution_time, GREATEST(0, qh.execution_time - e.duration), 5, 0, 0 FROM qh, exec_dur e\n  UNION ALL SELECT 2, 'child_query ' || c.cqs, c.duration, 0::bigint, 5, c.cqs, 0 FROM cqs_dur c\n  UNION ALL SELECT 3, 'stream ' || t.stream_id || ': ' || s.all_steps, t.duration, t.duration, 5, t.cqs, t.stream_id FROM top_seg t JOIN stream_info s USING (cqs, stream_id)\n)\nSELECT lvl AS level, label, round(value/1000000.0, 3) AS value, round(self/1000000.0, 3) AS self FROM all_rows ORDER BY s1, s2, s3, lvl",
+          "refId": "A"
+        }
+      ],
+      "title": "Query Breakdown",
+      "type": "flamegraph"
+    },
+    {
+      "datasource": {
+        "uid": "${ds}"
+      },
+      "description": "Per-segment execution details",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "text",
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "child_query_sequence"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 40
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "stream_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "segment_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "step_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "step_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "metrics_level"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "table_id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "table_name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 80
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "is_rrscan"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 50
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "start_time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "end_time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 130
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "\u00b5s"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "input_bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "output_bytes"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "input_rows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "output_rows"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "scan_efficiency"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 50
+                    },
+                    {
+                      "color": "orange",
+                      "value": 90
+                    },
+                    {
+                      "color": "red",
+                      "value": 100
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 120
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "local_read_io"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "remote_read_io"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "blocks_read"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "blocks_write"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spilled_block_local_disk"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spilled_block_remote_disk"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "decmbytes"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "data_skewness"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 25
+                    },
+                    {
+                      "color": "orange",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "time_skewness"
+            },
+            "properties": [
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "mode": "gradient",
+                  "type": "gauge"
+                }
+              },
+              {
+                "id": "min",
+                "value": 0
+              },
+              {
+                "id": "max",
+                "value": 100
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "green",
+                      "value": null
+                    },
+                    {
+                      "color": "yellow",
+                      "value": 25
+                    },
+                    {
+                      "color": "orange",
+                      "value": 50
+                    },
+                    {
+                      "color": "red",
+                      "value": 75
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "custom.width",
+                "value": 100
+              },
+              {
+                "id": "unit",
+                "value": "percent"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 12,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 13,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "child_query_sequence"
+          }
+        ]
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "format": 1,
+          "rawSQL": "SELECT\n  d.metrics_level,\n  d.child_query_sequence,\n  d.stream_id, d.segment_id, d.step_id,\n  d.step_name, d.table_name,\n  REPLACE(e.plan_node, ' ', chr(160)) AS plan_node, e.plan_info,\n  d.duration,\n  d.input_rows, d.output_rows,\n  CASE WHEN d.input_rows > 0 THEN round(d.output_rows::float / d.input_rows * 100, 2) END AS scan_efficiency,\n  d.input_bytes, d.output_bytes,\n  d.local_read_io, d.remote_read_io,\n  d.blocks_read, d.blocks_write,\n  d.data_skewness, d.time_skewness,\n  d.spilled_block_local_disk, d.spilled_block_remote_disk,\n  d.is_rrscan, d.table_id,\n  d.start_time, d.end_time\nFROM sys_query_detail d\nLEFT JOIN sys_query_explain e\n  ON d.query_id = e.query_id\n  AND d.child_query_sequence = e.child_query_sequence\n  AND d.plan_node_id = e.plan_node_id\n  AND d.metrics_level = 'step'\nWHERE d.query_id = $query_id\nORDER BY d.child_query_sequence, d.stream_id, d.segment_id, d.step_id",
+          "refId": "A"
+        }
+      ],
+      "title": "Query Details",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {
+            "exclude": {
+              "names": [
+                "user_id",
+                "query_id"
+              ]
+            }
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 24
+      },
+      "id": 2,
+      "panels": [],
+      "title": "Query Text",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "uid": "${ds}"
+      },
+      "description": "Full query text",
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 20,
+      "options": {
+        "dedupStrategy": "none",
+        "enableInfiniteScrolling": false,
+        "enableLogDetails": false,
+        "prettifyLogMessage": false,
+        "showCommonLabels": false,
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Ascending",
+        "wrapLogMessage": true
+      },
+      "pluginVersion": "11.6.0",
+      "targets": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "format": 0,
+          "rawSQL": "SELECT\n  current_timestamp as time,\n  REPLACE(t.full_text, '\\\\n', CHR(10)) AS text\nFROM (\n  SELECT listagg(text, '') WITHIN GROUP (ORDER BY sequence) AS full_text\n  FROM sys_query_text\n  WHERE query_id = $query_id\n) t",
+          "refId": "A"
+        }
+      ],
+      "title": "Query Text",
+      "type": "logs"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 39
+      },
+      "id": 48,
+      "panels": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 10,
+            "w": 12,
+            "x": 0,
+            "y": 40
+          },
+          "id": 49,
+          "maxPerRow": 2,
+          "options": {
+            "enableLogDetails": false,
+            "showLabels": false,
+            "showTime": false,
+            "wrapLogMessage": true
+          },
+          "repeat": "child_query_sequence",
+          "repeatDirection": "h",
+          "targets": [
+            {
+              "datasource": {
+                "uid": "${ds}"
+              },
+              "format": 0,
+              "rawSQL": "SELECT GETDATE() AS time, REPLACE(LISTAGG(text, '') WITHIN GROUP (ORDER BY sequence), '\\\\n', CHR(10)) AS message FROM sys_child_query_text WHERE query_id = ${query_id} AND child_query_sequence = CAST('${child_query_sequence}' AS int) GROUP BY 1",
+              "refId": "A"
+            }
+          ],
+          "title": "Child Query ${child_query_sequence}",
+          "type": "logs"
+        }
+      ],
+      "title": "Child Query Text",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 40
+      },
+      "id": 3,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "child_query_sequence"
+          },
+          {
+            "desc": false,
+            "displayName": "plan_node_id"
+          },
+          {
+            "desc": false,
+            "displayName": "plan_parent_id"
+          }
+        ]
+      },
+      "panels": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "description": "EXPLAIN plan from SYS_QUERY_EXPLAIN",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "fixedColor": "text",
+                "mode": "fixed"
+              },
+              "custom": {
+                "align": "auto",
+                "cellOptions": {
+                  "type": "auto"
+                },
+                "inspect": false
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  }
+                ]
+              }
+            },
+            "overrides": [
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "plan_node"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 600
+                  }
+                ]
+              },
+              {
+                "matcher": {
+                  "id": "byName",
+                  "options": "plan_info"
+                },
+                "properties": [
+                  {
+                    "id": "custom.width",
+                    "value": 500
+                  }
+                ]
+              }
+            ]
+          },
+          "gridPos": {
+            "h": 12,
+            "w": 24,
+            "x": 0,
+            "y": 41
+          },
+          "id": 30,
+          "options": {
+            "cellHeight": "sm",
+            "footer": {
+              "countRows": false,
+              "fields": "",
+              "reducer": [
+                "sum"
+              ],
+              "show": false
+            },
+            "showHeader": true,
+            "sortBy": [
+              {
+                "desc": false,
+                "displayName": "child_query_sequence"
+              },
+              {
+                "desc": false,
+                "displayName": "plan_node_id"
+              },
+              {
+                "desc": false,
+                "displayName": "plan_parent_id"
+              }
+            ]
+          },
+          "pluginVersion": "11.6.0",
+          "targets": [
+            {
+              "datasource": {
+                "uid": "${ds}"
+              },
+              "format": 1,
+              "rawSQL": "SELECT child_query_sequence, plan_node_id, plan_parent_id,\n  lpad('', (length(plan_node) - length(ltrim(plan_node))), chr(160)) || ltrim(plan_node) AS plan_node,\n  plan_info\nFROM sys_query_explain\nWHERE query_id = $query_id\nORDER BY child_query_sequence, plan_node_id, plan_parent_id",
+              "refId": "A"
+            }
+          ],
+          "title": "Query Plan",
+          "type": "table"
+        }
+      ],
+      "title": "Query Plan",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 54
+      },
+      "id": 34,
+      "panels": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 8,
+            "w": 24,
+            "x": 0,
+            "y": 54
+          },
+          "id": 33,
+          "options": {},
+          "targets": [
+            {
+              "datasource": {
+                "uid": "${ds}"
+              },
+              "format": 1,
+              "rawSQL": "SELECT * FROM sys_external_query_detail WHERE query_id = $query_id ORDER BY child_query_sequence, start_time",
+              "refId": "A"
+            }
+          ],
+          "title": "External Query Detail",
+          "type": "table"
+        }
+      ],
+      "title": "External Query Detail",
+      "type": "row"
+    },
+    {
+      "collapsed": true,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 55
+      },
+      "id": 47,
+      "panels": [
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 54
+          },
+          "id": 43,
+          "options": {},
+          "targets": [
+            {
+              "datasource": {
+                "uid": "${ds}"
+              },
+              "format": 1,
+              "rawSQL": "SELECT * FROM sys_load_history WHERE query_id = $query_id",
+              "refId": "A"
+            }
+          ],
+          "title": "Load History",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 60
+          },
+          "id": 44,
+          "options": {},
+          "targets": [
+            {
+              "datasource": {
+                "uid": "${ds}"
+              },
+              "format": 1,
+              "rawSQL": "SELECT * FROM sys_load_detail WHERE query_id = $query_id",
+              "refId": "A"
+            }
+          ],
+          "title": "Load Detail",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 66
+          },
+          "id": 45,
+          "options": {},
+          "targets": [
+            {
+              "datasource": {
+                "uid": "${ds}"
+              },
+              "format": 1,
+              "rawSQL": "SELECT * FROM sys_load_error_detail WHERE query_id = $query_id",
+              "refId": "A"
+            }
+          ],
+          "title": "Load Error Detail",
+          "type": "table"
+        },
+        {
+          "datasource": {
+            "uid": "${ds}"
+          },
+          "fieldConfig": {
+            "defaults": {},
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 6,
+            "w": 24,
+            "x": 0,
+            "y": 72
+          },
+          "id": 46,
+          "options": {},
+          "targets": [
+            {
+              "datasource": {
+                "uid": "${ds}"
+              },
+              "format": 1,
+              "rawSQL": "SELECT * FROM sys_unload_detail WHERE query_id = $query_id",
+              "refId": "A"
+            }
+          ],
+          "title": "Unload Detail",
+          "type": "table"
+        }
+      ],
+      "title": "COPY / UNLOAD Detail",
+      "type": "row"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 41,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "Redshift Serverless",
+          "value": "redshift-serverless"
+        },
+        "includeAll": false,
+        "label": "Data source",
+        "name": "ds",
+        "options": [],
+        "query": "grafana-redshift-datasource",
+        "refresh": 1,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "label": "query_id",
+        "name": "query_id",
+        "options": [],
+        "query": "77160893",
+        "type": "textbox"
+      },
+      {
+        "current": {
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": {
+          "uid": "${ds}"
+        },
+        "definition": "SELECT DISTINCT child_query_sequence::varchar FROM sys_child_query_text WHERE query_id = ${query_id} ORDER BY 1",
+        "hide": 2,
+        "includeAll": true,
+        "multi": true,
+        "name": "child_query_sequence",
+        "query": {
+          "format": 0,
+          "rawSQL": "SELECT DISTINCT child_query_sequence::varchar FROM sys_child_query_text WHERE query_id = ${query_id} ORDER BY 1"
+        },
+        "refresh": 2,
+        "sort": 3,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Amazon Redshift Query Details",
+  "uid": "redshift-query-details",
+  "version": 3
+}
