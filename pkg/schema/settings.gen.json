@@ -4,13 +4,18 @@
     "properties": {
       "jsonData": {
         "type": "object",
+        "required": [
+          "database"
+        ],
         "properties": {
-          "assumeRoleARN": {
-            "description": "ARN of the IAM role to assume.",
-            "type": "string"
+          "assumeRoleArn": {
+            "description": "Optional. Specifying the ARN of a role will ensure that the selected authentication provider is used to assume the role rather than the credentials directly.",
+            "type": "string",
+            "pattern": "^(arn:aws[a-zA-Z-]*:iam::[0-9]{12}:role/.+)?$",
+            "x-dsconfig-depends-on": "jsonData_authType != 'grafana_assume_role'"
           },
           "authType": {
-            "description": "AWS authentication method used to connect to Redshift.",
+            "description": "Specify which AWS credentials chain to use.",
             "type": "string",
             "default": "default",
             "enum": [
@@ -18,73 +23,76 @@
               "keys",
               "credentials",
               "ec2_iam_role",
-              "grafana_assume_role"
+              "grafana_assume_role",
+              "arn"
             ]
           },
           "clusterIdentifier": {
-            "description": "Identifier of the provisioned Redshift cluster to connect to.",
             "type": "string",
-            "x-dsconfig-depends-on": "jsonData.useServerless == false"
+            "x-dsconfig-depends-on": "jsonData_useServerless != true",
+            "x-dsconfig-required-when": "jsonData_useServerless != true"
           },
           "database": {
-            "description": "Name of the Redshift database to query.",
             "type": "string"
           },
           "dbUser": {
-            "description": "Database user used to connect when not using a managed secret.",
-            "type": "string"
+            "type": "string",
+            "x-dsconfig-depends-on": "jsonData_useServerless != true || jsonData_useManagedSecret == true",
+            "x-dsconfig-required-when": "jsonData_useServerless != true \u0026\u0026 jsonData_useManagedSecret != true"
           },
           "defaultRegion": {
-            "description": "Deprecated. Region used when no per-query region is supplied; use region instead.",
+            "description": "Specify the region, such as for US West (Oregon) use ` us-west-2 ` as the region.",
             "type": "string"
           },
           "endpoint": {
-            "description": "Optional custom endpoint that overrides the default Redshift Data API endpoint.",
-            "type": "string"
+            "description": "Optionally, specify a custom endpoint for the service",
+            "type": "string",
+            "x-dsconfig-depends-on": "jsonData_authType != 'grafana_assume_role'"
           },
           "externalId": {
-            "description": "External ID used when assuming the IAM role.",
-            "type": "string"
+            "description": "If you are assuming a role in another account, that has been created with an external ID, specify the external ID here.",
+            "type": "string",
+            "x-dsconfig-depends-on": "jsonData_authType != 'grafana_assume_role'"
+          },
+          "managedSecret": {
+            "type": "object",
+            "properties": {
+              "arn": {
+                "type": "string",
+                "x-dsconfig-depends-on": "jsonData_useManagedSecret == true",
+                "x-dsconfig-required-when": "jsonData_useManagedSecret == true"
+              },
+              "name": {
+                "type": "string",
+                "x-dsconfig-depends-on": "jsonData_useManagedSecret == true"
+              }
+            }
           },
           "profile": {
-            "description": "AWS credentials profile name (used with the Credentials file auth provider).",
-            "type": "string"
-          },
-          "proxyType": {
-            "description": "HTTP proxy type used for outbound connections.",
-            "type": "string"
-          },
-          "proxyUrl": {
-            "description": "URL of the HTTP proxy used for outbound connections.",
-            "type": "string"
-          },
-          "proxyUsername": {
-            "description": "Username for the HTTP proxy.",
-            "type": "string"
-          },
-          "region": {
-            "description": "AWS region used for Redshift queries.",
-            "type": "string"
+            "description": "Credentials profile name, as specified in ~/.aws/credentials, leave blank for default.",
+            "type": "string",
+            "x-dsconfig-depends-on": "jsonData_authType == 'credentials'"
           },
           "useManagedSecret": {
-            "description": "Authenticate to the database using an AWS Secrets Manager managed secret.",
             "type": "boolean",
-            "default": false
+            "default": false,
+            "enum": [
+              false,
+              true
+            ]
           },
           "useServerless": {
-            "description": "Connect to a Redshift Serverless workgroup instead of a provisioned cluster.",
             "type": "boolean",
             "default": false
           },
           "withEvent": {
-            "description": "Emit a CloudWatch event for each query run against Redshift.",
             "type": "boolean",
             "default": false
           },
           "workgroupName": {
-            "description": "Name of the Redshift Serverless workgroup to connect to.",
             "type": "string",
-            "x-dsconfig-depends-on": "jsonData.useServerless == true"
+            "x-dsconfig-depends-on": "jsonData_useServerless == true",
+            "x-dsconfig-required-when": "jsonData_useServerless == true"
           }
         }
       }
@@ -92,16 +100,13 @@
   },
   "secureValues": [
     {
-      "key": "accessKey",
-      "description": "AWS access key ID."
+      "key": "accessKey"
     },
     {
-      "key": "secretKey",
-      "description": "AWS secret access key."
+      "key": "secretKey"
     },
     {
-      "key": "sessionToken",
-      "description": "AWS temporary session token."
+      "key": "sessionToken"
     }
   ]
 }
