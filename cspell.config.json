@@ -2,14 +2,13 @@
   "ignorePaths": [
     ".config/Dockerfile",
     ".github/**",
-    ".yarn/**",
     "node_modules/**",
     "dist/**",
     "playwright*/**",
     "test-results/**",
     "provisioning/**",
     "src/dashboards/**",
-    "yarn.lock",
+    "package-lock.json",
     "go.mod",
     "go.sum",
     "mage_output_file.go",
@@ -130,7 +129,6 @@
     "viant",
     "wojtekmaj",
     "Workgroups",
-    "yarnrc",
     "yota",
     "zizmor"
   ]

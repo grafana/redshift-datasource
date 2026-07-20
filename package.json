@@ -2,12 +2,20 @@
   "name": "grafana-redshift-datasource",
   "version": "2.5.0",
   "description": "Use Amazon Redshift in Grafana",
+  "overrides": {
+    "react-router-dom-v5-compat": {
+      "react-router-dom": "^6.22.0"
+    },
+    "eslint-plugin-deprecation": {
+      "eslint": "9.39.4"
+    }
+  },
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
     "dev": "webpack -w -c ./.config/webpack/webpack.config.ts --env development",
     "e2e": "playwright test",
     "lint": "eslint --cache .",
-    "lint:fix": "yarn run lint --fix",
+    "lint:fix": "npm run lint -- --fix",
     "server": "docker compose up --build",
     "spellcheck": "cspell -c cspell.config.json \"**/*.{ts,tsx,js,go,md,mdx,yml,yaml,json,scss,css}\"",
     "test": "jest --watch --onlyChanged",
@@ -99,7 +107,8 @@
     "webpack-virtual-modules": "0.6.2"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20",
+    "npm": ">=11.12.1"
   },
-  "packageManager": "yarn@4.14.0"
+  "packageManager": "npm@11.18.0"
 }
