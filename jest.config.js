@@ -9,5 +9,5 @@ module.exports = {
   // Jest configuration provided by Grafana scaffolding
   ...require('./.config/jest.config'),
   // Inform Jest to only transform specific node_module packages.
-  transformIgnorePatterns: [nodeModulesToTransform([...grafanaESModules, ...esModules])],
+  transformIgnorePatterns: [nodeModulesToTransform([...grafanaESModules, '@marcbachmann/cel-js', ...esModules])],
 };
