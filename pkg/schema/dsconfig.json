@@ -4,103 +4,24 @@
   "pluginType": "grafana-redshift-datasource",
   "pluginName": "Amazon Redshift",
   "docURL": "https://grafana.com/grafana/plugins/grafana-redshift-datasource/",
+  "baseFields": [
+    {
+      "from": "aws_sdk_settings",
+      "exclude": [
+        "aws_sdk_settings.assumeRoleArn",
+        "aws_sdk_settings.sessionToken",
+        "aws_sdk_settings.proxyPassword"
+      ]
+    }
+  ],
   "fields": [
     {
-      "id": "jsonData_authType",
-      "key": "authType",
-      "label": "Authentication Provider",
-      "description": "Specify which AWS credentials chain to use.",
-      "valueType": "string",
-      "target": "jsonData",
-      "role": "auth.discriminator",
-      "defaultValue": "default",
-      "validations": [
-        {
-          "type": "allowedValues",
-          "values": ["default", "keys", "credentials", "ec2_iam_role", "grafana_assume_role", "arn"]
-        }
-      ],
-      "ui": {
-        "component": "select",
-        "options": [
-          {
-            "label": "Workspace IAM Role",
-            "value": "ec2_iam_role"
-          },
-          {
-            "label": "Grafana Assume Role",
-            "value": "grafana_assume_role"
-          },
-          {
-            "label": "AWS SDK Default",
-            "value": "default"
-          },
-          {
-            "label": "Access & secret key",
-            "value": "keys"
-          },
-          {
-            "label": "Credentials file",
-            "value": "credentials"
-          }
-        ]
-      }
-    },
-    {
-      "id": "jsonData_profile",
-      "key": "profile",
-      "label": "Credentials Profile Name",
-      "description": "Credentials profile name, as specified in ~/.aws/credentials, leave blank for default.",
-      "valueType": "string",
-      "target": "jsonData",
-      "dependsOn": "jsonData_authType == 'credentials'",
-      "ui": {
-        "component": "input",
-        "placeholder": "default"
-      }
-    },
-    {
-      "id": "secureJsonData_accessKey",
-      "key": "accessKey",
-      "label": "Access Key ID",
-      "valueType": "string",
-      "target": "secureJsonData",
-      "role": "auth.aws.accessKeyId",
-      "dependsOn": "jsonData_authType == 'keys'",
-      "requiredWhen": "jsonData_authType == 'keys'",
-      "ui": {
-        "component": "input"
-      }
-    },
-    {
-      "id": "secureJsonData_secretKey",
-      "key": "secretKey",
-      "label": "Secret Access Key",
-      "valueType": "string",
-      "target": "secureJsonData",
-      "role": "auth.aws.secretAccessKey",
-      "dependsOn": "jsonData_authType == 'keys'",
-      "requiredWhen": "jsonData_authType == 'keys'",
-      "ui": {
-        "component": "input"
-      }
-    },
-    {
-      "id": "secureJsonData_sessionToken",
-      "key": "sessionToken",
-      "valueType": "string",
-      "target": "secureJsonData",
-      "role": "auth.aws.sessionToken",
-      "tags": ["backend-only"]
-    },
-    {
-      "id": "jsonData_assumeRoleArn",
-      "key": "assumeRoleArn",
+      "id": "jsonData_assumeRoleARN",
+      "key": "assumeRoleARN",
       "label": "Assume Role ARN",
-      "description": "Optional. Specifying the ARN of a role will ensure that the selected authentication provider is used to assume the role rather than the credentials directly.",
+      "description": "Optional. Specifying the ARN of a role will ensure that the selected authentication provider is used to assume the role rather than the credentials directly. Note the key casing: the backend struct tag is `assumeRoleARN` (grafana-aws-sdk awsds.AWSDatasourceSettings), while the config editor writes `assumeRoleArn`. Both load correctly because encoding/json falls back to a case-insensitive tag match, but only the `assumeRoleArn` spelling is read back by the editor.",
       "valueType": "string",
       "target": "jsonData",
-      "dependsOn": "jsonData_authType != 'grafana_assume_role'",
       "validations": [
         {
           "type": "pattern",
@@ -114,42 +35,21 @@
       }
     },
     {
-      "id": "jsonData_externalId",
-      "key": "externalId",
-      "label": "External ID",
-      "description": "If you are assuming a role in another account, that has been created with an external ID, specify the external ID here.",
+      "id": "secureJsonData_sessionToken",
+      "key": "sessionToken",
       "valueType": "string",
-      "target": "jsonData",
-      "dependsOn": "jsonData_authType != 'grafana_assume_role'",
-      "ui": {
-        "component": "input",
-        "placeholder": "External ID"
-      }
+      "target": "secureJsonData",
+      "role": "auth.aws.sessionToken",
+      "tags": ["backend-only"]
     },
     {
-      "id": "jsonData_endpoint",
-      "key": "endpoint",
-      "label": "Endpoint",
-      "description": "Optionally, specify a custom endpoint for the service",
+      "id": "jsonData_region",
+      "key": "region",
+      "label": "Region",
+      "description": "Backend-only. Per-query override of defaultRegion, applied by RedshiftDataSourceSettings.Apply when a query specifies a region; the config editor never writes it.",
       "valueType": "string",
       "target": "jsonData",
-      "dependsOn": "jsonData_authType != 'grafana_assume_role'",
-      "ui": {
-        "component": "input",
-        "placeholder": "https://{service}.{region}.amazonaws.com"
-      }
-    },
-    {
-      "id": "jsonData_defaultRegion",
-      "key": "defaultRegion",
-      "label": "Default Region",
-      "description": "Specify the region, such as for US West (Oregon) use ` us-west-2 ` as the region.",
-      "valueType": "string",
-      "target": "jsonData",
-      "ui": {
-        "component": "select",
-        "allowCustom": true
-      }
+      "tags": ["backend-only"]
     },
     {
       "id": "jsonData_useManagedSecret",
@@ -271,10 +171,10 @@
       "title": "Authentication",
       "order": 1,
       "fieldRefs": [
-        "jsonData_authType",
-        "jsonData_profile",
-        "secureJsonData_accessKey",
-        "secureJsonData_secretKey",
+        "aws_sdk_settings.authType",
+        "aws_sdk_settings.profile",
+        "aws_sdk_settings.accessKey",
+        "aws_sdk_settings.secretKey",
         "secureJsonData_sessionToken"
       ]
     },
@@ -282,13 +182,20 @@
       "id": "assume-role",
       "title": "Assume Role",
       "order": 2,
-      "fieldRefs": ["jsonData_assumeRoleArn", "jsonData_externalId"]
+      "fieldRefs": ["jsonData_assumeRoleARN", "aws_sdk_settings.externalId"]
     },
     {
       "id": "additional-settings",
       "title": "Additional Settings",
       "order": 3,
-      "fieldRefs": ["jsonData_endpoint", "jsonData_defaultRegion"]
+      "fieldRefs": [
+        "aws_sdk_settings.endpoint",
+        "aws_sdk_settings.defaultRegion",
+        "jsonData_region",
+        "aws_sdk_settings.proxyType",
+        "aws_sdk_settings.proxyUrl",
+        "aws_sdk_settings.proxyUsername"
+      ]
     },
     {
       "id": "redshift-details",
@@ -310,13 +217,18 @@
   "relationships": [
     {
       "type": "pair",
-      "fields": ["secureJsonData_accessKey", "secureJsonData_secretKey"],
+      "fields": ["aws_sdk_settings.accessKey", "aws_sdk_settings.secretKey"],
       "description": "AWS access key pair — supplied together when authType is 'keys'"
     },
     {
       "type": "group",
-      "fields": ["jsonData_assumeRoleArn", "jsonData_externalId"],
-      "description": "STS assume-role parameters — external ID is only meaningful when assumeRoleArn is set"
+      "fields": ["jsonData_assumeRoleARN", "aws_sdk_settings.externalId"],
+      "description": "STS assume-role parameters — external ID is only meaningful when the assume-role ARN is set"
+    },
+    {
+      "type": "group",
+      "fields": ["aws_sdk_settings.proxyType", "aws_sdk_settings.proxyUrl", "aws_sdk_settings.proxyUsername"],
+      "description": "HTTP proxy settings read by grafana-aws-sdk — proxyUrl and proxyUsername only apply when proxyType is 'url'. The Redshift config editor does not render these (it calls ConnectionConfig without showHttpProxySettings), and the matching proxyPassword secret is deliberately absent because RedshiftDataSourceSettings.Load never reads it."
     },
     {
       "type": "group",
@@ -336,8 +248,12 @@
   ],
   "instructions": [
     {
-      "msg": "Six authentication values are stored in jsonData.authType. The five editor-selectable ones are: 'default' (AWS SDK Default — the default credential chain), 'keys' (Access & secret key — puts accessKey/secretKey in secureJsonData), 'credentials' (Credentials file — optionally provide jsonData.profile), 'ec2_iam_role' (Workspace IAM Role — no extra credentials needed), and 'grafana_assume_role' (Grafana Assume Role — Grafana Cloud only; visible only when the awsDatasourcesTempCredentials feature toggle is on). The sixth is 'arn' (deprecated legacy value; the backend maps it to 'default').",
+      "msg": "Six authentication values are stored in jsonData.authType. The five editor-selectable ones are: 'default' (AWS SDK Default — the default credential chain), 'keys' (Access & secret key — puts accessKey/secretKey in secureJsonData), 'credentials' (Credentials file — optionally provide jsonData.profile), 'ec2_iam_role' (Workspace IAM Role — no extra credentials needed), and 'grafana_assume_role' (Grafana Assume Role — Grafana Cloud only; visible only when the awsDatasourcesTempCredentials feature toggle is on). The sixth is 'arn' (deprecated legacy value; the backend maps it to 'default'). The aws_sdk_settings pack's ui.options for this field are stale relative to @grafana/aws-sdk 0.12.0 — the editor renders the five labels listed here, in that order, and never offers 'arn'.",
       "tags": ["llm", "auth"]
+    },
+    {
+      "msg": "The assume-role ARN is stored under two spellings and they are not interchangeable for round-tripping. grafana-aws-sdk's Go struct tags it `assumeRoleARN` (awsds.AWSDatasourceSettings), which is the spelling this schema declares so it stays in sync with the settings model. The config editor (@grafana/aws-sdk ConnectionConfig) reads and writes `assumeRoleArn`. Either spelling authenticates correctly because encoding/json matches tags case-insensitively, but a provisioned datasource that sets `assumeRoleARN` will show an empty Assume Role ARN box in the UI. Prefer `assumeRoleArn` in provisioning files until the Go struct tag is fixed upstream.",
+      "tags": ["llm", "auth", "provisioning"]
     }
   ]
 }

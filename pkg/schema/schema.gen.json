@@ -10,11 +10,10 @@
             "database"
           ],
           "properties": {
-            "assumeRoleArn": {
-              "description": "Optional. Specifying the ARN of a role will ensure that the selected authentication provider is used to assume the role rather than the credentials directly.",
+            "assumeRoleARN": {
+              "description": "Optional. Specifying the ARN of a role will ensure that the selected authentication provider is used to assume the role rather than the credentials directly. Note the key casing: the backend struct tag is `assumeRoleARN` (grafana-aws-sdk awsds.AWSDatasourceSettings), while the config editor writes `assumeRoleArn`. Both load correctly because encoding/json falls back to a case-insensitive tag match, but only the `assumeRoleArn` spelling is read back by the editor.",
               "type": "string",
-              "pattern": "^(arn:aws[a-zA-Z-]*:iam::[0-9]{12}:role/.+)?$",
-              "x-dsconfig-depends-on": "jsonData_authType != 'grafana_assume_role'"
+              "pattern": "^(arn:aws[a-zA-Z-]*:iam::[0-9]{12}:role/.+)?$"
             },
             "authType": {
               "description": "Specify which AWS credentials chain to use.",
@@ -43,18 +42,18 @@
               "x-dsconfig-required-when": "jsonData_useServerless != true \u0026\u0026 jsonData_useManagedSecret != true"
             },
             "defaultRegion": {
-              "description": "Specify the region, such as for US West (Oregon) use ` us-west-2 ` as the region.",
+              "description": "Specify the region, such as for US West (Oregon) use `us-west-2` as the region.",
               "type": "string"
             },
             "endpoint": {
               "description": "Optionally, specify a custom endpoint for the service",
               "type": "string",
-              "x-dsconfig-depends-on": "jsonData_authType != 'grafana_assume_role'"
+              "x-dsconfig-depends-on": "aws_sdk_settings.authType != 'grafana_assume_role'"
             },
             "externalId": {
               "description": "If you are assuming a role in another account, that has been created with an external ID, specify the external ID here.",
               "type": "string",
-              "x-dsconfig-depends-on": "jsonData_authType != 'grafana_assume_role'"
+              "x-dsconfig-depends-on": "aws_sdk_settings.authType != 'grafana_assume_role'"
             },
             "managedSecret": {
               "type": "object",
@@ -73,7 +72,32 @@
             "profile": {
               "description": "Credentials profile name, as specified in ~/.aws/credentials, leave blank for default.",
               "type": "string",
-              "x-dsconfig-depends-on": "jsonData_authType == 'credentials'"
+              "x-dsconfig-depends-on": "aws_sdk_settings.authType == 'credentials'"
+            },
+            "proxyType": {
+              "description": "Specify the type of proxy to use. This should not be set if Secure Socks Proxy is enabled.",
+              "type": "string",
+              "default": "env",
+              "enum": [
+                "none",
+                "env",
+                "url"
+              ]
+            },
+            "proxyUrl": {
+              "description": "Proxy URL. Don't set the username or password here",
+              "type": "string",
+              "x-dsconfig-depends-on": "aws_sdk_settings.proxyType == 'url'",
+              "x-dsconfig-required-when": "aws_sdk_settings.proxyType == 'url'"
+            },
+            "proxyUsername": {
+              "description": "Optional: Proxy Username. This functionality should only be used with legacy web sites. RFC 2396 warns that interpreting Userinfo this way \"is NOT RECOMMENDED, because the passing of authentication information in clear text (such as URI) has proven to be a security risk in almost every case where it has been used.\"",
+              "type": "string",
+              "x-dsconfig-depends-on": "aws_sdk_settings.proxyType == 'url'"
+            },
+            "region": {
+              "description": "Backend-only. Per-query override of defaultRegion, applied by RedshiftDataSourceSettings.Apply when a query specifies a region; the config editor never writes it.",
+              "type": "string"
             },
             "useManagedSecret": {
               "type": "boolean",
