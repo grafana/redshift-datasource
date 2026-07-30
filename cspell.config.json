@@ -13,7 +13,8 @@
     "go.mod",
     "go.sum",
     "mage_output_file.go",
-    "language.ts"
+    "language.ts",
+    "jest.config.js"
   ],
   "words": [
     "andresmgot",
