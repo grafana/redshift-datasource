@@ -3,8 +3,8 @@
   "version": "2.5.0",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
-    "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
-    "dev": "webpack -w -c ./.config/webpack/webpack.config.ts --env development",
+    "build": "webpack -c ./webpack.config.ts --env production",
+    "dev": "webpack -w -c ./webpack.config.ts --env development",
     "e2e": "playwright test",
     "lint": "eslint --cache .",
     "lint:fix": "yarn run lint --fix",
