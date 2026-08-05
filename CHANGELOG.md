@@ -1,5 +1,28 @@
 # Changelog
 
+## 2.5.1
+
+- Fix out of SLO CVEs in [#882](https://github.com/grafana/redshift-datasource/pull/882)
+- chore(deps): bump google.golang.org/grpc from 1.79.3 to 1.82.1 in [#880](https://github.com/grafana/redshift-datasource/pull/880)
+- Bump dependencies in [#879](https://github.com/grafana/redshift-datasource/pull/879)
+- Bump grafana/* dependencies in [#876](https://github.com/grafana/redshift-datasource/pull/876)
+- Resolve critical CVEs in [#877](https://github.com/grafana/redshift-datasource/pull/877)
+- ci: use shared reusable add-to-project workflow in [#875](https://github.com/grafana/redshift-datasource/pull/875)
+- ci: use shared reusable stale workflow in [#874](https://github.com/grafana/redshift-datasource/pull/874)
+- ci: add stale issue and PR workflow in [#872](https://github.com/grafana/redshift-datasource/pull/872)
+- chore: use shared data-sources Renovate base preset in [#862](https://github.com/grafana/redshift-datasource/pull/862)
+- Updating plugin-ci-workflows in [#859](https://github.com/grafana/redshift-datasource/pull/859)
+- Add add-to-project workflow and remove issue_commands in [#861](https://github.com/grafana/redshift-datasource/pull/861)
+- docs: add signed commits requirement to CONTRIBUTING.md in [#860](https://github.com/grafana/redshift-datasource/pull/860)
+- Bumped ci-cd-workflows version to support new way to publish docs in [#867](https://github.com/grafana/redshift-datasource/pull/867)
+- Docs: Major update to Redshift data source docs in [#829](https://github.com/grafana/redshift-datasource/pull/829)
+- chore: make grafanaDependency prerelease-inclusive in [#855](https://github.com/grafana/redshift-datasource/pull/855)
+- chore: supply chain hardening (Yarn, Actions, Go) in [#837](https://github.com/grafana/redshift-datasource/pull/837)
+- Use GATB in GitHub workflows in [#834](https://github.com/grafana/redshift-datasource/pull/834)
+- set enable scripts to false in .yarnrc.yml in [#831](https://github.com/grafana/redshift-datasource/pull/831)
+- chore(deps): update grafana/plugin-ci-workflows/ci-cd-workflows action to v7.3.1 in [#805](https://github.com/grafana/redshift-datasource/pull/805)
+- chore(deps): lock file maintenance in [#823](https://github.com/grafana/redshift-datasource/pull/823)
+
 ## 2.5.0
 
 - Add sessionToken handling to support Grafana Assume Role in [#795](https://github.com/grafana/redshift-datasource/pull/795)
