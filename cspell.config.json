@@ -136,6 +136,8 @@
     "yota",
     "zizmor",
     "dsconfig",
-    "creds"
+    "creds",
+    "struct",
+    "Struct"
   ]
 }
