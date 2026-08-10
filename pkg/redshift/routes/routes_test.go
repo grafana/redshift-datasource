@@ -2,15 +2,19 @@ package routes
 
 import (
 	"bytes"
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
+	"github.com/grafana/grafana-plugin-sdk-go/config"
 	"github.com/grafana/redshift-datasource/pkg/redshift/fake"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 var ds = &fake.RedshiftFakeDatasource{
@@ -113,4 +117,40 @@ func Test_Routes(t *testing.T) {
 	assert.Contains(t, r, "/secret")
 	assert.Contains(t, r, "/workgroups")
 	assert.Contains(t, r, "/clusters")
+	assert.Contains(t, r, "/externalId")
+}
+
+func setupHandler() RedshiftResourceHandler {
+	return RedshiftResourceHandler{redshift: ds}
+}
+
+func hitRoute(rh RedshiftResourceHandler, route string, reqBody []byte, externalId string) (*http.Response, []byte, error) {
+	ctx := config.WithGrafanaConfig(context.Background(), config.NewGrafanaCfg(map[string]string{
+		awsds.GrafanaAssumeRoleExternalIdKeyName: externalId,
+	}))
+	req := httptest.NewRequestWithContext(ctx, "GET", route, bytes.NewReader(reqBody))
+	rw := httptest.NewRecorder()
+	rh.Routes()[route](rw, req)
+	resp := rw.Result()
+	body, err := io.ReadAll(resp.Body)
+	return resp, body, err
+}
+
+func TestRoutes_ExternalId(t *testing.T) {
+	t.Run("it returns an externalId if one is set in the env", func(t *testing.T) {
+		rh := setupHandler()
+		resp, body, err := hitRoute(rh, "/externalId", []byte{}, "a fake external id")
+
+		require.NoError(t, err)
+		require.Equal(t, http.StatusOK, resp.StatusCode)
+		require.Equal(t, `{"externalId":"a fake external id"}`, string(body))
+	})
+	t.Run("it returns an empty string if there is no external id set in the env", func(t *testing.T) {
+		rh := setupHandler()
+		resp, body, err := hitRoute(rh, "/externalId", []byte{}, "")
+
+		require.NoError(t, err)
+		require.Equal(t, http.StatusOK, resp.StatusCode)
+		require.Equal(t, `{"externalId":""}`, string(body))
+	})
 }
