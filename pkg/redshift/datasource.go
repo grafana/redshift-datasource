@@ -97,6 +97,12 @@ func (s *RedshiftDatasource) GetAsyncDB(ctx context.Context, config backend.Data
 }
 
 func (s *RedshiftDatasource) getApi(ctx context.Context, options sqlds.Options) (*api.API, error) {
+	plugin := backend.PluginConfigFromContext(ctx)
+	if plugin.DataSourceInstanceSettings != nil {
+		// CallResource can run after deferred connect; re-init from the request
+		// so GetAPI has decrypted settings even if bootstrap Connect did not.
+		s.awsDS.Init(*plugin.DataSourceInstanceSettings)
+	}
 	id := datasource.GetDatasourceID(ctx)
 	args := sqlds.Options{}
 	for key, val := range options {
