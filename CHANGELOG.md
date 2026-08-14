@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.2
+
+- Bump `grafana-aws-sdk` to 1.5.3 and `sqlds` to 5.3.1 so CallResource can register when AWS auth is not ready at init; add `/externalId` resource + ConfigEditor wiring (with `@grafana/aws-sdk` 0.12.1) for Grafana Assume Role in [#884](https://github.com/grafana/redshift-datasource/pull/884)
+
 ## 2.5.1
 
 - Fix out of SLO CVEs in [#882](https://github.com/grafana/redshift-datasource/pull/882)

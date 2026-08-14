@@ -3,6 +3,7 @@ package routes
 import (
 	"net/http"
 
+	"github.com/grafana/grafana-aws-sdk/pkg/awsds"
 	"github.com/grafana/grafana-aws-sdk/pkg/sql/routes"
 	"github.com/grafana/redshift-datasource/pkg/redshift"
 	"github.com/grafana/sqlds/v5"
@@ -43,11 +44,24 @@ func (r *RedshiftResourceHandler) workgroups(rw http.ResponseWriter, req *http.R
 	routes.SendResources(rw, workgroups, err)
 }
 
+type ExternalIdResponse struct {
+	ExternalId string `json:"externalId"`
+}
+
+func (r *RedshiftResourceHandler) externalId(rw http.ResponseWriter, req *http.Request) {
+	authSettings, _ := awsds.ReadAuthSettingsFromContext(req.Context())
+	res := ExternalIdResponse{
+		ExternalId: authSettings.ExternalID,
+	}
+	routes.SendResources(rw, res, nil)
+}
+
 func (r *RedshiftResourceHandler) Routes() map[string]func(http.ResponseWriter, *http.Request) {
 	routes := r.DefaultRoutes()
 	routes["/secrets"] = r.secrets
 	routes["/secret"] = r.secret
 	routes["/clusters"] = r.clusters
 	routes["/workgroups"] = r.workgroups
+	routes["/externalId"] = r.externalId
 	return routes
 }

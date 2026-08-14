@@ -1,6 +1,6 @@
 {
   "name": "grafana-redshift-datasource",
-  "version": "2.5.1",
+  "version": "2.5.2",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
@@ -40,7 +40,7 @@
     "@babel/core": "7.29.0",
     "@eslint/eslintrc": "3.3.5",
     "@eslint/js": "9.39.4",
-    "@grafana/aws-sdk": "0.12.0",
+    "@grafana/aws-sdk": "0.12.1",
     "@grafana/eslint-config": "9.0.0",
     "@grafana/levitate": "0.17.3",
     "@grafana/plugin-e2e": "3.10.0",
