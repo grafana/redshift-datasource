@@ -21,6 +21,7 @@ import (
 	awsModels "github.com/grafana/grafana-aws-sdk/pkg/sql/models"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 	sdkhttpclient "github.com/grafana/grafana-plugin-sdk-go/backend/httpclient"
+	"github.com/grafana/grafana-plugin-sdk-go/config"
 	"github.com/grafana/redshift-datasource/pkg/redshift/models"
 	"github.com/grafana/sqlds/v5"
 )
@@ -39,7 +40,7 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	httpClientProvider := sdkhttpclient.NewProvider()
 	httpClientOptions, err := redshiftSettings.Config.HTTPClientOptions(ctx)
 
-	cfg := backend.GrafanaConfigFromContext(ctx)
+	cfg := config.GrafanaConfigFromContext(ctx)
 	httpClientOptions.Middlewares = append(httpClientOptions.Middlewares, sdkhttpclient.ResponseLimitMiddleware(cfg.ResponseLimit()))
 
 	if err != nil {
