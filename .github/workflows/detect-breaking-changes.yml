@@ -13,8 +13,8 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - name: Install dependencies
-        run: yarn install --immutable
+        run: npm ci
       - name: Build plugin
-        run: yarn build
+        run: npm run build
       - name: Compatibility check
-        run: yarn levitate:is-compatible
+        run: npm run levitate:is-compatible
