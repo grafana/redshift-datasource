@@ -47,7 +47,7 @@
     "@grafana/sign-plugin": "3.3.3",
     "@grafana/tsconfig": "2.0.1",
     "@openfeature/core": "1.9.2",
-    "@openfeature/web-sdk": "1.7.3",
+    "@openfeature/web-sdk": "1.10.0",
     "@playwright/test": "1.59.1",
     "@stylistic/eslint-plugin-ts": "4.4.1",
     "@swc/core": "1.15.24",
