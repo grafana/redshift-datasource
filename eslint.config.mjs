@@ -20,12 +20,13 @@ export default defineConfig([
     extends: compat.extends('./.config/.eslintrc'),
   },
   {
-    rules: {
-      'deprecation/deprecation': 'off',
-    },
-  },
-  {
     files: ['src/**/*.{ts,tsx,js,jsx}'],
+    languageOptions: {
+      parserOptions: {
+        project: './tsconfig.json',
+        tsconfigRootDir: __dirname,
+      },
+    },
     rules: {
       '@typescript-eslint/no-deprecated': 'warn',
     },
