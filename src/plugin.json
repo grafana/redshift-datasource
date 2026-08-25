@@ -16,6 +16,11 @@
     },
     {
       "type": "dashboard",
+      "name": "Amazon Redshift Query Details",
+      "path": "dashboards/redshift-query-details.json"
+    },
+    {
+      "type": "dashboard",
       "name": "Redshift Privileges",
       "path": "dashboards/redshift-privileges.json"
     },
