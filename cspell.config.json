@@ -2,18 +2,18 @@
   "ignorePaths": [
     ".config/Dockerfile",
     ".github/**",
-    ".yarn/**",
     "node_modules/**",
     "dist/**",
     "playwright*/**",
     "test-results/**",
     "provisioning/**",
     "src/dashboards/**",
-    "yarn.lock",
     "go.mod",
     "go.sum",
     "mage_output_file.go",
-    "language.ts"
+    "language.ts",
+    "jest.config.js",
+    "package-lock.json"
   ],
   "words": [
     "andresmgot",
@@ -45,6 +45,7 @@
     "fillmode",
     "foofoo",
     "fridgepoet",
+    "GATB",
     "gofmt",
     "gomod",
     "gotest",
@@ -130,7 +131,6 @@
     "viant",
     "wojtekmaj",
     "Workgroups",
-    "yarnrc",
     "yota",
     "zizmor"
   ]
