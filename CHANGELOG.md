@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.2
+
+- chore(deps): update dependencies in [#887](https://github.com/grafana/redshift-datasource/pull/887)
+
 ## 2.5.1
 
 - Fix out of SLO CVEs in [#882](https://github.com/grafana/redshift-datasource/pull/882)
