@@ -1,0 +1,259 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/dsconfig/refs/tags/dsconfig/v0.0.12/dsconfig/schema.json",
+  "schemaVersion": "v1",
+  "pluginType": "grafana-redshift-datasource",
+  "pluginName": "Amazon Redshift",
+  "docURL": "https://grafana.com/grafana/plugins/grafana-redshift-datasource/",
+  "baseFields": [
+    {
+      "from": "aws_sdk_settings",
+      "exclude": [
+        "aws_sdk_settings.assumeRoleArn",
+        "aws_sdk_settings.sessionToken",
+        "aws_sdk_settings.proxyPassword"
+      ]
+    }
+  ],
+  "fields": [
+    {
+      "id": "jsonData_assumeRoleARN",
+      "key": "assumeRoleARN",
+      "label": "Assume Role ARN",
+      "description": "Optional. Specifying the ARN of a role will ensure that the selected authentication provider is used to assume the role rather than the credentials directly. Note the key casing: the backend struct tag is `assumeRoleARN` (grafana-aws-sdk awsds.AWSDatasourceSettings), while the config editor writes `assumeRoleArn`. Both load correctly because encoding/json falls back to a case-insensitive tag match, but only the `assumeRoleArn` spelling is read back by the editor.",
+      "valueType": "string",
+      "target": "jsonData",
+      "validations": [
+        {
+          "type": "pattern",
+          "pattern": "^(arn:aws[a-zA-Z-]*:iam::[0-9]{12}:role/.+)?$",
+          "message": "When set, must be a valid IAM role ARN, e.g. arn:aws:iam::123456789012:role/MyRole"
+        }
+      ],
+      "ui": {
+        "component": "input",
+        "placeholder": "arn:aws:iam:*"
+      }
+    },
+    {
+      "id": "secureJsonData_sessionToken",
+      "key": "sessionToken",
+      "valueType": "string",
+      "target": "secureJsonData",
+      "role": "auth.aws.sessionToken",
+      "tags": ["backend-only"]
+    },
+    {
+      "id": "jsonData_region",
+      "key": "region",
+      "label": "Region",
+      "description": "Backend-only. Per-query override of defaultRegion, applied by RedshiftDataSourceSettings.Apply when a query specifies a region; the config editor never writes it.",
+      "valueType": "string",
+      "target": "jsonData",
+      "tags": ["backend-only"]
+    },
+    {
+      "id": "jsonData_useManagedSecret",
+      "key": "useManagedSecret",
+      "valueType": "boolean",
+      "target": "jsonData",
+      "defaultValue": false,
+      "ui": {
+        "component": "radio",
+        "options": [
+          {
+            "label": "Temporary credentials",
+            "value": false
+          },
+          {
+            "label": "AWS Secrets Manager",
+            "value": true
+          }
+        ]
+      }
+    },
+    {
+      "id": "jsonData_useServerless",
+      "key": "useServerless",
+      "label": "Serverless",
+      "valueType": "boolean",
+      "target": "jsonData",
+      "defaultValue": false,
+      "ui": {
+        "component": "switch"
+      }
+    },
+    {
+      "id": "jsonData_clusterIdentifier",
+      "key": "clusterIdentifier",
+      "label": "Cluster Identifier",
+      "valueType": "string",
+      "target": "jsonData",
+      "dependsOn": "jsonData_useServerless != true",
+      "requiredWhen": "jsonData_useServerless != true",
+      "ui": {
+        "component": "select",
+        "allowCustom": true
+      }
+    },
+    {
+      "id": "jsonData_workgroupName",
+      "key": "workgroupName",
+      "label": "Workgroup",
+      "valueType": "string",
+      "target": "jsonData",
+      "dependsOn": "jsonData_useServerless == true",
+      "requiredWhen": "jsonData_useServerless == true",
+      "ui": {
+        "component": "select"
+      }
+    },
+    {
+      "id": "jsonData_managedSecret_arn",
+      "key": "arn",
+      "section": "managedSecret",
+      "label": "Managed Secret",
+      "valueType": "string",
+      "target": "jsonData",
+      "dependsOn": "jsonData_useManagedSecret == true",
+      "requiredWhen": "jsonData_useManagedSecret == true",
+      "ui": {
+        "component": "select",
+        "allowCustom": true
+      }
+    },
+    {
+      "id": "jsonData_managedSecret_name",
+      "key": "name",
+      "section": "managedSecret",
+      "valueType": "string",
+      "target": "jsonData",
+      "dependsOn": "jsonData_useManagedSecret == true",
+      "tags": ["managed-by:jsonData_managedSecret_arn"]
+    },
+    {
+      "id": "jsonData_dbUser",
+      "key": "dbUser",
+      "label": "Database User",
+      "valueType": "string",
+      "target": "jsonData",
+      "dependsOn": "jsonData_useServerless != true || jsonData_useManagedSecret == true",
+      "requiredWhen": "jsonData_useServerless != true && jsonData_useManagedSecret != true",
+      "ui": {
+        "component": "input"
+      }
+    },
+    {
+      "id": "jsonData_database",
+      "key": "database",
+      "label": "Database",
+      "valueType": "string",
+      "target": "jsonData",
+      "required": true,
+      "ui": {
+        "component": "input"
+      }
+    },
+    {
+      "id": "jsonData_withEvent",
+      "key": "withEvent",
+      "label": "Send events to Amazon EventBridge",
+      "valueType": "boolean",
+      "target": "jsonData",
+      "defaultValue": false,
+      "ui": {
+        "component": "switch"
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "authentication",
+      "title": "Authentication",
+      "order": 1,
+      "fieldRefs": [
+        "aws_sdk_settings.authType",
+        "aws_sdk_settings.profile",
+        "aws_sdk_settings.accessKey",
+        "aws_sdk_settings.secretKey",
+        "secureJsonData_sessionToken"
+      ]
+    },
+    {
+      "id": "assume-role",
+      "title": "Assume Role",
+      "order": 2,
+      "fieldRefs": ["jsonData_assumeRoleARN", "aws_sdk_settings.externalId"]
+    },
+    {
+      "id": "additional-settings",
+      "title": "Additional Settings",
+      "order": 3,
+      "fieldRefs": [
+        "aws_sdk_settings.endpoint",
+        "aws_sdk_settings.defaultRegion",
+        "jsonData_region",
+        "aws_sdk_settings.proxyType",
+        "aws_sdk_settings.proxyUrl",
+        "aws_sdk_settings.proxyUsername"
+      ]
+    },
+    {
+      "id": "redshift-details",
+      "title": "Redshift Details",
+      "order": 4,
+      "fieldRefs": [
+        "jsonData_useManagedSecret",
+        "jsonData_useServerless",
+        "jsonData_clusterIdentifier",
+        "jsonData_workgroupName",
+        "jsonData_managedSecret_arn",
+        "jsonData_managedSecret_name",
+        "jsonData_dbUser",
+        "jsonData_database",
+        "jsonData_withEvent"
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "type": "pair",
+      "fields": ["aws_sdk_settings.accessKey", "aws_sdk_settings.secretKey"],
+      "description": "AWS access key pair — supplied together when authType is 'keys'"
+    },
+    {
+      "type": "group",
+      "fields": ["jsonData_assumeRoleARN", "aws_sdk_settings.externalId"],
+      "description": "STS assume-role parameters — external ID is only meaningful when the assume-role ARN is set"
+    },
+    {
+      "type": "group",
+      "fields": ["aws_sdk_settings.proxyType", "aws_sdk_settings.proxyUrl", "aws_sdk_settings.proxyUsername"],
+      "description": "HTTP proxy settings read by grafana-aws-sdk — proxyUrl and proxyUsername only apply when proxyType is 'url'. The Redshift config editor does not render these (it calls ConnectionConfig without showHttpProxySettings), and the matching proxyPassword secret is deliberately absent because RedshiftDataSourceSettings.Load never reads it."
+    },
+    {
+      "type": "group",
+      "fields": ["jsonData_managedSecret_arn", "jsonData_managedSecret_name"],
+      "description": "AWS Secrets Manager selection — the editor writes both fields from a single Select whose value is the secret ARN and whose label is the secret name"
+    },
+    {
+      "type": "group",
+      "fields": ["jsonData_useServerless", "jsonData_clusterIdentifier", "jsonData_workgroupName"],
+      "description": "Redshift provisioning model — useServerless=false requires clusterIdentifier (Provisioned); useServerless=true requires workgroupName (Serverless)"
+    },
+    {
+      "type": "group",
+      "fields": ["jsonData_useManagedSecret", "jsonData_managedSecret_arn", "jsonData_dbUser"],
+      "description": "Redshift credential mode — useManagedSecret=false requires dbUser (temporary IAM creds via GetClusterCredentials/GetCredentials); useManagedSecret=true requires managedSecret.arn (Secrets Manager stores both dbUser and password)"
+    }
+  ],
+  "instructions": [
+    {
+      "msg": "Six authentication values are stored in jsonData.authType. The five editor-selectable ones are: 'default' (AWS SDK Default — the default credential chain), 'keys' (Access & secret key — puts accessKey/secretKey in secureJsonData), 'credentials' (Credentials file — optionally provide jsonData.profile), 'ec2_iam_role' (Workspace IAM Role — no extra credentials needed), and 'grafana_assume_role' (Grafana Assume Role — Grafana Cloud only; visible only when the awsDatasourcesTempCredentials feature toggle is on). The sixth is 'arn' (deprecated legacy value; the backend maps it to 'default'). The aws_sdk_settings pack's ui.options for this field are stale relative to @grafana/aws-sdk 0.12.0 — the editor renders the five labels listed here, in that order, and never offers 'arn'.",
+      "tags": ["llm", "auth"]
+    },
+    {
+      "msg": "The assume-role ARN is stored under two spellings and they are not interchangeable for round-tripping. grafana-aws-sdk's Go struct tags it `assumeRoleARN` (awsds.AWSDatasourceSettings), which is the spelling this schema declares so it stays in sync with the settings model. The config editor (@grafana/aws-sdk ConnectionConfig) reads and writes `assumeRoleArn`. Either spelling authenticates correctly because encoding/json matches tags case-insensitively, but a provisioned datasource that sets `assumeRoleARN` will show an empty Assume Role ARN box in the UI. Prefer `assumeRoleArn` in provisioning files until the Go struct tag is fixed upstream.",
+      "tags": ["llm", "auth", "provisioning"]
+    }
+  ]
+}
