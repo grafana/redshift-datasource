@@ -216,11 +216,6 @@
     },
     {
       "type": "group",
-      "fields": ["aws_sdk_settings.proxyType", "aws_sdk_settings.proxyUrl", "aws_sdk_settings.proxyUsername"],
-      "description": "HTTP proxy settings read by grafana-aws-sdk — proxyUrl and proxyUsername only apply when proxyType is 'url'. The Redshift config editor does not render these (it calls ConnectionConfig without showHttpProxySettings), and the matching proxyPassword secret is deliberately absent because RedshiftDataSourceSettings.Load never reads it."
-    },
-    {
-      "type": "group",
       "fields": ["jsonData_managedSecret_arn", "jsonData_managedSecret_name"],
       "description": "AWS Secrets Manager selection — the editor writes both fields from a single Select whose value is the secret ARN and whose label is the secret name"
     },
@@ -243,6 +238,10 @@
     {
       "msg": "The assume-role ARN is stored under two spellings and they are not interchangeable for round-tripping. grafana-aws-sdk's Go struct tags it `assumeRoleARN` (awsds.AWSDatasourceSettings), which is promoted independently of the schema's primary `assumeRoleArn` field and only kept in sync via jsonData_assumeRoleARN_legacy. The config editor (@grafana/aws-sdk ConnectionConfig) reads and writes `assumeRoleArn`. Either spelling authenticates correctly because encoding/json matches tags case-insensitively, but a provisioned datasource that sets `assumeRoleARN` will show an empty Assume Role ARN box in the UI. Always use `assumeRoleArn` in provisioning files.",
       "tags": ["llm", "auth", "provisioning"]
+    },
+    {
+      "msg": "aws_sdk_settings.proxyType/.proxyUrl/.proxyUsername are declared only because RedshiftDataSourceSettings has them (via awsds.AWSDatasourceSettings) and excluding them would break the JSONDataMatchesStruct conformance test. They're otherwise dead here: the config editor never renders them, and api.New never sets awsauth.Settings.PerDatasourceProxySettings, so a provisioned value never reaches grafana-aws-sdk's proxy logic. Don't build on them without wiring PerDatasourceProxySettings first. proxyPassword is excluded from baseFields since it round-trips via secureJsonData, not a jsonData tag.",
+      "tags": ["llm", "provisioning"]
     }
   ]
 }
