@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Bump `@grafana/aws-sdk` to 0.12.2 and merge saved jsonData so the server-minted external ID appears after save, and bump `grafana-aws-sdk` to 1.5.3 so queries send that ID
+
 ## 2.5.2
 
 - chore(deps): update dependencies in [#887](https://github.com/grafana/redshift-datasource/pull/887)
