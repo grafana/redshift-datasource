@@ -4,7 +4,7 @@ import { select } from 'react-select-event';
 
 import { mockDatasourceOptions } from '../__mocks__/datasource';
 import { selectors } from '../selectors';
-import { ConfigEditor } from './ConfigEditor';
+import { ConfigEditor, applySavedDatasource } from './ConfigEditor';
 import userEvent from '@testing-library/user-event';
 
 const clusterIdentifier = 'cluster';
@@ -58,6 +58,26 @@ jest.mock('@grafana/runtime', () => {
 const props = mockDatasourceOptions;
 
 describe('ConfigEditor', () => {
+  it('merges the server-minted external ID from the save response', () => {
+    const current = {
+      ...mockDatasourceOptions.options,
+      jsonData: { ...mockDatasourceOptions.options.jsonData, database: 'dev' },
+    };
+    const saved = {
+      ...current,
+      version: (current.version ?? 1) + 1,
+      jsonData: {
+        ...current.jsonData,
+        grafanaExternalId: '5285-rsuid-abcdef0123456789',
+      },
+    };
+
+    const next = applySavedDatasource(current, saved);
+    expect(next.version).toBe(saved.version);
+    expect(next.jsonData.database).toBe('dev');
+    expect(next.jsonData.grafanaExternalId).toBe('5285-rsuid-abcdef0123456789');
+  });
+
   it('should display Provisioned using Secrets Manager', () => {
     render(<ConfigEditor {...props} />);
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
