@@ -137,7 +137,7 @@ func hitRoute(rh RedshiftResourceHandler, route string, reqBody []byte, external
 }
 
 func TestRoutes_ExternalId(t *testing.T) {
-	t.Run("it returns an externalId if one is set in the env", func(t *testing.T) {
+	t.Run("it returns an externalId when Grafana config has one", func(t *testing.T) {
 		rh := setupHandler()
 		resp, body, err := hitRoute(rh, "/externalId", []byte{}, "a fake external id")
 
@@ -145,7 +145,7 @@ func TestRoutes_ExternalId(t *testing.T) {
 		require.Equal(t, http.StatusOK, resp.StatusCode)
 		require.Equal(t, `{"externalId":"a fake external id"}`, string(body))
 	})
-	t.Run("it returns an empty string if there is no external id set in the env", func(t *testing.T) {
+	t.Run("it returns an empty string when Grafana config has no external id", func(t *testing.T) {
 		rh := setupHandler()
 		resp, body, err := hitRoute(rh, "/externalId", []byte{}, "")
 
