@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.4
+
+- chore: Adds datasoruce configuration schema in [#858](https://github.com/grafana/redshift-datasource/pull/858)
+
 ## 2.5.3
 
 - Bump `grafana-aws-sdk` to 1.5.5 and `sqlds` to 5.3.1 so CallResource can register when AWS auth is not ready at init; add `/externalId` resource + ConfigEditor wiring (with `@grafana/aws-sdk` 0.12.2) for Grafana Assume Role in [#884](https://github.com/grafana/redshift-datasource/pull/884)
@@ -13,7 +17,7 @@
 - Fix out of SLO CVEs in [#882](https://github.com/grafana/redshift-datasource/pull/882)
 - chore(deps): bump google.golang.org/grpc from 1.79.3 to 1.82.1 in [#880](https://github.com/grafana/redshift-datasource/pull/880)
 - Bump dependencies in [#879](https://github.com/grafana/redshift-datasource/pull/879)
-- Bump grafana/* dependencies in [#876](https://github.com/grafana/redshift-datasource/pull/876)
+- Bump grafana/\* dependencies in [#876](https://github.com/grafana/redshift-datasource/pull/876)
 - Resolve critical CVEs in [#877](https://github.com/grafana/redshift-datasource/pull/877)
 - ci: use shared reusable add-to-project workflow in [#875](https://github.com/grafana/redshift-datasource/pull/875)
 - ci: use shared reusable stale workflow in [#874](https://github.com/grafana/redshift-datasource/pull/874)
