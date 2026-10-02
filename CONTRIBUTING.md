@@ -77,14 +77,17 @@ If you build Grafana locally, you can for example symlink `redshift-datasource` 
 1. `npm run server`
 1. `npm run e2e`
 
-## Build a release for the Redshift data source plugin
+## Submitting PR
+
+If you are creating a PR, ensure to run `npx changeset` from your branch. Provide the details accordingly. It will create a `*.md` file inside the `./.changeset` folder. Later during the release, based on these changesets, the package version will be bumped and the changelog will be generated.
+
+## Releasing & Bumping version
 
 You need to have commit rights to the GitHub repository to publish a release.
 
-1. Update the version number in the `package.json` file.
-2. Update the `CHANGELOG.md` with the changes contained in the release.
-3. Commit the changes to master and push to GitHub.
-4. Follow the release process that you can find [here](https://enghub.grafana-ops.net/docs/default/component/grafana-plugins-platform/plugins-ci-github-actions/010-plugins-ci-github-actions/#cd_1)
+1. Execute `npx changeset version`. This will update the `CHANGELOG.md` and bump the version in `package.json`.
+2. Commit the changes to main and push to GitHub.
+3. Follow the release process that you can find [here](https://enghub.grafana-ops.net/docs/default/component/grafana-plugins-platform/plugins-ci-github-actions/010-plugins-ci-github-actions/#cd_1)
 
 # Plugin Technical Documentation
 
