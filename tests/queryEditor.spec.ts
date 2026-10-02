@@ -19,7 +19,8 @@ test('should provide autosuggestions', async ({ page, panelEditPage, selectors }
   await page.keyboard.press('Enter');
   await expect(editor.getByLabel('FROM')).toBeVisible();
   await page.keyboard.press('Enter');
-  await expect(editor.getByLabel('catalog_history')).toBeVisible({ timeout: 15_000 });
+  // Wait for schema suggestions (cluster no longer exposes catalog_history)
+  await expect(editor.getByLabel('information_schema')).toBeVisible({ timeout: 15_000 });
   await page.keyboard.press('p');
   await page.keyboard.press('u');
   await expect(editor.getByLabel('public')).toBeVisible({ timeout: 15_000 });

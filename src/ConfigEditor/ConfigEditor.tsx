@@ -1,9 +1,9 @@
-import { ConfigSelect, ConnectionConfig, Divider } from '@grafana/aws-sdk';
+import { ConfigSelect, ConnectionConfig, Divider, AwsAuthType } from '@grafana/aws-sdk';
 import { DataSourcePluginOptionsEditorProps, SelectableValue, GrafanaTheme2 } from '@grafana/data';
 import { config, getBackendSrv } from '@grafana/runtime';
 import { Field, Input, SecureSocksProxySettings, Switch, useStyles2 } from '@grafana/ui';
 import { gte } from 'semver';
-import React, { FormEvent, useEffect, useState } from 'react';
+import React, { FormEvent, useCallback, useEffect, useState } from 'react';
 import { selectors } from 'selectors';
 
 import {
@@ -45,6 +45,7 @@ export function ConfigEditor(props: Props) {
   const resourcesURL = `${baseURL}/resources`;
   const { jsonData } = props.options;
   const [saved, setSaved] = useState(!!jsonData.defaultRegion);
+  const [externalId, setExternalId] = useState('');
 
   const styles = useStyles2(getStyles);
 
@@ -186,6 +187,21 @@ export function ConfigEditor(props: Props) {
     props.onOptionsChange(options);
   };
 
+  const fetchExternalId = useCallback(async () => {
+    try {
+      const response = await getBackendSrv().post(resourcesURL + '/externalId', {});
+      setExternalId(response.externalId);
+    } catch {
+      setExternalId('');
+    }
+  }, [resourcesURL]);
+
+  useEffect(() => {
+    if (props.options.jsonData.authType === AwsAuthType.GrafanaAssumeRole) {
+      fetchExternalId();
+    }
+  }, [props.options.jsonData.authType, fetchExternalId]);
+
   const onChangeManagedSecret = (e: SelectableValue<string> | null) => {
     const value = e?.value ?? '';
     const label = e?.label ?? '';
@@ -242,7 +258,7 @@ export function ConfigEditor(props: Props) {
 
   return (
     <div className={styles.formStyles}>
-      <ConnectionConfig {...props} onOptionsChange={onOptionsChange} />
+      <ConnectionConfig {...props} onOptionsChange={onOptionsChange} externalId={externalId} />
       {config.secureSocksDSProxyEnabled && gte(config.buildInfo.version, '10.0.0') && (
         <SecureSocksProxySettings options={props.options} onOptionsChange={onOptionsChange} />
       )}
