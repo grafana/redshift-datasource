@@ -2,7 +2,7 @@
 
 ## 2.5.4
 
-- chore: Adds datasoruce configuration schema in [#858](https://github.com/grafana/redshift-datasource/pull/858)
+- chore: Adds datasource configuration schema in [#858](https://github.com/grafana/redshift-datasource/pull/858)
 
 ## 2.5.3
 
