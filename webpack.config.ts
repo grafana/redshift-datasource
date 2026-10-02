@@ -1,7 +1,6 @@
 import { Configuration } from 'webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { mergeWithRules } from 'webpack-merge';
-import path from 'path';
 import grafanaConfig from './.config/webpack/webpack.config';
 
 const config = async (env: any): Promise<Configuration> => {

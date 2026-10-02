@@ -42,6 +42,7 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 		backend.Logger.Error("failed to create HTTP client options", "error", err.Error())
 		return nil, err
 	}
+
 	httpClient, err := httpClientProvider.New(httpClientOptions)
 	if err != nil {
 		backend.Logger.Error("failed to create HTTP client", "error", err.Error())
@@ -54,17 +55,19 @@ func New(ctx context.Context, settings awsModels.Settings) (api.AWSAPI, error) {
 	}
 
 	awsCfg, err := awsauth.NewConfigProvider().GetConfig(ctx, awsauth.Settings{
-		LegacyAuthType:     redshiftSettings.AuthType,
-		AccessKey:          redshiftSettings.AccessKey,
-		SecretKey:          redshiftSettings.SecretKey,
-		SessionToken:       redshiftSettings.SessionToken,
-		Region:             region,
-		CredentialsProfile: redshiftSettings.Profile,
-		AssumeRoleARN:      redshiftSettings.AssumeRoleARN,
-		Endpoint:           redshiftSettings.Endpoint,
-		ExternalID:         redshiftSettings.ExternalID,
-		UserAgent:          "Redshift",
-		HTTPClient:         httpClient,
+		LegacyAuthType:             redshiftSettings.AuthType,
+		AccessKey:                  redshiftSettings.AccessKey,
+		SecretKey:                  redshiftSettings.SecretKey,
+		SessionToken:               redshiftSettings.SessionToken,
+		Region:                     region,
+		CredentialsProfile:         redshiftSettings.Profile,
+		AssumeRoleARN:              redshiftSettings.AssumeRoleARN,
+		Endpoint:                   redshiftSettings.Endpoint,
+		ExternalID:                 redshiftSettings.ExternalID,
+		GrafanaExternalID:          redshiftSettings.GrafanaExternalID,
+		UsePerDatasourceExternalID: redshiftSettings.UsePerDatasourceExternalID,
+		UserAgent:                  "Redshift",
+		HTTPClient:                 httpClient,
 	})
 	if err != nil {
 		return nil, err

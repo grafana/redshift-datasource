@@ -2,6 +2,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import React from 'react';
 import { select } from 'react-select-event';
 
+import { AwsAuthType } from '@grafana/aws-sdk';
 import { mockDatasourceOptions } from '../__mocks__/datasource';
 import { selectors } from '../selectors';
 import { ConfigEditor } from './ConfigEditor';
@@ -17,6 +18,30 @@ const serverlessSecretFetched = { dbClusterIdentifier: '', username: dbUser };
 const cluster = { clusterIdentifier, endpoint: { address: 'bar.d.e.f', port: 456 }, database: 'db2' };
 const workgroup = { workgroupName, endpoint: { address: 'foo.a.b.c', port: 123 }, database: 'db1' };
 
+const mockGet = jest.fn().mockImplementation((url) => {
+  if (url.includes('secrets')) {
+    return [provisionedSecret, serverlessSecret];
+  } else if (url.includes('clusters')) {
+    return [cluster];
+  } else if (url.includes('workgroups')) {
+    return [workgroup];
+  } else {
+    return [];
+  }
+});
+
+const mockPost = jest.fn().mockImplementation((url, args) => {
+  if (url.includes('externalId')) {
+    return Promise.resolve({ externalId: 'test-external-id' });
+  } else if (url.includes('secret') && args.secretARN === 'arn:bar') {
+    return provisionedSecretFetched;
+  } else if (url.includes('secret') && args.secretARN === 'arn:foo') {
+    return serverlessSecretFetched;
+  } else {
+    return;
+  }
+});
+
 jest.mock('@grafana/aws-sdk', () => {
   return {
     ...(jest.requireActual('@grafana/aws-sdk') as any),
@@ -31,26 +56,8 @@ jest.mock('@grafana/runtime', () => {
     ...(jest.requireActual('@grafana/runtime') as any),
     getBackendSrv: () => ({
       put: jest.fn().mockResolvedValue({ datasource: {} }),
-      get: jest.fn().mockImplementation((url, args) => {
-        if (url.includes('secrets')) {
-          return [provisionedSecret, serverlessSecret];
-        } else if (url.includes('clusters')) {
-          return [cluster];
-        } else if (url.includes('workgroups')) {
-          return [workgroup];
-        } else {
-          return [];
-        }
-      }),
-      post: jest.fn().mockImplementation((url, args) => {
-        if (url.includes('secret') && args.secretARN === 'arn:bar') {
-          return provisionedSecretFetched;
-        } else if (url.includes('secret') && args.secretARN === 'arn:foo') {
-          return serverlessSecretFetched;
-        } else {
-          return;
-        }
-      }),
+      get: mockGet,
+      post: mockPost,
     }),
   };
 });
@@ -58,6 +65,30 @@ jest.mock('@grafana/runtime', () => {
 const props = mockDatasourceOptions;
 
 describe('ConfigEditor', () => {
+  beforeEach(() => {
+    mockGet.mockClear();
+    mockPost.mockClear();
+  });
+
+  it('should fetch externalId when using Grafana Assume Role', async () => {
+    render(
+      <ConfigEditor
+        {...props}
+        options={{
+          ...props.options,
+          jsonData: {
+            ...props.options.jsonData,
+            authType: AwsAuthType.GrafanaAssumeRole,
+          },
+        }}
+      />
+    );
+
+    await waitFor(() =>
+      expect(mockPost).toHaveBeenCalledWith('/api/datasources/uid/redshift-id/resources/externalId', {})
+    );
+  });
+
   it('should display Provisioned using Secrets Manager', () => {
     render(<ConfigEditor {...props} />);
     expect(screen.getByTestId(selectors.components.ConfigEditor.WorkgroupText.testID)).not.toBeVisible();
