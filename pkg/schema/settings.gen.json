@@ -57,6 +57,11 @@
             "type": "string",
             "x-dsconfig-depends-on": "aws_sdk_settings.authType != 'grafana_assume_role'"
           },
+          "grafanaExternalId": {
+            "description": "Per-datasource external ID used for Grafana Assume Role. Only takes effect when \"Use per-datasource external ID\" is enabled; otherwise the stack-wide external ID is used.",
+            "type": "string",
+            "x-dsconfig-depends-on": "aws_sdk_settings.authType == 'grafana_assume_role' \u0026\u0026 aws_sdk_settings.usePerDatasourceExternalId == true"
+          },
           "managedSecret": {
             "type": "object",
             "properties": {
@@ -108,6 +113,12 @@
               false,
               true
             ]
+          },
+          "usePerDatasourceExternalId": {
+            "description": "Grafana Assume Role only. When enabled, this datasource uses its own external ID (below) instead of the stack-wide external ID.",
+            "type": "boolean",
+            "default": false,
+            "x-dsconfig-depends-on": "aws_sdk_settings.authType == 'grafana_assume_role'"
           },
           "useServerless": {
             "type": "boolean",
