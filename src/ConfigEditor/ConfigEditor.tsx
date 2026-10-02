@@ -1,5 +1,11 @@
 import { ConfigSelect, ConnectionConfig, Divider } from '@grafana/aws-sdk';
-import { DataSourcePluginOptionsEditorProps, DataSourceSettings, SelectableValue, GrafanaTheme2 } from '@grafana/data';
+import {
+  DataSourceJsonData,
+  DataSourcePluginOptionsEditorProps,
+  DataSourceSettings,
+  SelectableValue,
+  GrafanaTheme2,
+} from '@grafana/data';
 import { config, getBackendSrv } from '@grafana/runtime';
 import { Field, Input, SecureSocksProxySettings, Switch, useStyles2 } from '@grafana/ui';
 import { gte } from 'semver';
@@ -18,7 +24,7 @@ import { ConfigSection } from '@grafana/plugin-ui';
 
 export type Props = DataSourcePluginOptionsEditorProps<RedshiftDataSourceOptions, RedshiftDataSourceSecureJsonData>;
 
-export function applySavedDatasource<TJson, TSecure>(
+export function applySavedDatasource<TJson extends DataSourceJsonData, TSecure>(
   current: DataSourceSettings<TJson, TSecure>,
   saved?: DataSourceSettings<TJson, TSecure>
 ): DataSourceSettings<TJson, TSecure> {

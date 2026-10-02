@@ -68,14 +68,14 @@ describe('ConfigEditor', () => {
       version: (current.version ?? 1) + 1,
       jsonData: {
         ...current.jsonData,
-        grafanaExternalId: '5285-rsuid-abcdef0123456789',
+        grafanaExternalId: '5285-uid-abcdef0123456789',
       },
     };
 
     const next = applySavedDatasource(current, saved);
     expect(next.version).toBe(saved.version);
     expect(next.jsonData.database).toBe('dev');
-    expect(next.jsonData.grafanaExternalId).toBe('5285-rsuid-abcdef0123456789');
+    expect(next.jsonData.grafanaExternalId).toBe('5285-uid-abcdef0123456789');
   });
 
   it('should display Provisioned using Secrets Manager', () => {
