@@ -48,7 +48,7 @@ type RedshiftDataSourceSettings struct {
 	UseManagedSecret  bool   `json:"useManagedSecret"`
 	WithEvent         bool   `json:"withEvent"`
 	DBUser            string `json:"dbUser"`
-	ManagedSecret     ManagedSecret
+	ManagedSecret     ManagedSecret `json:"managedSecret"`
 }
 
 func New(_ context.Context) models.Settings {
