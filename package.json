@@ -1,6 +1,6 @@
 {
   "name": "grafana-redshift-datasource",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "webpack -c ./webpack.config.ts --env production",
@@ -95,6 +95,12 @@
     "webpack-livereload-plugin": "3.0.2",
     "webpack-subresource-integrity": "5.1.0",
     "webpack-virtual-modules": "0.6.2"
+  },
+  "overrides": {
+    "brace-expansion@1.x": "1.1.21",
+    "brace-expansion@2.x": "2.1.7",
+    "brace-expansion@5.x": "5.0.12",
+    "basic-ftp": "6.2.1"
   },
   "engines": {
     "node": ">=24",
