@@ -1,6 +1,6 @@
 module github.com/grafana/redshift-datasource
 
-go 1.26.6
+go 1.27.3
 
 require (
 	github.com/aws/aws-sdk-go-v2 v1.46.0
