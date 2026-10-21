@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.6
+
+- Update Go to 1.27.3 in [#893](https://github.com/grafana/redshift-datasource/pull/893)
+
 ## 2.5.5
 
 - chore(security): bump brace-expansion and basic-ftp to fix CVEs in [#890](https://github.com/grafana/redshift-datasource/pull/890)
