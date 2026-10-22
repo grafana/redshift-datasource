@@ -1,5 +1,5 @@
 import { applySQLTemplateVariables, filterSQLQuery } from '@grafana/aws-sdk';
-import { DatasourceWithAsyncBackend } from '@grafana/async-query-data';
+import { DatasourceWithAsyncBackend } from '@grafana/plugin-ui';
 import { DataSourceInstanceSettings, ScopedVars } from '@grafana/data';
 import { getTemplateSrv } from '@grafana/runtime';
 import { RedshiftVariableSupport } from 'variables';
