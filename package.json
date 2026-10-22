@@ -1,6 +1,6 @@
 {
   "name": "grafana-redshift-datasource",
-  "version": "2.5.5",
+  "version": "2.5.6",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "webpack -c ./webpack.config.ts --env production",
@@ -82,7 +82,7 @@
     "react-select-event": "5.5.1",
     "replace-in-file-webpack-plugin": "1.0.6",
     "sass": "1.99.0",
-    "sass-loader": "16.0.7",
+    "sass-loader": "17.0.1",
     "style-loader": "4.0.0",
     "swc-loader": "0.2.7",
     "terser-webpack-plugin": "5.4.0",
