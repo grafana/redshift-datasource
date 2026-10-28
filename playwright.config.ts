@@ -37,7 +37,6 @@ export default defineConfig<PluginOptions>({
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:3000',
     featureToggles: {
-      dashboardNewLayouts: false,
       multiPropsVariables: false,
     },
     openFeature: {

@@ -1,5 +1,9 @@
 # Changelog
 
+## 2.5.7
+
+- Bump backend dependency
+
 ## 2.5.6
 
 - Update Go to 1.27.3 in [#893](https://github.com/grafana/redshift-datasource/pull/893)
