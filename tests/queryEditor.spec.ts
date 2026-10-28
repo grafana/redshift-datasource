@@ -1,10 +1,11 @@
 import { test, expect } from '@grafana/plugin-e2e';
+import { setVisualization } from './setVisualization';
 
 test('should provide autosuggestions', async ({ page, panelEditPage, selectors }) => {
   test.slow();
   await panelEditPage.datasource.set('AWS Redshift E2E');
   await panelEditPage.timeRange.set({ from: '2008-01-01 19:00:00', to: '2008-01-02 19:00:00' });
-  await panelEditPage.setVisualization('Table');
+  await setVisualization(panelEditPage, 'Table');
 
   // The following section will verify that autocompletion is behaving as expected.
   // Throughout the composition of the SQL query, the autocompletion engine will provide appropriate suggestions.
@@ -37,7 +38,7 @@ test('should provide autosuggestions', async ({ page, panelEditPage, selectors }
 test('should return data when a valid query is successfully run', async ({ page, panelEditPage, selectors }) => {
   await panelEditPage.datasource.set('AWS Redshift E2E');
   await panelEditPage.timeRange.set({ from: '2008-01-01 19:00:00', to: '2008-01-02 19:00:00' });
-  await panelEditPage.setVisualization('Table');
+  await setVisualization(panelEditPage, 'Table');
 
   await page.waitForFunction(() => window.monaco);
   const editor = panelEditPage.getByGrafanaSelector(selectors.components.CodeEditor.container);
