@@ -3,9 +3,14 @@ import { assign } from 'lodash';
 import { Observable } from 'rxjs';
 import { VariableQueryCodeEditor } from 'VariableQueryEditor';
 import { DataSource } from './datasource';
-import { RedshiftQuery, defaultQuery } from './types';
+import { RedshiftDataSourceOptions, RedshiftQuery, defaultQuery } from './types';
 
-export class RedshiftVariableSupport extends CustomVariableSupport<DataSource, RedshiftQuery, RedshiftQuery> {
+export class RedshiftVariableSupport extends CustomVariableSupport<
+  DataSource,
+  RedshiftQuery,
+  RedshiftQuery,
+  RedshiftDataSourceOptions
+> {
   constructor(private readonly datasource: DataSource) {
     super();
     this.datasource = datasource;
