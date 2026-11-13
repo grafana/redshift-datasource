@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Keep the server-minted Grafana external ID in the config form after save.
+
 ## 2.5.8
 
 - Fix a connection freeze between Grafana and the plugin under heavy query load by updating google.golang.org/grpc to v1.85.0 ([grpc/grpc-go#9330](https://github.com/grpc/grpc-go/issues/9330))
