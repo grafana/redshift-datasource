@@ -48,9 +48,9 @@ test('shows the server-minted external ID after save', async ({
   page,
   readProvisionedDataSource,
 }) => {
-  // Plugin CI starts a local Grafana. Minting happens on datasourcese2e once
-  // awsAssumeRolePerDatasourceExternalId is rolled out there.
-  test.skip(!process.env.GRAFANA_URL, 'Requires datasourcese2e.grafana-dev.net');
+  // The plugin CI Playwright job does not set GRAFANA_URL. It starts its own
+  // Grafana, which does not mint a per-datasource external ID.
+  test.skip(!process.env.GRAFANA_URL, 'Requires GRAFANA_URL for a Grafana that mints external IDs');
 
   const ds = await readProvisionedDataSource({ fileName: 'aws-redshift-e2e.yaml', name: 'AWS Redshift E2E' });
   const configPage = await createDataSourceConfigPage({ type: ds.type });
