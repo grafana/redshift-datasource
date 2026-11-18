@@ -18,3 +18,5 @@ services:
       ACCESS_KEY: ${ACCESS_KEY}
       SECRET_KEY: ${SECRET_KEY}
       GF_AWS_ALLOWED_AUTH_PROVIDERS: default,keys,credentials,grafana_assume_role
+      GF_FEATURE_TOGGLES_awsAssumeRolePerDatasourceExternalId: "true"
+      GF_AWS_EXTERNAL_ID: "12345"
