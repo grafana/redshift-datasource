@@ -1,6 +1,6 @@
 {
   "name": "grafana-redshift-datasource",
-  "version": "2.5.8",
+  "version": "2.5.9",
   "description": "Use Amazon Redshift in Grafana",
   "scripts": {
     "build": "webpack -c ./webpack.config.ts --env production",
