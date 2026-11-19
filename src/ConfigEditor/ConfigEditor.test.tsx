@@ -5,7 +5,7 @@ import { select } from 'react-select-event';
 import { AwsAuthType } from '@grafana/aws-sdk';
 import { mockDatasourceOptions } from '../__mocks__/datasource';
 import { selectors } from '../selectors';
-import { ConfigEditor } from './ConfigEditor';
+import { ConfigEditor, applySavedDatasource } from './ConfigEditor';
 import userEvent from '@testing-library/user-event';
 
 const clusterIdentifier = 'cluster';
@@ -68,6 +68,26 @@ describe('ConfigEditor', () => {
   beforeEach(() => {
     mockGet.mockClear();
     mockPost.mockClear();
+  });
+
+  it('merges the server-minted external ID from the save response', () => {
+    const current = {
+      ...mockDatasourceOptions.options,
+      jsonData: { ...mockDatasourceOptions.options.jsonData, database: 'dev' },
+    };
+    const saved = {
+      ...current,
+      version: (current.version ?? 1) + 1,
+      jsonData: {
+        ...current.jsonData,
+        grafanaExternalId: '5285-uid-abcdef0123456789',
+      },
+    };
+
+    const next = applySavedDatasource(current, saved);
+    expect(next.version).toBe(saved.version);
+    expect(next.jsonData.database).toBe('dev');
+    expect(next.jsonData.grafanaExternalId).toBe('5285-uid-abcdef0123456789');
   });
 
   it('should fetch externalId when using Grafana Assume Role', async () => {
