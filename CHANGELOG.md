@@ -1,8 +1,12 @@
 # Changelog
 
-## Unreleased
+## 2.5.9
 
-- Keep the server-minted Grafana external ID in the config form after save.
+- Keep the server-minted Grafana external ID in the config form after save in [#905](https://github.com/grafana/redshift-datasource/pull/905)
+- Bump `@grafana/aws-sdk` to 0.13.1 in [#906](https://github.com/grafana/redshift-datasource/pull/906)
+- Fix a security vulnerability in glob in [#902](https://github.com/grafana/redshift-datasource/pull/902)
+- Fix CVEs in moment, ip-address and fast-uri in [#903](https://github.com/grafana/redshift-datasource/pull/903)
+- Update backend dependencies in [#898](https://github.com/grafana/redshift-datasource/pull/898)
 
 ## 2.5.8
 
