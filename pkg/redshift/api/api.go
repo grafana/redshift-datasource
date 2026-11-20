@@ -136,6 +136,10 @@ func (c *API) Execute(ctx context.Context, input *api.ExecuteQueryInput) (*api.E
 		return nil, backend.DownstreamError(fmt.Errorf("%w: %v", api.ErrorExecute, err))
 	}
 
+	if output == nil || output.Id == nil {
+		return nil, backend.DownstreamError(fmt.Errorf("%w: missing statement id in response", api.ErrorExecute))
+	}
+
 	return &api.ExecuteQueryOutput{ID: *output.Id}, nil
 }
 
@@ -355,6 +359,9 @@ func (c *API) Secret(ctx context.Context, options sqlds.Options) (*models.Redshi
 	}
 	if out == nil {
 		return nil, fmt.Errorf("missing secret content")
+	}
+	if out.SecretString == nil {
+		return nil, fmt.Errorf("secret has no string value")
 	}
 	res := &models.RedshiftSecret{}
 	err = json.Unmarshal([]byte(*out.SecretString), res)

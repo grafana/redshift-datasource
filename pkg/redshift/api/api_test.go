@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
 	"github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
+	"github.com/aws/aws-sdk-go-v2/service/secretsmanager"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 
@@ -362,4 +363,33 @@ func Test_GetWorkgroups(t *testing.T) {
 			}
 		})
 	}
+}
+
+type binarySecretClient struct {
+	mock.MockRedshiftSecretsManager
+}
+
+func (binarySecretClient) GetSecretValue(_ context.Context, _ *secretsmanager.GetSecretValueInput, _ ...func(*secretsmanager.Options)) (*secretsmanager.GetSecretValueOutput, error) {
+	return &secretsmanager.GetSecretValueOutput{SecretBinary: []byte("binary")}, nil
+}
+
+func Test_GetSecret_NoSecretString(t *testing.T) {
+	c := &API{SecretsClient: &binarySecretClient{}}
+	assert.NotPanics(t, func() {
+		secret, err := c.Secret(context.Background(), sqlds.Options{"secretARN": "arn"})
+		assert.Nil(t, secret)
+		assert.Error(t, err)
+	})
+}
+
+func Test_Execute_MissingStatementID(t *testing.T) {
+	c := &API{
+		settings:   &models.RedshiftDataSourceSettings{},
+		DataClient: &mock.MockRedshiftClient{ExecutionResult: &redshiftdata.ExecuteStatementOutput{}},
+	}
+	assert.NotPanics(t, func() {
+		res, err := c.Execute(context.Background(), &api.ExecuteQueryInput{Query: "select 1"})
+		assert.Nil(t, res)
+		assert.Error(t, err)
+	})
 }
