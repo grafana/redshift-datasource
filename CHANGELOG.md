@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix a memory leak where each new connection kept a driver and its AWS client in memory until the plugin restarted
+
 ## 2.5.9
 
 - Keep the server-minted Grafana external ID in the config form after save in [#905](https://github.com/grafana/redshift-datasource/pull/905)
