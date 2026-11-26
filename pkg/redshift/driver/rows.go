@@ -47,16 +47,14 @@ func (r *Rows) Next(dest []driver.Value) error {
 		return io.EOF
 	}
 
-	// If nothing left to iterate...
-	if len(r.result.Records) == 0 {
-		// And if nothing more to paginate...
+	// Skip over exhausted (or empty) pages until a row is available or there is nothing more to paginate.
+	for len(r.result.Records) == 0 {
 		if r.result.NextToken == nil || *r.result.NextToken == "" {
 			r.done = true
 			return io.EOF
 		}
 
-		err := r.fetchNextPage(r.result.NextToken)
-		if err != nil {
+		if err := r.fetchNextPage(r.result.NextToken); err != nil {
 			return err
 		}
 	}

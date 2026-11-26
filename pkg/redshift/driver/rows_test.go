@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
 	redshiftdatatypes "github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
 
 	mock "github.com/grafana/redshift-datasource/pkg/redshift/driver/mock"
@@ -364,4 +365,71 @@ func Test_convertRow(t *testing.T) {
 			[]driver.Value{},
 		), "error in convertRow: col.TypeName is nil")
 	})
+}
+
+type pagedResultClient struct {
+	pages []*redshiftdata.GetStatementResultOutput
+	calls int
+}
+
+func (p *pagedResultClient) GetStatementResult(_ context.Context, _ *redshiftdata.GetStatementResultInput, _ ...func(*redshiftdata.Options)) (*redshiftdata.GetStatementResultOutput, error) {
+	page := p.pages[p.calls]
+	p.calls++
+	return page, nil
+}
+
+func TestRowsSkipsEmptyPages(t *testing.T) {
+	cols := []redshiftdatatypes.ColumnMetadata{{Name: aws.String("a"), TypeName: aws.String("varchar")}}
+	row := func(v string) []redshiftdatatypes.Field {
+		return []redshiftdatatypes.Field{&redshiftdatatypes.FieldMemberStringValue{Value: v}}
+	}
+	tests := []struct {
+		name  string
+		pages []*redshiftdata.GetStatementResultOutput
+		want  []string
+	}{
+		{
+			name: "empty page in the middle",
+			pages: []*redshiftdata.GetStatementResultOutput{
+				{ColumnMetadata: cols, Records: [][]redshiftdatatypes.Field{row("1")}, NextToken: aws.String("t1")},
+				{ColumnMetadata: cols, NextToken: aws.String("t2")},
+				{ColumnMetadata: cols, Records: [][]redshiftdatatypes.Field{row("2")}},
+			},
+			want: []string{"1", "2"},
+		},
+		{
+			name: "empty last page",
+			pages: []*redshiftdata.GetStatementResultOutput{
+				{ColumnMetadata: cols, Records: [][]redshiftdatatypes.Field{row("1")}, NextToken: aws.String("t1")},
+				{ColumnMetadata: cols},
+			},
+			want: []string{"1"},
+		},
+		{
+			name: "empty first page",
+			pages: []*redshiftdata.GetStatementResultOutput{
+				{ColumnMetadata: cols, NextToken: aws.String("t1")},
+				{ColumnMetadata: cols, Records: [][]redshiftdatatypes.Field{row("1")}},
+			},
+			want: []string{"1"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			client := &pagedResultClient{pages: tt.pages}
+			rows, err := newRows(context.Background(), client, "id")
+			require.NoError(t, err)
+			got := []string{}
+			for {
+				dest := make([]driver.Value, 1)
+				err := rows.Next(dest)
+				if err == io.EOF {
+					break
+				}
+				require.NoError(t, err)
+				got = append(got, dest[0].(string))
+			}
+			assert.Equal(t, tt.want, got)
+		})
+	}
 }
