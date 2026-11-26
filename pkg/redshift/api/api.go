@@ -365,48 +365,62 @@ func (c *API) Secret(ctx context.Context, options sqlds.Options) (*models.Redshi
 }
 
 func (c *API) Clusters(ctx context.Context) ([]models.RedshiftCluster, error) {
-	out, err := c.ManagementClient.DescribeClusters(ctx, &redshift.DescribeClustersInput{})
-	if err != nil {
-		return nil, err
-	}
-	if out == nil {
-		return nil, fmt.Errorf("missing clusters content")
-	}
+	input := &redshift.DescribeClustersInput{}
 	res := []models.RedshiftCluster{}
-	for _, r := range out.Clusters {
-		if r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil {
-			res = append(res, models.RedshiftCluster{
-				ClusterIdentifier: *r.ClusterIdentifier,
-				Endpoint: models.RedshiftEndpoint{
-					Address: *r.Endpoint.Address,
-					Port:    *r.Endpoint.Port,
-				},
-				Database: *r.DBName,
-			})
+	for {
+		out, err := c.ManagementClient.DescribeClusters(ctx, input)
+		if err != nil {
+			return nil, err
 		}
+		if out == nil {
+			return nil, fmt.Errorf("missing clusters content")
+		}
+		for _, r := range out.Clusters {
+			if r.ClusterIdentifier != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil && r.DBName != nil {
+				res = append(res, models.RedshiftCluster{
+					ClusterIdentifier: *r.ClusterIdentifier,
+					Endpoint: models.RedshiftEndpoint{
+						Address: *r.Endpoint.Address,
+						Port:    *r.Endpoint.Port,
+					},
+					Database: *r.DBName,
+				})
+			}
+		}
+		if out.Marker == nil || *out.Marker == "" {
+			break
+		}
+		input.Marker = out.Marker
 	}
 	return res, nil
 }
 
 func (c *API) Workgroups(ctx context.Context) ([]models.RedshiftWorkgroup, error) {
-	out, err := c.ServerlessManagementClient.ListWorkgroups(ctx, &redshiftserverless.ListWorkgroupsInput{})
-	if err != nil {
-		return nil, err
-	}
-	if out == nil {
-		return nil, fmt.Errorf("missing workgroups content")
-	}
+	input := &redshiftserverless.ListWorkgroupsInput{}
 	res := []models.RedshiftWorkgroup{}
-	for _, r := range out.Workgroups {
-		if r.WorkgroupName != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil {
-			res = append(res, models.RedshiftWorkgroup{
-				WorkgroupName: *r.WorkgroupName,
-				Endpoint: models.RedshiftEndpoint{
-					Address: *r.Endpoint.Address,
-					Port:    *r.Endpoint.Port,
-				},
-			})
+	for {
+		out, err := c.ServerlessManagementClient.ListWorkgroups(ctx, input)
+		if err != nil {
+			return nil, err
 		}
+		if out == nil {
+			return nil, fmt.Errorf("missing workgroups content")
+		}
+		for _, r := range out.Workgroups {
+			if r.WorkgroupName != nil && r.Endpoint != nil && r.Endpoint.Address != nil && r.Endpoint.Port != nil {
+				res = append(res, models.RedshiftWorkgroup{
+					WorkgroupName: *r.WorkgroupName,
+					Endpoint: models.RedshiftEndpoint{
+						Address: *r.Endpoint.Address,
+						Port:    *r.Endpoint.Port,
+					},
+				})
+			}
+		}
+		if out.NextToken == nil || *out.NextToken == "" {
+			break
+		}
+		input.NextToken = out.NextToken
 	}
 	return res, nil
 }

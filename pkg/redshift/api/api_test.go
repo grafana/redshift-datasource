@@ -2,12 +2,17 @@ package api
 
 import (
 	"context"
+	"fmt"
 	"sort"
 	"testing"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/redshift"
+	redshifttypes "github.com/aws/aws-sdk-go-v2/service/redshift/types"
 	"github.com/aws/aws-sdk-go-v2/service/redshiftdata"
 	"github.com/aws/aws-sdk-go-v2/service/redshiftdata/types"
+	"github.com/aws/aws-sdk-go-v2/service/redshiftserverless"
+	serverlesstypes "github.com/aws/aws-sdk-go-v2/service/redshiftserverless/types"
 	"github.com/google/go-cmp/cmp"
 	"github.com/stretchr/testify/assert"
 
@@ -362,4 +367,75 @@ func Test_GetWorkgroups(t *testing.T) {
 			}
 		})
 	}
+}
+
+type pagedClusters struct {
+	pages [][]string
+	calls int
+}
+
+func (p *pagedClusters) DescribeClusters(_ context.Context, in *redshift.DescribeClustersInput, _ ...func(*redshift.Options)) (*redshift.DescribeClustersOutput, error) {
+	idx := p.calls
+	p.calls++
+	if idx > 0 && (in.Marker == nil || *in.Marker != fmt.Sprintf("m%d", idx)) {
+		return nil, fmt.Errorf("missing marker for page %d", idx)
+	}
+	out := &redshift.DescribeClustersOutput{}
+	for _, c := range p.pages[idx] {
+		out.Clusters = append(out.Clusters, redshifttypes.Cluster{
+			ClusterIdentifier: aws.String(c),
+			Endpoint:          &redshifttypes.Endpoint{Address: aws.String(c), Port: aws.Int32(123)},
+			DBName:            aws.String(c),
+		})
+	}
+	if idx+1 < len(p.pages) {
+		out.Marker = aws.String(fmt.Sprintf("m%d", idx+1))
+	}
+	return out, nil
+}
+
+type pagedWorkgroups struct {
+	pages [][]string
+	calls int
+}
+
+func (p *pagedWorkgroups) ListWorkgroups(_ context.Context, in *redshiftserverless.ListWorkgroupsInput, _ ...func(*redshiftserverless.Options)) (*redshiftserverless.ListWorkgroupsOutput, error) {
+	idx := p.calls
+	p.calls++
+	if idx > 0 && (in.NextToken == nil || *in.NextToken != fmt.Sprintf("t%d", idx)) {
+		return nil, fmt.Errorf("missing token for page %d", idx)
+	}
+	out := &redshiftserverless.ListWorkgroupsOutput{}
+	for _, w := range p.pages[idx] {
+		out.Workgroups = append(out.Workgroups, serverlesstypes.Workgroup{
+			WorkgroupName: aws.String(w),
+			Endpoint:      &serverlesstypes.Endpoint{Address: aws.String(w), Port: aws.Int32(123)},
+		})
+	}
+	if idx+1 < len(p.pages) {
+		out.NextToken = aws.String(fmt.Sprintf("t%d", idx+1))
+	}
+	return out, nil
+}
+
+func Test_GetClusters_Paginates(t *testing.T) {
+	c := &API{ManagementClient: &pagedClusters{pages: [][]string{{"a", "b"}, {"c"}}}}
+	clusters, err := c.Clusters(context.Background())
+	assert.NoError(t, err)
+	names := []string{}
+	for _, cl := range clusters {
+		names = append(names, cl.ClusterIdentifier)
+	}
+	assert.Equal(t, []string{"a", "b", "c"}, names)
+}
+
+func Test_GetWorkgroups_Paginates(t *testing.T) {
+	c := &API{ServerlessManagementClient: &pagedWorkgroups{pages: [][]string{{"a", "b"}, {"c"}}}}
+	workgroups, err := c.Workgroups(context.Background())
+	assert.NoError(t, err)
+	names := []string{}
+	for _, w := range workgroups {
+		names = append(names, w.WorkgroupName)
+	}
+	assert.Equal(t, []string{"a", "b", "c"}, names)
 }
