@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.5.10
+
+- Fix CVEs in source-map-js, smol-toml and postcss-selector-parser in [#912](https://github.com/grafana/redshift-datasource/pull/912)
+- Update plugin CI workflows to v12.1.1 in [#914](https://github.com/grafana/redshift-datasource/pull/914)
+
 ## 2.5.9
 
 - Keep the server-minted Grafana external ID in the config form after save in [#905](https://github.com/grafana/redshift-datasource/pull/905)
